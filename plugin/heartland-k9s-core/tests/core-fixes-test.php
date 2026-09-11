@@ -292,8 +292,16 @@ $capture   = static function ( $pre, $args ) use ( &$seen_args ) {
 	return new WP_Error( 'tmp', 'captured' );
 };
 add_filter( 'pre_http_request', $capture, 10, 2 );
+// The local dev mu-plugin opts out of verification; lift it for the default check.
+$dev_optout = has_filter( 'hk9/redirects/test_sslverify', '__return_false' );
+if ( false !== $dev_optout ) {
+	remove_filter( 'hk9/redirects/test_sslverify', '__return_false', $dev_optout );
+}
 HK9\Core\Redirects\Resolver::test( '/hk923-005/', true );
 $check( 'sslverify defaults to true', $seen_args['sslverify'] ?? null, true );
+if ( false !== $dev_optout ) {
+	add_filter( 'hk9/redirects/test_sslverify', '__return_false', $dev_optout );
+}
 add_filter( 'hk9/redirects/test_sslverify', '__return_false' );
 HK9\Core\Redirects\Resolver::test( '/hk923-005/', true );
 $check( 'filter can opt out', $seen_args['sslverify'] ?? null, false );

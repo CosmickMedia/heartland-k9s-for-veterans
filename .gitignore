@@ -1,7 +1,7 @@
 node_modules/
 .idea/
 .DS_Store
-dist/*.zip
+dist/heartland-k9s-payload.zip
 payload/media/
 payload/source/
 # evidence screenshots are committed (handoff kit); raw per-engine full-page duplicates and raw Lighthouse JSON are not
