@@ -1,0 +1,65 @@
+{
+  "key": "live:campaign:heartland-ambassador",
+  "type": "hk9_campaign",
+  "status": "publish",
+  "slug": "heartland-ambassador",
+  "title": "The Heartland Ambassador Campaign",
+  "excerpt": "Give your employees and patrons an opportunity to see a service dog in action!",
+  "content": "content/live__campaign__heartland-ambassador.html",
+  "featured": "{{media:live:media:2456}}",
+  "menu_order": 5,
+  "meta": {
+    "hk9_summary": {
+      "type": "string",
+      "value": "Would you like to have us come to you? Heartland would love the chance to bring a service dog team to your venue—to promote a grand opening or other event, educate your employees and patrons on service dogs, answer questions about our campaigns, and share ADA rules and laws."
+    },
+    "hk9_status": {
+      "type": "string",
+      "value": "active"
+    },
+    "hk9_start": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_end": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_cta": {
+      "type": "object",
+      "value": {
+        "label": "We’d love to have a team visit us!",
+        "url": "",
+        "post_id": "{{post:ref:page:contact}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_secondary_cta": {
+      "type": "object",
+      "value": {
+        "label": "",
+        "url": "",
+        "post_id": 0,
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_sponsors": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_gallery": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_goal_text": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": false
+    }
+  }
+}

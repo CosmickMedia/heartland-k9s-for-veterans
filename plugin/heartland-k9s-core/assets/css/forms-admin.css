@@ -1,0 +1,122 @@
+/**
+ * Heartland K9s — Form Submissions admin (hk9_submission list + read-only detail screen).
+ * Loaded only on hk9_submission screens by HK9\Core\Forms\Submissions.
+ */
+
+/* Detail screen: read-only, so hide the title input + publish controls (Trash link stays in the Delivery box). */
+.post-type-hk9_submission #titlewrap,
+.post-type-hk9_submission #edit-slug-box,
+.post-type-hk9_submission #minor-publishing,
+.post-type-hk9_submission #misc-publishing-actions,
+.post-type-hk9_submission #major-publishing-actions,
+.post-type-hk9_submission #submitdiv,
+.post-type-hk9_submission .page-title-action {
+	display: none !important;
+}
+
+.post-type-hk9_submission #poststuff #post-body.columns-2 #postbox-container-1 {
+	margin-top: 0;
+}
+
+.hk9-submission__note {
+	margin: 0 0 12px;
+	color: #50575e;
+}
+
+.hk9-submission__table {
+	border: 1px solid #c3c4c7;
+}
+
+.hk9-submission__table th,
+.hk9-submission__table td {
+	padding: 10px 12px;
+	vertical-align: top;
+	line-height: 1.5;
+}
+
+.hk9-submission__table th {
+	width: 220px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.hk9-submission__multiline {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}
+
+.hk9-submission__meta {
+	margin: 0;
+}
+
+.hk9-submission__meta dt {
+	margin: 10px 0 2px;
+	font-weight: 600;
+	color: #1d2327;
+}
+
+.hk9-submission__meta dt:first-child {
+	margin-top: 0;
+}
+
+.hk9-submission__meta dd {
+	margin: 0;
+	overflow-wrap: anywhere;
+}
+
+.hk9-submission__actions {
+	margin: 16px 0 0;
+	padding-top: 12px;
+	border-top: 1px solid #dcdcde;
+}
+
+/* Mail-sent badges (list table + detail). */
+.hk9-badge {
+	display: inline-flex;
+	align-items: center;
+	gap: 2px;
+	padding: 1px 8px 1px 4px;
+	border-radius: 999px;
+	font-size: 12px;
+	line-height: 20px;
+	white-space: nowrap;
+}
+
+.hk9-badge .dashicons {
+	font-size: 16px;
+	width: 16px;
+	height: 16px;
+	line-height: 20px;
+}
+
+.hk9-badge--ok {
+	background: #edfaef;
+	color: #00631b;
+}
+
+.hk9-badge--fail {
+	background: #fcf0f1;
+	color: #8a2424;
+}
+
+/* List table column widths. */
+.post-type-hk9_submission .wp-list-table .column-hk9_form {
+	width: 14%;
+}
+
+.post-type-hk9_submission .wp-list-table .column-hk9_mail {
+	width: 10%;
+}
+
+@media screen and (max-width: 782px) {
+	.hk9-submission__table th {
+		width: auto;
+		display: block;
+		padding-bottom: 0;
+	}
+
+	.hk9-submission__table td {
+		display: block;
+		padding-top: 4px;
+	}
+}

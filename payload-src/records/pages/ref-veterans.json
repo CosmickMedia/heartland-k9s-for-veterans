@@ -1,0 +1,122 @@
+{
+  "key": "ref:page:veterans",
+  "type": "page",
+  "status": "publish",
+  "slug": "veterans",
+  "title": "For Veterans",
+  "template": "page-templates/veterans.php",
+  "excerpt": "Your service earned this. We are here to provide the support you deserve at zero cost.",
+  "menu_order": 3,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "For Veterans",
+        "text": "Your service earned this. We are here to provide the support you deserve at zero cost.",
+        "pattern": "stars"
+      }
+    },
+    "hk9_sec_questions": {
+      "type": "object",
+      "value": {
+        "heading": "The 5 Questions",
+        "intro": "Before partnering with a Service Dog, there are several important points to consider. There are no wrong answers to these questions – only answers that help you make the best decision for your needs and disability.",
+        "items": [
+          {
+            "question": "Am I financially able to take on the costs of caring for a dog for 10 to 15 years?"
+          },
+          {
+            "question": "Are you prepared to care or arrange for care for a dog every single day?"
+          },
+          {
+            "question": "Are you prepared to always be the center of attention?"
+          },
+          {
+            "question": "Are you willing and able to accept the training and socialization obligations accompanying a Service Dog?"
+          },
+          {
+            "question": "Are you prepared to deal with conflict?"
+          }
+        ],
+        "footer_text": "The questions are designed to help you think and they’re not meant to be answered with a simple “yes” or “no.” Partnering with a Service Dog is a huge step, and every person’s needs, desires, disability, abilities and situations are unique. Still think a Service Dog is for you? Start with our online screening application.",
+        "button": {
+          "label": "Start Application",
+          "url": "",
+          "post_id": "{{post:live:page:1989}}",
+          "target": "_self",
+          "rel": ""
+        },
+        "secondary_link": {
+          "label": "Read the full 5 Questions",
+          "url": "",
+          "post_id": "{{post:live:page:16}}",
+          "target": "_self",
+          "rel": ""
+        }
+      }
+    },
+    "hk9_sec_expect": {
+      "type": "object",
+      "value": {
+        "heading": "What to Expect",
+        "steps": [
+          {
+            "title": "Screening & Assessment",
+            "text": "After HK9 receives your online screening application, an HK9 representative will reach out for a phone conversation and baseline assessment."
+          },
+          {
+            "title": "Full Application",
+            "text": "HK9 will email the full application. It is extremely detailed—medical information, living conditions, history—so please fill it out thoroughly and completely. HK9 reserves the right to deny any application."
+          },
+          {
+            "title": "Matching & Team Training",
+            "text": "If you are selected, the search begins for the “right fit” K9. Obedience training begins the day the dog is accepted and service training starts once the K9 is at least 7 months old. Your training includes commands for the K9, de-escalation while in public, conflict resolution and the Americans with Disabilities Act (ADA). A final practical exam results in graduation of the K9 team."
+          }
+        ],
+        "card_icon": "shield-check",
+        "card_title": "The BarKode System",
+        "card_text": "As a Heartland-trained team, your Service K9 is assigned a unique team number and QR code documented in our secure database. Scanning the BarKode shows your K9’s photo, team ID and trained tasks along with emergency contact, veterinarian and HK9 contact information—so that in an emergency your canine is not separated from you. BarKode is a free service for Heartland-trained teams.",
+        "card_button": {
+          "label": "Learn about BarKode",
+          "url": "",
+          "post_id": "{{post:ref:page:barkode}}",
+          "target": "_self",
+          "rel": ""
+        }
+      }
+    },
+    "hk9_sec_ada": {
+      "type": "object",
+      "value": {
+        "heading": "ADA Rights & FAQs",
+        "text": "As a service dog handler, you have specific rights protected under the Americans with Disabilities Act (ADA). ADA education is part of every Veteran’s training with HK9, and we have collected a few frequently asked questions from the U.S. Department of Justice.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Read ADA FAQs",
+              "url": "",
+              "post_id": "{{post:live:page:1995}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "outline-light"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "questions",
+          "expect",
+          "ada"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

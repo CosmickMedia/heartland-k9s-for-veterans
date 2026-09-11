@@ -1,0 +1,28 @@
+{
+  "key": "live:person:jennifer-johnson",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "jennifer-johnson",
+  "title": "Jennifer Johnson",
+  "featured": "{{media:live:media:3276}}",
+  "menu_order": 6,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Board Member"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "content": "content/live__person__jennifer-johnson.html"
+}

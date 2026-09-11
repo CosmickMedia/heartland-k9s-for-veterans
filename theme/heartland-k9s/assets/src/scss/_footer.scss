@@ -1,0 +1,213 @@
+// ---------------------------------------------------------------------------
+// Footer (measured at 1440: 480px tall; 390: 1141px).
+// bg navy, white; container py-16 (64px); grid 1 → 2 (md) → 4 (lg) cols gap 48;
+// brand col: logo 80px + wordmark (white / white@80 10px uppercase), p 14/22.75 white@80 max 320,
+// tagline Fraunces italic 18/28 crimson; col h3 Fraunces 600 18/28 −.45px mb 16;
+// links 14/20 white@80 hover white, li gap 12; contact rows gap 12 icon 20px crimson;
+// bottom bar mt 64 pt 32 border-t white/10 flex col → md row space-between 12/16 white@60.
+// ---------------------------------------------------------------------------
+
+.hk9-footer {
+	background: var(--hk9-primary);
+	color: #fff;
+	flex-shrink: 0;
+
+	a {
+		color: rgba(var(--hk9-white-rgb), .8);
+		text-decoration: none;
+		transition: color .15s ease-in-out;
+
+		&:hover,
+		&:focus-visible {
+			color: #fff;
+			text-decoration: none;
+		}
+	}
+
+	&__inner {
+		padding-top: 4rem;
+		padding-bottom: 4rem;
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3rem;
+
+		@include media-breakpoint-up(md) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		@include media-breakpoint-up(lg) {
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+		}
+	}
+
+	&__brand {
+		> * + * { margin-top: 1rem; }
+	}
+
+	&__brand-link {
+		display: flex;
+		align-items: center;
+		gap: .75rem;
+		color: #fff;
+
+		&:hover { color: #fff; }
+	}
+
+	&__logo {
+		display: block;
+		height: var(--hk9-footer-logo-h);
+		width: auto;
+		object-fit: contain;
+	}
+
+	&__wordmark {
+		display: flex;
+		flex-direction: column;
+		line-height: 1.25;
+	}
+
+	&__wordmark-line1 {
+		font-family: var(--hk9-font-serif);
+		font-weight: 600;
+		font-size: 1.125rem;
+		line-height: 1.25;
+		color: #fff;
+	}
+
+	&__wordmark-line2 {
+		font-size: 10px;
+		line-height: 1.5;
+		font-weight: 500;
+		letter-spacing: .05em;
+		text-transform: uppercase;
+		color: rgba(var(--hk9-white-rgb), .8);
+	}
+
+	&__description {
+		font-size: .875rem;
+		line-height: 1.625;
+		color: rgba(var(--hk9-white-rgb), .8);
+		max-width: 20rem;
+		margin-bottom: 0;
+	}
+
+	&__tagline {
+		font-family: var(--hk9-font-serif);
+		font-style: italic;
+		font-weight: 400;
+		font-size: 1.125rem;
+		line-height: 1.5556;
+		color: var(--hk9-secondary);
+		margin-bottom: 0;
+	}
+
+	&__heading {
+		font-family: var(--hk9-font-serif);
+		font-size: 1.125rem;
+		line-height: 1.5556;
+		font-weight: 600;
+		color: #fff;
+		margin-bottom: 1rem;
+	}
+
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: .75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: rgba(var(--hk9-white-rgb), .8);
+
+		li { margin: 0; }
+
+		&--contact {
+			gap: 1rem;
+		}
+	}
+
+	&__contact-row {
+		display: flex;
+		align-items: flex-start;
+		gap: .75rem;
+
+		.hk9-icon {
+			width: 1.25rem;
+			height: 1.25rem;
+			color: var(--hk9-secondary);
+			margin-top: .0625rem;
+		}
+	}
+
+	&__contact-sub {
+		display: block;
+		font-size: .75rem;
+		line-height: 1.3334;
+		margin-top: .25rem;
+		color: rgba(var(--hk9-white-rgb), .6);
+	}
+
+	&__seal {
+		margin-top: 1rem;
+
+		img {
+			height: 4rem;
+			width: auto;
+		}
+	}
+
+	&__bottom {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-top: 4rem;
+		padding-top: 2rem;
+		border-top: 1px solid rgba(var(--hk9-white-rgb), .1);
+		font-size: .75rem;
+		line-height: 1.3334;
+		color: rgba(var(--hk9-white-rgb), .6);
+		text-align: center;
+
+		@include media-breakpoint-up(md) {
+			flex-direction: row;
+			text-align: left;
+		}
+
+		p { margin: 0; }
+
+		a { color: inherit; }
+	}
+
+	&__credit {
+		display: inline-flex;
+		align-items: center;
+		gap: .25rem;
+
+		.hk9-icon {
+			width: .75rem;
+			height: .75rem;
+			color: var(--hk9-secondary);
+			fill: currentColor;
+		}
+	}
+
+	&__social {
+		display: flex;
+		gap: .75rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		.hk9-icon {
+			width: 1.25rem;
+			height: 1.25rem;
+		}
+	}
+}

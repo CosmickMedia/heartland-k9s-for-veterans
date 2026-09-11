@@ -1,0 +1,12 @@
+{
+  "key": "menu:mini-primary",
+  "type": "menu",
+  "name": "Mini Primary",
+  "locations": ["mini"],
+  "items": [
+    { "key": "menu:mini-primary:about", "kind": "post_type", "object": "{{post:mini:page:about}}", "title": "", "order": 1 },
+    { "key": "menu:mini-primary:history", "kind": "post_type", "object": "{{post:mini:page:history}}", "title": "Our history", "parent": "menu:mini-primary:about", "order": 2 },
+    { "key": "menu:mini-primary:donate", "kind": "custom", "url": "https://example.org/donate", "title": "Donate", "target": "_blank", "classes": ["hk9-nav-cta"], "order": 3 },
+    { "key": "menu:mini-primary:home", "kind": "post_type", "object": "{{post:mini:page:home}}", "title": "Home", "order": 4 }
+  ]
+}

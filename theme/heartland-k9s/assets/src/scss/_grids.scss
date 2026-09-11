@@ -1,0 +1,340 @@
+// ---------------------------------------------------------------------------
+// Record layouts and content grids: BarKode record, gallery, people, partners,
+// events, campaigns, teams, stories.
+// ---------------------------------------------------------------------------
+
+// BarKode registry record: photo left (2/5), fields right (3/5) from md.
+.hk9-record {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2rem;
+	max-width: var(--hk9-wide);
+	margin: 0 auto;
+
+	@include media-breakpoint-up(md) {
+		grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+		gap: 3rem;
+	}
+
+	&__photo {
+		img {
+			display: block;
+			width: 100%;
+			height: auto;
+			border-radius: 1rem;
+			border: 1px solid var(--hk9-border);
+			box-shadow: var(--hk9-shadow-lg);
+		}
+
+		figcaption { margin-top: .75rem; font-size: .875rem; color: var(--hk9-muted-fg); text-align: center; }
+	}
+
+	&__badge {
+		@extend .hk9-badge;
+		@extend .hk9-badge--solid;
+		margin-bottom: 1rem;
+	}
+
+	&__title {
+		font-size: 2.25rem;
+		color: var(--hk9-primary);
+		margin-bottom: .5rem;
+	}
+
+	&__id {
+		font-size: .875rem;
+		font-weight: 600;
+		letter-spacing: .05em;
+		text-transform: uppercase;
+		color: var(--hk9-muted-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__fields {
+		margin: 0;
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0;
+		border: 1px solid var(--hk9-border);
+		border-radius: .5rem;
+		background: var(--hk9-card);
+		overflow: hidden;
+
+		> div {
+			display: grid;
+			grid-template-columns: minmax(0, 1fr);
+			gap: .25rem;
+			padding: .875rem 1.25rem;
+			border-top: 1px solid var(--hk9-border);
+
+			&:first-child { border-top: 0; }
+
+			@include media-breakpoint-up(sm) {
+				grid-template-columns: 11rem minmax(0, 1fr);
+				gap: 1rem;
+			}
+		}
+
+		dt {
+			font-size: .8125rem;
+			font-weight: 600;
+			letter-spacing: .05em;
+			text-transform: uppercase;
+			color: var(--hk9-muted-fg);
+		}
+
+		dd {
+			margin: 0;
+			color: var(--hk9-fg);
+			white-space: pre-line;
+		}
+	}
+
+	&__notice {
+		@extend .hk9-callout;
+		text-align: left;
+		margin-top: 1.5rem;
+		font-weight: 500;
+		color: var(--hk9-primary);
+	}
+
+	&__alert {
+		display: flex;
+		gap: .75rem;
+		align-items: flex-start;
+		margin-top: 1.5rem;
+		padding: 1rem 1.25rem;
+		border-radius: .5rem;
+		background: rgba(var(--hk9-secondary-rgb), .08);
+		border: 1px solid rgba(var(--hk9-secondary-rgb), .3);
+		color: var(--hk9-secondary);
+		font-weight: 600;
+
+		.hk9-icon { width: 1.25rem; height: 1.25rem; margin-top: .125rem; }
+	}
+
+	&__cards {
+		margin-top: 2rem;
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+
+		img { width: 100%; height: auto; border-radius: .5rem; border: 1px solid var(--hk9-border); }
+	}
+}
+
+// Photo gallery grid: 2 → 3 (md) → 4 (lg) columns, square tiles, 16px gap.
+.hk9-gallery {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1rem;
+
+	@include media-breakpoint-up(md) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	@include media-breakpoint-up(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+	&--2 { @include media-breakpoint-up(md) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+	&--3 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+	&__item {
+		position: relative;
+		margin: 0;
+		aspect-ratio: 1;
+		overflow: hidden;
+		border-radius: .5rem;
+		background: var(--hk9-muted);
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			transition: transform .3s var(--hk9-ease);
+		}
+
+		a { display: block; height: 100%; }
+
+		@media (hover: hover) {
+			&:hover img { transform: scale(1.04); }
+		}
+
+		figcaption {
+			position: absolute;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			padding: .75rem 1rem;
+			font-size: .8125rem;
+			color: #fff;
+			background: linear-gradient(to top, rgba(15, 23, 42, .75), transparent);
+		}
+	}
+}
+
+// Shared grid for people / partners / events / campaigns / teams / stories.
+%hk9-content-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2rem;
+
+	@include media-breakpoint-up(md) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	@include media-breakpoint-up(lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.hk9-people {
+	@extend %hk9-content-grid;
+
+	&--2 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+
+	&__card {
+		@extend .hk9-card;
+		@extend .hk9-card--center;
+
+		.hk9-people__portrait {
+			width: 8rem;
+			height: 8rem;
+			margin-bottom: 1.5rem;
+			border-radius: 9999px;
+			overflow: hidden;
+			background: var(--hk9-muted);
+			border: 4px solid rgba(var(--hk9-primary-rgb), .08);
+
+			img { width: 100%; height: 100%; object-fit: cover; }
+		}
+
+		.hk9-people__name { font-size: 1.25rem; margin-bottom: .25rem; }
+		.hk9-people__role { font-size: .875rem; font-weight: 600; letter-spacing: .05em; text-transform: uppercase; color: var(--hk9-secondary); margin-bottom: 1rem; }
+		.hk9-people__bio { color: var(--hk9-muted-fg); font-size: .9375rem; line-height: 1.625; }
+		.hk9-people__links { display: flex; gap: .75rem; justify-content: center; margin-top: auto; padding-top: 1rem; }
+	}
+}
+
+.hk9-partners {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1.5rem;
+
+	@include media-breakpoint-up(md) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+	@include media-breakpoint-up(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+	&--3 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+	&--5 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+	&--6 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+	&__item {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: .75rem;
+		padding: 1.5rem;
+		background: var(--hk9-card);
+		border: 1px solid var(--hk9-border);
+		border-radius: .5rem;
+		box-shadow: var(--hk9-shadow-sm);
+		text-align: center;
+		color: var(--hk9-fg);
+		text-decoration: none;
+		transition: transform .3s var(--hk9-ease), box-shadow .3s var(--hk9-ease);
+
+		img {
+			max-height: 5rem;
+			width: auto;
+			max-width: 100%;
+			object-fit: contain;
+		}
+
+		@media (hover: hover) {
+			&:hover { transform: translateY(-4px); box-shadow: var(--hk9-shadow-lg); text-decoration: none; }
+		}
+	}
+
+	&__name { font-size: .875rem; font-weight: 500; }
+	&__tier { font-size: .75rem; color: var(--hk9-muted-fg); }
+}
+
+.hk9-events,
+.hk9-campaigns,
+.hk9-teams,
+.hk9-stories {
+	@extend %hk9-content-grid;
+
+	&__card {
+		@extend .hk9-card;
+		@extend .hk9-card--hover;
+		padding: 0;
+		overflow: hidden;
+
+		.hk9-card__media { margin: 0; border-radius: 0; }
+		.hk9-card__body { display: flex; flex-direction: column; flex: 1 1 auto; padding: 1.5rem 2rem 2rem; }
+		.hk9-card__title { font-size: 1.25rem; margin-bottom: .5rem; }
+	}
+}
+
+// Event date/time chip.
+.hk9-event-date {
+	display: inline-flex;
+	align-items: center;
+	gap: .5rem;
+	font-size: .875rem;
+	font-weight: 600;
+	color: var(--hk9-secondary);
+
+	.hk9-icon { width: 1rem; height: 1rem; }
+}
+
+// Status pills (teams / campaigns / events).
+.hk9-status {
+	display: inline-block;
+	padding: .125rem .625rem;
+	border-radius: 9999px;
+	font-size: .75rem;
+	font-weight: 700;
+	letter-spacing: .08em;
+	text-transform: uppercase;
+	background: rgba(var(--hk9-primary-rgb), .1);
+	color: var(--hk9-primary);
+
+	&--active,
+	&--in-training { background: rgba(var(--hk9-secondary-rgb), .1); color: var(--hk9-secondary); }
+	&--completed,
+	&--graduated { background: rgba(47, 125, 79, .12); color: #1f6b41; }
+	&--cancelled,
+	&--postponed,
+	&--paused { background: rgba(var(--hk9-muted-fg-rgb), .15); color: var(--hk9-muted-fg); }
+}
+
+// Sponsor tiers (coloring book landing).
+.hk9-tiers {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 1.5rem;
+
+	@include media-breakpoint-up(md) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	@include media-breakpoint-up(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+	&__item {
+		@extend .hk9-card;
+		@extend .hk9-card--center;
+
+		&.is-highlight { border-color: var(--hk9-secondary); box-shadow: var(--hk9-shadow-lg); }
+
+		.hk9-tiers__price { font-family: var(--hk9-font-serif); font-size: 2rem; font-weight: 700; color: var(--hk9-primary); }
+		.hk9-tiers__qty { font-size: .875rem; color: var(--hk9-muted-fg); margin-bottom: 1rem; }
+		ul { list-style: none; padding: 0; margin: 0 0 1.5rem; color: var(--hk9-muted-fg); font-size: .9375rem; text-align: left; }
+		li { padding: .375rem 0; border-top: 1px solid var(--hk9-border); }
+		li:first-child { border-top: 0; }
+	}
+}
+
+// Contact info rows (contact page card + donate mail-in).
+.hk9-info {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+
+	&__row { display: flex; gap: 1rem; align-items: flex-start; }
+	&__label { font-weight: 700; font-size: 1rem; color: var(--hk9-fg); margin-bottom: .125rem; }
+	&__value { color: var(--hk9-muted-fg); white-space: pre-line; }
+}

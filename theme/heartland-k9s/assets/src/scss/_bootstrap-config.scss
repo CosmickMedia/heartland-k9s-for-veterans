@@ -1,0 +1,187 @@
+// ---------------------------------------------------------------------------
+// Bootstrap 5.3.8 configuration — imported AFTER bootstrap/scss/functions and
+// BEFORE bootstrap/scss/variables so every `!default` below wins.
+//
+// Every value here is a measured reference value (discovery/discovery-result.json
+// → design, discovery/measure/results.json). Do not "improve" them.
+// ---------------------------------------------------------------------------
+
+// Design tokens (HSL → hex, computed exactly; the rgb triplets feed alpha variants).
+$hk9-primary:   #1c2f4a; // hsl(215 45% 20%)  navy
+$hk9-secondary: #b82e45; // hsl(350 60% 45%)  crimson
+$hk9-bg:        #fbfaf9; // hsl(40 20% 98%)
+$hk9-fg:        #151c28; // hsl(220 30% 12%)  = rgb(21,28,40) as measured on body
+$hk9-muted:     #f4f0ec; // hsl(35 25% 94%)   = rgb(244,240,236) as measured
+$hk9-muted-fg:  #52637a; // hsl(215 20% 40%)
+$hk9-border:    #e5e0dc; // hsl(30 15% 88%)
+$hk9-accent:    #eae2d7; // hsl(35 30% 88%)
+$hk9-card:      #ffffff;
+$hk9-ring:      $hk9-primary;
+$hk9-radius:    .25rem;
+
+// Bootstrap colour system.
+$primary:   $hk9-primary;
+$secondary: $hk9-secondary;
+$success:   #2f7d4f;
+$danger:    #d92626; // hsl(0 70% 50%) — reference --destructive
+$warning:   #b7791f;
+$info:      $hk9-muted-fg;
+$light:     $hk9-muted;
+$dark:      $hk9-fg;
+
+// Only four theme colours → far fewer generated .btn-*/.text-bg-* variants.
+$theme-colors: (
+	"primary":   $primary,
+	"secondary": $secondary,
+	"light":     $light,
+	"dark":      $dark
+);
+
+$body-bg:              $hk9-bg;
+$body-color:           $hk9-fg;
+$body-secondary-color: $hk9-muted-fg;
+$border-color:         $hk9-border;
+$link-color:           $hk9-secondary;
+$link-decoration:      none;
+$link-hover-color:     $hk9-secondary;
+$link-hover-decoration: underline;
+
+// Feature flags.
+$enable-shadows:              false;
+$enable-gradients:            false;
+$enable-dark-mode:            false;
+$enable-rfs:                  false;   // exact px type scale, no fluid resizing
+$enable-smooth-scroll:        true;
+$enable-reduced-motion:       true;
+$enable-negative-margins:     false;
+$enable-validation-icons:     false;
+$enable-important-utilities:  true;
+$enable-deprecation-messages: false;
+$enable-grid-classes:         false;   // the theme uses its own BEM grids; containers stay on
+$enable-container-classes:    true;
+
+// Tailwind v4 breakpoints + container steps (measured: nav switch at 1024, gutter switch at 768).
+$grid-breakpoints: (
+	xs: 0,
+	sm: 640px,
+	md: 768px,
+	lg: 1024px,
+	xl: 1280px,
+	xxl: 1536px
+);
+$container-max-widths: (
+	sm: 640px,
+	md: 768px,
+	lg: 1024px,
+	xl: 1280px,
+	xxl: 1536px
+);
+$grid-gutter-width: 2rem;
+// Bootstrap applies HALF of $container-padding-x per side: 4rem → 32px each side (≥768px).
+// `_layout.scss` scopes --bs-gutter-x to 2rem (16px per side) below 768px.
+$container-padding-x: 4rem;
+
+// Typography — families come from CSS custom properties so settings can swap them at runtime.
+$font-family-sans-serif: var(--hk9-font-sans);
+$font-family-base:       var(--hk9-font-sans);
+$font-family-monospace:  Menlo, Consolas, "Liberation Mono", monospace;
+$font-size-base:         1rem;
+$font-weight-base:       400;
+$line-height-base:       1.5;
+$paragraph-margin-bottom: 1rem;
+
+$headings-font-family:   var(--hk9-font-serif);
+$headings-font-weight:   700;
+$headings-line-height:   1.25;
+$headings-margin-bottom: .5rem;
+$headings-color:         inherit;
+$h1-font-size: 2.25rem;   // 36px (<768) — components scale up
+$h2-font-size: 1.875rem;  // 30px
+$h3-font-size: 1.5rem;    // 24px
+$h4-font-size: 1.25rem;   // 20px
+$h5-font-size: 1.125rem;
+$h6-font-size: 1rem;
+
+$blockquote-font-size: 1.25rem;
+$hr-color: $hk9-border;
+$hr-opacity: 1;
+
+// Radii: --radius .25rem → buttons/inputs 2px, cards 8px, panels 16px / 24px.
+$border-radius:     $hk9-radius;
+$border-radius-sm:  .125rem;
+$border-radius-lg:  .5rem;
+$border-radius-xl:  1rem;
+$border-radius-xxl: 1.5rem;
+$border-radius-pill: 9999px;
+
+// Focus ring: 1px navy (measured input focus box-shadow 0 0 0 1px rgb(28,47,74)).
+$focus-ring-width:   1px;
+$focus-ring-opacity: 1;
+$focus-ring-color:   $hk9-ring;
+
+// Buttons (base = shadcn "default size": 14px/500, 8px 16px padding, radius 2px).
+$btn-padding-y:        .5rem;
+$btn-padding-x:        1rem;
+$btn-font-size:        .875rem;
+$btn-line-height:      1.4286;
+$btn-font-weight:      500;
+$btn-border-radius:    2px;
+$btn-border-radius-sm: 2px;
+$btn-border-radius-lg: 2px;
+$btn-padding-y-lg:     0;
+$btn-padding-x-lg:     2rem;
+$btn-font-size-lg:     1rem;
+$btn-focus-width:      1px;
+$btn-focus-box-shadow: 0 0 0 1px $hk9-ring;
+$btn-transition:       color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+
+// Forms (reference input: 48px tall, 14px, muted/50 bg, 1px border, 2px radius, ring on focus).
+$input-padding-y:            .25rem;
+$input-padding-x:            .75rem;
+$input-font-size:            .875rem;
+$input-line-height:          1.4286;
+$input-bg:                   rgba($hk9-muted, .5);
+$input-color:                $hk9-fg;
+$input-border-color:         $hk9-border;
+$input-border-radius:        2px;
+$input-border-radius-sm:     2px;
+$input-border-radius-lg:     2px;
+$input-focus-bg:             rgba($hk9-muted, .5);
+$input-focus-border-color:   $hk9-border;
+$input-focus-color:          $hk9-fg;
+$input-focus-width:          1px;
+$input-focus-box-shadow:     0 0 0 1px $hk9-ring;
+$input-placeholder-color:    $hk9-muted-fg;
+$input-height:               3rem;
+$form-label-font-size:       .875rem;
+$form-label-font-weight:     500;
+$form-label-margin-bottom:   .5rem;
+$form-select-padding-y:      .5rem;
+$form-select-padding-x:      .75rem;
+$form-select-bg:             rgba($hk9-muted, .5);
+$form-select-focus-border-color: transparent;
+$form-select-focus-box-shadow: 0 0 0 2px $hk9-ring;
+$form-check-input-checked-bg-color: $hk9-primary;
+$form-check-input-focus-box-shadow: 0 0 0 1px $hk9-ring;
+$form-feedback-invalid-color: $danger;
+$form-feedback-font-size:    .875rem;
+
+// Pagination (blog).
+$pagination-padding-y:          .5rem;
+$pagination-padding-x:          .875rem;
+$pagination-color:              $hk9-fg;
+$pagination-bg:                 $hk9-card;
+$pagination-border-color:       $hk9-border;
+$pagination-hover-color:        $hk9-secondary;
+$pagination-hover-bg:           $hk9-muted;
+$pagination-hover-border-color: $hk9-border;
+$pagination-focus-color:        $hk9-secondary;
+$pagination-focus-bg:           $hk9-muted;
+$pagination-focus-box-shadow:   0 0 0 1px $hk9-ring;
+$pagination-active-color:       #fff;
+$pagination-active-bg:          $hk9-secondary;
+$pagination-active-border-color: $hk9-secondary;
+$pagination-disabled-color:     $hk9-muted-fg;
+$pagination-disabled-bg:        $hk9-card;
+$pagination-disabled-border-color: $hk9-border;
+$pagination-border-radius:      2px;

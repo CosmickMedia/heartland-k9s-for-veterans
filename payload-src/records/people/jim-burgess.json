@@ -1,0 +1,28 @@
+{
+  "key": "live:person:jim-burgess",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "jim-burgess",
+  "title": "Jim Burgess",
+  "featured": "{{media:live:media:3059}}",
+  "menu_order": 11,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Volunteer Coordinator"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "content": "content/live__person__jim-burgess.html"
+}

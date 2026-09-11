@@ -1,0 +1,74 @@
+{
+  "key": "live:event:joplin-jailbirds-veteran-appreciation-night",
+  "type": "hk9_event",
+  "status": "publish",
+  "slug": "joplin-jailbirds-veteran-appreciation-night",
+  "title": "Joplin Jailbirds Veteran Appreciation Night",
+  "excerpt": "Gates open at 6 PM, game starts at 7 PM at Joe Becker Stadium, Joplin MO. $3 of each pregame ticket goes to Heartland Canines for Veterans.",
+  "content": "content/live__event__joplin-jailbirds-veteran-appreciation-night.html",
+  "featured": "{{media:live:media:3777}}",
+  "meta": {
+    "hk9_start": {
+      "type": "string",
+      "value": "2026-07-25 18:00"
+    },
+    "hk9_end": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_all_day": {
+      "type": "boolean",
+      "value": false
+    },
+    "hk9_time_tbd": {
+      "type": "boolean",
+      "value": false
+    },
+    "hk9_timezone": {
+      "type": "string",
+      "value": "America/Chicago"
+    },
+    "hk9_venue": {
+      "type": "string",
+      "value": "Joe Becker Stadium"
+    },
+    "hk9_address": {
+      "type": "string",
+      "value": "Joplin, MO"
+    },
+    "hk9_registration": {
+      "type": "object",
+      "value": {
+        "label": "Purchase Game tickets here",
+        "url": "https://www.simpletix.com/e/joplin-jailbirds-vs-chillicothe-mudcats-7-tickets-255726?utm=MilitaryNight2026&promocode=MILITARYNITE26",
+        "post_id": 0,
+        "target": "_blank",
+        "rel": "noopener"
+      }
+    },
+    "hk9_ticket_info": {
+      "type": "string",
+      "value": "Pregame tickets are $9 through SimpleTix — $3 of each ticket goes to Heartland Canines for Veterans. Tickets are $10 at the gate the night of the game, so save a dollar and help us out by getting your tickets in advance."
+    },
+    "hk9_organizer_name": {
+      "type": "string",
+      "value": "Jimmy Burgess"
+    },
+    "hk9_organizer_contact": {
+      "type": "string",
+      "value": "director@heartlandk9s.org"
+    },
+    "hk9_status": {
+      "type": "string",
+      "value": "scheduled"
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": false
+    },
+    "hk9_flyer": {
+      "type": "integer",
+      "value": "{{media:live:media:3777}}"
+    }
+  }
+}

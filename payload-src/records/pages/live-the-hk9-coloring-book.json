@@ -1,0 +1,210 @@
+{
+  "key": "live:page:3627",
+  "type": "page",
+  "status": "publish",
+  "slug": "the-hk9-coloring-book",
+  "title": "The HK9 Coloring Book",
+  "template": "page-templates/landing.php",
+  "excerpt": "Help fund service dogs for Veterans – and get your business featured in a fun, family-friendly coloring book that teaches kids about service dog heroes.",
+  "date": "2025-11-06T01:04:09Z",
+  "menu_order": 0,
+  "content": "content/live__page__3627.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "The HK9 Coloring Book",
+        "text": "Help fund service dogs for Veterans – and get your business featured in a fun, family-friendly coloring book that teaches kids about service dog heroes.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": [],
+        "source_note": ""
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "HK9 Educational Coloring Book Sponsor Opportunities",
+        "intro": "This educational coloring book will be featured on a major book review social media account with over 30,000 followers — giving sponsors national-level visibility and brand exposure. In the book sponsorships, these books are YOURS for distribution; the Page Partner, Featured Page and Legacy Page levels are dedicated page sponsorships included in our coloring books.",
+        "items": [
+          {
+            "name": "Bronze",
+            "price": "$500",
+            "quantity": "50 Books + Mission Support",
+            "benefits": "Name listed in the book promoted to 30,000 followers\n‘Adopt a Page’ credit on chosen page",
+            "highlight": false,
+            "button": {
+              "label": "Sign us up!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "name": "Silver",
+            "price": "$1,000",
+            "quantity": "100 Books + Mission Support",
+            "benefits": "Custom full-page spread\nExposure through book promotion to 30,000 followers",
+            "highlight": false,
+            "button": {
+              "label": "Sign us up!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "name": "Gold",
+            "price": "$4,000",
+            "quantity": "500 Books + Mission Support",
+            "benefits": "Logo integrated into artwork\nFeatured in promotional social posts\nExposure through book promotion to 30,000 followers\nCustom full-page spread",
+            "highlight": false,
+            "button": {
+              "label": "Sign us up!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "name": "Platinum",
+            "price": "$10,000",
+            "quantity": "1,000 Books + Mission Support",
+            "benefits": "Full-page spread + logo on back cover\nFull-page spread INCLUDED in 1,000 other coloring books\nGuaranteed mention in promotional posts\nHighlighted page that includes maximum exposure to 30,000 followers",
+            "highlight": true,
+            "button": {
+              "label": "Sign us up!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "name": "Page Partner",
+            "price": "$2,500",
+            "quantity": "Dedicated page sponsorship",
+            "benefits": "Full custom coloring page themed around the sponsor’s business\nLogo integrated into the scene (colorable)\nListed on sponsor thank you page\nWebsite listing with clickable link\nSolo social media announcement\nIncluded in the 30k follower promo campaign",
+            "highlight": false,
+            "button": {
+              "label": "Sign us up!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "name": "Featured Page Sponsor",
+            "price": "$4,000",
+            "quantity": "Dedicated page sponsorship",
+            "benefits": "All Page Partner benefits\nBonus spotlight box on page (“Fun Fact” or message)\nPage featured in marketing teasers\nSecond small brand cameo elsewhere in the book",
+            "highlight": false,
+            "button": {
+              "label": "Sign us up!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "name": "Legacy Page Sponsor",
+            "price": "$7,500",
+            "quantity": "Dedicated page sponsorship",
+            "benefits": "Premium, showcased full page design\nTwo additional branded cameos throughout the book\nTop billing on inside back cover\nRecognized as a Legacy Partner at events and online\nIncluded in all social promos + reviewer account features\nAdd a second custom page for the same sponsor — $2,000",
+            "highlight": false,
+            "button": {
+              "label": "Sign us up!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "name": "Classroom Sponsorship",
+            "price": "$300",
+            "quantity": "30 Books",
+            "benefits": "Help us educate an entire classroom! Currently we go to different schools to teach children about service dogs. Let’s put this educational tool in their hands!\nWith this sponsorship, you get your own custom page and a copy for yourself or business as well.",
+            "highlight": false,
+            "button": {
+              "label": "Sponsor a class!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            }
+          }
+        ]
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Sign us up! Let’s change a life!",
+        "text": "Ready to sponsor a tier or a classroom? Contact us and we will get you set up.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Sponsor a class!",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          },
+          {
+            "link": {
+              "label": "Contact Us",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "outline-light"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "faq"
+        ]
+      }
+    }
+  }
+}

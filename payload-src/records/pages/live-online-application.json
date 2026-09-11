@@ -1,0 +1,49 @@
+{
+  "key": "live:page:1989",
+  "type": "page",
+  "status": "publish",
+  "slug": "online-application",
+  "title": "Initial Online Application",
+  "template": "page-templates/application.php",
+  "excerpt": "Complete the application and submit it to Heartland K9s. Our director will contact you to provide our full application to be considered for our program.",
+  "date": "2020-01-22T22:16:06Z",
+  "menu_order": 0,
+  "content": "content/live__page__1989.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Initial Online Application",
+        "text": "Complete the application and submit it to Heartland K9s. Our director will contact you to provide our full application to be considered for our program.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "intro",
+          "form"
+        ],
+        "hidden": []
+      }
+    },
+    "hk9_sec_application_form": {
+      "type": "object",
+      "value": {
+        "heading": "Initial Application Inquiry",
+        "notice": "Please understand, this is not the application to apply but an opportunity to “see who you are”. After HK9 receives this inquiry, an HK9 representative will reach out for a phone conversation and baseline assessment, and the full application will be emailed to the Veteran. This inquiry form was rebuilt for the new site; the original online form could not be recovered from the live site.",
+        "success_page": {
+          "label": "Thank You",
+          "url": "",
+          "post_id": "{{post:live:page:2505}}",
+          "target": "_self",
+          "rel": ""
+        },
+        "show_five_questions_link": true
+      }
+    }
+  }
+}

@@ -1,0 +1,266 @@
+/* Heartland K9s Core — admin styles (settings, list tables, redirects). */
+
+/* ---------------------------------------------------------------- settings */
+.hk9-settings .hk9-tabs {
+	margin-bottom: 1.25rem;
+}
+.hk9-settings .hk9-section-description {
+	max-width: 48rem;
+	margin: 0 0 1rem;
+}
+.hk9-settings .hk9-settings-section + .hk9-settings-section {
+	margin-top: 2rem;
+	padding-top: 1rem;
+	border-top: 1px solid #dcdcde;
+}
+.hk9-settings .form-table th {
+	width: 240px;
+}
+.hk9-settings .form-table td .description {
+	margin-top: 0.4em;
+}
+.hk9-settings input.regular-text,
+.hk9-settings textarea.large-text {
+	max-width: 100%;
+}
+
+.hk9-toggle {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4rem;
+}
+
+.hk9-color {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+.hk9-color__swatch {
+	inline-size: 2.75rem;
+	block-size: 2rem;
+	padding: 2px;
+	border: 1px solid #8c8f94;
+	border-radius: 4px;
+	background: #fff;
+	cursor: pointer;
+}
+.hk9-color__hex {
+	max-width: 9rem;
+}
+
+.hk9-image-field {
+	display: flex;
+	align-items: flex-start;
+	gap: 1rem;
+}
+.hk9-image-field__preview {
+	inline-size: 160px;
+	min-block-size: 80px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border: 1px dashed #c3c4c7;
+	border-radius: 4px;
+	background: #f6f7f7;
+	overflow: hidden;
+}
+.hk9-image-field__preview:empty::before {
+	content: "—";
+	color: #8c8f94;
+}
+.hk9-image-field__preview img {
+	max-inline-size: 100%;
+	max-block-size: 160px;
+	display: block;
+	object-fit: contain;
+}
+.hk9-image-field__actions {
+	display: flex;
+	flex-direction: column;
+	gap: 0.5rem;
+	align-items: flex-start;
+}
+.hk9-image-field .hk9-when-set,
+.hk9-image-field.has-image .hk9-when-empty {
+	display: none;
+}
+.hk9-image-field.has-image .hk9-when-set {
+	display: inline;
+}
+
+.hk9-link-field {
+	display: grid;
+	gap: 0.5rem;
+	max-width: 40rem;
+}
+.hk9-link-field__modes {
+	display: flex;
+	gap: 1.25rem;
+	flex-wrap: wrap;
+}
+.hk9-link-field[data-mode="post"] .hk9-link-field__url,
+.hk9-link-field[data-mode="url"] .hk9-link-field__post {
+	display: none;
+}
+.hk9-link-field select {
+	max-width: 100%;
+	min-width: 20rem;
+}
+
+.hk9-repeater {
+	max-width: 48rem;
+}
+.hk9-repeater__table input.regular-text {
+	width: 100%;
+}
+.hk9-repeater__actions {
+	white-space: nowrap;
+	width: 1%;
+}
+.hk9-repeater__actions .button-link {
+	padding: 0.25rem;
+}
+.hk9-repeater__empty {
+	color: #646970;
+	font-style: italic;
+}
+
+/* ------------------------------------------------------------- list tables */
+.column-hk9_image,
+.column-hk9_photo,
+.column-hk9_logo,
+.column-hk9_portrait {
+	width: 64px;
+}
+.hk9-col-thumb {
+	display: block;
+	inline-size: 48px;
+	block-size: 48px;
+	border-radius: 4px;
+	object-fit: cover;
+	background: #f0f0f1;
+}
+.hk9-col-thumb--empty {
+	display: inline-block;
+	inline-size: 48px;
+	block-size: 48px;
+	border-radius: 4px;
+	background: #f0f0f1;
+	border: 1px dashed #c3c4c7;
+}
+.hk9-col-thumb--contain {
+	object-fit: contain;
+	background: #fff;
+	border: 1px solid #dcdcde;
+}
+.column-hk9_order,
+.column-hk9_featured,
+.column-hk9_handler {
+	width: 6rem;
+}
+.column-hk9_status,
+.column-hk9_scope,
+.column-hk9_program_type {
+	width: 8rem;
+}
+.hk9-pill {
+	display: inline-block;
+	padding: 0.1rem 0.55rem;
+	border-radius: 999px;
+	font-size: 12px;
+	line-height: 1.6;
+	background: #f0f0f1;
+	color: #1d2327;
+}
+.hk9-pill--good {
+	background: #e6f4ea;
+	color: #1e4620;
+}
+.hk9-pill--warn {
+	background: #fcf0e4;
+	color: #6e3600;
+}
+.hk9-pill--bad {
+	background: #fbeaea;
+	color: #8a1f11;
+}
+.hk9-pill--info {
+	background: #e5f0fa;
+	color: #0a3d6e;
+}
+.hk9-yes {
+	color: #1e8a3c;
+}
+.hk9-muted {
+	color: #8c8f94;
+}
+
+/* --------------------------------------------------------------- redirects */
+.hk9-redirects .hk9-redirect-form {
+	max-width: 48rem;
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	padding: 1rem 1.5rem;
+	margin: 1rem 0 1.5rem;
+}
+.hk9-redirects .hk9-redirect-form .form-table th {
+	width: 180px;
+}
+.hk9-redirects .column-source {
+	width: 28%;
+}
+.hk9-redirects .column-status {
+	width: 6rem;
+}
+.hk9-redirects .column-enabled {
+	width: 6rem;
+}
+.hk9-redirects code {
+	font-size: 12px;
+}
+.hk9-redirects .hk9-target-mode .hk9-target-field {
+	display: none;
+	margin-top: 0.5rem;
+}
+.hk9-redirects .hk9-target-mode[data-mode="post"] .hk9-target-field--post,
+.hk9-redirects .hk9-target-mode[data-mode="record"] .hk9-target-field--record,
+.hk9-redirects .hk9-target-mode[data-mode="path"] .hk9-target-field--path {
+	display: block;
+}
+.hk9-redirects .hk9-target-mode select,
+.hk9-redirects .hk9-target-mode input[type="text"] {
+	min-width: 20rem;
+	max-width: 100%;
+}
+.hk9-redirect-test {
+	margin-top: 0.5rem;
+}
+
+/* ---------------------------------------------------------------- overview */
+.hk9-overview__grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+	gap: 1rem;
+	margin-top: 1rem;
+	max-width: 72rem;
+}
+.hk9-overview__card {
+	background: #fff;
+	border: 1px solid #c3c4c7;
+	border-radius: 4px;
+	padding: 1rem 1.25rem;
+}
+.hk9-overview__card h2 {
+	margin: 0 0 0.25rem;
+	font-size: 1rem;
+}
+.hk9-overview__card p {
+	margin: 0.25rem 0;
+	color: #646970;
+}
+.hk9-overview__count {
+	font-size: 1.75rem;
+	font-weight: 600;
+	line-height: 1.1;
+	color: #1d2327;
+}

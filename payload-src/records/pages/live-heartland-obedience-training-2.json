@@ -1,0 +1,88 @@
+{
+  "key": "live:page:3742",
+  "type": "page",
+  "status": "publish",
+  "slug": "heartland-obedience-training-2",
+  "title": "Heartland Obedience Training",
+  "template": "page-templates/landing.php",
+  "excerpt": "Not everyone needs a SERVICE dog, but we believe everyone needs a dog. All costs (donations) go directly to the training of future service dogs for our Veterans.",
+  "date": "2026-03-06T17:28:42Z",
+  "menu_order": 0,
+  "content": "content/live__page__3742.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Heartland Obedience Training",
+        "text": "Not everyone needs a SERVICE dog, but we believe everyone needs a dog. All costs (donations) go directly to the training of future service dogs for our Veterans.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": [],
+        "source_note": ""
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": []
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Interested in having your dog trained?",
+        "text": "Click the “Contact Us” button below!",
+        "buttons": [
+          {
+            "link": {
+              "label": "Contact Us",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "faq",
+          "tiers"
+        ]
+      }
+    }
+  }
+}

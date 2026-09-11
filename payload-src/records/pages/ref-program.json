@@ -1,0 +1,111 @@
+{
+  "key": "ref:page:program",
+  "type": "page",
+  "status": "publish",
+  "slug": "program",
+  "title": "The Program",
+  "template": "page-templates/program.php",
+  "excerpt": "Rigorous training, precise matching, and lifelong support.",
+  "menu_order": 2,
+  "meta": {
+    "hk9_sec_hero_image": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "eyebrow_icon": "",
+        "heading": "The Program",
+        "heading_break_after": "",
+        "text": "Rigorous training, precise matching, and lifelong support.",
+        "image": "{{media:ref:asset:training}}",
+        "image_mobile": 0,
+        "focal": "center",
+        "height": "60vh",
+        "overlay": "70",
+        "gradient": false,
+        "buttons": [],
+        "animate": false
+      }
+    },
+    "hk9_sec_steps": {
+      "type": "object",
+      "value": {
+        "heading": "How It Works",
+        "intro": "Our decision making process is informed by comprehensive empirical studies and high quality data evaluation. We strive to build productive relationships in our teams and make a positive impact with all of our pursuits.",
+        "steps": [
+          {
+            "icon": "circle-check",
+            "title": "Read the 5 Questions",
+            "text": "A service K9 is NOT for everyone. This is a lifetime commitment for the K9, the Veteran and the Veteran’s Family. We cannot underestimate how important the 5 Questions section is."
+          },
+          {
+            "icon": "clipboard-check",
+            "title": "Online Screening Application",
+            "text": "Fill out our online application. This is a precursor to our full application. This screening application is to better get to know the Veteran, conditions, and needs. This is NOT the full application."
+          },
+          {
+            "icon": "phone-call",
+            "title": "Phone Conversation & Baseline Assessment",
+            "text": "After HK9 receives the online application, an HK9 representative will reach out for a phone conversation and baseline assessment."
+          },
+          {
+            "icon": "file-text",
+            "title": "Full Application",
+            "text": "HK9 will email the full application to be filled out by the Veteran. It is extremely detailed—it includes medical information, living conditions and history—so please ensure it is filled out thoroughly and completely. HK9 reserves the right to deny any application."
+          },
+          {
+            "icon": "dog",
+            "title": "Finding the “Right Fit” K9",
+            "text": "If the Veteran is selected for our program, the search begins to find the “right fit” in a K9. HK9 bases the selection of the K9 on the needs of the Veteran. Obedience training begins the day the dog is accepted; service training starts once the K9 is at least 7 months old, and a final practical exam results in graduation of the K9 team."
+          }
+        ]
+      }
+    },
+    "hk9_sec_providers": {
+      "type": "object",
+      "value": {
+        "icon": "shield-alert",
+        "heading": "Providing a K9",
+        "text": "HK9 owes it to our Veterans and donors that the K9s we receive for the program are trainable, documented, and healthy. K9s considered for the program are AKC registered, breed-specific to the needs of a selected Veteran in waiting, pass the temperament exam given by our trainer, have a traceable life history, and are between 10 weeks and 16 months old (pre-birth arrangements are possible). HK9 cannot accept strays, K9s that are not AKC registered, K9s without a documented history, or pets.",
+        "button": {
+          "label": "K9 Provider Criteria",
+          "url": "",
+          "post_id": "{{post:live:page:3084}}",
+          "target": "_self",
+          "rel": ""
+        }
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Are You a Veteran in Need?",
+        "text": "If you are a Veteran—or the family member of a Veteran—considering a Service K9, we invite you to read the 5 Questions and begin the application process.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Review 5 Questions & Apply",
+              "url": "",
+              "post_id": "{{post:ref:page:veterans}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_image",
+          "steps",
+          "providers",
+          "cta"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

@@ -1,0 +1,441 @@
+// ---------------------------------------------------------------------------
+// Home-page section components: mission, BarKode feature, testimonial, CTA band,
+// timeline, FAQ accordion.
+// ---------------------------------------------------------------------------
+
+// Mission --------------------------------------------------------------------
+// container max-w-4xl text-center; h2 Fraunces 600 30/37.5 → 36/45 primary mb 32;
+// divider; p 18/29.25 muted-fg.
+.hk9-mission {
+	text-align: center;
+
+	&__heading {
+		font-size: 1.875rem;
+		line-height: 1.25;
+		font-weight: 600;
+		color: var(--hk9-primary);
+		margin-bottom: 2rem;
+
+		@include media-breakpoint-up(md) {
+			font-size: 2.25rem;
+		}
+	}
+
+	&__text {
+		@extend .hk9-lead;
+		margin-bottom: 0;
+	}
+}
+
+// BarKode feature (navy, grid pattern) ---------------------------------------
+// container flex col → lg row, items-center, gap 48; tile max-w 448 square, radius 16,
+// 4px border white/10, shadow-2xl, gradient to top from primary/80; caption bottom 24/24;
+// text col space-y-6, centred → left at lg; badge solid; h2 30/37.5 → 48/60; p 18/29.25 white/80.
+.hk9-feature {
+	@extend .hk9-split;
+
+	&__media {
+		@extend .hk9-split__col;
+		display: flex;
+		justify-content: center;
+	}
+
+	&__tile {
+		position: relative;
+		width: 100%;
+		max-width: 28rem;
+		aspect-ratio: 1;
+		border-radius: 1rem;
+		overflow: hidden;
+		box-shadow: var(--hk9-shadow-2xl);
+		border: 4px solid rgba(var(--hk9-white-rgb), .1);
+		background: var(--hk9-primary);
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		&::after {
+			content: "";
+			position: absolute;
+			inset: 0;
+			background-image: linear-gradient(to top, rgba(var(--hk9-primary-rgb), .8), transparent);
+		}
+	}
+
+	&__caption {
+		position: absolute;
+		left: 1.5rem;
+		right: 1.5rem;
+		bottom: 1.5rem;
+		z-index: 1;
+		font-size: 1.5rem;
+		line-height: 1.3334;
+		font-weight: 700;
+		color: #fff;
+		margin: 0 0 .5rem;
+	}
+
+	&__body {
+		@extend .hk9-split__col;
+		text-align: center;
+
+		> * + * { margin-top: 1.5rem; }
+		> * { margin-bottom: 0; }
+
+		@include media-breakpoint-up(lg) {
+			text-align: left;
+		}
+	}
+
+	&__heading {
+		font-size: 1.875rem;
+		line-height: 1.25;
+		font-weight: 700;
+		color: #fff;
+
+		@include media-breakpoint-up(md) {
+			font-size: 3rem;
+		}
+	}
+
+	&__text {
+		font-size: 1.125rem;
+		line-height: 1.625;
+		color: rgba(var(--hk9-white-rgb), .8);
+	}
+
+	&__actions {
+		padding-top: 1rem;
+	}
+}
+
+// Testimonial ------------------------------------------------------------------
+// max-w-5xl mx-auto bg-muted rounded-3xl overflow-hidden shadow-sm flex col → md row;
+// media md:w-2/5 h-64 → auto; body md:w-3/5 p-10 → p-14; quote glyph 40px crimson @50% mb 24;
+// blockquote Fraunces 400 20/27.5 → 24/33 fg mb 32; author row space-between.
+.hk9-testimonial {
+	display: flex;
+	flex-direction: column;
+	max-width: var(--hk9-wide);
+	margin: 0 auto;
+	background: var(--hk9-muted);
+	border-radius: 1.5rem;
+	overflow: hidden;
+	box-shadow: var(--hk9-shadow-sm);
+
+	@include media-breakpoint-up(md) {
+		flex-direction: row;
+	}
+
+	&__media {
+		position: relative;
+		height: 16rem;
+		background: var(--hk9-accent);
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		@include media-breakpoint-up(md) {
+			width: 40%;
+			height: auto;
+			flex: 0 0 40%;
+		}
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 2.5rem;
+
+		@include media-breakpoint-up(md) {
+			width: 60%;
+			flex: 0 0 60%;
+			padding: 3.5rem;
+		}
+	}
+
+	&__glyph {
+		display: block;
+		width: 2.5rem;
+		height: 2.5rem;
+		color: var(--hk9-secondary);
+		opacity: .5;
+		margin-bottom: 1.5rem;
+		fill: currentColor;
+	}
+
+	&__quote {
+		font-family: var(--hk9-font-serif);
+		font-size: 1.25rem;
+		line-height: 1.375;
+		font-weight: 400;
+		letter-spacing: normal;
+		color: var(--hk9-fg);
+		margin: 0 0 2rem;
+
+		@include media-breakpoint-up(md) {
+			font-size: 1.5rem;
+		}
+
+		p { margin: 0; }
+	}
+
+	&__author {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+	}
+
+	&__name {
+		font-weight: 700;
+		color: var(--hk9-primary);
+	}
+
+	&__meta {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+	}
+
+	// Stories page "featured" variant: navy card.
+	&--navy {
+		background: var(--hk9-primary);
+		color: #fff;
+
+		.hk9-testimonial__quote { color: #fff; }
+		.hk9-testimonial__name { color: #fff; }
+		.hk9-testimonial__meta { color: rgba(var(--hk9-white-rgb), .7); }
+	}
+}
+
+// CTA band ----------------------------------------------------------------------
+// navy: py-24 (or py-20) text-center px-4; container max-w-3xl; h2 30 → 36 mb 24;
+// p 18 white/80 mb 40; buttons. tint: max-w-4xl bg-muted rounded-3xl p-10 → p-16 panel.
+.hk9-cta-band {
+	text-align: center;
+
+	&__inner {
+		max-width: 768px;
+		margin: 0 auto;
+	}
+
+	&__heading {
+		font-size: 1.875rem;
+		line-height: 1.25;
+		font-weight: 700;
+		margin-bottom: 1.5rem;
+
+		@include media-breakpoint-up(md) {
+			font-size: 2.25rem;
+		}
+	}
+
+	&__text {
+		font-size: 1.125rem;
+		line-height: 1.625;
+		margin-bottom: 2.5rem;
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		gap: 1rem;
+
+		@include media-breakpoint-up(sm) {
+			flex-direction: row;
+		}
+	}
+
+	&--navy {
+		background: var(--hk9-primary);
+		color: #fff;
+
+		.hk9-cta-band__text { color: rgba(var(--hk9-white-rgb), .8); }
+	}
+
+	&--plain,
+	&--muted {
+		color: var(--hk9-fg);
+
+		.hk9-cta-band__heading { color: var(--hk9-primary); }
+		.hk9-cta-band__text { color: var(--hk9-muted-fg); }
+	}
+
+	&--muted {
+		background: var(--hk9-muted);
+	}
+
+	// Rounded panel inside a plain section.
+	&--tint {
+		.hk9-cta-band__inner {
+			max-width: var(--hk9-narrow);
+			background: var(--hk9-muted);
+			border: 1px solid var(--hk9-border);
+			border-radius: 1.5rem;
+			box-shadow: var(--hk9-shadow-sm);
+			padding: 2.5rem;
+
+			@include media-breakpoint-up(md) {
+				padding: 4rem;
+			}
+		}
+
+		.hk9-cta-band__heading { color: var(--hk9-primary); }
+		.hk9-cta-band__text { color: var(--hk9-muted-fg); }
+	}
+}
+
+// Timeline ----------------------------------------------------------------------
+// grid 1 → 2 cols gap 48 relative; centre spine (md+) 1px border colour; right column
+// offset md:mt-24 (96px); cards with 32px crimson number markers hanging off the edge.
+.hk9-timeline {
+	position: relative;
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 3rem;
+
+	@include media-breakpoint-up(md) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	&__line {
+		display: none;
+		position: absolute;
+		left: 50%;
+		top: 0;
+		bottom: 0;
+		width: 1px;
+		background: var(--hk9-border);
+		transform: translateX(-50%);
+
+		@include media-breakpoint-up(md) {
+			display: block;
+		}
+	}
+
+	&__col {
+		display: flex;
+		flex-direction: column;
+		gap: 3rem;
+
+		@include media-breakpoint-up(md) {
+			&--offset { margin-top: 6rem; }
+		}
+	}
+
+	&__item {
+		@extend .hk9-card;
+		display: block;
+
+		.hk9-card__glyph { color: var(--hk9-primary); }
+
+		h3 {
+			font-size: 1.25rem;
+			line-height: 1.4;
+			margin-bottom: .75rem;
+		}
+
+		p {
+			color: var(--hk9-muted-fg);
+			margin-bottom: 0;
+		}
+	}
+
+	&__num {
+		display: none;
+		position: absolute;
+		top: 2rem;
+		right: -1rem;
+		z-index: 10;
+		width: 2rem;
+		height: 2rem;
+		align-items: center;
+		justify-content: center;
+		border-radius: 9999px;
+		background: var(--hk9-secondary);
+		color: #fff;
+		font-weight: 700;
+		box-shadow: var(--hk9-shadow-md);
+
+		@include media-breakpoint-up(md) {
+			display: flex;
+		}
+
+		.hk9-timeline__col--offset & {
+			right: auto;
+			left: -1rem;
+		}
+	}
+}
+
+// FAQ accordion (native <details>/<summary>) ----------------------------------------
+.hk9-faq {
+	max-width: var(--hk9-narrow);
+	margin: 0 auto;
+
+	&__item {
+		background: var(--hk9-card);
+		border: 1px solid var(--hk9-border);
+		border-radius: .5rem;
+		box-shadow: var(--hk9-shadow-sm);
+
+		& + & { margin-top: 1rem; }
+	}
+
+	&__question {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 1.25rem 1.5rem;
+		font-family: var(--hk9-font-serif);
+		font-size: 1.125rem;
+		font-weight: 700;
+		letter-spacing: -.025em;
+		color: var(--hk9-primary);
+		cursor: pointer;
+		list-style: none;
+
+		&::-webkit-details-marker { display: none; }
+
+		.hk9-icon {
+			width: 1.25rem;
+			height: 1.25rem;
+			color: var(--hk9-secondary);
+			transition: transform .2s var(--hk9-ease);
+		}
+
+		[open] > & .hk9-icon {
+			transform: rotate(180deg);
+		}
+	}
+
+	&__answer {
+		padding: 0 1.5rem 1.5rem;
+		color: var(--hk9-muted-fg);
+		line-height: 1.625;
+
+		> :last-child { margin-bottom: 0; }
+	}
+
+	&__note {
+		margin-top: 1.5rem;
+		font-size: .875rem;
+		color: var(--hk9-muted-fg);
+		text-align: center;
+	}
+}

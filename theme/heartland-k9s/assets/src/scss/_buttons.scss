@@ -1,0 +1,227 @@
+// ---------------------------------------------------------------------------
+// Buttons — Bootstrap .btn extended.
+// Measured base: inline-flex, gap 8px, 14px/20px Inter 500, padding 8px 16px,
+// min-height 36px (38px rendered), radius 2px, transition-colors .15s.
+// --primary: crimson bg, white text, 1px WHITE border (reference quirk:
+//   --primary-border is undefined → currentColor). Hover = bg at 90% alpha only.
+// --lg: 56px tall, padding 0 32px, 16px/24px Inter 600.
+// Focus: 1px ring in --hk9-ring. Disabled: opacity .5, no pointer events.
+// ---------------------------------------------------------------------------
+
+.hk9-btn {
+	@extend .btn;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
+	min-height: 2.25rem;
+	padding: .5rem 1rem;
+	font-family: var(--hk9-font-sans);
+	font-size: .875rem;
+	line-height: 1.4286;
+	font-weight: 500;
+	white-space: nowrap;
+	border: 1px solid transparent;
+	border-radius: 2px;
+	text-decoration: none;
+	cursor: pointer;
+	transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
+
+	&:hover,
+	&:focus-visible {
+		text-decoration: none;
+	}
+
+	&:focus-visible {
+		outline: none;
+		box-shadow: 0 0 0 1px var(--hk9-ring);
+	}
+
+	&:disabled,
+	&.is-disabled,
+	&[aria-disabled="true"] {
+		opacity: .5;
+		pointer-events: none;
+	}
+
+	.hk9-icon {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	// Icon spacing variants (reference: ArrowRight w-4 h-4 ml-2 / w-5 h-5 ml-2).
+	.hk9-icon--20 {
+		width: 1.25rem;
+		height: 1.25rem;
+	}
+
+	// Styles -----------------------------------------------------------------
+	&--primary {
+		background-color: var(--hk9-secondary);
+		border-color: #fff;
+		color: #fff;
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-secondary-rgb), .9);
+			border-color: #fff;
+			color: #fff;
+		}
+	}
+
+	&--navy {
+		background-color: var(--hk9-primary);
+		border-color: #fff;
+		color: #fff;
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-primary-rgb), .9);
+			border-color: #fff;
+			color: #fff;
+		}
+	}
+
+	&--outline {
+		background-color: transparent;
+		border-color: rgba(0, 0, 0, .1);
+		color: var(--hk9-fg);
+		box-shadow: var(--hk9-shadow-xs);
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-fg-rgb), .05);
+			border-color: rgba(0, 0, 0, .1);
+			color: var(--hk9-fg);
+		}
+
+		&:active {
+			box-shadow: none;
+		}
+	}
+
+	&--outline-light {
+		background-color: transparent;
+		border-color: rgba(var(--hk9-white-rgb), .3);
+		color: #fff;
+		box-shadow: var(--hk9-shadow-xs);
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-white-rgb), .1);
+			border-color: rgba(var(--hk9-white-rgb), .3);
+			color: #fff;
+		}
+
+		&:active {
+			box-shadow: none;
+		}
+	}
+
+	// Glass variant of outline-light used on image heroes: white/10 → white/20 + blur.
+	&--glass {
+		background-color: rgba(var(--hk9-white-rgb), .1);
+		-webkit-backdrop-filter: blur(8px);
+		backdrop-filter: blur(8px);
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-white-rgb), .2);
+		}
+	}
+
+	&--ghost {
+		background-color: transparent;
+		border-color: transparent;
+		color: var(--hk9-secondary);
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-secondary-rgb), .1);
+			border-color: transparent;
+			color: var(--hk9-secondary);
+		}
+	}
+
+	&--ghost-light {
+		background-color: transparent;
+		border-color: transparent;
+		color: #fff;
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-white-rgb), .1);
+			color: #fff;
+		}
+	}
+
+	// Sizes ------------------------------------------------------------------
+	&--lg {
+		min-height: 3.5rem;
+		height: 3.5rem;
+		padding: 0 2rem;
+		font-size: 1rem;
+		line-height: 1.5;
+		font-weight: 600;
+	}
+
+	&--lg.hk9-btn--text-sm {
+		font-size: .875rem;
+		line-height: 1.4286;
+	}
+
+	&--sm {
+		min-height: 2rem;
+		padding: .25rem .75rem;
+		font-size: .75rem;
+	}
+
+	&--full {
+		display: flex;
+		width: 100%;
+	}
+}
+
+// Inline arrow text link ("Learn more →"): crimson 16px/500, gap 4px → 8px on hover.
+.hk9-link {
+	display: inline-flex;
+	align-items: center;
+	gap: .25rem;
+	font-weight: 500;
+	color: var(--hk9-secondary);
+	text-decoration: none;
+	transition: gap .15s ease-in-out, color .15s ease-in-out;
+
+	.hk9-icon {
+		width: 1rem;
+		height: 1rem;
+	}
+
+	&:hover,
+	&:focus-visible {
+		gap: .5rem;
+		color: var(--hk9-secondary);
+		text-decoration: none;
+	}
+
+	&--light {
+		color: #fff;
+
+		&:hover,
+		&:focus-visible {
+			color: #fff;
+		}
+	}
+}
+
+// Core button block inherits the same look.
+.wp-block-button__link {
+	@extend .hk9-btn;
+	@extend .hk9-btn--primary;
+}
+
+.is-style-outline .wp-block-button__link,
+.wp-block-button.is-style-outline > .wp-block-button__link {
+	@extend .hk9-btn--outline;
+	background-color: transparent;
+}

@@ -1,0 +1,90 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/theme.json",
+	"version": 3,
+	"settings": {
+		"appearanceTools": false,
+		"color": {
+			"custom": true,
+			"customGradient": false,
+			"defaultPalette": false,
+			"defaultGradients": false,
+			"defaultDuotone": false,
+			"palette": [
+				{ "slug": "primary", "color": "#1c2f4a", "name": "Navy" },
+				{ "slug": "secondary", "color": "#b82e45", "name": "Crimson" },
+				{ "slug": "background", "color": "#fbfaf9", "name": "Background" },
+				{ "slug": "foreground", "color": "#151c28", "name": "Foreground" },
+				{ "slug": "muted", "color": "#f4f0ec", "name": "Muted" },
+				{ "slug": "muted-foreground", "color": "#52637a", "name": "Muted text" },
+				{ "slug": "border", "color": "#e5e0dc", "name": "Border" },
+				{ "slug": "accent", "color": "#eae2d7", "name": "Accent" },
+				{ "slug": "white", "color": "#ffffff", "name": "White" }
+			]
+		},
+		"typography": {
+			"customFontSize": true,
+			"fluid": false,
+			"lineHeight": true,
+			"fontFamilies": [
+				{
+					"slug": "serif",
+					"name": "Fraunces (headings)",
+					"fontFamily": "\"Fraunces\", ui-serif, Georgia, \"Times New Roman\", serif"
+				},
+				{
+					"slug": "sans",
+					"name": "Inter (body)",
+					"fontFamily": "\"Inter\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, sans-serif"
+				}
+			],
+			"fontSizes": [
+				{ "slug": "small", "size": "0.875rem", "name": "Small" },
+				{ "slug": "medium", "size": "1.125rem", "name": "Medium" },
+				{ "slug": "large", "size": "1.5rem", "name": "Large" },
+				{ "slug": "x-large", "size": "2rem", "name": "Extra large" }
+			]
+		},
+		"spacing": {
+			"units": [ "px", "rem", "em", "%", "vw" ],
+			"padding": true,
+			"margin": true,
+			"blockGap": true,
+			"spacingSizes": [
+				{ "slug": "20", "size": "0.5rem", "name": "2" },
+				{ "slug": "30", "size": "1rem", "name": "3" },
+				{ "slug": "40", "size": "1.5rem", "name": "4" },
+				{ "slug": "50", "size": "2rem", "name": "5" },
+				{ "slug": "60", "size": "3rem", "name": "6" },
+				{ "slug": "70", "size": "4rem", "name": "7" },
+				{ "slug": "80", "size": "6rem", "name": "8" }
+			]
+		},
+		"layout": {
+			"contentSize": "896px",
+			"wideSize": "1024px"
+		},
+		"useRootPaddingAwareAlignments": false,
+		"border": {
+			"radius": true,
+			"color": false,
+			"style": false,
+			"width": false
+		},
+		"shadow": {
+			"defaultPresets": false
+		}
+	},
+	"styles": {
+		"elements": {
+			"button": {
+				"color": {
+					"background": "var(--hk9-secondary)",
+					"text": "#ffffff"
+				},
+				"border": {
+					"radius": "2px"
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,78 @@
+{
+  "key": "live:page:3093",
+  "type": "page",
+  "status": "publish",
+  "slug": "how-it-works-veteran-consideration",
+  "title": "How it Works (Veteran Consideration)",
+  "template": "page-templates/landing.php",
+  "excerpt": "Thank you for considering HK9 for yourself, or your Veteran. This is how the process works.",
+  "date": "2023-07-17T15:48:33Z",
+  "menu_order": 0,
+  "content": "content/live__page__3093.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "How it Works (Veteran Consideration)",
+        "text": "Thank you for considering HK9 for yourself, or your Veteran. This is how the process works.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": [],
+        "source_note": ""
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": []
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "text": "",
+        "buttons": [],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ]
+      }
+    }
+  }
+}

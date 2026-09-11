@@ -1,0 +1,8 @@
+{
+  "key": "reading",
+  "type": "reading",
+  "show_on_front": "page",
+  "page_on_front": "{{post:ref:page:home}}",
+  "page_for_posts": "{{post:new:page:news}}",
+  "posts_per_page": 10
+}

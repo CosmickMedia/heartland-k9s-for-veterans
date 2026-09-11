@@ -1,0 +1,35 @@
+{
+  "key": "live:partner:petland-joplin",
+  "type": "hk9_partner",
+  "status": "publish",
+  "slug": "petland-charities",
+  "title": "Petland Charities",
+  "featured": "{{media:live:media:3017}}",
+  "menu_order": 2,
+  "meta": {
+    "hk9_website": {
+      "type": "object",
+      "value": {
+        "label": "Petland Joplin",
+        "url": "https://petlandjoplin.com/",
+        "post_id": 0,
+        "target": "_blank",
+        "rel": "noopener"
+      }
+    },
+    "hk9_tier": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_since": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "terms": {
+    "hk9_partner_type": [
+      "{{term:hk9_partner_type:back-the-pack}}",
+      "{{term:hk9_partner_type:campaign-sponsor}}"
+    ]
+  }
+}

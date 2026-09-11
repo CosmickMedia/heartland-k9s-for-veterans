@@ -1,0 +1,62 @@
+// ---------------------------------------------------------------------------
+// Design tokens as CSS custom properties (ARCHITECTURE.md §11).
+// inc/options.php re-emits the colour + font variables from settings as an
+// inline style in wp_head, so anything below can be overridden without a rebuild.
+// The *-rgb triplets exist for alpha variants: rgba(var(--hk9-primary-rgb), .6).
+// ---------------------------------------------------------------------------
+
+@function hk9-alpha($token, $alpha) {
+	@return unquote("rgba(var(--hk9-#{$token}-rgb), #{$alpha})");
+}
+
+// Font stacks — the fallback stacks are what renders before/without the woff2 files.
+$hk9-font-serif-stack: "Fraunces", ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+$hk9-font-sans-stack: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+
+:root {
+	--hk9-primary: #{$hk9-primary};
+	--hk9-primary-rgb: #{red($hk9-primary)}, #{green($hk9-primary)}, #{blue($hk9-primary)};
+	--hk9-secondary: #{$hk9-secondary};
+	--hk9-secondary-rgb: #{red($hk9-secondary)}, #{green($hk9-secondary)}, #{blue($hk9-secondary)};
+	--hk9-bg: #{$hk9-bg};
+	--hk9-bg-rgb: #{red($hk9-bg)}, #{green($hk9-bg)}, #{blue($hk9-bg)};
+	--hk9-fg: #{$hk9-fg};
+	--hk9-fg-rgb: #{red($hk9-fg)}, #{green($hk9-fg)}, #{blue($hk9-fg)};
+	--hk9-muted: #{$hk9-muted};
+	--hk9-muted-rgb: #{red($hk9-muted)}, #{green($hk9-muted)}, #{blue($hk9-muted)};
+	--hk9-muted-fg: #{$hk9-muted-fg};
+	--hk9-muted-fg-rgb: #{red($hk9-muted-fg)}, #{green($hk9-muted-fg)}, #{blue($hk9-muted-fg)};
+	--hk9-border: #{$hk9-border};
+	--hk9-border-rgb: #{red($hk9-border)}, #{green($hk9-border)}, #{blue($hk9-border)};
+	--hk9-accent: #{$hk9-accent};
+	--hk9-card: #{$hk9-card};
+	--hk9-white-rgb: 255, 255, 255;
+	--hk9-ring: var(--hk9-primary);
+	--hk9-radius: #{$hk9-radius};
+
+	--hk9-font-serif: #{$hk9-font-serif-stack};
+	--hk9-font-sans: #{$hk9-font-sans-stack};
+
+	--hk9-header-h: 80px;
+	--hk9-logo-h: 64px;
+	--hk9-footer-logo-h: 80px;
+	--hk9-sticky-top: 0px; // set by JS when the WP admin bar is present
+
+	// Layout.
+	--hk9-gutter: 1rem;        // 16px < 768px, 32px ≥ 768px (see _layout.scss)
+	--hk9-content: 1216px;     // 1280 container − 2 × 32 gutter
+	--hk9-narrow: 896px;       // max-w-4xl
+	--hk9-wide: 1024px;        // max-w-5xl
+	--hk9-overlap: 64px;       // -mt-16
+
+	// Shadows (Tailwind v4 scale, measured).
+	--hk9-shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, .05);
+	--hk9-shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, .1), 0 1px 2px -1px rgba(0, 0, 0, .1);
+	--hk9-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, .1), 0 2px 4px -2px rgba(0, 0, 0, .1);
+	--hk9-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -4px rgba(0, 0, 0, .1);
+	--hk9-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, .1), 0 8px 10px -6px rgba(0, 0, 0, .1);
+	--hk9-shadow-2xl: 0 25px 50px -12px rgba(0, 0, 0, .25);
+
+	// Motion.
+	--hk9-ease: cubic-bezier(.4, 0, .2, 1);
+}

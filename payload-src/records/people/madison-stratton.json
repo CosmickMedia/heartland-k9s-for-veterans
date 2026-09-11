@@ -1,0 +1,28 @@
+{
+  "key": "live:person:madison-stratton",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "madison-stratton",
+  "title": "Madison Stratton",
+  "featured": "{{media:live:media:3444}}",
+  "menu_order": 8,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Board Member"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": "Its truly night and day compared to where I was to where I am now. I can’t thank my friends, family, and the community enough for helping me through everything."
+    }
+  },
+  "content": "content/live__person__madison-stratton.html"
+}

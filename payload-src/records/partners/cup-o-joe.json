@@ -1,0 +1,34 @@
+{
+  "key": "live:partner:cup-o-joe",
+  "type": "hk9_partner",
+  "status": "publish",
+  "slug": "cup-o-joe",
+  "title": "Cup O Joe",
+  "featured": "{{media:live:media:3076}}",
+  "menu_order": 9,
+  "meta": {
+    "hk9_website": {
+      "type": "object",
+      "value": {
+        "label": "",
+        "url": "",
+        "post_id": 0,
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_tier": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_since": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "terms": {
+    "hk9_partner_type": [
+      "{{term:hk9_partner_type:back-the-pack}}"
+    ]
+  }
+}

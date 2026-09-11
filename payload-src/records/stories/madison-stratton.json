@@ -1,0 +1,53 @@
+{
+  "key": "live:story:madison-stratton",
+  "type": "hk9_story",
+  "status": "publish",
+  "slug": "madison-and-gunther",
+  "title": "Madison & Gunther",
+  "excerpt": "Marine Corps veteran Madison Stratton was paired with Gunther, a standard poodle, and has shown immense improvement in her mental health. Today she serves on the HK9 Board of Directors.",
+  "content": "content/live__story__madison-stratton.html",
+  "featured": "{{media:live:media:3444}}",
+  "menu_order": 1,
+  "meta": {
+    "hk9_veteran_name": {
+      "type": "string",
+      "value": "Madison Stratton"
+    },
+    "hk9_branch": {
+      "type": "string",
+      "value": "U.S. Marine Corps"
+    },
+    "hk9_canine_name": {
+      "type": "string",
+      "value": "Gunther"
+    },
+    "hk9_relationship": {
+      "type": "string",
+      "value": "service"
+    },
+    "hk9_pairing_year": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": "Its truly night and day compared to where I was to where I am now. I can’t thank my friends, family, and the community enough for helping me through everything."
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": true
+    },
+    "hk9_gallery": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_team": {
+      "type": "integer",
+      "value": 0
+    },
+    "hk9_source_note": {
+      "type": "string",
+      "value": "Sourced from Meet the Team bio, heartlandk9s.org, 2026-09-10"
+    }
+  }
+}

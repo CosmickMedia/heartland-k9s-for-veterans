@@ -1,0 +1,10 @@
+{
+  "key": "option:hk9_settings",
+  "type": "option",
+  "name": "hk9_settings",
+  "merge": "deep",
+  "value": {
+    "branding": { "wordmark_line1": "Mini K9s", "header_logo": "{{media:mini:asset:card}}" },
+    "contact": { "phone_main": "555-0100" }
+  }
+}

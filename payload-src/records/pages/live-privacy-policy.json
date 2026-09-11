@@ -1,0 +1,32 @@
+{
+  "key": "live:page:3",
+  "type": "page",
+  "status": "publish",
+  "slug": "privacy-policy",
+  "title": "Privacy Policy",
+  "template": "",
+  "excerpt": "",
+  "date": "2020-01-21T20:06:12Z",
+  "menu_order": 0,
+  "content": "content/live__page__3.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Privacy Policy",
+        "text": "This Privacy Policy is effective as of November 19, 2020.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

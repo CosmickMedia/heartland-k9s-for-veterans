@@ -1,0 +1,66 @@
+// ===========================================================================
+// Heartland Canines for Veterans — editor.scss (block editor styles)
+// Build: node tools/build-css.mjs → assets/dist/editor.css
+// WordPress wraps these rules in .editor-styles-wrapper (add_editor_style) and
+// rewrites relative font URLs, so the editor canvas matches the frontend prose.
+// ===========================================================================
+
+@use "fonts";
+
+@import "bootstrap/scss/functions";
+@import "bootstrap-config";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "tokens";
+
+body {
+	font-family: var(--hk9-font-sans);
+	font-size: 1rem;
+	line-height: 1.625;
+	color: var(--hk9-fg);
+	background-color: var(--hk9-card);
+	-webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-family: var(--hk9-font-serif);
+	font-weight: 700;
+	line-height: 1.25;
+	letter-spacing: -.025em;
+	color: var(--hk9-primary);
+}
+
+a { color: var(--hk9-secondary); }
+
+// Reuse the frontend component rules the editor can show: buttons, callout, faq, prose.
+.hk9-icon { display: inline-block; width: 1em; height: 1em; fill: none; stroke: currentColor; stroke-width: 2; }
+.hk9-badge { display: inline-flex; }
+.hk9-icon-well { display: inline-flex; }
+.hk9-link { display: inline-flex; }
+.hk9-callout { padding: 1.5rem; border-radius: .5rem; background: rgba(var(--hk9-primary-rgb), .05); border: 1px solid rgba(var(--hk9-primary-rgb), .1); }
+.hk9-callout--lg { padding: 2rem; border-radius: 1rem; }
+.hk9-faq__item { background: var(--hk9-card); border: 1px solid var(--hk9-border); border-radius: .5rem; }
+.hk9-faq__question { display: flex; padding: 1.25rem 1.5rem; font-family: var(--hk9-font-serif); font-weight: 700; color: var(--hk9-primary); }
+
+.hk9-btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: .5rem;
+	min-height: 2.25rem;
+	padding: .5rem 1rem;
+	font-size: .875rem;
+	font-weight: 500;
+	border: 1px solid transparent;
+	border-radius: 2px;
+	text-decoration: none;
+}
+.hk9-btn--primary { background: var(--hk9-secondary); border-color: #fff; color: #fff; }
+.hk9-btn--navy { background: var(--hk9-primary); border-color: #fff; color: #fff; }
+.hk9-btn--outline { background: transparent; border-color: rgba(0, 0, 0, .1); color: var(--hk9-fg); }
+.hk9-btn--lg { min-height: 3.5rem; padding: 0 2rem; font-size: 1rem; font-weight: 600; }
+
+$hk9-prose-root: ".editor-styles-wrapper";
+@import "prose";

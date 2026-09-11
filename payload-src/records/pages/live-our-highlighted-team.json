@@ -1,0 +1,52 @@
+{
+  "key": "live:page:3496",
+  "type": "page",
+  "status": "publish",
+  "slug": "our-highlighted-team",
+  "title": "Our Highlighted Team",
+  "template": "page-templates/highlighted-team.php",
+  "excerpt": "Billy is an Army Veteran. He is partnered with Caddie, a 1 year old black lab.",
+  "date": "2025-06-16T20:12:12Z",
+  "menu_order": 0,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Our Highlighted Team",
+        "text": "",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_team": {
+      "type": "object",
+      "value": {
+        "team": "{{post:live:team:billy-and-caddie}}",
+        "heading": "Our Highlighted Team",
+        "intro": ""
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "text": "",
+        "buttons": [],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "team",
+          "cta"
+        ],
+        "hidden": [
+          "cta"
+        ]
+      }
+    }
+  }
+}

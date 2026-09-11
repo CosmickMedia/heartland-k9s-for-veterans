@@ -1,0 +1,65 @@
+{
+  "key": "live:campaign:paws-for-giving",
+  "type": "hk9_campaign",
+  "status": "publish",
+  "slug": "paws-for-giving",
+  "title": "“Paws” for Giving",
+  "excerpt": "Provide wall, counter or window space for HK9’s specially designed logo with a QR code so employees or patrons can donate.",
+  "content": "content/live__campaign__paws-for-giving.html",
+  "featured": "{{media:live:media:2823}}",
+  "menu_order": 3,
+  "meta": {
+    "hk9_summary": {
+      "type": "string",
+      "value": "“Paws” for Giving allows companies, businesses and individuals to provide wall space, counter space or window space for HK9’s specially designed logo with a QR code, giving employees or patrons an opportunity to donate to HK9. The 4\"x4\" stickers are no cost to your business."
+    },
+    "hk9_status": {
+      "type": "string",
+      "value": "active"
+    },
+    "hk9_start": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_end": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_cta": {
+      "type": "object",
+      "value": {
+        "label": "Request your Stickers Here",
+        "url": "",
+        "post_id": "{{post:ref:page:contact}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_secondary_cta": {
+      "type": "object",
+      "value": {
+        "label": "",
+        "url": "",
+        "post_id": 0,
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_sponsors": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_gallery": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_goal_text": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": false
+    }
+  }
+}

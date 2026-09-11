@@ -1,0 +1,55 @@
+{
+  "key": "live:team:billy-and-caddie",
+  "type": "hk9_team",
+  "status": "publish",
+  "slug": "billy-and-caddie",
+  "title": "Billy & Caddie",
+  "excerpt": "Caddie is a Lab, currently in her 3rd month of service training. She is being trained to block, post, watch, as well as pressure therapy.",
+  "content": "content/live__team__billy-and-caddie.html",
+  "featured": "{{media:live:media:3684}}",
+  "menu_order": 1,
+  "meta": {
+    "hk9_canine_name": {
+      "type": "string",
+      "value": "Caddie"
+    },
+    "hk9_handler_name": {
+      "type": "string",
+      "value": "Billy"
+    },
+    "hk9_status": {
+      "type": "string",
+      "value": "in-training"
+    },
+    "hk9_year": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": true
+    },
+    "hk9_gallery": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_donate_link": {
+      "type": "object",
+      "value": {
+        "label": "Donate to help Caddie and Billy",
+        "url": "",
+        "post_id": "{{post:live:page:2120}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_barkode": {
+      "type": "integer",
+      "value": 0
+    },
+    "hk9_summary": {
+      "type": "string",
+      "value": "Caddie is a Lab, currently in her 3rd month of service training. She is being trained to block, post, watch, as well as pressure therapy."
+    }
+  }
+}

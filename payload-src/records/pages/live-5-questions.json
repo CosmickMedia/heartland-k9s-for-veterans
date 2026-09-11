@@ -1,0 +1,88 @@
+{
+  "key": "live:page:16",
+  "type": "page",
+  "status": "publish",
+  "slug": "5-questions",
+  "title": "5 Questions to Ask Before Partnering With a Service Dog",
+  "template": "page-templates/landing.php",
+  "excerpt": "Before partnering with a Service Dog, there are several important points to consider.",
+  "date": "2017-11-15T09:43:23Z",
+  "menu_order": 0,
+  "content": "content/live__page__16.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "5 Questions to Ask Before Partnering With a Service Dog",
+        "text": "Before partnering with a Service Dog, there are several important points to consider. Please ask yourself the following 5 questions before making a final decision.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": [],
+        "source_note": ""
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": []
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Still think a Service Dog is for you?",
+        "text": "Click the button below to apply.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Submit an Application",
+              "url": "",
+              "post_id": "{{post:live:page:1989}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "faq",
+          "tiers"
+        ]
+      }
+    }
+  }
+}

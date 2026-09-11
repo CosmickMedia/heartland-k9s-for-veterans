@@ -1,0 +1,313 @@
+{
+  "format": "hk9-payload/1",
+  "generated_at": "2026-09-11T13:09:17.542Z",
+  "sources": {
+    "fixture": "tools/fixtures/payload-mini (synthetic test payload)"
+  },
+  "requires": {
+    "theme": "heartland-k9s"
+  },
+  "records": [
+    {
+      "key": "mini:asset:hero",
+      "type": "attachment",
+      "file": "media/mini__asset__hero/mini-hero.jpg",
+      "sha256": "240a9ac4f83d0f83c4e85e5a976bbe1bf2d446b4f36e6848143bb81274d6e337",
+      "mime": "image/jpeg",
+      "size": 47062,
+      "title": "Mini hero",
+      "alt": "Navy banner with the word hero",
+      "caption": "Hero caption",
+      "description": "Generated fixture image (hero).",
+      "date": "2024-03-01T10:00:00Z",
+      "width": 2800,
+      "height": 1400
+    },
+    {
+      "key": "mini:asset:card",
+      "type": "attachment",
+      "file": "media/mini__asset__card/mini-card.png",
+      "sha256": "0d9f2e06cd4520090f48b54a214d45d8924f9d7487e81ea50c12e3ec2b94f64c",
+      "mime": "image/png",
+      "size": 6040,
+      "title": "Mini card",
+      "alt": "Crimson card image",
+      "caption": "",
+      "description": "",
+      "date": "2024-03-02T10:00:00Z",
+      "width": 400,
+      "height": 300
+    },
+    {
+      "key": "mini:asset:portrait",
+      "type": "attachment",
+      "file": "media/mini__asset__portrait/mini-portrait.png",
+      "sha256": "559bc6d7a12bed9c943fa6b5f99476ab50bf6a7b432d7aa46a463edbcaa3768c",
+      "mime": "image/png",
+      "size": 8887,
+      "title": "Handler portrait (must be scrubbed)",
+      "alt": "Named person alt text (must be scrubbed)",
+      "caption": "Caption with a name (must be scrubbed)",
+      "description": "",
+      "date": "2024-03-03T10:00:00Z",
+      "width": 600,
+      "height": 400,
+      "sensitive": true
+    },
+    {
+      "key": "term:post_tag:mini-poker-run",
+      "type": "term",
+      "taxonomy": "post_tag",
+      "slug": "mini-poker-run",
+      "name": "Mini Poker Run",
+      "description": "Fixture tag."
+    },
+    {
+      "key": "mini:page:home",
+      "type": "page",
+      "status": "publish",
+      "slug": "mini-home",
+      "title": "Mini Home",
+      "template": "home.php",
+      "excerpt": "Front page of the mini fixture.",
+      "date": "2024-04-01T09:00:00Z",
+      "menu_order": 0,
+      "featured": "{{media:mini:asset:hero}}",
+      "meta": {
+        "hk9_sec_hero_image": {
+          "type": "object",
+          "value": {
+            "eyebrow": "Mini fixture",
+            "eyebrow_icon": "star",
+            "heading": "Serving veterans, never alone",
+            "heading_break_after": "Never",
+            "text": "A synthetic front page used to exercise the importer.",
+            "image": "{{media:mini:asset:hero}}",
+            "image_mobile": 0,
+            "focal": "center",
+            "height": "85vh",
+            "overlay": "70",
+            "gradient": true,
+            "buttons": [
+              {
+                "link": {
+                  "label": "About us",
+                  "url": "{{post_url:mini:page:about}}",
+                  "post_id": "{{post:mini:page:about}}",
+                  "target": "_self",
+                  "rel": ""
+                },
+                "style": "primary"
+              }
+            ],
+            "animate": true
+          }
+        },
+        "hk9_sections_layout": {
+          "type": "object",
+          "value": {
+            "order": [
+              "hero_image",
+              "mission"
+            ],
+            "hidden": []
+          }
+        }
+      },
+      "content": "content/mini__page__home.html"
+    },
+    {
+      "key": "mini:page:about",
+      "type": "page",
+      "status": "publish",
+      "slug": "mini-about",
+      "title": "About Mini",
+      "template": "about.php",
+      "excerpt": "About the mini fixture.",
+      "date": "2024-04-02T09:00:00Z",
+      "menu_order": 1,
+      "featured": "{{media:mini:asset:card}}",
+      "meta": {
+        "hk9_sec_hero_band": {
+          "type": "object",
+          "value": {
+            "eyebrow": "Who we are",
+            "heading": "About the mini fixture",
+            "text": "Hero band text.",
+            "pattern": "stars"
+          }
+        },
+        "hk9_sec_legacy": {
+          "type": "object",
+          "value": {
+            "eyebrow": "Legacy",
+            "heading": "Our legacy",
+            "body": "<p>Legacy <strong>body</strong> copy.</p>",
+            "image": "{{media:mini:asset:card}}",
+            "image_side": "left"
+          }
+        },
+        "hk9_sections_layout": {
+          "type": "object",
+          "value": {
+            "order": [
+              "hero_band",
+              "legacy",
+              "values",
+              "cta"
+            ],
+            "hidden": [
+              "values"
+            ]
+          }
+        }
+      },
+      "content": "content/mini__page__about.html"
+    },
+    {
+      "key": "mini:page:history",
+      "type": "page",
+      "status": "publish",
+      "slug": "history",
+      "title": "History",
+      "parent": "{{post:mini:page:about}}",
+      "date": "2024-04-03T09:00:00Z",
+      "menu_order": 2,
+      "featured": "{{media:mini:asset:card}}",
+      "content": "content/mini__page__history.html"
+    },
+    {
+      "key": "mini:page:news",
+      "type": "page",
+      "status": "publish",
+      "slug": "mini-news",
+      "title": "Mini News",
+      "date": "2024-04-04T09:00:00Z"
+    },
+    {
+      "key": "mini:story:sample",
+      "type": "hk9_story",
+      "status": "publish",
+      "slug": "mini-sample-story",
+      "title": "A sample story",
+      "excerpt": "Short excerpt.",
+      "date": "2024-05-01T12:30:00Z",
+      "menu_order": 3,
+      "featured": "{{media:mini:asset:portrait}}",
+      "meta": {
+        "hk9_veteran_name": {
+          "type": "string",
+          "value": "J. Sample"
+        },
+        "hk9_canine_name": {
+          "type": "string",
+          "value": "Biscuit"
+        },
+        "hk9_relationship": {
+          "type": "string",
+          "value": "service"
+        },
+        "hk9_featured": {
+          "type": "boolean",
+          "value": true
+        },
+        "hk9_gallery": {
+          "type": "array",
+          "value": [
+            "{{media:mini:asset:card}}",
+            "{{media:mini:asset:hero}}"
+          ]
+        }
+      },
+      "terms": {
+        "post_tag": [
+          "{{term:post_tag:mini-poker-run}}"
+        ]
+      },
+      "content": "content/mini__story__sample.html"
+    },
+    {
+      "key": "menu:mini-primary",
+      "type": "menu",
+      "name": "Mini Primary",
+      "locations": [
+        "mini"
+      ],
+      "items": [
+        {
+          "key": "menu:mini-primary:about",
+          "kind": "post_type",
+          "object": "{{post:mini:page:about}}",
+          "title": "",
+          "order": 1
+        },
+        {
+          "key": "menu:mini-primary:history",
+          "kind": "post_type",
+          "object": "{{post:mini:page:history}}",
+          "title": "Our history",
+          "parent": "menu:mini-primary:about",
+          "order": 2
+        },
+        {
+          "key": "menu:mini-primary:donate",
+          "kind": "custom",
+          "url": "https://example.org/donate",
+          "title": "Donate",
+          "target": "_blank",
+          "classes": [
+            "hk9-nav-cta"
+          ],
+          "order": 3
+        },
+        {
+          "key": "menu:mini-primary:home",
+          "kind": "post_type",
+          "object": "{{post:mini:page:home}}",
+          "title": "Home",
+          "order": 4
+        }
+      ]
+    },
+    {
+      "key": "option:hk9_settings",
+      "type": "option",
+      "name": "hk9_settings",
+      "merge": "deep",
+      "value": {
+        "branding": {
+          "wordmark_line1": "Mini K9s",
+          "header_logo": "{{media:mini:asset:card}}"
+        },
+        "contact": {
+          "phone_main": "555-0100"
+        }
+      }
+    },
+    {
+      "key": "reading",
+      "type": "reading",
+      "show_on_front": "page",
+      "page_on_front": "{{post:mini:page:home}}",
+      "page_for_posts": "{{post:mini:page:news}}",
+      "posts_per_page": 6
+    },
+    {
+      "key": "redirect:/old-mini-about/",
+      "type": "redirect",
+      "from": "/old-mini-about/",
+      "to": "{{post_url:mini:page:about}}",
+      "status": 301
+    },
+    {
+      "key": "redirect:/hk9-mini-001/",
+      "type": "redirect",
+      "from": "/hk9-mini-001/",
+      "to": {
+        "type": "record",
+        "slug": "hk9-mini-001"
+      },
+      "status": 301
+    }
+  ]
+}

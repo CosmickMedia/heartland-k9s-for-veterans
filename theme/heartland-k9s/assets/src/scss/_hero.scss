@@ -1,0 +1,216 @@
+// ---------------------------------------------------------------------------
+// Heroes.
+//  --image: full-bleed photo, 85vh / 70vh / 60vh with 600 / 500 / 400px floors,
+//           overlays primary@60/70/80 multiply + optional gradient
+//           linear-gradient(rgba(15,23,42,.3), rgba(15,23,42,.9)); centred content.
+//           h1 Fraunces 700 36/45 → 60/75 (md) → 72/90 (lg), −.025em, max 896px, mb 24;
+//           p Inter 500 18/28 → 20/28 (md) white@90 max 672 mb 40; CTA row 56px.
+//  --band:  flat navy band pt-24 pb-32 text-center; h1 36/40 → 60/60; p 20/32.5 white@80.
+// ---------------------------------------------------------------------------
+
+.hk9-hero {
+	position: relative;
+	width: 100%;
+	color: #fff;
+
+	// Image variant ------------------------------------------------------------
+	&--image {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		background-color: var(--hk9-primary);
+		min-height: 600px;
+		height: 85vh;
+	}
+
+	&--h85 { height: 85vh; min-height: 600px; }
+	&--h70 { height: 70vh; min-height: 500px; }
+	&--h60 { height: 60vh; min-height: 400px; }
+
+	&__bg {
+		position: absolute;
+		inset: 0;
+		z-index: 0;
+		overflow: hidden;
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			object-position: center;
+		}
+	}
+
+	&--focal-top    .hk9-hero__bg img { object-position: center top; }
+	&--focal-bottom .hk9-hero__bg img { object-position: center bottom; }
+	&--focal-left   .hk9-hero__bg img { object-position: left center; }
+	&--focal-right  .hk9-hero__bg img { object-position: right center; }
+
+	&__overlay {
+		position: absolute;
+		inset: 0;
+		background-color: rgba(var(--hk9-primary-rgb), .6);
+		mix-blend-mode: multiply;
+	}
+
+	&--overlay-70 .hk9-hero__overlay { background-color: rgba(var(--hk9-primary-rgb), .7); }
+	&--overlay-80 .hk9-hero__overlay { background-color: rgba(var(--hk9-primary-rgb), .8); }
+
+	&__gradient {
+		position: absolute;
+		inset: 0;
+		background-image: linear-gradient(rgba(15, 23, 42, .3), rgba(15, 23, 42, .9));
+	}
+
+	&__content {
+		position: relative;
+		z-index: 10;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+	}
+
+	&__badge {
+		@extend .hk9-badge;
+		margin-bottom: 2rem;
+	}
+
+	&__title {
+		font-size: 2.25rem;
+		line-height: 1.25;
+		font-weight: 700;
+		color: #fff;
+		max-width: var(--hk9-narrow);
+		margin-bottom: 1.5rem;
+
+		@include media-breakpoint-up(md) {
+			font-size: 3.75rem;
+		}
+
+		@include media-breakpoint-up(lg) {
+			font-size: 4.5rem;
+		}
+	}
+
+	&__text {
+		font-size: 1.125rem;
+		line-height: 1.5556;
+		font-weight: 500;
+		color: rgba(var(--hk9-white-rgb), .9);
+		max-width: 672px;
+		margin-bottom: 2.5rem;
+
+		@include media-breakpoint-up(md) {
+			font-size: 1.25rem;
+			line-height: 1.4;
+		}
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		width: 100%;
+
+		.hk9-btn {
+			width: 100%;
+		}
+
+		@include media-breakpoint-up(sm) {
+			flex-direction: row;
+			width: auto;
+
+			.hk9-btn {
+				width: auto;
+			}
+		}
+	}
+
+	// Band variant -------------------------------------------------------------
+	&--band {
+		background-color: var(--hk9-primary);
+		text-align: center;
+		padding: 6rem var(--hk9-gutter) 8rem;
+
+		.hk9-hero__content {
+			position: relative;
+			z-index: 1;
+		}
+
+		.hk9-hero__title {
+			font-size: 2.25rem;
+			line-height: 1.1112;
+			max-width: none;
+
+			@include media-breakpoint-up(md) {
+				font-size: 3.75rem;
+				line-height: 1;
+			}
+		}
+
+		.hk9-hero__text {
+			font-size: 1.25rem;
+			line-height: 1.625;
+			font-weight: 400;
+			color: rgba(var(--hk9-white-rgb), .8);
+			margin-left: auto;
+			margin-right: auto;
+			margin-bottom: 0;
+		}
+
+		.hk9-hero__eyebrow {
+			@extend .hk9-badge;
+			@extend .hk9-badge--tint;
+			background: rgba(var(--hk9-white-rgb), .1);
+			color: #fff;
+			margin-bottom: 1.5rem;
+		}
+	}
+
+	// Blog / archive hero (band with optional image behind).
+	&--blog {
+		padding: 5rem var(--hk9-gutter) 6rem;
+	}
+}
+
+// The forced line break inside the hero title: hidden below 768px.
+.hk9-md-br {
+	display: none;
+
+	@include media-breakpoint-up(md) {
+		display: block;
+	}
+}
+
+// Entrance animation (home only). Only when the user allows motion.
+@keyframes hk9-enter-up {
+	from {
+		opacity: 0;
+		transform: translateY(var(--hk9-enter-y, 24px));
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@media (prefers-reduced-motion: no-preference) {
+	.hk9-hero--animate {
+		.hk9-hero__badge,
+		.hk9-hero__title,
+		.hk9-hero__text,
+		.hk9-hero__actions {
+			animation: hk9-enter-up .7s var(--hk9-ease) both;
+		}
+
+		.hk9-hero__badge { --hk9-enter-y: 16px; animation-delay: 0s; }
+		.hk9-hero__title { animation-delay: .15s; }
+		.hk9-hero__text { animation-delay: .3s; }
+		.hk9-hero__actions { animation-delay: .5s; }
+	}
+}

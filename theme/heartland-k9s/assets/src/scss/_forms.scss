@@ -1,0 +1,208 @@
+// ---------------------------------------------------------------------------
+// Forms (.hk9-form) — the contact form look measured on the reference:
+// input 48px, 14px (16px < 768), bg muted/50, border 1px, radius 2px, padding 4/12,
+// shadow-sm, placeholder muted-fg, focus ring 0 0 0 1px navy; select ring 2px;
+// textarea min 120px, padding 8/12, resize vertical; label 14px/500 + 8px gap;
+// form space-y-6; name row grid 1 → 2 cols gap 24.
+// The plugin renders the markup; the theme only styles it.
+// ---------------------------------------------------------------------------
+
+.hk9-form {
+	display: flex;
+	flex-direction: column;
+	gap: 1.5rem;
+
+	&__row {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.5rem;
+
+		@include media-breakpoint-up(md) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	&__field {
+		display: flex;
+		flex-direction: column;
+		gap: .5rem;
+		min-width: 0;
+	}
+
+	&__label,
+	label {
+		font-size: .875rem;
+		line-height: 1.4286;
+		font-weight: 500;
+		color: var(--hk9-fg);
+		margin: 0;
+	}
+
+	&__required {
+		color: var(--hk9-secondary);
+		margin-left: .125rem;
+	}
+
+	&__help {
+		font-size: .875rem;
+		color: var(--hk9-muted-fg);
+	}
+
+	&__input,
+	input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]),
+	select,
+	textarea {
+		display: block;
+		width: 100%;
+		min-height: 3rem;
+		padding: .25rem .75rem;
+		font-family: inherit;
+		font-size: 1rem;
+		line-height: 1.5;
+		color: var(--hk9-fg);
+		background-color: rgba(var(--hk9-muted-rgb), .5);
+		border: 1px solid var(--hk9-border);
+		border-radius: 2px;
+		box-shadow: var(--hk9-shadow-sm);
+		transition: box-shadow .15s ease-in-out, border-color .15s ease-in-out;
+		-webkit-appearance: none;
+		appearance: none;
+
+		@include media-breakpoint-up(md) {
+			font-size: .875rem;
+			line-height: 1.4286;
+		}
+
+		&::placeholder {
+			color: var(--hk9-muted-fg);
+			opacity: 1;
+		}
+
+		&:focus,
+		&:focus-visible {
+			outline: none;
+			box-shadow: 0 0 0 1px var(--hk9-ring);
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: .5;
+		}
+
+		&[aria-invalid="true"],
+		&.is-invalid {
+			border-color: #d92626;
+		}
+	}
+
+	select {
+		padding: .5rem 2.5rem .5rem .75rem;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2352637a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right .75rem center;
+		background-size: 16px 16px;
+
+		&:focus,
+		&:focus-visible {
+			border-color: transparent;
+			box-shadow: 0 0 0 2px var(--hk9-ring);
+		}
+	}
+
+	textarea {
+		min-height: 7.5rem;
+		padding: .5rem .75rem;
+		resize: vertical;
+	}
+
+	&__check {
+		display: flex;
+		align-items: flex-start;
+		gap: .75rem;
+
+		input[type="checkbox"] {
+			width: 1.125rem;
+			height: 1.125rem;
+			margin-top: .125rem;
+			flex-shrink: 0;
+			accent-color: var(--hk9-primary);
+		}
+
+		label {
+			font-weight: 400;
+		}
+	}
+
+	&__error {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: #b91c1c;
+	}
+
+	&__summary,
+	&__success {
+		padding: 1rem 1.25rem;
+		border-radius: .5rem;
+		border: 1px solid;
+		font-size: .9375rem;
+		line-height: 1.5;
+
+		> :last-child { margin-bottom: 0; }
+
+		ul {
+			margin: .5rem 0 0;
+			padding-left: 1.25rem;
+		}
+	}
+
+	&__summary {
+		background: rgba(217, 38, 38, .06);
+		border-color: rgba(217, 38, 38, .3);
+		color: #7f1d1d;
+	}
+
+	&__success {
+		background: rgba(47, 125, 79, .08);
+		border-color: rgba(47, 125, 79, .3);
+		color: #14532d;
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+	}
+
+	&__submit {
+		@extend .hk9-btn;
+		@extend .hk9-btn--navy;
+		@extend .hk9-btn--lg;
+		width: 100%;
+	}
+
+	// Honeypot: visually removed but still in the DOM for bots.
+	&__hp {
+		position: absolute !important;
+		left: -9999px !important;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+}
+
+// Search form (searchform.php) shares the look.
+.hk9-search {
+	display: flex;
+	gap: .5rem;
+
+	&__input {
+		@extend .hk9-form__input;
+	}
+}
+
+// Comments form (comments.php) inherits .hk9-form via class.
+.comment-form {
+	@extend .hk9-form;
+
+	p { margin: 0; }
+}

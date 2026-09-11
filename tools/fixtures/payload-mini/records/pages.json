@@ -1,0 +1,79 @@
+[
+  {
+    "key": "mini:page:home",
+    "type": "page",
+    "status": "publish",
+    "slug": "mini-home",
+    "title": "Mini Home",
+    "template": "home.php",
+    "excerpt": "Front page of the mini fixture.",
+    "date": "2024-04-01T09:00:00Z",
+    "menu_order": 0,
+    "featured": "{{media:mini:asset:hero}}",
+    "meta": {
+      "hk9_sec_hero_image": {
+        "type": "object",
+        "value": {
+          "eyebrow": "Mini fixture",
+          "eyebrow_icon": "star",
+          "heading": "Serving veterans, never alone",
+          "heading_break_after": "Never",
+          "text": "A synthetic front page used to exercise the importer.",
+          "image": "{{media:mini:asset:hero}}",
+          "image_mobile": 0,
+          "focal": "center",
+          "height": "85vh",
+          "overlay": "70",
+          "gradient": true,
+          "buttons": [
+            { "link": { "label": "About us", "url": "{{post_url:mini:page:about}}", "post_id": "{{post:mini:page:about}}", "target": "_self", "rel": "" }, "style": "primary" }
+          ],
+          "animate": true
+        }
+      },
+      "hk9_sections_layout": { "type": "object", "value": { "order": ["hero_image", "mission"], "hidden": [] } }
+    }
+  },
+  {
+    "key": "mini:page:about",
+    "type": "page",
+    "status": "publish",
+    "slug": "mini-about",
+    "title": "About Mini",
+    "template": "about.php",
+    "excerpt": "About the mini fixture.",
+    "date": "2024-04-02T09:00:00Z",
+    "menu_order": 1,
+    "featured": "{{media:mini:asset:card}}",
+    "meta": {
+      "hk9_sec_hero_band": {
+        "type": "object",
+        "value": { "eyebrow": "Who we are", "heading": "About the mini fixture", "text": "Hero band text.", "pattern": "stars" }
+      },
+      "hk9_sec_legacy": {
+        "type": "object",
+        "value": { "eyebrow": "Legacy", "heading": "Our legacy", "body": "<p>Legacy <strong>body</strong> copy.</p>", "image": "{{media:mini:asset:card}}", "image_side": "left" }
+      },
+      "hk9_sections_layout": { "type": "object", "value": { "order": ["hero_band", "legacy", "values", "cta"], "hidden": ["values"] } }
+    }
+  },
+  {
+    "key": "mini:page:history",
+    "type": "page",
+    "status": "publish",
+    "slug": "history",
+    "title": "History",
+    "parent": "{{post:mini:page:about}}",
+    "date": "2024-04-03T09:00:00Z",
+    "menu_order": 2,
+    "featured": "{{media:mini:asset:card}}"
+  },
+  {
+    "key": "mini:page:news",
+    "type": "page",
+    "status": "publish",
+    "slug": "mini-news",
+    "title": "Mini News",
+    "date": "2024-04-04T09:00:00Z"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "key": "live:person:larry-warren",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "larry-warren",
+  "title": "Larry Warren",
+  "featured": "{{media:live:media:3377}}",
+  "menu_order": 4,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Board Member"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": ""
+    }
+  }
+}

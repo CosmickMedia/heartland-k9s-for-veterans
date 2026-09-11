@@ -1,0 +1,125 @@
+{
+  "key": "live:page:2120",
+  "type": "page",
+  "status": "publish",
+  "slug": "donate",
+  "title": "Donate",
+  "template": "page-templates/donate.php",
+  "excerpt": "Your donation allows us to help those who have done so much for all of us, the US Veterans, by providing them with a properly trained and certified Service Dog.",
+  "date": "2020-02-13T17:37:12Z",
+  "menu_order": 0,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Donate",
+        "text": "Your donation allows us to help those who have done so much for all of us, the US Veterans, by providing them with a properly trained and certified Service Dog.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_options": {
+      "type": "object",
+      "value": {
+        "heading": "Ways to Give",
+        "intro": "Donating has never been easier! Simply click on whatever platform you wish to use for your contribution.",
+        "items": [
+          {
+            "icon": "heart-handshake",
+            "logo": "{{media:live:media:3718}}",
+            "title": "Donate online with Zeffy",
+            "text": "Donating has never been easier! Click the Zeffy logo to donate.",
+            "button": {
+              "label": "Donate with Zeffy",
+              "url": "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives",
+              "post_id": 0,
+              "target": "_blank",
+              "rel": "noopener"
+            },
+            "primary": true
+          },
+          {
+            "icon": "credit-card",
+            "logo": 0,
+            "title": "Donate online with PayPal",
+            "text": "Donate online with PayPal.",
+            "button": {
+              "label": "Donate with PayPal",
+              "url": "https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=METNHXQ9EBUMQ",
+              "post_id": 0,
+              "target": "_blank",
+              "rel": "noopener"
+            },
+            "primary": false
+          },
+          {
+            "icon": "gift",
+            "logo": "{{media:live:media:3678}}",
+            "title": "HK9’s Daily Needs Wishlist",
+            "text": "Donating has never been easier! Click through to HK9’s Daily Needs Wishlist on Amazon.",
+            "button": {
+              "label": "View the Amazon Wishlist",
+              "url": "https://www.amazon.com/hz/wishlist/ls/35NF4IVCKN76G?ref_=wl_share",
+              "post_id": 0,
+              "target": "_blank",
+              "rel": "noopener"
+            },
+            "primary": false
+          },
+          {
+            "icon": "mail",
+            "logo": 0,
+            "title": "Mail your donation",
+            "text": "Prefer to send a check? Mail your donation to the address below.",
+            "button": {
+              "label": "",
+              "url": "",
+              "post_id": 0,
+              "target": "_self",
+              "rel": ""
+            },
+            "primary": false
+          }
+        ]
+      }
+    },
+    "hk9_sec_mail_in": {
+      "type": "object",
+      "value": {
+        "heading": "Mail your donation to:",
+        "text": "Thank you so much for donating! We will put your gift to work right away.\nIf you have any questions, please call us at 417-312-7484.",
+        "use_settings_address": true
+      }
+    },
+    "hk9_sec_tax": {
+      "type": "object",
+      "value": {
+        "text": "Thank you for your consideration and donation to Heartland Canines For Veterans. Your donation allows us to help those who have done so much for all of us, the US Veterans by providing them with a properly trained and certified Service Dog. Heartland Canines For Veterans is an IRS recognized 501(c)(3) non-profit organization. IRS EIN 47-4991572. All donations are tax deductible to the extent allowed by law. Consult your CPA if you have questions."
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "text": "",
+        "buttons": [],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "options",
+          "mail_in",
+          "tax",
+          "cta"
+        ],
+        "hidden": [
+          "cta"
+        ]
+      }
+    }
+  }
+}

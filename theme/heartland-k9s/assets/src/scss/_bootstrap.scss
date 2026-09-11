@@ -1,0 +1,57 @@
+// ---------------------------------------------------------------------------
+// Selective Bootstrap 5.3.8 import. Only the layers the theme actually uses:
+// functions/variables/maps/mixins, root, reboot, type, containers, grid,
+// buttons, form-control/select/check/validation, transitions, pagination and a
+// pruned utilities API. No navbar/offcanvas/modal/carousel/accordion CSS.
+// ---------------------------------------------------------------------------
+
+@import "bootstrap/scss/functions";
+@import "bootstrap-config";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "bootstrap/scss/utilities";
+
+// Keep only the utilities the templates use (the full map is ~70 kB compressed);
+// only `display` keeps its responsive variants.
+$utilities: map-get-multiple(
+	$utilities,
+	(
+		"display",
+		"flex-direction",
+		"flex-wrap",
+		"justify-content",
+		"align-items",
+		"gap",
+		"text-align",
+		"width"
+	)
+);
+$utilities: map-merge(
+	$utilities,
+	(
+		"flex-direction": map-merge(map-get($utilities, "flex-direction"), (responsive: false)),
+		"flex-wrap": map-merge(map-get($utilities, "flex-wrap"), (responsive: false)),
+		"justify-content": map-merge(map-get($utilities, "justify-content"), (responsive: false)),
+		"align-items": map-merge(map-get($utilities, "align-items"), (responsive: false)),
+		"gap": map-merge(map-get($utilities, "gap"), (responsive: false)),
+		"text-align": map-merge(map-get($utilities, "text-align"), (responsive: false)),
+	)
+);
+
+@import "bootstrap/scss/root";
+@import "bootstrap/scss/reboot";
+@import "bootstrap/scss/type";
+@import "bootstrap/scss/containers";
+@import "bootstrap/scss/grid";
+@import "bootstrap/scss/buttons";
+@import "bootstrap/scss/transitions";
+@import "bootstrap/scss/forms/labels";
+@import "bootstrap/scss/forms/form-text";
+@import "bootstrap/scss/forms/form-control";
+@import "bootstrap/scss/forms/form-select";
+@import "bootstrap/scss/forms/form-check";
+@import "bootstrap/scss/forms/validation";
+@import "bootstrap/scss/pagination";
+@import "bootstrap/scss/utilities/api";

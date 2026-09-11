@@ -1,0 +1,28 @@
+{
+  "key": "live:person:ted-donaldson",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "ted-donaldson",
+  "title": "Ted Donaldson",
+  "featured": "{{media:live:media:3378}}",
+  "menu_order": 10,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Development Director"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": "development@heartlandk9s.org"
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "content": "content/live__person__ted-donaldson.html"
+}

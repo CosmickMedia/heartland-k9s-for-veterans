@@ -1,0 +1,70 @@
+{
+  "key": "live:page:2483",
+  "type": "page",
+  "status": "publish",
+  "slug": "events",
+  "title": "Events",
+  "template": "page-templates/events.php",
+  "excerpt": "Upcoming and past events with Heartland Canines for Veterans.",
+  "date": "2021-05-28T21:13:49Z",
+  "menu_order": 0,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Events",
+        "text": "Upcoming and past events with Heartland Canines for Veterans.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_upcoming": {
+      "type": "object",
+      "value": {
+        "heading": "Upcoming Events",
+        "empty_text": "There are no upcoming events scheduled right now. Check back soon or follow us on Facebook for announcements.",
+        "count": 6
+      }
+    },
+    "hk9_sec_past": {
+      "type": "object",
+      "value": {
+        "show": true,
+        "heading": "Past Events",
+        "count": 6
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Questions about an event?",
+        "text": "We are actively looking for sponsors for our events.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Contact Us",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          }
+        ],
+        "tone": "tint"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "upcoming",
+          "past",
+          "cta"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

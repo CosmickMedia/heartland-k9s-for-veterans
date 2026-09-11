@@ -1,0 +1,134 @@
+{
+  "key": "ref:page:barkode",
+  "type": "page",
+  "status": "publish",
+  "slug": "barkode",
+  "title": "The BarKode Program",
+  "template": "page-templates/barkode.php",
+  "excerpt": "A vital safety net dedicated to Derron and his service dog, Rosie.",
+  "menu_order": 4,
+  "meta": {
+    "hk9_sec_hero_image": {
+      "type": "object",
+      "value": {
+        "eyebrow": "A Service of Heartland K9s",
+        "eyebrow_icon": "qr-code",
+        "heading": "The BarKode Program",
+        "heading_break_after": "",
+        "text": "A vital safety net dedicated to Derron and his service dog, Rosie.",
+        "image": "{{media:ref:asset:barkode}}",
+        "image_mobile": 0,
+        "focal": "center",
+        "height": "70vh",
+        "overlay": "80",
+        "gradient": true,
+        "buttons": [],
+        "animate": false
+      }
+    },
+    "hk9_sec_story": {
+      "type": "object",
+      "value": {
+        "icon": "heart-pulse",
+        "heading": "Dedicated to Derron & Rosie",
+        "body": "<p>This program is dedicated to Derron and his service dog Rosie. At Derron’s untimely death, first responders, the humane society and coroner did not know what to do with Rosie. She ended up spending multiple days away from her family. Our goal is to prevent this unfortunate circumstance from happening in the future.</p>\n<p>BarKode is a unique service provided by Heartland Canines For Veterans to facilitate Service K9 Teams’ public access and ensure that in an emergency these uniquely trained Canines are not separated from their handler. This voluntary validation service provides verification for First Responders so Service K9s are provided the appropriate care and concern. BarKode can also remove ambiguity for businesses regarding Service K9 Team public access under the relevant aspects of the Americans With Disabilities Act (ADA).</p>"
+      }
+    },
+    "hk9_sec_protects": {
+      "type": "object",
+      "value": {
+        "heading": "How BarKode Protects",
+        "intro": "",
+        "divider": true,
+        "align": "left",
+        "columns": "3",
+        "cards": [
+          {
+            "icon": "qr-code",
+            "tone": "navy",
+            "title": "Instant Identification",
+            "text": "Heartland-trained teams are assigned a unique team number and QR code documented in our secure database. Scanning the BarKode displays a picture of the Service K9 along with the team ID and the tasks the canine is trained to perform.",
+            "link": {
+              "label": "",
+              "url": "",
+              "post_id": 0,
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          },
+          {
+            "icon": "phone-call",
+            "tone": "navy",
+            "title": "Emergency Contacts",
+            "text": "Each BarKode carries emergency contacts for the Veteran, veterinarian information for the K9 and a contact for HK9 if there are any questions—so the dog’s well-being is managed while the Veteran receives care.",
+            "link": {
+              "label": "",
+              "url": "",
+              "post_id": 0,
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          },
+          {
+            "icon": "shield-check",
+            "tone": "navy",
+            "title": "Legitimacy & Trust",
+            "text": "BarKode is a voluntary validation service. It verifies that a team was trained by Heartland Canines For Veterans, giving First Responders and businesses confidence in the team and its public access.",
+            "link": {
+              "label": "",
+              "url": "",
+              "post_id": 0,
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          }
+        ]
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Support the BarKode Initiative",
+        "text": "BarKode is a free service for Heartland Canines For Veterans trained Service K9 Teams; teams trained by other providers may be provided access only after application, evaluation, any additional training and an annual fee. Maintaining the program and its secure database takes ongoing resources—your donation directly supports the safety of our veterans and their K9 partners.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Donate to Protect a Team",
+              "url": "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives",
+              "post_id": 0,
+              "target": "_blank",
+              "rel": "noopener"
+            },
+            "style": "primary"
+          },
+          {
+            "link": {
+              "label": "Ask about BarKode",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "outline"
+          }
+        ],
+        "tone": "plain"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_image",
+          "story",
+          "protects",
+          "cta"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

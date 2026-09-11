@@ -1,0 +1,55 @@
+{
+  "key": "live:team:marilyn-and-travis",
+  "type": "hk9_team",
+  "status": "publish",
+  "slug": "marilyn-and-travis",
+  "title": "Marilyn & Travis",
+  "excerpt": "Early in their training, Travis’ main focus will be all obedience training for the next few months. He will be trained for PTS and anxiety.",
+  "content": "content/live__team__marilyn-and-travis.html",
+  "featured": "{{media:live:media:3731}}",
+  "menu_order": 2,
+  "meta": {
+    "hk9_canine_name": {
+      "type": "string",
+      "value": "Travis"
+    },
+    "hk9_handler_name": {
+      "type": "string",
+      "value": "Marilyn"
+    },
+    "hk9_status": {
+      "type": "string",
+      "value": "in-training"
+    },
+    "hk9_year": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": false
+    },
+    "hk9_gallery": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_donate_link": {
+      "type": "object",
+      "value": {
+        "label": "Donate to help Marilyn and Travis",
+        "url": "",
+        "post_id": "{{post:live:page:2120}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_barkode": {
+      "type": "integer",
+      "value": 0
+    },
+    "hk9_summary": {
+      "type": "string",
+      "value": "Early in their training, Travis’ main focus will be all obedience training for the next few months. He will be trained for PTS and anxiety."
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "key": "live:campaign:one-of-us",
+  "type": "hk9_campaign",
+  "status": "publish",
+  "slug": "one-of-us",
+  "title": "“One of Us” Campaign",
+  "excerpt": "An opportunity for organizations to invest in the success of a specific Veteran and their K-9 partner, now, and for years to come.",
+  "content": "content/live__campaign__one-of-us.html",
+  "menu_order": 2,
+  "meta": {
+    "hk9_summary": {
+      "type": "string",
+      "value": "The “One of Us” Campaign gives organizations an opportunity to invest in the success of a specific Veteran and their K-9 partner. Your organization names the K-9, your campaign covers the team’s training, veterinary care, gear, equipment, kenneling and administrative costs, and you become part of the team’s process—from training updates to graduation."
+    },
+    "hk9_status": {
+      "type": "string",
+      "value": "active"
+    },
+    "hk9_start": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_end": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_cta": {
+      "type": "object",
+      "value": {
+        "label": "I would like more info on this",
+        "url": "",
+        "post_id": "{{post:ref:page:contact}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_secondary_cta": {
+      "type": "object",
+      "value": {
+        "label": "Sign us up! Let’s change a life!",
+        "url": "",
+        "post_id": "{{post:ref:page:contact}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_sponsors": {
+      "type": "array",
+      "value": [
+        "{{post:live:partner:pinnacle-pet}}",
+        "{{post:live:partner:petland-joplin}}",
+        "{{post:live:partner:jack}}"
+      ]
+    },
+    "hk9_gallery": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_goal_text": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": false
+    }
+  }
+}

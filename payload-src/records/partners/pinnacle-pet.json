@@ -1,0 +1,35 @@
+{
+  "key": "live:partner:pinnacle-pet",
+  "type": "hk9_partner",
+  "status": "publish",
+  "slug": "pinnacle-pet",
+  "title": "Pinnacle Pet",
+  "featured": "{{media:live:media:2114}}",
+  "menu_order": 1,
+  "meta": {
+    "hk9_website": {
+      "type": "object",
+      "value": {
+        "label": "Pinnacle Pet",
+        "url": "https://customer.pinnaclepet.net/Home.aspx",
+        "post_id": 0,
+        "target": "_blank",
+        "rel": "noopener"
+      }
+    },
+    "hk9_tier": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_since": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "terms": {
+    "hk9_partner_type": [
+      "{{term:hk9_partner_type:back-the-pack}}",
+      "{{term:hk9_partner_type:campaign-sponsor}}"
+    ]
+  }
+}

@@ -1,0 +1,234 @@
+[
+  {
+    "key": "menu:primary",
+    "type": "menu",
+    "name": "Primary",
+    "locations": [
+      "primary"
+    ],
+    "items": [
+      {
+        "key": "menu:primary:about",
+        "kind": "post_type",
+        "object": "{{post:ref:page:about}}",
+        "title": "About",
+        "order": 1
+      },
+      {
+        "key": "menu:primary:program",
+        "kind": "post_type",
+        "object": "{{post:ref:page:program}}",
+        "title": "Program",
+        "order": 2
+      },
+      {
+        "key": "menu:primary:veterans",
+        "kind": "post_type",
+        "object": "{{post:ref:page:veterans}}",
+        "title": "Veterans",
+        "order": 3
+      },
+      {
+        "key": "menu:primary:barkode",
+        "kind": "post_type",
+        "object": "{{post:ref:page:barkode}}",
+        "title": "BarKode",
+        "order": 4
+      },
+      {
+        "key": "menu:primary:stories",
+        "kind": "post_type",
+        "object": "{{post:ref:page:stories}}",
+        "title": "Stories",
+        "order": 5
+      },
+      {
+        "key": "menu:primary:get-involved",
+        "kind": "post_type",
+        "object": "{{post:ref:page:get-involved}}",
+        "title": "Get Involved",
+        "order": 6
+      },
+      {
+        "key": "menu:primary:contact",
+        "kind": "post_type",
+        "object": "{{post:ref:page:contact}}",
+        "title": "Contact",
+        "order": 7,
+        "classes": [
+          "hk9-nav-divider"
+        ]
+      }
+    ]
+  },
+  {
+    "key": "menu:footer_quick",
+    "type": "menu",
+    "name": "Footer Quick Links",
+    "locations": [
+      "footer_quick"
+    ],
+    "items": [
+      {
+        "key": "menu:footer_quick:mission",
+        "kind": "post_type",
+        "object": "{{post:ref:page:about}}",
+        "title": "Our Mission",
+        "order": 1
+      },
+      {
+        "key": "menu:footer_quick:program",
+        "kind": "post_type",
+        "object": "{{post:ref:page:program}}",
+        "title": "The Program",
+        "order": 2
+      },
+      {
+        "key": "menu:footer_quick:veterans",
+        "kind": "post_type",
+        "object": "{{post:ref:page:veterans}}",
+        "title": "For Veterans",
+        "order": 3
+      },
+      {
+        "key": "menu:footer_quick:barkode",
+        "kind": "post_type",
+        "object": "{{post:ref:page:barkode}}",
+        "title": "BarKode Program",
+        "order": 4
+      },
+      {
+        "key": "menu:footer_quick:stories",
+        "kind": "post_type",
+        "object": "{{post:ref:page:stories}}",
+        "title": "Success Stories",
+        "order": 5
+      },
+      {
+        "key": "menu:footer_quick:five-questions",
+        "kind": "post_type",
+        "object": "{{post:live:page:16}}",
+        "title": "5 Questions",
+        "order": 6
+      },
+      {
+        "key": "menu:footer_quick:ada",
+        "kind": "post_type",
+        "object": "{{post:live:page:1995}}",
+        "title": "ADA FAQs",
+        "order": 7
+      },
+      {
+        "key": "menu:footer_quick:team",
+        "kind": "post_type",
+        "object": "{{post:live:page:2856}}",
+        "title": "Meet the Team",
+        "order": 8
+      },
+      {
+        "key": "menu:footer_quick:photos",
+        "kind": "post_type",
+        "object": "{{post:live:page:2455}}",
+        "title": "Photos",
+        "order": 9
+      }
+    ]
+  },
+  {
+    "key": "menu:footer_involved",
+    "type": "menu",
+    "name": "Footer Get Involved",
+    "locations": [
+      "footer_involved"
+    ],
+    "items": [
+      {
+        "key": "menu:footer_involved:donate",
+        "kind": "post_type",
+        "object": "{{post:live:page:2120}}",
+        "title": "Make a Donation",
+        "order": 1
+      },
+      {
+        "key": "menu:footer_involved:volunteer",
+        "kind": "post_type",
+        "object": "{{post:live:page:2124}}",
+        "title": "Volunteer",
+        "order": 2
+      },
+      {
+        "key": "menu:footer_involved:campaigns",
+        "kind": "post_type",
+        "object": "{{post:live:page:2800}}",
+        "title": "Campaigns",
+        "order": 3
+      },
+      {
+        "key": "menu:footer_involved:events",
+        "kind": "post_type",
+        "object": "{{post:live:page:2483}}",
+        "title": "Events",
+        "order": 4
+      },
+      {
+        "key": "menu:footer_involved:back-the-pack",
+        "kind": "post_type",
+        "object": "{{post:live:page:2072}}",
+        "title": "Back the Pack",
+        "order": 5
+      },
+      {
+        "key": "menu:footer_involved:providers",
+        "kind": "post_type",
+        "object": "{{post:live:page:3084}}",
+        "title": "K9 Providers",
+        "order": 6
+      },
+      {
+        "key": "menu:footer_involved:gear",
+        "kind": "post_type",
+        "object": "{{post:live:page:3408}}",
+        "title": "Heartland Gear",
+        "order": 7
+      },
+      {
+        "key": "menu:footer_involved:coloring-book",
+        "kind": "post_type",
+        "object": "{{post:live:page:3627}}",
+        "title": "Coloring Book",
+        "order": 8
+      },
+      {
+        "key": "menu:footer_involved:obedience",
+        "kind": "post_type",
+        "object": "{{post:live:page:3742}}",
+        "title": "Obedience Training",
+        "order": 9
+      },
+      {
+        "key": "menu:footer_involved:apply",
+        "kind": "post_type",
+        "object": "{{post:live:page:1989}}",
+        "title": "Apply",
+        "order": 10
+      }
+    ]
+  },
+  {
+    "key": "menu:legal",
+    "type": "menu",
+    "name": "Legal",
+    "locations": [
+      "legal"
+    ],
+    "items": [
+      {
+        "key": "menu:legal:privacy",
+        "kind": "post_type",
+        "object": "{{post:live:page:3}}",
+        "title": "Privacy Policy",
+        "order": 1
+      }
+    ]
+  }
+]

@@ -1,0 +1,4 @@
+{
+  "sources": { "fixture": "tools/fixtures/payload-mini (synthetic test payload)" },
+  "requires": { "theme": "heartland-k9s" }
+}

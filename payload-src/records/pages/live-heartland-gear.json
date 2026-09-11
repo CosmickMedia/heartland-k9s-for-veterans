@@ -1,0 +1,88 @@
+{
+  "key": "live:page:3408",
+  "type": "page",
+  "status": "publish",
+  "slug": "heartland-gear",
+  "title": "Heartland Gear",
+  "template": "page-templates/landing.php",
+  "excerpt": "Look through what we have to offer, and on a “donation” basis, YOU can help fund our next service team as well as get some great gear and other products!",
+  "date": "2024-12-03T14:59:48Z",
+  "menu_order": 0,
+  "content": "content/live__page__3408.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Heartland Gear",
+        "text": "Look through what we have to offer, and on a “donation” basis, YOU can help fund our next service team as well as get some great gear and other products!",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": [],
+        "source_note": ""
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": []
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Browse our gear at Links Ink",
+        "text": "To purchase, simply click the “Browse Now” button. You will be taken to Links Ink website to find that next piece of swag for your arsenal.",
+        "buttons": [
+          {
+            "link": {
+              "label": "BROWSE NOW",
+              "url": "https://linksinkllc.com/?s=Heartland",
+              "post_id": 0,
+              "target": "_blank",
+              "rel": "noopener"
+            },
+            "style": "primary"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "faq",
+          "tiers"
+        ]
+      }
+    }
+  }
+}

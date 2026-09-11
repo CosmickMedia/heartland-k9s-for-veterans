@@ -1,0 +1,28 @@
+{
+  "key": "live:person:jimmy-burgess",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "jimmy-burgess",
+  "title": "Jimmy Burgess",
+  "featured": "{{media:live:media:3556}}",
+  "menu_order": 1,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Executive Director & Service Dog Trainer"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": "director@heartlandk9s.org"
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "content": "content/live__person__jimmy-burgess.html"
+}

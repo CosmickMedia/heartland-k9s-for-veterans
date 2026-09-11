@@ -1,0 +1,28 @@
+{
+  "key": "live:person:cody-simmons",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "cody-simmons",
+  "title": "Cody Simmons",
+  "featured": "{{media:live:media:3442}}",
+  "menu_order": 7,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Board Member"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "content": "content/live__person__cody-simmons.html"
+}

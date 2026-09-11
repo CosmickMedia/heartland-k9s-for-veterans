@@ -1,0 +1,78 @@
+{
+  "key": "live:page:2505",
+  "type": "page",
+  "status": "publish",
+  "slug": "thank-you",
+  "title": "Thank You",
+  "template": "page-templates/landing.php",
+  "excerpt": "Please download or print the medical history form. Your physician will complete the form and return it to our office.",
+  "date": "2021-06-05T01:40:35Z",
+  "menu_order": 0,
+  "content": "content/live__page__2505.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Thank You",
+        "text": "Please download or print the medical history form. Your physician will complete the form and return it to our office.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": [],
+        "source_note": ""
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": []
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "text": "",
+        "buttons": [],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ]
+      }
+    }
+  }
+}

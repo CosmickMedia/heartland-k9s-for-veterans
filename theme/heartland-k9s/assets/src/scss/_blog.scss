@@ -1,0 +1,269 @@
+// ---------------------------------------------------------------------------
+// Blog: post lists/cards, meta, pagination (the_posts_pagination markup), single
+// post header, related posts, comments.
+// ---------------------------------------------------------------------------
+
+.hk9-blog {
+	&__list {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2rem;
+
+		&--grid {
+			@include media-breakpoint-up(md) {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+
+			@include media-breakpoint-up(lg) {
+				grid-template-columns: repeat(3, minmax(0, 1fr));
+			}
+		}
+	}
+
+	&__card {
+		@extend .hk9-card;
+		@extend .hk9-card--hover;
+		padding: 0;
+		overflow: hidden;
+
+		.hk9-blog__card-media {
+			display: block;
+			aspect-ratio: 16 / 9;
+			overflow: hidden;
+			background: var(--hk9-muted);
+
+			img {
+				width: 100%;
+				height: 100%;
+				object-fit: cover;
+			}
+		}
+
+		.hk9-blog__card-body {
+			display: flex;
+			flex-direction: column;
+			flex: 1 1 auto;
+			padding: 1.5rem 2rem 2rem;
+		}
+
+		.hk9-blog__card-title {
+			font-size: 1.25rem;
+			line-height: 1.4;
+			margin-bottom: .75rem;
+
+			a { color: var(--hk9-fg); text-decoration: none; }
+			a:hover { color: var(--hk9-secondary); }
+		}
+
+		.hk9-blog__excerpt {
+			color: var(--hk9-muted-fg);
+			flex: 1 1 auto;
+			margin-bottom: 1rem;
+		}
+
+		// List layout: media left, body right (≥768).
+		.hk9-blog__list:not(.hk9-blog__list--grid) & {
+			@include media-breakpoint-up(md) {
+				flex-direction: row;
+
+				.hk9-blog__card-media {
+					flex: 0 0 40%;
+					aspect-ratio: auto;
+					min-height: 14rem;
+				}
+			}
+		}
+	}
+
+	&__meta {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: .25rem .75rem;
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+		margin-bottom: .75rem;
+
+		a { color: var(--hk9-secondary); }
+
+		.hk9-icon { width: 1rem; height: 1rem; }
+	}
+
+	&__terms {
+		display: flex;
+		flex-wrap: wrap;
+		gap: .5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		a {
+			display: inline-block;
+			padding: .125rem .625rem;
+			border-radius: 9999px;
+			font-size: .75rem;
+			font-weight: 600;
+			letter-spacing: .05em;
+			text-transform: uppercase;
+			background: rgba(var(--hk9-secondary-rgb), .1);
+			color: var(--hk9-secondary);
+			text-decoration: none;
+
+			&:hover { background: rgba(var(--hk9-secondary-rgb), .18); }
+		}
+	}
+
+	&__header {
+		text-align: center;
+		margin-bottom: 2.5rem;
+
+		.hk9-blog__title {
+			font-size: 2.25rem;
+			color: var(--hk9-primary);
+			margin-bottom: 1rem;
+
+			@include media-breakpoint-up(md) { font-size: 3rem; }
+		}
+
+		.hk9-blog__meta { justify-content: center; }
+	}
+
+	&__featured {
+		margin: 0 0 2.5rem;
+		border-radius: 1rem;
+		overflow: hidden;
+
+		img { width: 100%; height: auto; display: block; }
+	}
+
+	&__footer {
+		margin-top: 3rem;
+		padding-top: 2rem;
+		border-top: 1px solid var(--hk9-border);
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	&__nav {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1rem;
+
+		@include media-breakpoint-up(sm) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+
+		a {
+			display: block;
+			padding: 1rem 1.25rem;
+			border: 1px solid var(--hk9-border);
+			border-radius: .5rem;
+			background: var(--hk9-card);
+			color: var(--hk9-fg);
+			text-decoration: none;
+
+			span { display: block; font-size: .75rem; text-transform: uppercase; letter-spacing: .05em; color: var(--hk9-muted-fg); margin-bottom: .25rem; }
+			&:hover { border-color: var(--hk9-secondary); color: var(--hk9-secondary); }
+		}
+
+		&-next { text-align: right; }
+	}
+
+	&__related {
+		margin-top: 4rem;
+
+		h2 { font-size: 1.5rem; color: var(--hk9-primary); margin-bottom: 1.5rem; }
+	}
+
+	&__empty {
+		@extend .hk9-callout;
+		@extend .hk9-callout--lg;
+		max-width: var(--hk9-narrow);
+		margin: 0 auto;
+
+		h2 { color: var(--hk9-primary); font-size: 1.5rem; }
+		p { color: var(--hk9-muted-fg); }
+	}
+
+	// Pagination (the_posts_pagination): centred, 2px radius, crimson current.
+	&__pagination,
+	.navigation.pagination {
+		margin-top: 3rem;
+
+		.nav-links {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: center;
+			gap: .5rem;
+		}
+
+		.page-numbers {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 2.5rem;
+			height: 2.5rem;
+			padding: 0 .75rem;
+			border: 1px solid var(--hk9-border);
+			border-radius: 2px;
+			background: var(--hk9-card);
+			color: var(--hk9-fg);
+			font-size: .875rem;
+			font-weight: 500;
+			text-decoration: none;
+			transition: background-color .15s ease-in-out, color .15s ease-in-out;
+
+			&:hover,
+			&:focus-visible { background: var(--hk9-muted); color: var(--hk9-secondary); text-decoration: none; }
+
+			&.current { background: var(--hk9-secondary); border-color: var(--hk9-secondary); color: #fff; }
+
+			&.dots { border-color: transparent; background: transparent; color: var(--hk9-muted-fg); }
+
+			.hk9-icon { width: 1rem; height: 1rem; }
+		}
+	}
+}
+
+// Archive / search hero text.
+.hk9-archive-description {
+	color: rgba(var(--hk9-white-rgb), .8);
+	max-width: 672px;
+	margin: 0 auto;
+
+	> :last-child { margin-bottom: 0; }
+}
+
+// Comments.
+.hk9-comments {
+	margin-top: 4rem;
+	padding-top: 2rem;
+	border-top: 1px solid var(--hk9-border);
+
+	&__title { font-size: 1.5rem; color: var(--hk9-primary); margin-bottom: 1.5rem; }
+
+	.comment-list {
+		list-style: none;
+		margin: 0 0 2rem;
+		padding: 0;
+
+		.children { list-style: none; padding-left: 1.5rem; margin-top: 1rem; }
+	}
+
+	.comment-body {
+		padding: 1.25rem 1.5rem;
+		margin-bottom: 1rem;
+		background: var(--hk9-card);
+		border: 1px solid var(--hk9-border);
+		border-radius: .5rem;
+	}
+
+	.comment-meta { font-size: .875rem; color: var(--hk9-muted-fg); margin-bottom: .5rem; }
+	.comment-author .fn { font-weight: 600; color: var(--hk9-fg); font-style: normal; }
+	.comment-author .avatar { border-radius: 9999px; margin-right: .5rem; vertical-align: middle; }
+	.reply a { font-size: .875rem; font-weight: 500; }
+	.comment-reply-title { font-size: 1.25rem; color: var(--hk9-primary); }
+}

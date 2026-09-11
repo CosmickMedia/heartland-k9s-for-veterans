@@ -1,0 +1,88 @@
+{
+  "key": "live:page:3084",
+  "type": "page",
+  "status": "publish",
+  "slug": "the-service-k9-program",
+  "title": "The Service K9 Program",
+  "template": "page-templates/landing.php",
+  "excerpt": "HK9 owes it to our Veterans and donors that the K9s we receive for the program are trainable, documented, and healthy.",
+  "date": "2023-07-17T14:46:07Z",
+  "menu_order": 0,
+  "content": "content/live__page__3084.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "The Service K9 Program",
+        "text": "HK9 owes it to our Veterans and donors that the K9s we receive for the program are trainable, documented, and healthy.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": [],
+        "source_note": ""
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": []
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Does your K9 meet the requirements listed above?",
+        "text": "Click the “Contact Us” button below!",
+        "buttons": [
+          {
+            "link": {
+              "label": "Contact Us",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "faq",
+          "tiers"
+        ]
+      }
+    }
+  }
+}

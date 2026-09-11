@@ -1,0 +1,45 @@
+{
+  "generated_at": "2026-09-11T12:35:09.710Z",
+  "items": {
+    "mini:asset:hero": {
+      "file": "media/mini__asset__hero/mini-hero.jpg",
+      "sha256": "240a9ac4f83d0f83c4e85e5a976bbe1bf2d446b4f36e6848143bb81274d6e337",
+      "bytes": 47062,
+      "mime": "image/jpeg",
+      "width": 2800,
+      "height": 1400,
+      "title": "Mini hero",
+      "alt": "Navy banner with the word hero",
+      "caption": "Hero caption",
+      "description": "Generated fixture image (hero).",
+      "date": "2024-03-01T10:00:00Z"
+    },
+    "mini:asset:card": {
+      "file": "media/mini__asset__card/mini-card.png",
+      "sha256": "0d9f2e06cd4520090f48b54a214d45d8924f9d7487e81ea50c12e3ec2b94f64c",
+      "bytes": 6040,
+      "mime": "image/png",
+      "width": 400,
+      "height": 300,
+      "title": "Mini card",
+      "alt": "Crimson card image",
+      "caption": "",
+      "description": "",
+      "date": "2024-03-02T10:00:00Z"
+    },
+    "mini:asset:portrait": {
+      "file": "media/mini__asset__portrait/mini-portrait.png",
+      "sha256": "559bc6d7a12bed9c943fa6b5f99476ab50bf6a7b432d7aa46a463edbcaa3768c",
+      "bytes": 8887,
+      "mime": "image/png",
+      "width": 600,
+      "height": 400,
+      "title": "Handler portrait (must be scrubbed)",
+      "alt": "Named person alt text (must be scrubbed)",
+      "caption": "Caption with a name (must be scrubbed)",
+      "description": "",
+      "date": "2024-03-03T10:00:00Z",
+      "sensitive": true
+    }
+  }
+}

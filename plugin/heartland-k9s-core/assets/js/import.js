@@ -1,0 +1,419 @@
+/**
+ * Heartland -> Setup & Import: REST-driven progress client (no jQuery, no build).
+ *
+ * Reads window.HK9Import = { root, nonce, status, logBase, steps, i18n } and
+ * drives POST hk9/v1/import/{start,step,pause,resume,retry,rollback,reset} +
+ * GET hk9/v1/import/status. While a run is "running" the page keeps calling
+ * /step; every response is the full status snapshot and re-renders the screen.
+ */
+( function () {
+	'use strict';
+
+	const cfg = window.HK9Import;
+	if ( ! cfg ) {
+		return;
+	}
+
+	const $ = ( sel, root ) => ( root || document ).querySelector( sel );
+	const el = {
+		notice: $( '#hk9-import-notice' ),
+		payload: $( '#hk9-import-payload' ),
+		path: $( '#hk9-import-path' ),
+		overwrite: $( '#hk9-import-overwrite' ),
+		dry: $( '#hk9-import-dry' ),
+		start: $( '#hk9-import-start' ),
+		pause: $( '#hk9-import-pause' ),
+		resume: $( '#hk9-import-resume' ),
+		retry: $( '#hk9-import-retry' ),
+		reset: $( '#hk9-import-reset' ),
+		badge: $( '#hk9-import-status .hk9-import__badge' ),
+		stepline: $( '#hk9-import-status .hk9-import__stepline' ),
+		progress: $( '#hk9-import-status .hk9-import__progress' ),
+		bar: $( '#hk9-import-status .hk9-import__bar' ),
+		meta: $( '#hk9-import-status .hk9-import__meta' ),
+		log: $( '#hk9-import-status .hk9-import__log a' ),
+		counts: $( '#hk9-import-counts tbody' ),
+		errors: $( '#hk9-import-errors' ),
+		errorCount: $( '#hk9-import-error-count' ),
+		warnings: $( '#hk9-import-warnings' ),
+		runs: $( '#hk9-import-runs' ),
+		map: $( '#hk9-import-map' ),
+	};
+
+	let nonce = cfg.nonce;
+	let snapshot = cfg.status;
+	let busy = false;
+	let stopped = false;
+	let lastReport = '';
+
+	const speak = ( msg ) => {
+		if ( window.wp && wp.a11y && wp.a11y.speak ) {
+			wp.a11y.speak( msg );
+		}
+	};
+
+	const sprintf = ( fmt, ...args ) => {
+		let i = 0;
+		return fmt.replace( /%(\d+\$)?[sd]/g, ( m, pos ) => {
+			const idx = pos ? parseInt( pos, 10 ) - 1 : i++;
+			return String( args[ idx ] ?? '' );
+		} );
+	};
+
+	const esc = ( s ) => String( s ?? '' ).replace( /[&<>"']/g, ( c ) => ( { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ c ] ) );
+
+	/* ------------------------------------------------------------ REST */
+
+	async function call( action, body, method ) {
+		const res = await fetch( cfg.root + action, {
+			method: method || 'POST',
+			credentials: 'same-origin',
+			headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': nonce },
+			body: method === 'GET' ? undefined : JSON.stringify( body || {} ),
+		} );
+		const fresh = res.headers.get( 'X-WP-Nonce' );
+		if ( fresh ) {
+			nonce = fresh;
+		}
+		let data = null;
+		try {
+			data = await res.json();
+		} catch ( e ) {
+			data = null;
+		}
+		if ( ! res.ok ) {
+			const err = new Error( ( data && data.message ) || res.statusText || 'Request failed' );
+			err.status = res.status;
+			err.code = data && data.code;
+			throw err;
+		}
+		return data;
+	}
+
+	function notice( kind, msg ) {
+		if ( ! el.notice ) {
+			return;
+		}
+		if ( ! msg ) {
+			el.notice.hidden = true;
+			return;
+		}
+		el.notice.className = 'notice notice-' + kind;
+		el.notice.querySelector( 'p' ).textContent = msg;
+		el.notice.hidden = false;
+		speak( msg );
+	}
+
+	/* ---------------------------------------------------------- render */
+
+	function render() {
+		const s = snapshot.state;
+		const status = s.status || 'idle';
+		const stepIdx = ( s.step_index || 0 ) + 1;
+		const total = cfg.steps.length;
+
+		el.badge.dataset.status = status;
+		el.badge.textContent = cfg.i18n[ status ] || status;
+
+		if ( status === 'idle' ) {
+			el.stepline.textContent = '';
+			el.meta.textContent = '';
+		} else {
+			el.stepline.textContent = sprintf( cfg.i18n.stepOf, stepIdx, total, s.step ) + ' · ' + sprintf( cfg.i18n.records, s.cursor || 0, s.step_total || 0 );
+			const mb = ( ( s.bytes_copied || 0 ) / 1048576 ).toFixed( 1 );
+			el.meta.textContent = ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( s.mode && s.mode.overwrite ? ' + overwrite' : '' ) + ' · run ' + s.run_id + ' · ' + mb + ' MB' + ( snapshot.lock ? ' · ' + cfg.i18n.locked : '' );
+		}
+
+		// Progress: steps completed + fraction of the current step.
+		let pct = 0;
+		if ( status === 'done' ) {
+			pct = 100;
+		} else if ( status !== 'idle' ) {
+			const frac = s.step_total ? Math.min( 1, ( s.cursor || 0 ) / s.step_total ) : 0;
+			pct = Math.round( ( ( s.step_index || 0 ) + frac ) / total * 100 );
+		}
+		el.bar.style.width = pct + '%';
+		el.progress.setAttribute( 'aria-valuenow', String( pct ) );
+		el.progress.classList.toggle( 'is-done', status === 'done' );
+		el.progress.classList.toggle( 'is-failed', status === 'failed' );
+
+		if ( el.log ) {
+			if ( s.run_id ) {
+				el.log.href = cfg.logBase + '&run=' + encodeURIComponent( s.run_id );
+				el.log.hidden = false;
+			} else {
+				el.log.hidden = true;
+			}
+		}
+
+		// Counts.
+		const rows = cfg.steps.map( ( step, i ) => {
+			const c = ( s.counts && s.counts[ step ] ) || {};
+			const cur = status !== 'idle' && i === ( s.step_index || 0 ) && status !== 'done' ? ' class="is-current"' : '';
+			return '<tr' + cur + '><td>' + esc( step ) + '</td>' +
+				'<td>' + ( c.create || 0 ) + '</td><td>' + ( c.update || 0 ) + '</td><td>' + ( c.skip || 0 ) + '</td>' +
+				'<td class="' + ( c.conflict ? 'is-conflict' : '' ) + '">' + ( c.conflict || 0 ) + '</td>' +
+				'<td class="' + ( c.fail ? 'is-fail' : '' ) + '">' + ( c.fail || 0 ) + '</td></tr>';
+		} );
+		el.counts.innerHTML = rows.join( '' );
+
+		// Errors.
+		const errors = s.errors || [];
+		el.errorCount.textContent = errors.length ? '(' + ( s.errors_total || errors.length ) + ')' : '';
+		if ( ! errors.length ) {
+			el.errors.innerHTML = '<p class="hk9-import__empty">' + esc( cfg.i18n.noErrors ) + '</p>';
+		} else {
+			el.errors.innerHTML = '<table class="widefat striped"><thead><tr><th>Key</th><th>Step</th><th>Message</th></tr></thead><tbody>' +
+				errors.map( ( e ) => '<tr class="' + ( e.fatal ? 'is-fatal' : '' ) + '"><td><code>' + esc( e.key || '—' ) + '</code></td><td>' + esc( e.step ) + '</td><td>' + esc( e.message ) + '</td></tr>' ).join( '' ) +
+				'</tbody></table>';
+		}
+
+		// Warnings.
+		const warnings = s.warnings || [];
+		el.warnings.querySelector( '.hk9-import__count' ).textContent = warnings.length ? '(' + ( s.warnings_total || warnings.length ) + ')' : '';
+		el.warnings.querySelector( 'ul' ).innerHTML = warnings.map( ( w ) => '<li><code>' + esc( w.key || w.step ) + '</code> ' + esc( w.message ) + '</li>' ).join( '' );
+		el.warnings.hidden = ! warnings.length;
+
+		// Buttons.
+		const running = status === 'running';
+		const canStart = ! running && ! busy && ! snapshot.lock;
+		el.dry.disabled = ! canStart || el.dry.dataset.locked === '1';
+		el.start.disabled = ! canStart || el.start.dataset.locked === '1';
+		el.pause.disabled = ! running || busy;
+		el.resume.disabled = status !== 'paused' || busy || !! snapshot.lock;
+		el.retry.disabled = ! ( status === 'done' || status === 'failed' ) || ! errors.length || busy;
+		el.reset.disabled = running || busy;
+
+		// Payload summary.
+		if ( snapshot.payload ) {
+			const p = snapshot.payload;
+			el.payload.innerHTML = p.ok
+				? '<dl class="hk9-import__dl"><dt>Directory</dt><dd><code>' + esc( p.dir ) + '</code></dd><dt>Source</dt><dd>' + ( p.uploaded ? 'Uploaded ZIP' : 'Server path' ) + '</dd><dt>Generated</dt><dd>' + esc( p.generated_at ) + '</dd><dt>Records</dt><dd>' + p.records + ' (' + p.posts + ' posts/pages, ' + p.attachments + ' media, ' + ( p.bytes / 1048576 ).toFixed( 1 ) + ' MB)</dd></dl>'
+				: '<p class="hk9-import__empty">' + esc( p.error ) + '</p>';
+			if ( el.path && ! el.path.value ) {
+				el.path.value = p.dir;
+			}
+		} else {
+			el.payload.innerHTML = '<p class="hk9-import__empty">No payload selected yet. Upload a ZIP below or use a server path.</p>';
+		}
+		document.querySelectorAll( '.hk9-import__dev li' ).forEach( ( li ) => {
+			const btn = li.querySelector( 'button' );
+			li.classList.toggle( 'is-selected', !! btn && el.path && btn.dataset.path === el.path.value );
+		} );
+
+		// Runs.
+		const runs = Object.values( snapshot.runs || {} );
+		if ( ! runs.length ) {
+			el.runs.innerHTML = '<p class="hk9-import__empty">' + esc( cfg.i18n.noRuns ) + '</p>';
+		} else {
+			el.runs.innerHTML = '<div class="hk9-import__runs"><table class="widefat striped"><thead><tr><th>Run</th><th>Started</th><th>Mode</th><th>Status</th><th>Errors</th><th></th></tr></thead><tbody>' +
+				runs.map( ( r ) => {
+					const mode = ( r.mode && r.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( r.mode && r.mode.overwrite ? ' + overwrite' : '' );
+					const canRollback = ! ( r.mode && r.mode.dry_run ) && ! r.rolled_back && ! running;
+					return '<tr data-run="' + esc( r.run_id ) + '"><td><code>' + esc( r.run_id ) + '</code></td><td>' + esc( ( r.started_at || '' ).replace( 'T', ' ' ).slice( 0, 19 ) ) + '</td><td>' + esc( mode ) + '</td><td>' + esc( r.status ) + ( r.rolled_back ? ' (' + esc( cfg.i18n.rolledBack ) + ')' : '' ) + '</td><td>' + ( r.errors || 0 ) + '</td>' +
+						'<td>' + ( canRollback ? '<button type="button" class="button button-small hk9-import__rollback-btn" data-run="' + esc( r.run_id ) + '">' + esc( cfg.i18n.rollback ) + '</button>' : '' ) +
+						( r.log_file ? ' <a class="button button-small" href="' + esc( cfg.logBase + '&run=' + encodeURIComponent( r.run_id ) ) + '">Log</a>' : '' ) + '</td></tr>';
+				} ).join( '' ) + '</tbody></table></div>' +
+				( lastReport ? '<div class="hk9-import__report" role="status">' + esc( lastReport ) + '</div>' : '' );
+		}
+
+		// Map summary.
+		const map = snapshot.map || {};
+		const parts = Object.keys( map ).map( ( k ) => k + ' = ' + map[ k ] );
+		el.map.textContent = parts.length ? parts.join( ', ' ) : '—';
+	}
+
+	/* ------------------------------------------------------------ loop */
+
+	async function loop() {
+		if ( stopped ) {
+			return;
+		}
+		if ( snapshot.state.status !== 'running' ) {
+			return;
+		}
+		if ( snapshot.lock && ! busy ) {
+			// Another process (CLI?) is ticking: just poll status.
+			try {
+				snapshot = await call( 'status', null, 'GET' );
+			} catch ( e ) {
+				notice( 'error', e.message );
+			}
+			render();
+			setTimeout( loop, 2000 );
+			return;
+		}
+		try {
+			busy = true;
+			render();
+			snapshot = await call( 'step' );
+			busy = false;
+			render();
+			if ( snapshot.state.status === 'running' ) {
+				setTimeout( loop, 50 );
+			} else {
+				announceFinal();
+			}
+		} catch ( e ) {
+			busy = false;
+			if ( e.status === 423 ) {
+				try {
+					snapshot = await call( 'status', null, 'GET' );
+				} catch ( e2 ) {
+					// keep old snapshot
+				}
+				render();
+				setTimeout( loop, 2000 );
+				return;
+			}
+			notice( 'error', e.message );
+			try {
+				snapshot = await call( 'status', null, 'GET' );
+			} catch ( e3 ) {
+				// ignore
+			}
+			render();
+		}
+	}
+
+	function announceFinal() {
+		const s = snapshot.state;
+		const errs = ( s.errors || [] ).length;
+		if ( s.status === 'done' ) {
+			notice( errs ? 'warning' : 'success', ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ': ' + cfg.i18n.done + ( errs ? ' — ' + errs + ' ' + cfg.i18n.error.toLowerCase() + '(s)' : '' ) );
+		} else if ( s.status === 'failed' ) {
+			notice( 'error', cfg.i18n.failed + ': ' + ( ( s.errors || [] ).filter( ( e ) => e.fatal ).map( ( e ) => e.message ).join( ' ' ) || '' ) );
+		} else if ( s.status === 'paused' ) {
+			notice( 'info', cfg.i18n.paused );
+		}
+	}
+
+	async function action( name, body ) {
+		notice( '', '' );
+		try {
+			busy = true;
+			render();
+			const data = await call( name, body );
+			snapshot = data.status ? data.status : data;
+			busy = false;
+			render();
+			return data;
+		} catch ( e ) {
+			busy = false;
+			render();
+			notice( 'error', e.message );
+			return null;
+		}
+	}
+
+	async function start( dryRun ) {
+		const body = {
+			dry_run: !! dryRun,
+			overwrite: !! el.overwrite.checked,
+			path: el.path ? el.path.value : '',
+			budget: 10,
+			batch: 25,
+		};
+		const data = await action( 'start', body );
+		if ( data ) {
+			stopped = false;
+			loop();
+		}
+	}
+
+	/* ---------------------------------------------------------- events */
+
+	el.dry.addEventListener( 'click', () => start( true ) );
+	el.start.addEventListener( 'click', () => start( false ) );
+	el.pause.addEventListener( 'click', async () => {
+		await action( 'pause' );
+		if ( snapshot.state.status === 'paused' ) {
+			notice( 'info', cfg.i18n.paused );
+		}
+	} );
+	el.resume.addEventListener( 'click', async () => {
+		const data = await action( 'resume' );
+		if ( data ) {
+			stopped = false;
+			loop();
+		}
+	} );
+	el.retry.addEventListener( 'click', async () => {
+		const data = await action( 'retry' );
+		if ( data ) {
+			stopped = false;
+			loop();
+		}
+	} );
+	el.reset.addEventListener( 'click', async () => {
+		if ( ! window.confirm( cfg.i18n.confirmReset ) ) {
+			return;
+		}
+		stopped = true;
+		await action( 'reset' );
+	} );
+
+	document.addEventListener( 'click', ( ev ) => {
+		const use = ev.target.closest( '.hk9-import__use-path' );
+		if ( use && el.path ) {
+			el.path.value = use.dataset.path;
+			render();
+			return;
+		}
+		const rb = ev.target.closest( '.hk9-import__rollback-btn' );
+		if ( rb ) {
+			openRollback( rb.dataset.run, rb.closest( 'tr' ) );
+		}
+	} );
+
+	function openRollback( run, row ) {
+		document.querySelectorAll( '.hk9-import__rollback' ).forEach( ( n ) => n.remove() );
+		const box = document.createElement( 'div' );
+		box.className = 'hk9-import__rollback';
+		box.innerHTML = '<label>' + esc( cfg.i18n.typeRollback ) + ' <input type="text" autocomplete="off" aria-label="Confirmation"></label>' +
+			'<label><input type="checkbox" class="hk9-import__force"> Force (also remove records edited since the import)</label>' +
+			'<button type="button" class="button button-primary hk9-import__rollback-go">Roll back ' + esc( run ) + '</button>' +
+			'<button type="button" class="button hk9-import__rollback-cancel">Cancel</button>';
+		const cell = document.createElement( 'td' );
+		cell.colSpan = 6;
+		cell.appendChild( box );
+		const tr = document.createElement( 'tr' );
+		tr.appendChild( cell );
+		row.after( tr );
+		const input = box.querySelector( 'input[type="text"]' );
+		input.focus();
+		box.querySelector( '.hk9-import__rollback-cancel' ).addEventListener( 'click', () => tr.remove() );
+		box.querySelector( '.hk9-import__rollback-go' ).addEventListener( 'click', async () => {
+			if ( input.value.trim() !== 'ROLLBACK' ) {
+				notice( 'error', cfg.i18n.typeRollback );
+				input.focus();
+				return;
+			}
+			const data = await action( 'rollback', { run, confirm: 'ROLLBACK', force: box.querySelector( '.hk9-import__force' ).checked } );
+			if ( data && data.report ) {
+				const r = data.report;
+				lastReport = [
+					...r.deleted.map( ( d ) => 'deleted   ' + d.key + ( d.id ? ' (#' + d.id + ')' : '' ) ),
+					...r.restored.map( ( d ) => 'restored  ' + d.key + ' [' + ( d.fields || [] ).join( ', ' ) + ']' ),
+					...r.skipped.map( ( d ) => 'skipped   ' + d.key + ' — ' + d.reason ),
+					...r.errors.map( ( d ) => 'error     ' + d ),
+				].join( '\n' );
+				render();
+				notice( r.skipped.length ? 'warning' : 'success', sprintf( cfg.i18n.rollbackDone, r.deleted.length, r.restored.length, r.skipped.length ) );
+			}
+		} );
+	}
+
+	/* ------------------------------------------------------------ boot */
+
+	if ( el.dry.disabled ) {
+		el.dry.dataset.locked = '1';
+	}
+	if ( el.start.disabled ) {
+		el.start.dataset.locked = '1';
+	}
+	render();
+	if ( snapshot.state.status === 'running' ) {
+		loop();
+	}
+} )();

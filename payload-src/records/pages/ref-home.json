@@ -1,0 +1,162 @@
+{
+  "key": "ref:page:home",
+  "type": "page",
+  "status": "publish",
+  "slug": "home",
+  "title": "Home",
+  "template": "page-templates/home.php",
+  "excerpt": "Pairing eligible disabled U.S. veterans with highly trained service dogs at zero cost. Restoring independence, dignity, and purpose.",
+  "menu_order": 0,
+  "meta": {
+    "hk9_sec_hero_image": {
+      "type": "object",
+      "value": {
+        "eyebrow": "IRS-Recognized 501(c)(3) Nonprofit",
+        "eyebrow_icon": "shield-check",
+        "heading": "So They Never Walk Alone.",
+        "heading_break_after": "Never",
+        "text": "Pairing eligible disabled U.S. veterans with highly trained service dogs at zero cost. Restoring independence, dignity, and purpose.",
+        "image": "{{media:ref:asset:hero-home}}",
+        "image_mobile": 0,
+        "focal": "center",
+        "height": "85vh",
+        "overlay": "60",
+        "gradient": true,
+        "buttons": [
+          {
+            "link": {
+              "label": "Support a Service Dog",
+              "url": "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives",
+              "post_id": 0,
+              "target": "_blank",
+              "rel": "noopener"
+            },
+            "style": "primary"
+          },
+          {
+            "link": {
+              "label": "Apply for a Dog",
+              "url": "",
+              "post_id": "{{post:ref:page:veterans}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "outline-light"
+          }
+        ],
+        "animate": true
+      }
+    },
+    "hk9_sec_mission": {
+      "type": "object",
+      "value": {
+        "heading": "We believe those who served our nation deserve the highest level of care and support upon their return.",
+        "divider": true,
+        "text": "At Heartland Canines for Veterans, our mission is simple yet profound: to place exceptional service dogs with disabled veterans at no financial burden to the veteran. Through empirical strategies, rigorous training, and a deep understanding of our veterans’ needs, we forge partnerships that save lives."
+      }
+    },
+    "hk9_sec_features": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": [
+          {
+            "icon": "shield-check",
+            "tone": "navy",
+            "title": "Zero Cost to Veterans",
+            "text": "We believe a veteran has already paid the price. HK9 proudly gifts a service K9 at ZERO cost to Veterans—every service dog, complete with training and equipment, is provided entirely free of charge.",
+            "link": {
+              "label": "Learn about funding",
+              "url": "",
+              "post_id": "{{post:ref:page:get-involved}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          },
+          {
+            "icon": "heart-handshake",
+            "tone": "crimson",
+            "title": "Unbreakable Bond",
+            "text": "We don’t just hand over a leash. We ensure the right canine is paired with the right person, fostering a bond built on trust and mutual support.",
+            "link": {
+              "label": "Our matching process",
+              "url": "",
+              "post_id": "{{post:ref:page:program}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": true
+          },
+          {
+            "icon": "heart",
+            "tone": "navy",
+            "title": "A Lifelong Commitment",
+            "text": "Having a service dog is a lifetime commitment. Training, and working with your K9 is never “complete”. HK9 is available to help with re-training.",
+            "link": {
+              "label": "What to expect",
+              "url": "",
+              "post_id": "{{post:ref:page:veterans}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          }
+        ]
+      }
+    },
+    "hk9_sec_barkode_feature": {
+      "type": "object",
+      "value": {
+        "eyebrow": "A Service of Heartland K9s",
+        "heading": "The BarKode Program",
+        "text": "Heartland-trained Service K9 Teams are assigned a unique team number and QR code documented in our secure database. Scanning a BarKode shows the K9’s photo, team ID and trained tasks along with emergency contact, veterinarian and HK9 contact information—so that in an emergency these uniquely trained canines are not separated from their handler.",
+        "image": "{{media:ref:asset:barkode}}",
+        "image_caption": "Dedicated to Derron & Rosie",
+        "button": {
+          "label": "Explore BarKode",
+          "url": "",
+          "post_id": "{{post:ref:page:barkode}}",
+          "target": "_self",
+          "rel": ""
+        },
+        "pattern": true
+      }
+    },
+    "hk9_sec_testimonial": {
+      "type": "object",
+      "value": {
+        "source": "story",
+        "story": "{{post:live:story:madison-stratton}}",
+        "quote": "Its truly night and day compared to where I was to where I am now. I can’t thank my friends, family, and the community enough for helping me through everything.",
+        "name": "Madison Stratton",
+        "meta": "USMC Veteran & HK9 Board Member — paired with Gunther",
+        "image": "{{media:live:media:3444}}",
+        "button": {
+          "label": "Read More Stories",
+          "url": "",
+          "post_id": "{{post:ref:page:stories}}",
+          "target": "_self",
+          "rel": ""
+        }
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_image",
+          "mission",
+          "features",
+          "barkode_feature",
+          "testimonial"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "key": "live:partner:jack",
+  "type": "hk9_partner",
+  "status": "publish",
+  "slug": "jack-henry-associates",
+  "title": "Jack Henry & Associates",
+  "featured": "{{media:live:media:3020}}",
+  "menu_order": 5,
+  "meta": {
+    "hk9_website": {
+      "type": "object",
+      "value": {
+        "label": "",
+        "url": "",
+        "post_id": 0,
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_tier": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_since": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "terms": {
+    "hk9_partner_type": [
+      "{{term:hk9_partner_type:back-the-pack}}",
+      "{{term:hk9_partner_type:campaign-sponsor}}"
+    ]
+  }
+}

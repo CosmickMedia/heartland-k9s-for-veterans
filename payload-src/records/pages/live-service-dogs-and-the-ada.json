@@ -1,0 +1,94 @@
+{
+  "key": "live:page:1995",
+  "type": "page",
+  "status": "publish",
+  "slug": "service-dogs-and-the-ada",
+  "title": "Service Dogs and the ADA",
+  "template": "page-templates/landing.php",
+  "excerpt": "A few frequently asked questions about Service Animals and the Americans With Disabilities Act (ADA).",
+  "date": "2020-01-23T17:24:15Z",
+  "menu_order": 0,
+  "content": "content/live__page__1995.html",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Service Dogs and the ADA",
+        "text": "A Few Frequently Asked Questions about Service Animals and the Americans With Disabilities Act (ADA).",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cards": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "divider": false,
+        "align": "center",
+        "columns": "3",
+        "cards": []
+      }
+    },
+    "hk9_sec_faq": {
+      "type": "object",
+      "value": {
+        "heading": "Questions about Service Animals and the ADA",
+        "intro": "A few of the questions most often asked of the U.S. Department of Justice Civil Rights Division. Use the link above for the full list.",
+        "items": [
+          {
+            "question": "What is a service animal?",
+            "answer": "<p>Under the ADA, a service animal is defined as a dog that has been individually trained to do work or perform tasks for an individual with a disability. The task(s) performed by the dog must be directly related to the person’s disability.</p>"
+          },
+          {
+            "question": "What does “do work or perform tasks” mean?",
+            "answer": "<p>The dog must be trained to take a specific action when needed to assist the person with a disability. For example, a person with diabetes may have a dog that is trained to alert him when his blood sugar reaches high or low levels. A person with depression may have a dog that is trained to remind her to take her medication. Or, a person who has epilepsy may have a dog that is trained to detect the onset of a seizure and then help the person remain safe during the seizure.</p>"
+          },
+          {
+            "question": "Are emotional support, therapy, comfort, or companion animals considered service animals under the ADA?",
+            "answer": "<p>No. These terms are used to describe animals that provide comfort just by being with a person. Because they have not been trained to perform a specific job or task, they do not qualify as service animals under the ADA. However, some State or local governments have laws that allow people to take emotional support animals into public places. You may check with your State and local government agencies to find out about these laws.</p>"
+          },
+          {
+            "question": "Can individuals with disabilities be refused access to a facility based solely on the breed of their service animal?",
+            "answer": "<p>No. A service animal may not be excluded based on assumptions or stereotypes about the animal’s breed or how the animal might behave. However, if a particular service animal behaves in a way that poses a direct threat to the health or safety of others, has a history of such behavior, or is not under the control of the handler, that animal may be excluded. If an animal is excluded for such reasons, staff must still offer their goods or services to the person without the animal present.</p>"
+          }
+        ],
+        "source_note": "Source: U.S. Department of Justice Civil Rights Division, Disability Rights Section — Frequently Asked Questions about Service Animals and the ADA."
+      }
+    },
+    "hk9_sec_tiers": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "intro": "",
+        "items": []
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "text": "",
+        "buttons": [],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "cards",
+          "faq",
+          "tiers",
+          "cta"
+        ],
+        "hidden": [
+          "cards",
+          "tiers",
+          "cta"
+        ]
+      }
+    }
+  }
+}

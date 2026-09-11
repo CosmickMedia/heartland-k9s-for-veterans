@@ -1,0 +1,8 @@
+{
+  "key": "reading",
+  "type": "reading",
+  "show_on_front": "page",
+  "page_on_front": "{{post:mini:page:home}}",
+  "page_for_posts": "{{post:mini:page:news}}",
+  "posts_per_page": 6
+}

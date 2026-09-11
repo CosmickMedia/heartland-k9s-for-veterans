@@ -1,0 +1,74 @@
+{
+  "key": "live:page:2072",
+  "type": "page",
+  "status": "publish",
+  "slug": "back-the-pack",
+  "title": "Back the Pack",
+  "template": "page-templates/partners.php",
+  "excerpt": "We would like to send a big thank you to our Back the Pack partners.",
+  "date": "2020-02-03T17:18:40Z",
+  "menu_order": 0,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Back the Pack",
+        "text": "We would like to send a big thank you to our Back the Pack partners.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_logos": {
+      "type": "object",
+      "value": {
+        "heading": "Our Back the Pack Partners",
+        "intro": "If you would like to join the pack please contact us for more information or check out our different campaigns.",
+        "mode": "auto",
+        "type": "back-the-pack",
+        "partners": [],
+        "columns": "4"
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Join the Pack",
+        "text": "If you would like to join the pack please contact us for more information or check out our different campaigns.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Contact Us",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          },
+          {
+            "link": {
+              "label": "View Campaigns",
+              "url": "",
+              "post_id": "{{post:live:page:2800}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "outline-light"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "logos",
+          "cta"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

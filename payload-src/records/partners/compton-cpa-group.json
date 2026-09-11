@@ -1,0 +1,34 @@
+{
+  "key": "live:partner:compton-cpa-group",
+  "type": "hk9_partner",
+  "status": "publish",
+  "slug": "compton-cpa-group",
+  "title": "Compton CPA Group P.C.",
+  "featured": "{{media:live:media:3505}}",
+  "menu_order": 13,
+  "meta": {
+    "hk9_website": {
+      "type": "object",
+      "value": {
+        "label": "",
+        "url": "",
+        "post_id": 0,
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_tier": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_since": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "terms": {
+    "hk9_partner_type": [
+      "{{term:hk9_partner_type:back-the-pack}}"
+    ]
+  }
+}

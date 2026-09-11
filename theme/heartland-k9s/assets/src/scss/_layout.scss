@@ -1,0 +1,277 @@
+// ---------------------------------------------------------------------------
+// Layout: containers, sections, inner max-widths, divider bar, background patterns.
+// Measured section rhythm: py-24 = 96px, py-20 = 80px, hero band pt-24 pb-32,
+// overlap −64px, container gutter 16px (<768) / 32px (≥768).
+// ---------------------------------------------------------------------------
+
+// Bootstrap's .container already carries the max-width steps; below 768px the
+// per-side gutter drops to 16px (px-4 md:px-8).
+.container,
+.hk9-container {
+	--bs-gutter-x: 2rem;
+
+	@include media-breakpoint-up(md) {
+		--bs-gutter-x: 4rem;
+	}
+}
+
+:root {
+	@include media-breakpoint-up(md) {
+		--hk9-gutter: 2rem;
+	}
+}
+
+.hk9-container {
+	@extend .container;
+}
+
+.hk9-narrow,
+.hk9-wide,
+.hk9-medium {
+	margin-left: auto;
+	margin-right: auto;
+	width: 100%;
+}
+
+.hk9-narrow { max-width: var(--hk9-narrow); } // 896px — max-w-4xl
+.hk9-wide   { max-width: var(--hk9-wide); }   // 1024px — max-w-5xl
+.hk9-medium { max-width: 768px; }             // max-w-3xl (CTA bands)
+.hk9-copy   { max-width: 672px; }             // max-w-2xl (hero paragraphs)
+
+// "container max-w-4xl": the gutter sits INSIDE the max-width (content 832px at ≥768).
+.container.hk9-narrow { max-width: var(--hk9-narrow); }
+.container.hk9-wide { max-width: var(--hk9-wide); }
+.container.hk9-medium { max-width: 768px; }
+
+// A padded inner wrapper for sections that use the gutter but not the container width
+// (reference: <section class="-mt-16 px-4 md:px-8"><div class="container max-w-5xl">).
+.hk9-gutter {
+	padding-left: var(--hk9-gutter);
+	padding-right: var(--hk9-gutter);
+}
+
+// Sections -------------------------------------------------------------------
+
+.hk9-section {
+	position: relative;
+	background-color: var(--hk9-bg);
+	color: var(--hk9-fg);
+
+	&--py24 { padding-top: 6rem; padding-bottom: 6rem; }
+	&--py20 { padding-top: 5rem; padding-bottom: 5rem; }
+	&--py16 { padding-top: 4rem; padding-bottom: 4rem; }
+	&--pb20 { padding-bottom: 5rem; }
+
+	&--tint {
+		background-color: rgba(var(--hk9-muted-rgb), .5);
+	}
+
+	&--muted {
+		background-color: var(--hk9-muted);
+	}
+
+	&--navy {
+		background-color: var(--hk9-primary);
+		color: #fff;
+
+		.hk9-lead { color: rgba(var(--hk9-white-rgb), .8); }
+	}
+
+	&--bordered {
+		border-top: 1px solid var(--hk9-border);
+		border-bottom: 1px solid var(--hk9-border);
+	}
+
+	&--plain {
+		background-color: transparent;
+	}
+
+	&--overflow {
+		overflow: hidden;
+	}
+
+	// Content stacked above a pattern layer.
+	&__inner {
+		position: relative;
+		z-index: 1;
+	}
+
+	// Section header block: "text-center mb-16".
+	&__header {
+		text-align: center;
+		margin-bottom: 4rem;
+
+		> :last-child { margin-bottom: 0; }
+	}
+
+	&__title {
+		font-size: 1.875rem;
+		line-height: 1.2;
+		margin-bottom: 1rem;
+		color: var(--hk9-primary);
+
+		@include media-breakpoint-up(md) {
+			font-size: 2.25rem;
+			line-height: 1.25;
+		}
+
+		.hk9-section--navy & { color: #fff; }
+	}
+
+	&__intro {
+		@extend .hk9-lead;
+		max-width: var(--hk9-narrow);
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+// Crimson divider bar: 96 × 4, fully rounded, 32px below (mb-8).
+.hk9-divider {
+	display: block;
+	width: 6rem;
+	height: .25rem;
+	margin: 0 auto 2rem;
+	border-radius: 9999px;
+	background: var(--hk9-secondary);
+
+	&--left {
+		margin-left: 0;
+		margin-right: 0;
+	}
+}
+
+// Background patterns (inline SVG data URIs, 10% opacity, currentColor = white on navy).
+// grid: 40×40 diagonal lines · stars: 60×60 five-point star.
+$hk9-pattern-grid: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40' stroke='%23ffffff' stroke-width='1' fill='none'/%3E%3C/svg%3E";
+$hk9-pattern-stars: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 10l5 15h15l-12 9 5 15-13-10-13 10 5-15-12-9h15z' fill='%23ffffff'/%3E%3C/svg%3E";
+
+.hk9-pattern {
+	position: relative;
+	overflow: hidden;
+
+	&::before {
+		content: "";
+		position: absolute;
+		inset: 0;
+		opacity: .1;
+		pointer-events: none;
+		background-repeat: repeat;
+		background-position: 0 0;
+	}
+
+	&--grid::before {
+		background-image: url("#{$hk9-pattern-grid}");
+		background-size: 40px 40px;
+	}
+
+	&--stars::before {
+		background-image: url("#{$hk9-pattern-stars}");
+		background-size: 60px 60px;
+	}
+
+	> * {
+		position: relative;
+		z-index: 1;
+	}
+}
+
+// Overlap card: sits −64px over the navy hero band (page templates).
+.hk9-overlap {
+	position: relative;
+	z-index: 2;
+	margin-top: calc(var(--hk9-overlap) * -1);
+	padding-left: var(--hk9-gutter);
+	padding-right: var(--hk9-gutter);
+
+	&__card {
+		width: 100%;
+		max-width: var(--hk9-wide);
+		margin: 0 auto;
+		background: var(--hk9-card);
+		border: 1px solid var(--hk9-border);
+		border-radius: 1rem;
+		box-shadow: var(--hk9-shadow-xl);
+		padding: 2rem;
+
+		@include media-breakpoint-up(md) {
+			padding: 3rem;
+		}
+	}
+
+	&__card--split {
+		display: flex;
+		flex-direction: column;
+		padding: 0;
+		overflow: hidden;
+
+		@include media-breakpoint-up(md) {
+			flex-direction: row;
+		}
+	}
+
+	&__media {
+		position: relative;
+		min-height: 20rem; // h-80
+		background: var(--hk9-muted);
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+
+		@include media-breakpoint-up(md) {
+			width: 50%;
+			min-height: 0;
+		}
+	}
+
+	&__body {
+		padding: 2.5rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		gap: 1.5rem;
+
+		@include media-breakpoint-up(md) {
+			width: 50%;
+			padding: 3rem;
+		}
+
+		> * { margin-bottom: 0; }
+	}
+}
+
+// Generic stacked spacing helpers ("space-y-*").
+.hk9-stack > * + * { margin-top: 1.5rem; }
+.hk9-stack--sm > * + * { margin-top: 1rem; }
+.hk9-stack--lg > * + * { margin-top: 2rem; }
+
+// Split layout used by feature sections (image + text, lg: side by side).
+.hk9-split {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 3rem;
+
+	@include media-breakpoint-up(lg) {
+		flex-direction: row;
+	}
+
+	&__col {
+		width: 100%;
+
+		@include media-breakpoint-up(lg) {
+			width: 50%;
+		}
+	}
+
+	&--reverse {
+		@include media-breakpoint-up(lg) {
+			flex-direction: row-reverse;
+		}
+	}
+}

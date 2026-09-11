@@ -1,0 +1,87 @@
+// ---------------------------------------------------------------------------
+// Accessibility + motion utilities: skip link, reduced motion, hover gating,
+// print. (.hk9-visually-hidden lives in _prose.scss next to .screen-reader-text.)
+// ---------------------------------------------------------------------------
+
+.hk9-skip-link {
+	position: absolute;
+	top: -100%;
+	left: 1rem;
+	z-index: 100;
+	padding: .75rem 1.25rem;
+	background: var(--hk9-primary);
+	color: #fff;
+	font-weight: 600;
+	border-radius: 2px;
+	text-decoration: none;
+	box-shadow: var(--hk9-shadow-lg);
+
+	&:focus,
+	&:focus-visible {
+		top: calc(var(--hk9-sticky-top, 0px) + 1rem);
+		color: #fff;
+		outline: 2px solid #fff;
+		outline-offset: 2px;
+	}
+}
+
+// Inline notice printed on the frontend when a template is used without the plugin.
+.hk9-notice {
+	padding: 1rem 1.25rem;
+	border-radius: .5rem;
+	background: rgba(var(--hk9-secondary-rgb), .08);
+	border: 1px solid rgba(var(--hk9-secondary-rgb), .3);
+	color: var(--hk9-fg);
+	font-size: .9375rem;
+}
+
+// Reduced motion: no animations or transitions anywhere.
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: .01ms !important;
+		animation-iteration-count: 1 !important;
+		animation-delay: 0s !important;
+		transition-duration: .01ms !important;
+		scroll-behavior: auto !important;
+	}
+
+	.hk9-hero--animate .hk9-hero__badge,
+	.hk9-hero--animate .hk9-hero__title,
+	.hk9-hero--animate .hk9-hero__text,
+	.hk9-hero--animate .hk9-hero__actions {
+		animation: none !important;
+		opacity: 1 !important;
+		transform: none !important;
+	}
+
+	.hk9-header__mobile.is-open {
+		animation: none !important;
+	}
+}
+
+// Hover-only effects are gated with @media (hover: hover) in the component
+// partials; this stops touch devices from sticking in the hover state.
+@media (hover: none) {
+	.hk9-card--hover,
+	.hk9-card--lift,
+	.hk9-partners__item {
+		transform: none !important;
+	}
+}
+
+@media print {
+	.hk9-header,
+	.hk9-footer,
+	.hk9-skip-link,
+	.hk9-hero__bg,
+	.hk9-hero__overlay,
+	.hk9-hero__gradient {
+		display: none !important;
+	}
+
+	.hk9-hero { color: var(--hk9-fg); min-height: 0; height: auto; padding: 1rem 0; }
+	.hk9-hero__title, .hk9-hero__text { color: var(--hk9-fg); }
+	.hk9-section { padding: 1rem 0 !important; background: none !important; color: var(--hk9-fg) !important; }
+}

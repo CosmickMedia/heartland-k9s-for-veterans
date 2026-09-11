@@ -1,0 +1,63 @@
+{
+  "key": "live:page:3011",
+  "type": "page",
+  "status": "publish",
+  "slug": "hk9-current-teams-in-training",
+  "title": "HK9 Teams in Training",
+  "template": "page-templates/teams.php",
+  "excerpt": "Meet the Veteran and K9 teams currently in training with Heartland Canines for Veterans.",
+  "date": "2023-05-10T15:55:56Z",
+  "menu_order": 0,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "HK9 Teams in Training",
+        "text": "Meet the Veteran and K9 teams currently in training with Heartland Canines for Veterans.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "Help our teams in training",
+        "text": "Every gift helps cover training, medical costs, food and kennel for the K9s in our program.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Donate",
+              "url": "",
+              "post_id": "{{post:live:page:2120}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          }
+        ],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "list",
+          "cta"
+        ],
+        "hidden": []
+      }
+    },
+    "hk9_sec_teams_list": {
+      "type": "object",
+      "value": {
+        "heading": "Teams in Training",
+        "intro": "",
+        "mode": "auto",
+        "status": "in-training",
+        "teams": []
+      }
+    }
+  }
+}

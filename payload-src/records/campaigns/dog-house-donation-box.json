@@ -1,0 +1,65 @@
+{
+  "key": "live:campaign:dog-house-donation-box",
+  "type": "hk9_campaign",
+  "status": "publish",
+  "slug": "dog-house-donation-box",
+  "title": "Dog House Donation Box",
+  "excerpt": "Provide counter space for HK9’s Donation Box for cash donations.",
+  "content": "content/live__campaign__dog-house-donation-box.html",
+  "featured": "{{media:live:media:2808}}",
+  "menu_order": 4,
+  "meta": {
+    "hk9_summary": {
+      "type": "string",
+      "value": "Our Dog House Donation Box Campaign is for companies and businesses to provide counter space for HK9’s Donation Box for cash donations. The boxes are small, provide information to let people know where their gifts are going, and are no cost to your business."
+    },
+    "hk9_status": {
+      "type": "string",
+      "value": "active"
+    },
+    "hk9_start": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_end": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_cta": {
+      "type": "object",
+      "value": {
+        "label": "Request your Dog House Here",
+        "url": "",
+        "post_id": "{{post:ref:page:contact}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_secondary_cta": {
+      "type": "object",
+      "value": {
+        "label": "",
+        "url": "",
+        "post_id": 0,
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "hk9_sponsors": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_gallery": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_goal_text": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_featured": {
+      "type": "boolean",
+      "value": false
+    }
+  }
+}

@@ -1,0 +1,223 @@
+[
+  {
+    "key": "redirect:/master_template_barkode/",
+    "type": "redirect",
+    "from": "/master_template_barkode/",
+    "to": "{{post_url:ref:page:barkode}}",
+    "status": 301,
+    "note": "Master template is imported as a draft example; legacy public URL now lands on the BarKode program page."
+  },
+  {
+    "key": "redirect:/success/",
+    "type": "redirect",
+    "from": "/success/",
+    "to": "{{post_url:ref:page:stories}}",
+    "status": 301,
+    "note": "Unpopulated live stories stub (imported as draft)."
+  },
+  {
+    "key": "redirect:/success/sample-success-story/",
+    "type": "redirect",
+    "from": "/success/sample-success-story/",
+    "to": "{{post_url:ref:page:stories}}",
+    "status": 301,
+    "note": "Placeholder sample story (imported as draft)."
+  },
+  {
+    "key": "redirect:/slide/heartland-hero/",
+    "type": "redirect",
+    "from": "/slide/heartland-hero/",
+    "to": "/",
+    "status": 301,
+    "note": "Avada slider CPT URL; live already 301s to the homepage."
+  },
+  {
+    "key": "redirect:/slide-page/homepage-fusion/",
+    "type": "redirect",
+    "from": "/slide-page/homepage-fusion/",
+    "to": "/",
+    "status": 301,
+    "note": "Avada slider taxonomy URL; live already 301s to the homepage."
+  },
+  {
+    "key": "redirect:/?foogallery=2468",
+    "type": "redirect",
+    "from": "/?foogallery=2468",
+    "to": "{{post_url:live:page:2455}}",
+    "status": 301,
+    "note": "FooGallery query URL for the photo gallery."
+  },
+  {
+    "key": "redirect:/?foogallery=back-the-pack-partners",
+    "type": "redirect",
+    "from": "/?foogallery=back-the-pack-partners",
+    "to": "{{post_url:live:page:2072}}",
+    "status": 301,
+    "note": "FooGallery query URL for the Back the Pack partner wall."
+  },
+  {
+    "key": "redirect:/larry-and-archie-service-k9/",
+    "type": "redirect",
+    "from": "/larry-and-archie-service-k9/",
+    "to": {
+      "type": "record",
+      "slug": "larry-and-archie-service-k9"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/jimmy-and-riley-service-k9/",
+    "type": "redirect",
+    "from": "/jimmy-and-riley-service-k9/",
+    "to": {
+      "type": "record",
+      "slug": "jimmy-and-riley-service-k9"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/vern-and-bella-service-dog/",
+    "type": "redirect",
+    "from": "/vern-and-bella-service-dog/",
+    "to": {
+      "type": "record",
+      "slug": "vern-and-bella-service-dog"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/hk923004/",
+    "type": "redirect",
+    "from": "/hk923004/",
+    "to": {
+      "type": "record",
+      "slug": "hk923004"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/hk923-005/",
+    "type": "redirect",
+    "from": "/hk923-005/",
+    "to": {
+      "type": "record",
+      "slug": "hk923-005"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/madison-and-gunther-service-k9/",
+    "type": "redirect",
+    "from": "/madison-and-gunther-service-k9/",
+    "to": {
+      "type": "record",
+      "slug": "madison-and-gunther-service-k9"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/scott-and-elke-service-k9/",
+    "type": "redirect",
+    "from": "/scott-and-elke-service-k9/",
+    "to": {
+      "type": "record",
+      "slug": "scott-and-elke-service-k9"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/jeremy-and-nova-service-k9/",
+    "type": "redirect",
+    "from": "/jeremy-and-nova-service-k9/",
+    "to": {
+      "type": "record",
+      "slug": "jeremy-and-nova-service-k9"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/paul-and-mj-service-k9/",
+    "type": "redirect",
+    "from": "/paul-and-mj-service-k9/",
+    "to": {
+      "type": "record",
+      "slug": "paul-and-mj-service-k9"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/cody-and-willow-service-k9/",
+    "type": "redirect",
+    "from": "/cody-and-willow-service-k9/",
+    "to": {
+      "type": "record",
+      "slug": "cody-and-willow-service-k9"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/barkode-mosby-hk9t26-01/",
+    "type": "redirect",
+    "from": "/barkode-mosby-hk9t26-01/",
+    "to": {
+      "type": "record",
+      "slug": "barkode-mosby-hk9t26-01"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/kimber_hk92026-01/",
+    "type": "redirect",
+    "from": "/kimber_hk92026-01/",
+    "to": {
+      "type": "record",
+      "slug": "kimber_hk92026-01"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/caddie-service-k9_hk92026-02/",
+    "type": "redirect",
+    "from": "/caddie-service-k9_hk92026-02/",
+    "to": {
+      "type": "record",
+      "slug": "caddie-service-k9_hk92026-02"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/tex-service-k9-hk926-002/",
+    "type": "redirect",
+    "from": "/tex-service-k9-hk926-002/",
+    "to": {
+      "type": "record",
+      "slug": "tex-service-k9-hk926-002"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  },
+  {
+    "key": "redirect:/sandy-therapy-k9t26-02/",
+    "type": "redirect",
+    "from": "/sandy-therapy-k9t26-02/",
+    "to": {
+      "type": "record",
+      "slug": "sandy-therapy-k9t26-02"
+    },
+    "status": 301,
+    "note": "Legacy root-level BarKode record path printed on QR patches; canonical URL is /barkode/<slug>/."
+  }
+]

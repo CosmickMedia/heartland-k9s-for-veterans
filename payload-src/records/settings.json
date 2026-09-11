@@ -1,0 +1,257 @@
+{
+  "key": "option:hk9_settings",
+  "type": "option",
+  "name": "hk9_settings",
+  "merge": "deep",
+  "value": {
+    "branding": {
+      "header_logo": "{{media:ref:asset:heartland-k9s-logo}}",
+      "footer_logo": "{{media:ref:asset:heartland-k9s-logo}}",
+      "header_logo_height": 64,
+      "footer_logo_height": 80,
+      "wordmark_line1": "Heartland K9s",
+      "wordmark_line2": "For Veterans",
+      "show_wordmark": true
+    },
+    "contact": {
+      "phone_main": "800-913-6189",
+      "phone_main_label": "Main",
+      "phone_secondary": "417-312-7484",
+      "phone_secondary_label": "Director cell",
+      "email": "info@heartlandk9s.org",
+      "email_director": "director@heartlandk9s.org",
+      "email_development": "development@heartlandk9s.org",
+      "address_line1": "12651 Gateway Dr",
+      "address_line2": "",
+      "city": "Neosho",
+      "state": "MO",
+      "zip": "64850",
+      "hours": "8:00am – 5:00pm",
+      "hours_days": "",
+      "service_area": "",
+      "facebook": "https://www.facebook.com/heartlandk9s/",
+      "instagram": "",
+      "youtube": "",
+      "linkedin": "",
+      "x": "",
+      "candid_url": "https://app.candid.org/profile/9494475/heartland-canines-for-veterans-inc-47-4991572/?pkId=0c9bd385-c54d-417d-8e44-a7057050afae",
+      "show_guidestar_seal": true,
+      "ein": "47-4991572",
+      "legal_name": "Heartland Canines for Veterans Inc",
+      "tax_statement": "Heartland Canines For Veterans is an IRS recognized 501(c)(3) non-profit organization. IRS EIN 47-4991572. All donations are tax deductible to the extent allowed by law. Consult your CPA if you have questions."
+    },
+    "links": {
+      "donate": {
+        "label": "Donate",
+        "url": "",
+        "post_id": "{{post:live:page:2120}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "donate_external": {
+        "label": "Support a Service Dog",
+        "url": "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives",
+        "post_id": 0,
+        "target": "_blank",
+        "rel": "noopener"
+      },
+      "paypal_hosted_button_id": "METNHXQ9EBUMQ",
+      "amazon_wishlist": {
+        "label": "HK9s Daily Needs Wishlist",
+        "url": "https://www.amazon.com/hz/wishlist/ls/35NF4IVCKN76G?ref_=wl_share",
+        "post_id": 0,
+        "target": "_blank",
+        "rel": "noopener"
+      },
+      "application": {
+        "label": "Online Application",
+        "url": "",
+        "post_id": "{{post:live:page:1989}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "five_questions": {
+        "label": "5 Questions",
+        "url": "",
+        "post_id": "{{post:live:page:16}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "ada": {
+        "label": "ADA FAQs",
+        "url": "",
+        "post_id": "{{post:live:page:1995}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "volunteer": {
+        "label": "Volunteer",
+        "url": "",
+        "post_id": "{{post:live:page:2124}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "provider": {
+        "label": "K9 Provider Criteria",
+        "url": "",
+        "post_id": "{{post:live:page:3084}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "campaigns": {
+        "label": "Campaigns",
+        "url": "",
+        "post_id": "{{post:live:page:2800}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "events": {
+        "label": "Events",
+        "url": "",
+        "post_id": "{{post:live:page:2483}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "stories": {
+        "label": "Success Stories",
+        "url": "",
+        "post_id": "{{post:ref:page:stories}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "contact": {
+        "label": "Contact",
+        "url": "",
+        "post_id": "{{post:ref:page:contact}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "gear": {
+        "label": "Heartland Gear",
+        "url": "https://linksinkllc.com/?s=Heartland",
+        "post_id": 0,
+        "target": "_blank",
+        "rel": "noopener"
+      },
+      "coloring_book": {
+        "label": "Coloring Book",
+        "url": "",
+        "post_id": "{{post:live:page:3627}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "obedience": {
+        "label": "Obedience Training",
+        "url": "",
+        "post_id": "{{post:live:page:3742}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "teams": {
+        "label": "Teams in Training",
+        "url": "",
+        "post_id": "{{post:live:page:3011}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "people": {
+        "label": "Meet the Team",
+        "url": "",
+        "post_id": "{{post:live:page:2856}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "photos": {
+        "label": "Photos",
+        "url": "",
+        "post_id": "{{post:live:page:2455}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "barkode": {
+        "label": "BarKode",
+        "url": "",
+        "post_id": "{{post:ref:page:barkode}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "header": {
+      "cta_label": "Donate Now",
+      "cta_link": {
+        "label": "Donate Now",
+        "url": "",
+        "post_id": "{{post:live:page:2120}}",
+        "target": "_self",
+        "rel": ""
+      },
+      "show_cta": true,
+      "sticky": true
+    },
+    "footer": {
+      "description": "An IRS-recognized 501(c)(3) nonprofit pairing eligible disabled U.S. veterans with highly trained service dogs at zero cost.",
+      "tagline": "So They Never Walk Alone.",
+      "col2_heading": "Quick Links",
+      "col3_heading": "Get Involved",
+      "col4_heading": "Contact Us",
+      "copyright": "© {year} Heartland Canines for Veterans. All rights reserved.",
+      "credit": "Built with ♥ for our veterans.",
+      "show_seal": true
+    },
+    "blog": {
+      "layout": "list",
+      "hero_title": "News",
+      "hero_text": "Updates from Heartland Canines for Veterans: events, campaigns and news from our Veteran–K9 teams.",
+      "hero_image": 0,
+      "show_author": false,
+      "show_date": true,
+      "show_categories": true,
+      "show_tags": true,
+      "show_related": true,
+      "related_count": 3,
+      "show_featured_image": true
+    },
+    "forms": {
+      "contact_recipients": "info@heartlandk9s.org",
+      "application_recipients": "director@heartlandk9s.org",
+      "from_name": "Heartland Canines for Veterans",
+      "from_email": "",
+      "subjects": [
+        {
+          "value": "veteran-application",
+          "label": "Veteran Application Inquiry"
+        },
+        {
+          "value": "donation",
+          "label": "Donation Inquiry"
+        },
+        {
+          "value": "volunteer",
+          "label": "Volunteer / Campaign"
+        },
+        {
+          "value": "provider",
+          "label": "K9 Provider Partnership"
+        },
+        {
+          "value": "other",
+          "label": "Other"
+        }
+      ],
+      "rate_limit": 5,
+      "retention_days": 90,
+      "store_submissions": true,
+      "contact_success_text": "Thank you for reaching out. We will get back to you shortly.",
+      "application_success_page": {
+        "label": "Thank You",
+        "url": "",
+        "post_id": "{{post:live:page:2505}}",
+        "target": "_self",
+        "rel": ""
+      }
+    },
+    "analytics": {
+      "fathom_site_id": ""
+    }
+  }
+}

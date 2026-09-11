@@ -1,0 +1,4 @@
+[
+  { "key": "redirect:/old-mini-about/", "type": "redirect", "from": "/old-mini-about/", "to": "{{post_url:mini:page:about}}", "status": 301 },
+  { "key": "redirect:/hk9-mini-001/", "type": "redirect", "from": "/hk9-mini-001/", "to": { "type": "record", "slug": "hk9-mini-001" }, "status": 301 }
+]

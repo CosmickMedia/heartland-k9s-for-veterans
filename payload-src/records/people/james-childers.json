@@ -1,0 +1,28 @@
+{
+  "key": "live:person:james-childers",
+  "type": "hk9_person",
+  "status": "publish",
+  "slug": "james-childers",
+  "title": "James Childers",
+  "featured": "{{media:live:media:2877}}",
+  "menu_order": 5,
+  "meta": {
+    "hk9_role": {
+      "type": "string",
+      "value": "Board Member"
+    },
+    "hk9_email": {
+      "type": "string",
+      "value": ""
+    },
+    "hk9_links": {
+      "type": "array",
+      "value": []
+    },
+    "hk9_quote": {
+      "type": "string",
+      "value": ""
+    }
+  },
+  "content": "content/live__person__james-childers.html"
+}

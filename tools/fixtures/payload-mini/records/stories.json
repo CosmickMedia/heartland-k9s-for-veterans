@@ -1,0 +1,19 @@
+{
+  "key": "mini:story:sample",
+  "type": "hk9_story",
+  "status": "publish",
+  "slug": "mini-sample-story",
+  "title": "A sample story",
+  "excerpt": "Short excerpt.",
+  "date": "2024-05-01T12:30:00Z",
+  "menu_order": 3,
+  "featured": "{{media:mini:asset:portrait}}",
+  "meta": {
+    "hk9_veteran_name": { "type": "string", "value": "J. Sample" },
+    "hk9_canine_name": { "type": "string", "value": "Biscuit" },
+    "hk9_relationship": { "type": "string", "value": "service" },
+    "hk9_featured": { "type": "boolean", "value": true },
+    "hk9_gallery": { "type": "array", "value": ["{{media:mini:asset:card}}", "{{media:mini:asset:hero}}"] }
+  },
+  "terms": { "post_tag": ["{{term:post_tag:mini-poker-run}}"] }
+}

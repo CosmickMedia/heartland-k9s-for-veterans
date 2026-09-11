@@ -1,0 +1,44 @@
+[
+  {
+    "key": "term:post_tag:poker-run",
+    "type": "term",
+    "taxonomy": "post_tag",
+    "slug": "poker-run",
+    "name": "Poker Run"
+  },
+  {
+    "key": "term:post_tag:veterans-day",
+    "type": "term",
+    "taxonomy": "post_tag",
+    "slug": "veterans-day",
+    "name": "Veterans Day"
+  },
+  {
+    "key": "term:hk9_partner_type:back-the-pack",
+    "type": "term",
+    "taxonomy": "hk9_partner_type",
+    "slug": "back-the-pack",
+    "name": "Back the Pack Partner"
+  },
+  {
+    "key": "term:hk9_partner_type:campaign-sponsor",
+    "type": "term",
+    "taxonomy": "hk9_partner_type",
+    "slug": "campaign-sponsor",
+    "name": "Campaign Sponsor"
+  },
+  {
+    "key": "term:hk9_partner_type:provider",
+    "type": "term",
+    "taxonomy": "hk9_partner_type",
+    "slug": "provider",
+    "name": "K9 Provider"
+  },
+  {
+    "key": "term:hk9_partner_type:community",
+    "type": "term",
+    "taxonomy": "hk9_partner_type",
+    "slug": "community",
+    "name": "Community Partner"
+  }
+]

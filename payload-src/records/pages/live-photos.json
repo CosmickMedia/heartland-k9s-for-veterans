@@ -1,0 +1,43 @@
+{
+  "key": "live:page:2455",
+  "type": "page",
+  "status": "publish",
+  "slug": "photos",
+  "title": "Photos",
+  "template": "page-templates/gallery.php",
+  "excerpt": "Heartland Canines for Veterans image gallery.",
+  "date": "2021-03-24T19:47:50Z",
+  "menu_order": 0,
+  "content": "content/live__page__2455.html",
+  "featured": "{{media:live:media:2456}}",
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Photos",
+        "text": "Heartland Canines for Veterans image gallery.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_gallery_options": {
+      "type": "object",
+      "value": {
+        "lightbox": true,
+        "columns": "3",
+        "captions": true,
+        "images": []
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "gallery_options"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

@@ -1,0 +1,99 @@
+{
+  "key": "ref:page:get-involved",
+  "type": "page",
+  "status": "publish",
+  "slug": "get-involved",
+  "title": "Get Involved",
+  "template": "page-templates/get-involved.php",
+  "excerpt": "It takes a community to save a life. Join us in providing independence to those who served.",
+  "menu_order": 6,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Get Involved",
+        "text": "It takes a community to save a life. Join us in providing independence to those who served.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_ways": {
+      "type": "object",
+      "value": {
+        "cards": [
+          {
+            "icon": "dollar-sign",
+            "tone": "crimson",
+            "title": "Donate",
+            "text": "Your financial support directly funds the acquisition, training, and placement of service dogs for veterans. Every dollar makes a tangible difference.",
+            "button": {
+              "label": "Make a Donation",
+              "url": "",
+              "post_id": "{{post:live:page:2120}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "button_style": "primary"
+          },
+          {
+            "icon": "calendar",
+            "tone": "navy",
+            "title": "Campaigns",
+            "text": "Participate in our fundraising campaigns and events throughout the year. Help us spread awareness and raise crucial funds for our mission.",
+            "button": {
+              "label": "View Campaigns",
+              "url": "",
+              "post_id": "{{post:live:page:2800}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "button_style": "outline"
+          },
+          {
+            "icon": "hand-heart",
+            "tone": "navy",
+            "title": "Volunteer",
+            "text": "Give your time and skills—at our facility, at events and other gatherings, or as a volunteer temporary home for a future service dog through our “Paws for Training” program. Volunteers are always welcome.",
+            "button": {
+              "label": "Contact Us to Help",
+              "url": "",
+              "post_id": "{{post:ref:page:contact}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "button_style": "outline"
+          }
+        ],
+        "heading": "",
+        "intro": ""
+      }
+    },
+    "hk9_sec_partners": {
+      "type": "object",
+      "value": {
+        "icon": "heart",
+        "heading": "Corporate & Community Partners",
+        "body": "<p>We are deeply grateful for the businesses and organizations that stand with us. Partnering with Heartland K9s demonstrates a profound commitment to our nation’s veterans.</p>\n<p>If your organization is interested in sponsorship opportunities, matching gifts, hosting an event, or joining our “Back the Pack” partners, we would love to connect.</p>",
+        "button": {
+          "label": "Discuss a Partnership",
+          "url": "",
+          "post_id": "{{post:ref:page:contact}}",
+          "target": "_self",
+          "rel": ""
+        },
+        "show_logos": true
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "ways",
+          "partners"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}

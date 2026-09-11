@@ -1,0 +1,54 @@
+{
+  "key": "live:page:2856",
+  "type": "page",
+  "status": "publish",
+  "slug": "meet-the-team",
+  "title": "Meet the Team",
+  "template": "page-templates/people.php",
+  "excerpt": "The staff, board and volunteers behind Heartland Canines for Veterans.",
+  "date": "2023-01-19T17:20:26Z",
+  "menu_order": 0,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "Meet the Team",
+        "text": "The staff, board and volunteers behind Heartland Canines for Veterans.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sec_grid": {
+      "type": "object",
+      "value": {
+        "heading": "Meet the Team",
+        "intro": "",
+        "mode": "auto",
+        "people": [],
+        "columns": "3"
+      }
+    },
+    "hk9_sec_cta": {
+      "type": "object",
+      "value": {
+        "heading": "",
+        "text": "",
+        "buttons": [],
+        "tone": "navy"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band",
+          "grid",
+          "cta"
+        ],
+        "hidden": [
+          "cta"
+        ]
+      }
+    }
+  }
+}

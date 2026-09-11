@@ -1,0 +1,30 @@
+{
+  "key": "new:page:news",
+  "type": "page",
+  "status": "publish",
+  "slug": "news",
+  "title": "News",
+  "excerpt": "Updates from Heartland Canines for Veterans: events, campaigns and news from our Veteran–K9 teams.",
+  "content": "content/new__page__news.html",
+  "menu_order": 8,
+  "meta": {
+    "hk9_sec_hero_band": {
+      "type": "object",
+      "value": {
+        "eyebrow": "",
+        "heading": "News",
+        "text": "Updates from Heartland Canines for Veterans: events, campaigns and news from our Veteran–K9 teams.",
+        "pattern": "none"
+      }
+    },
+    "hk9_sections_layout": {
+      "type": "object",
+      "value": {
+        "order": [
+          "hero_band"
+        ],
+        "hidden": []
+      }
+    }
+  }
+}
