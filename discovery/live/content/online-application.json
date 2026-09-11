@@ -1,0 +1,49 @@
+{
+ "id": 1989,
+ "slug_path": "/online-application/",
+ "file_key": "online-application",
+ "link": "https://heartlandk9s.org/online-application/",
+ "title": "Initial Online Application",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2020-01-22T22:16:06",
+ "modified": "2024-11-17T20:52:31",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Initial Online Application - Heartland Canines for Veterans",
+  "description": "Are You Ready With this initiative, our goal is to promote great opportunities for those in need. With access to the right resources, people can become empowere"
+ },
+ "classification": "form-page",
+ "registry_id": null,
+ "headings": [
+  "h1: Are You Ready",
+  "h3: Before you apply please read 5 Questions to Ask Before Partnering With a Service Dog"
+ ],
+ "text_chars": 592,
+ "image_count": 0,
+ "images": [],
+ "internal_links": [
+  {
+   "href": "http://heartlandk9s.org/5-questions/",
+   "text": "5 Questions to Ask Before Partnering With a Service Dog"
+  }
+ ],
+ "external_links": [],
+ "shortcodes": [
+  "[ccf_form id=\"2156\"]"
+ ],
+ "embeds": [
+  {
+   "kind": "ccf-shortcode-unrendered",
+   "src": "Custom Contact Forms shortcode printed as literal text (plugin not active)"
+  }
+ ],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 6068,
+ "text": "Are You Ready\nWith this initiative, our goal is to promote great opportunities for those in need. With access to the right resources, people can become empowered by their own abilities and gain the confidence to fulfill their potential. Complete the application and submit it to Heartland K9s. Please understand, this is not the application to apply but an opportunity to “see who you are”. Our director will contact you to provide our full application to be considered for our program.\nBefore you apply please read 5 Questions to Ask Before Partnering With a Service Dog\n[ccf_form id=\"2156\"]"
+}

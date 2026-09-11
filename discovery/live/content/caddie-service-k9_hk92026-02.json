@@ -1,0 +1,45 @@
+{
+ "id": 3683,
+ "slug_path": "/caddie-service-k9_hk92026-02/",
+ "file_key": "caddie-service-k9_hk92026-02",
+ "link": "https://heartlandk9s.org/caddie-service-k9_hk92026-02/",
+ "title": "Caddie (Service K9 In Training)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2026-01-11T21:37:40",
+ "modified": "2026-01-14T06:45:52",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Caddie (Service K9 In Training) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": "HK92026-02 (slug)",
+ "headings": [],
+ "text_chars": 390,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/01/1000016218-300x225.jpg",
+   "alt": "1000016218",
+   "title": "1000016218"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 3779,
+ "text": "Caddie (Service K9 In Training)\nBlack Lab\nPTSD/Anxiety Service Dog\nResponsibilities/Tasks – PTSD/Mobility\nBlocking, post, orbit, pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

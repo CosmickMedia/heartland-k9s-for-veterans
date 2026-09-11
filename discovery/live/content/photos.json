@@ -1,0 +1,680 @@
+{
+ "id": 2455,
+ "slug_path": "/photos/",
+ "file_key": "photos",
+ "link": "https://heartlandk9s.org/photos/",
+ "title": "Photos",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 1,
+ "date": "2021-03-24T14:47:50",
+ "modified": "2021-03-24T15:20:00",
+ "featured_media": 2456,
+ "menu_order": 0,
+ "seo": {
+  "title": "Photos - Heartland Canines for Veterans",
+  "description": "Time To Work Sometimes the dogs want to train so bad they go get their own gear. Hannibal visits Arkansas Veterans Hannibal pays a visit to Arkansas during trai"
+ },
+ "classification": "gallery",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 214,
+ "image_count": 71,
+ "images": [
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/IMG_curlyvest-scaled/2128778114.jpg",
+   "alt": "",
+   "title": "Time To Work"
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/arlegoin3/3789177861.jpg",
+   "alt": "",
+   "title": "Hannibal visits Arkansas Veterans"
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2022/12/justin/2063452780.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2022/12/larryarchie/2446214796.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/IMG-7973-scaled/2010992243.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2022/12/vet-parade/2474158768.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/IMG-7971-scaled/2331053393.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/329519127_592698582190879_3851980048173136353_n/1418707835.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/329146424_892016148510128_3782328147530088947_n/2642684302.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/329097304_625581989614335_327909721061889155_n/3142556936.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/329046611_1832257997155208_8198298589365974073_n/3826463354.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/329042947_931927034929169_3232757778153128033_n/437458372.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/328692330_576486077664770_6030566192957191494_n/2670306523.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/Screenshot_20230206-202734_Video-Player/468409224.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/Screenshot_20230206-202846_Video-Player-1/1284117300.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/Screenshot_20230206-105720_Messenger/906341062.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/Screenshot_20230206-202846_Video-Player/2242401570.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2023/04/903A0881-2-scaled/3060328392.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/IMG_7689/1307659077.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/123_13/276702390.jpeg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/903A0740-scaled/2231150610.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/903A0477-scaled/805681869.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2025/06/grad/1141196691.jpg",
+   "alt": "Grad",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2025/05/496009229_708289025043442_6654562698047626934_n/691805230.jpg",
+   "alt": "496009229 708289025043442 6654562698047626934 n",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2025/01/2BD3EC8D-1E9A-4AA1-9A28-D78280CE66BC/1659611195.jpeg",
+   "alt": "2bd3ec8d 1e9a 4aa1 9a28 D78280ce66bc",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2025/01/469965036_598815635990782_1987363041355702480_n/115040626.jpg",
+   "alt": "469965036 598815635990782 1987363041355702480 N",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/konor/1007987499.jpg",
+   "alt": "Konor",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/PandM/2349678762.jpg",
+   "alt": "Pandm",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/team/316632072.jpg",
+   "alt": "Team",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0259-scaled/2419524273.jpeg",
+   "alt": "dsc0259",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0256-scaled/1266128696.jpeg",
+   "alt": "dsc0256",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0243-scaled/1215796920.jpeg",
+   "alt": "dsc0243",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0219-scaled/499135147.jpeg",
+   "alt": "dsc0219",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0206-scaled/2808994513.jpeg",
+   "alt": "dsc0206",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0161-scaled/1116519037.jpeg",
+   "alt": "dsc0161",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0086-scaled/1915402459.jpeg",
+   "alt": "dsc0086",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0057-scaled/2606135531.jpeg",
+   "alt": "dsc0057",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0054-scaled/1281481676.jpeg",
+   "alt": "dsc0054",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0041-scaled/3828629290.jpeg",
+   "alt": "dsc0041",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0036-scaled/1249534028.jpeg",
+   "alt": "dsc0036",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0030-scaled/1279392539.jpeg",
+   "alt": "dsc0030",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0012-scaled/3777124714.jpeg",
+   "alt": "dsc0012",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0971-scaled/3262623950.jpeg",
+   "alt": "dsc0971",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0966-scaled/197773307.jpeg",
+   "alt": "dsc0966",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0960-scaled/233987244.jpeg",
+   "alt": "dsc0960",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0945-scaled/1690580049.jpeg",
+   "alt": "dsc0945",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0936-scaled/942935643.jpeg",
+   "alt": "dsc0936",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0917-scaled/3164543192.jpeg",
+   "alt": "dsc0917",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0915-scaled/1855311624.jpeg",
+   "alt": "dsc0915",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0908-scaled/2472320330.jpeg",
+   "alt": "dsc0908",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0869-scaled/553189249.jpeg",
+   "alt": "dsc0869",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0861-scaled/2903799579.jpeg",
+   "alt": "dsc0861",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0859-scaled/3627499875.jpeg",
+   "alt": "dsc0859",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0851-scaled/415603247.jpeg",
+   "alt": "dsc0851",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0844-scaled/2962259657.jpeg",
+   "alt": "dsc0844",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0837-scaled/1231497093.jpeg",
+   "alt": "dsc0837",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0834-scaled/889545156.jpeg",
+   "alt": "dsc0834",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0829-scaled/1159134987.jpeg",
+   "alt": "dsc0829",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0828-scaled/3201604649.jpeg",
+   "alt": "dsc0828",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0827-scaled/1125851211.jpeg",
+   "alt": "dsc0827",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0819-scaled/1705607127.jpeg",
+   "alt": "dsc0819",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0813-scaled/1877332526.jpeg",
+   "alt": "dsc0813",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0811-scaled/3186558462.jpeg",
+   "alt": "dsc0811",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0809-scaled/4206564849.jpeg",
+   "alt": "dsc0809",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0805-scaled/137573514.jpeg",
+   "alt": "dsc0805",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0803-scaled/2633070658.jpeg",
+   "alt": "dsc0803",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0799-scaled/2854293608.jpeg",
+   "alt": "dsc0799",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0796-scaled/3660865671.jpeg",
+   "alt": "dsc0796",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0793-scaled/4123479842.jpeg",
+   "alt": "dsc0793",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/DSC0787-scaled/3581219774.jpeg",
+   "alt": "dsc0787",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2021/03/billy-scaled/2710605875.jpeg",
+   "alt": "Billy",
+   "title": ""
+  }
+ ],
+ "internal_links": [
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG_curlyvest-scaled.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/arlegoin3.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2022/12/justin.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2022/12/larryarchie.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG-7973-scaled.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2022/12/vet-parade.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG-7971-scaled.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/329519127_592698582190879_3851980048173136353_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/329146424_892016148510128_3782328147530088947_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/329097304_625581989614335_327909721061889155_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/329046611_1832257997155208_8198298589365974073_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/329042947_931927034929169_3232757778153128033_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/328692330_576486077664770_6030566192957191494_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-202734_Video-Player.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-202846_Video-Player-1.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-105720_Messenger.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-202846_Video-Player.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2023/04/903A0881-2-scaled.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG_7689.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/123_13.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/903A0740-scaled.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/903A0477-scaled.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2025/06/grad.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2025/05/496009229_708289025043442_6654562698047626934_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2025/01/2BD3EC8D-1E9A-4AA1-9A28-D78280CE66BC.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2025/01/469965036_598815635990782_1987363041355702480_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/konor.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/PandM.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/team.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0259-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0256-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0243-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0219-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0206-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0161-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0086-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0057-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0054-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0041-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0036-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0030-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0012-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0971-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0966-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0960-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0945-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0936-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0917-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0915-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0908-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0869-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0861-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0859-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0851-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0844-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0837-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0834-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0829-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0828-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0827-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0819-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0813-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0811-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0809-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0805-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0803-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0799-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0796-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0793-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0787-scaled.jpeg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2021/03/billy-scaled.jpeg",
+   "text": ""
+  }
+ ],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [
+  {
+   "kind": "foogallery",
+   "src": "FooGallery block (id 2094 back-the-pack-partners / 2468 image gallery)"
+  }
+ ],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 40139,
+ "text": "Time To Work\nSometimes the dogs want to train so bad they go get their own gear.\nHannibal visits Arkansas Veterans\nHannibal pays a visit to Arkansas during training to say hi to the Veterans at the American Legion."
+}

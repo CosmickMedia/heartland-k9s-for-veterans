@@ -1,0 +1,118 @@
+{
+ "total": 244,
+ "fetched_via_rest": 243,
+ "hidden_id": 2061,
+ "referenced": 151,
+ "unreferenced": 93,
+ "bytes": {
+  "served_full_sum": 141323700,
+  "true_originals_sum": 694273927,
+  "thumbnails_sum": 352143394,
+  "scaled_files_sum": 53097777,
+  "unscaled_originals_sum": 606048004
+ },
+ "galleries": {
+  "photos": {
+   "gallery_post": 2468,
+   "items": 71,
+   "all_in_manifest": true
+  },
+  "back-the-pack": {
+   "gallery_post": 2094,
+   "items": 13,
+   "all_in_manifest": true
+  }
+ },
+ "ref_assets": [
+  {
+   "file": "_live-3028-Concept-1-rocker-outlined-2.png",
+   "bytes": 159325,
+   "sha256_16": "558ab18952bd238a",
+   "dims": [
+    1073,
+    1223
+   ],
+   "same_size_live": [
+    3028
+   ]
+  },
+  {
+   "file": "about-dog.jpg",
+   "bytes": 141462,
+   "sha256_16": "0e8932901fcfcc15",
+   "dims": [
+    1024,
+    1024
+   ],
+   "same_size_live": null
+  },
+  {
+   "file": "barkode.jpg",
+   "bytes": 200864,
+   "sha256_16": "a27487a9b1e40deb",
+   "dims": [
+    1024,
+    1024
+   ],
+   "same_size_live": null
+  },
+  {
+   "file": "favicon.svg",
+   "bytes": 163,
+   "sha256_16": "8ffbde9092b1fa4d",
+   "dims": null,
+   "same_size_live": null
+  },
+  {
+   "file": "heartland-k9s-logo.png",
+   "bytes": 159325,
+   "sha256_16": "558ab18952bd238a",
+   "dims": [
+    1073,
+    1223
+   ],
+   "same_size_live": [
+    3028
+   ]
+  },
+  {
+   "file": "hero-home.jpg",
+   "bytes": 177848,
+   "sha256_16": "6dbd75aeda4f0774",
+   "dims": [
+    1024,
+    1024
+   ],
+   "same_size_live": null
+  },
+  {
+   "file": "training.jpg",
+   "bytes": 156008,
+   "sha256_16": "090fae7ac97a8d8b",
+   "dims": [
+    1024,
+    1024
+   ],
+   "same_size_live": null
+  },
+  {
+   "file": "veteran-story.jpg",
+   "bytes": 209692,
+   "sha256_16": "9ffdf2565314ce7c",
+   "dims": [
+    1024,
+    1024
+   ],
+   "same_size_live": null
+  }
+ ],
+ "files": {
+  "manifest": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/live/media-manifest.json",
+  "xref": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/live/media-xref.json",
+  "galleries": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/live/galleries.json",
+  "raw_pages": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/live/media-pages/",
+  "ref_assets_dir": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/ref/assets/",
+  "photos_html": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/live/photos.html",
+  "btp_html": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/live/back-the-pack.html"
+ }
+}

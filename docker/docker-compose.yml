@@ -1,0 +1,101 @@
+# Local WordPress stack for the Heartland Canines for Veterans build.
+#
+#   docker compose -f docker/docker-compose.yml up -d
+#   docker/setup.sh
+#
+# Services:
+#   db        MariaDB 11 (LTS line; matches WordPress' MariaDB 10.11+ recommendation)
+#   wordpress WordPress 7.x on PHP 8.3 + Apache      -> http://localhost:8093
+#   mailpit   SMTP sink + web UI                      -> http://localhost:8094 (captures all outbound mail)
+#   wpcli     one-shot WP-CLI runner (docker compose -f docker/docker-compose.yml run --rm wpcli <args>)
+#
+# The theme and companion plugin are bind-mounted so edits are live. The dev-only
+# mu-plugin (docker/mu-plugins/hk9-dev.php) routes wp_mail() to Mailpit and adds a
+# local-fixtures command for blog/pagination testing. Nothing in docker/ ships in the ZIPs.
+
+name: hk9
+
+services:
+  db:
+    image: mariadb:11
+    command: --max_allowed_packet=64M
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: wordpress
+      MYSQL_PASSWORD: wordpress
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  wordpress:
+    image: wordpress:php8.3-apache
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8093:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: "1"
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG', true );
+        define( 'WP_DEBUG_LOG', true );
+        define( 'WP_DEBUG_DISPLAY', false );
+        define( 'SCRIPT_DEBUG', false );
+        define( 'HK9_DEV_MAIL_HOST', 'mailpit' );
+        define( 'HK9_DEV_MAIL_PORT', 1025 );
+        define( 'WP_MEMORY_LIMIT', '512M' );
+        define( 'WP_MAX_MEMORY_LIMIT', '1024M' );
+        define( 'DISABLE_WP_CRON', false );
+        define( 'FS_METHOD', 'direct' );
+    volumes:
+      - wp_data:/var/www/html
+      - ../theme/heartland-k9s:/var/www/html/wp-content/themes/heartland-k9s
+      - ../plugin/heartland-k9s-core:/var/www/html/wp-content/plugins/heartland-k9s-core
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./fixtures:/var/www/html/wp-content/hk9-fixtures:ro
+      - ../payload:/var/www/html/wp-content/hk9-payload:ro
+      - ./php-uploads.ini:/usr/local/etc/php/conf.d/hk9-uploads.ini:ro
+
+  mailpit:
+    image: axllent/mailpit
+    ports:
+      - "8094:8025"
+    environment:
+      MP_SMTP_AUTH_ACCEPT_ANY: 1
+      MP_SMTP_AUTH_ALLOW_INSECURE: 1
+
+  wpcli:
+    image: wordpress:cli-php8.3
+    user: "33:33"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      HK9_DEV_MAIL_HOST: mailpit
+    volumes:
+      - wp_data:/var/www/html
+      - ../theme/heartland-k9s:/var/www/html/wp-content/themes/heartland-k9s
+      - ../plugin/heartland-k9s-core:/var/www/html/wp-content/plugins/heartland-k9s-core
+      - ./mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./fixtures:/var/www/html/wp-content/hk9-fixtures:ro
+      - ../payload:/var/www/html/wp-content/hk9-payload:ro
+      - ./php-uploads.ini:/usr/local/etc/php/conf.d/hk9-uploads.ini:ro
+    entrypoint: ["wp"]
+    command: ["--info"]
+
+volumes:
+  db_data:
+  wp_data:

@@ -1,0 +1,45 @@
+{
+ "id": 2993,
+ "slug_path": "/hk923004/",
+ "file_key": "hk923004",
+ "link": "https://heartlandk9s.org/hk923004/",
+ "title": "Alex and Sammi (Service Dog)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2023-05-02T08:31:31",
+ "modified": "2023-05-02T09:08:40",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Alex and Sammi (Service Dog) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": "HK923-004 (from slug hk923004)",
+ "headings": [],
+ "text_chars": 399,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/05/received-300x200.jpeg",
+   "alt": "",
+   "title": "received"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 3740,
+ "text": "Sammi (Service K9)\nBlack Rough Haired Pointer\nPTSD/Anxiety/Mobility Service Dog\nResponsibilities/Tasks –\nBlocking, post, orbit, pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact (417) 499 – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

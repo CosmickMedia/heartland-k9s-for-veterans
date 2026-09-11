@@ -1,0 +1,182 @@
+[
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/assets/index-chYGRaWh.css",
+  "type": "stylesheet",
+  "status": 200,
+  "contentType": "text/css; charset=utf-8",
+  "contentLength": "105197",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/assets/index-D3NkXuBj.js",
+  "type": "script",
+  "status": 200,
+  "contentType": "text/javascript; charset=utf-8",
+  "contentLength": "382337",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@400;500;600;700&display=swap",
+  "type": "stylesheet",
+  "status": 200,
+  "contentType": "text/css; charset=utf-8",
+  "contentLength": null,
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/assets/veteran-story.jpg",
+  "type": "image",
+  "status": 200,
+  "contentType": "image/jpeg",
+  "contentLength": "209692",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/assets/hero-home.jpg",
+  "type": "image",
+  "status": 200,
+  "contentType": "image/jpeg",
+  "contentLength": "177848",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://fonts.gstatic.com/s/inter/v20/UcC73FwrK3iLTeHuS_nVMrMxCp50SjIa1ZL7W0Q5nw.woff2",
+  "type": "font",
+  "status": 200,
+  "contentType": "font/woff2",
+  "contentLength": "48432",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://fonts.gstatic.com/s/fraunces/v38/6NU78FyLNQOQZAnv9bYEvDiIdE9Ea92uemAk_WBq8U_9v0c2Wa0KxC9TeP2Xz5c.woff2",
+  "type": "font",
+  "status": 200,
+  "contentType": "font/woff2",
+  "contentLength": "67388",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://fonts.gstatic.com/s/fraunces/v38/6NU58FyLNQOQZAnv9ZwNjucMHVn85Ni7emAe9lKqZTnbB-gzTK0K1ChjeveQ7ZXk8g.woff2",
+  "type": "font",
+  "status": 200,
+  "contentType": "font/woff2",
+  "contentLength": "81704",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/assets/barkode.jpg",
+  "type": "image",
+  "status": 200,
+  "contentType": "image/jpeg",
+  "contentLength": "200864",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/heartland-k9s-logo.png",
+  "type": "image",
+  "status": 200,
+  "contentType": "image/png",
+  "contentLength": "159325",
+  "route": "/",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/about",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/about",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/assets/about-dog.jpg",
+  "type": "image",
+  "status": 200,
+  "contentType": "image/jpeg",
+  "contentLength": "141462",
+  "route": "/about",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/program",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/program",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/assets/training.jpg",
+  "type": "image",
+  "status": 200,
+  "contentType": "image/jpeg",
+  "contentLength": "156008",
+  "route": "/program",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/veterans",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/veterans",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/get-involved",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/get-involved",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/barkode",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/barkode",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/stories",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/stories",
+  "vw": 1440
+ },
+ {
+  "url": "https://heartland-canines-for-veterans.replit.app/contact",
+  "type": "document",
+  "status": 200,
+  "contentType": "text/html; charset=utf-8",
+  "contentLength": "1408",
+  "route": "/contact",
+  "vw": 1440
+ }
+]

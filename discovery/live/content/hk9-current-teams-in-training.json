@@ -1,0 +1,54 @@
+{
+ "id": 3011,
+ "slug_path": "/hk9-current-teams-in-training/",
+ "file_key": "hk9-current-teams-in-training",
+ "link": "https://heartlandk9s.org/hk9-current-teams-in-training/",
+ "title": "HK9 Teams in Training",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2023-05-10T10:55:56",
+ "modified": "2026-02-18T10:52:44",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "HK9 Teams in Training - Heartland Canines for Veterans",
+  "description": "Billy and Caddie- Caddie is a Lab, currently in her 3rd month of service training. She is being trained to block, post, watch, as well as pressure therapy. CLIC"
+ },
+ "classification": "source-of-records",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 413,
+ "image_count": 2,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/01/1000016218-300x225.jpg",
+   "alt": "1000016218",
+   "title": "1000016218"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/02/635328658_921661253706217_8379646685389489216_n-225x300.jpg",
+   "alt": "635328658 921661253706217 8379646685389489216 n",
+   "title": "635328658_921661253706217_8379646685389489216_n"
+  }
+ ],
+ "internal_links": [
+  {
+   "href": "https://heartlandk9s.org/donate/",
+   "text": "CLICK HERE to Donate to help Caddie and Billy"
+  },
+  {
+   "href": "https://heartlandk9s.org/donate/",
+   "text": "CLICK HERE to Donate to help Marilyn and Travis!"
+  }
+ ],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 9422,
+ "text": "Billy and Caddie-\nCaddie is a Lab, currently in her 3rd month of service training. She is being trained to block, post, watch, as well as pressure therapy.\nCLICK HERE to Donate to help Caddie and Billy\nMarilyn and Travis-\nEarly in their training, Travis’ main focus will be alllll obedience training for the next few months. He will be trained for PTS and anxiety.\nCLICK HERE to Donate to help Marilyn and Travis!"
+}

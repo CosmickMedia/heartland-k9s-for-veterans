@@ -1,0 +1,168 @@
+{
+ "id": 2072,
+ "slug_path": "/back-the-pack/",
+ "file_key": "back-the-pack",
+ "link": "https://heartlandk9s.org/back-the-pack/",
+ "title": "Back the Pack",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2020-02-03T11:18:40",
+ "modified": "2022-12-19T13:44:59",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Back the Pack - Heartland Canines for Veterans",
+  "description": "Back the Pack We would like to send a big thank you to our Back the Pack partners. If you would like the join the pack please contact us for more information or"
+ },
+ "classification": "source-of-records",
+ "registry_id": null,
+ "headings": [
+  "h2: Back the Pack"
+ ],
+ "text_chars": 216,
+ "image_count": 13,
+ "images": [
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/new-pinnacle/3720556105.jpg",
+   "alt": "Pinnacle Pet",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2023/05/OIP/2995043690.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/Petland-Logo-Orange-With-Tag/2987511972.jpg",
+   "alt": "Petland - Pets make life better",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/BENNETT-MODIFIED-Vertical-V2-color285/2576496478.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2023/05/jack/2875401014.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/aliceCBD_logo-1/4007148373.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/293429547_163411172920894_3757616234711033360_n/3352392971.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/trademarklogopoodleonly/4036962692.jpg",
+   "alt": "Trademark Poodles",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/cupojoe/539339213.jpg",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/VFW-Logo/1434541524.jpg",
+   "alt": "Veterans of Foreign Wars",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/366902803_121841830998837_7639201652951336683_n/3910734919.jpg",
+   "alt": "366902803 121841830998837 7639201652951336683 n",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/Joplin_Main_X-1024x934-1/2165434795.webp",
+   "alt": "Joplin main x 1024x934",
+   "title": ""
+  },
+  {
+   "src": "https://heartlandk9s.org/wp-content/uploads/cache/2020/02/Compton-CPA-Group-P_C/2264370493.png",
+   "alt": "Compton cpa group p.c.",
+   "title": ""
+  }
+ ],
+ "internal_links": [
+  {
+   "href": "http://heartlandk9s.org/contact/",
+   "text": "contact us"
+  },
+  {
+   "href": "http://heartlandk9s.org/campaigns/",
+   "text": "View Campaigns"
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/new-pinnacle.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2023/05/OIP.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/Petland-Logo-Orange-With-Tag.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/BENNETT-MODIFIED-Vertical-V2-color285.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2023/05/jack.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/aliceCBD_logo-1.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/293429547_163411172920894_3757616234711033360_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/trademarklogopoodleonly.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/cupojoe.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/VFW-Logo.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/366902803_121841830998837_7639201652951336683_n.jpg",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/Joplin_Main_X-1024x934-1.webp",
+   "text": ""
+  },
+  {
+   "href": "https://heartlandk9s.org/wp-content/uploads/2020/02/Compton-CPA-Group-P.C.png",
+   "text": ""
+  }
+ ],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [
+  {
+   "kind": "foogallery",
+   "src": "FooGallery block (id 2094 back-the-pack-partners / 2468 image gallery)"
+  }
+ ],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 11185,
+ "text": "Back the Pack\nWe would like to send a big thank you to our Back the Pack partners. If you would like the join the pack please contact us for more information or check out our different campaigns below.\nView Campaigns"
+}

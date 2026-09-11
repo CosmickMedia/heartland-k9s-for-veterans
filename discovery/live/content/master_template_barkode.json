@@ -1,0 +1,42 @@
+{
+ "id": 3673,
+ "slug_path": "/master_template_barkode/",
+ "file_key": "master_template_barkode",
+ "link": "https://heartlandk9s.org/master_template_barkode/",
+ "title": "Barkode Master Template (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2026-01-09T19:28:13",
+ "modified": "2026-01-09T19:28:13",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Barkode Master Template (Service K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "master-template",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 366,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/09/cody-and-willow-156x300.jpg",
+   "alt": "Cody and willow",
+   "title": "cody and willow"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Template labels only (Handler / Emergency contact / Veterinary Contact) – no values"
+ ],
+ "raw_html_chars": 3558,
+ "text": "Dog Name (Service K9)\nBreed\nTask Description Service Dog\nResponsibilities/Tasks –\nBlocking, post, orbit, pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

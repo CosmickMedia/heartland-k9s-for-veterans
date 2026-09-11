@@ -1,0 +1,67 @@
+{
+ "id": 2491,
+ "slug_path": "/success/",
+ "file_key": "success",
+ "link": "https://heartlandk9s.org/success/",
+ "title": "Success",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2021-06-03T09:03:07",
+ "modified": "2021-10-12T14:21:16",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Success Stories - Heartland k9s",
+  "description": "Heartland K9s bring together a community of  dog trainers, dog breeders and kennels to provide service dogs for veterans."
+ },
+ "classification": "thank-you/success-destination",
+ "registry_id": null,
+ "headings": [
+  "h1: Our Success Stories",
+  "h2: Success Stories",
+  "h5: Heartland K9s bring together a community of dog trainers, dog breeders and kennels to provide service dogs for veterans. There is nothing more telling about the successful and lasting human-animal partnerships our community helps to create than the stories of the lives changed."
+ ],
+ "text_chars": 387,
+ "image_count": 3,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2020/01/Donate.jpg",
+   "alt": "Dog kissing his soldier",
+   "title": "Donate"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2020/01/Pic-4.jpg",
+   "alt": "Veteran smiling with his service dog",
+   "title": "Show Your Support"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2020/01/Pic-2.jpg",
+   "alt": "Woman posing with dog at Heartland K9s event",
+   "title": "Make A True Change"
+  }
+ ],
+ "internal_links": [
+  {
+   "href": "http://heartlandk9s.org/success/sample-success-story/",
+   "text": "Read More"
+  },
+  {
+   "href": "http://heartlandk9s.org/success/sample-success-story/",
+   "text": "Read More"
+  },
+  {
+   "href": "http://heartlandk9s.org/success/sample-success-story/",
+   "text": "Read More"
+  }
+ ],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 16248,
+ "text": "Our Success Stories\nSuccess Stories\nHeartland K9s bring together a community of  dog trainers, dog breeders and kennels to provide service dogs for veterans.\nThere is nothing more telling about the successful and lasting human-animal partnerships our community helps to create than the stories of the lives changed.\nSuccess Story\nRead More\nSuccess Story\nRead More\nSuccess Story\nRead More"
+}

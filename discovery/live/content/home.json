@@ -1,0 +1,159 @@
+{
+ "id": 6,
+ "slug_path": "/",
+ "file_key": "home",
+ "link": "https://heartlandk9s.org/",
+ "title": "HOME",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2017-11-15T09:40:43",
+ "modified": "2026-04-17T12:18:24",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Heartland Canines for Veterans - Providing Service Dogs To Eligible Disabled Veterans - So They Never Walk Alone",
+  "description": "EMAIL info@heartlandk9s.org PHONE 800-913-6189 HOURS 8:00am - 5:00pm HOW IT WORKS At Heartland Canines for Veterans, we are driven by a single goal; to do our p"
+ },
+ "classification": "marketing-page",
+ "registry_id": null,
+ "headings": [
+  "h3: EMAIL",
+  "h3: info@heartlandk9s.org",
+  "h3: PHONE",
+  "h3: 800-913-6189",
+  "h3: HOURS",
+  "h3: 8:00am – 5:00pm",
+  "h1: HOW IT WORKS",
+  "h3: Meaningful Work. Unforgettable Experiences.",
+  "h2: WHAT WE DO",
+  "h3: To see all our latest gear, click below!",
+  "h1: SUPPORT US",
+  "h1: BarKode",
+  "h3: MAKE A DONATION",
+  "h3: HEARTLAND CAMPAIGNS",
+  "h3: VOLUNTEER YOUR TIME",
+  "h3: EMAIL",
+  "h3: Click to email",
+  "h3: PHONE",
+  "h3: 800-913-6189",
+  "h3: HOURS",
+  "h3: 8:00am – 5:00pm"
+ ],
+ "text_chars": 3296,
+ "image_count": 8,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/05/Concept-1-rocker-outlined-2-263x300.png",
+   "alt": "",
+   "title": "Concept 1 rocker outlined (2)"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2024/12/HK9-Swag-232x300.png",
+   "alt": "Adam and Sadie - Heartland Canines for Veterans",
+   "title": "HK9 Swag"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/05/Concept-1-rocker-outlined-2-263x300.png",
+   "alt": "",
+   "title": "Concept 1 rocker outlined (2)"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/03/Heartland-BarKode-Example-300x300.png",
+   "alt": "",
+   "title": "Heartland BarKode Example"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/06/1000008525-210x300.jpg",
+   "alt": "1000008525",
+   "title": "1000008525"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/06/Train-gym-300x225.jpg",
+   "alt": "Train gym",
+   "title": "Train gym"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/06/502075699_720094960529515_6264838396365568581_n-300x194.jpg",
+   "alt": "502075699 720094960529515 6264838396365568581 n",
+   "title": "502075699_720094960529515_6264838396365568581_n"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/06/DSC0259-300x200.jpeg",
+   "alt": " dsc0259",
+   "title": "_DSC0259"
+  }
+ ],
+ "internal_links": [
+  {
+   "href": "https://heartlandk9s.org/how-it-works-veteran-consideration/",
+   "text": "Are You a Veteran interested in our Program? Apply for a service dog."
+  },
+  {
+   "href": "https://heartlandk9s.org/the-service-k9-program/",
+   "text": "Are you interested in providing a K9? Apply to provide a K9"
+  },
+  {
+   "href": "https://heartlandk9s.org/campaigns/",
+   "text": "We provide K9s at ZERO cost to our Veterans. But we need your help!"
+  },
+  {
+   "href": "http://heartlandk9s.org/campaigns/",
+   "text": "View Our Campaigns"
+  },
+  {
+   "href": "https://heartlandk9s.org/heartland-gear/",
+   "text": "SWAG AVAILABLE"
+  },
+  {
+   "href": "http://heartlandk9s.org/meet-the-team/",
+   "text": "Meet the HK9 Team"
+  },
+  {
+   "href": "https://heartlandk9s.org/hk9-current-teams-in-training/",
+   "text": "Meet the Teams in Training"
+  },
+  {
+   "href": "https://heartlandk9s.org/our-highlighted-team/",
+   "text": "Our Highlighted TEAM"
+  },
+  {
+   "href": "https://heartlandk9s.org/donate/",
+   "text": "DONATE HERE!"
+  },
+  {
+   "href": "https://heartlandk9s.org/barkode/",
+   "text": "BarKode Information"
+  },
+  {
+   "href": "https://heartlandk9s.org/donate/",
+   "text": "DONATE"
+  },
+  {
+   "href": "http://heartlandk9s.org/campaigns/",
+   "text": "VIEW THE CAMPAIGNS"
+  },
+  {
+   "href": "http://heartlandk9s.org/volunteer/",
+   "text": "Get In Touch"
+  },
+  {
+   "href": "http://heartlandk9s.org/contact/",
+   "text": "Click to email"
+  }
+ ],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [
+  {
+   "kind": "html5-video",
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/01/CQ-Vet-Service-Dogs.mp4"
+  }
+ ],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 50911,
+ "text": "EMAIL\ninfo@heartlandk9s.org\nPHONE\n800-913-6189\nHOURS\n8:00am – 5:00pm\nHOW IT WORKS\nAt Heartland Canines for Veterans, we are driven by a single goal; to do our part in making the world a better place for the veterans who have served this great nation. We use proven canine training strategies to produce a highly skilled and capable team.\nWe ensure the right canine is paired with the right person. Our decision making process is informed by comprehensive empirical studies and high quality data evaluation. We strive to build productive relationships in our teams and make a positive impact with all of our pursuits.\nAre You a Veteran interested in our Program? Apply for a service dog.\nAre you interested in providing a K9? Apply to provide a K9\nWe provide K9s at ZERO cost to our Veterans. But we need your help!\nMeaningful Work.\nUnforgettable Experiences.\nWHAT WE DO\nHeartland Canines for Veterans is an IRS recognized 501(c)(3) non-profit organization whose purpose is to help our nation’s warriors by providing a canine partner trained to help them thrive. We are achieving more with our initiatives than ever before. We work to help improve the lives of others, and are very proud of the progress we continue to make. Learn more about what we do, who we help, and how we work every day to promote positive change.\nSorry, your browser doesn't support embedded videos.\nView Our Campaigns\nTo see all our latest gear, click below!\nSWAG AVAILABLE\nSUPPORT US\nWe are so happy you’re interested in getting involved with our work here at Heartland Canines for Veterans. There are so many ways for you to help, and we truly appreciate each and every effort. By lending your support, you’ll become a valuable part of our Nonprofit Organization and help to strengthen our operations.\nMeet the HK9 Team\nMeet the Teams in Training\nOur Highlighted TEAM\nBarKode \nOur new program is now available to better track our K9s. Visibility and education is so important. We are looking to close the gap and protect our teams through accountability. Click the link for more information on how we help our teams, and how we provide the public with certification of our K9 Teams.\nThis program is dedicated to Derron and his service dog Rosie. At Derron’s untimely death, first responders, the humane society and coroner did not know what to do with Rosie. She ended up spending multiple days away from her family. Our goal is to prevent this unfortunate circumstance from happening in the future. Each of our BarKodes have emergency contacts for the Veteran, Vet information for the K9 and a contact for HK9 if there are any questions. Please help this program by clicking the button below.\nDONATE HERE!\nBarKode Information\nOur organization always appreciates the generosity and involvement of people like you, with every contribution going towards making Heartland Canines for Veterans an even better Nonprofit Organization than it already is. We want to provide you with the correct and appropriate information pertaining to your mode of support, so don’t hesitate to contact us with your questions.\nMAKE A DONATION\nHelp Us Help Veterans\nDONATE\nHEARTLAND CAMPAIGNS\nCOMPANY CAMPAIGNS\nVIEW THE CAMPAIGNS\nVOLUNTEER YOUR TIME\nMake A True Change\nGet In Touch\nEMAIL\nClick to email\nPHONE\n800-913-6189\nHOURS\n8:00am – 5:00pm"
+}

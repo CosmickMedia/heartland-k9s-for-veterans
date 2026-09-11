@@ -1,0 +1,100 @@
+{
+ "id": 2120,
+ "slug_path": "/donate/",
+ "file_key": "donate",
+ "link": "https://heartlandk9s.org/donate/",
+ "title": "Donate",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2020-02-13T11:37:12",
+ "modified": "2026-03-06T16:15:50",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Donate - Heartland Canines for Veterans",
+  "description": "Donating has never been easier! Click the Zeffy Logo to Donate! Thank you so much for donating! We will put your gift to work right away. Mail your donation to:"
+ },
+ "classification": "marketing-page",
+ "registry_id": null,
+ "headings": [
+  "h4: Thank you for your consideration and donation to Heartland Canines For Veterans. Your donation allows us to help those who have done so much for all of us, the US Veterans by providing them with a properly trained and certified Service Dog. Heartland Canines For Veterans is an IRS recognized 501(c)(3) non-profit organization. IRS EIN 47-4991572. All donations are tax deductible to the extend allowed by law. Consult your CPA if you have questions."
+ ],
+ "text_chars": 902,
+ "image_count": 4,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/01/aRSaNzP6RkRDw9gvqs04NgnM0X41658926928464_200x200.png",
+   "alt": "ARSaNzP6RkRDw9gvqs04NgnM0X41658926928464 200x200",
+   "title": ""
+  },
+  {
+   "src": "https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif",
+   "alt": "Donate with PayPal button",
+   "title": "PayPal - The safer, easier way to pay online!"
+  },
+  {
+   "src": "https://www.paypal.com/en_US/i/scr/pixel.gif",
+   "alt": "",
+   "title": ""
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/01/amazon-300x158.png",
+   "alt": "Amazon",
+   "title": ""
+  }
+ ],
+ "internal_links": [],
+ "external_links": [
+  {
+   "href": "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives",
+   "text": ""
+  },
+  {
+   "href": "https://www.amazon.com/hz/wishlist/ls/35NF4IVCKN76G?ref_=wl_share",
+   "text": ""
+  }
+ ],
+ "shortcodes": [],
+ "embeds": [
+  {
+   "kind": "html-form",
+   "src": "https://www.paypal.com/cgi-bin/webscr"
+  }
+ ],
+ "forms": [
+  {
+   "action": "https://www.paypal.com/cgi-bin/webscr",
+   "method": "post",
+   "id": "",
+   "class": ""
+  }
+ ],
+ "inputs": [
+  {
+   "tag": "input",
+   "type": "hidden",
+   "name": "cmd",
+   "value": "_s-xclick",
+   "required": false
+  },
+  {
+   "tag": "input",
+   "type": "hidden",
+   "name": "hosted_button_id",
+   "value": "METNHXQ9EBUMQ",
+   "required": false
+  },
+  {
+   "tag": "input",
+   "type": "image",
+   "name": "submit",
+   "value": "",
+   "required": false
+  }
+ ],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 11884,
+ "text": "Donating has never been easier! Click the Zeffy Logo to Donate!\nThank you so much for donating!\nWe will put your gift to work right away.\nMail your donation to:\n12651 Gateway Dr\nNeosho MO 64850\nIf you have any questions, please call us at 417-312-7484.\nDonate online with PayPal.\nDonating has never been easier! Click the Amazon Picture to be taken to Hk9s Daily Needs Wishlist!\nThank you for your consideration and donation to Heartland Canines For Veterans. Your donation allows us to help those who have done so much for all of us, the US Veterans by providing them with a properly trained and certified Service Dog. Heartland Canines For Veterans is an IRS recognized 501(c)(3) non-profit organization. IRS EIN 47-4991572. All donations are tax deductible to the extend allowed by law. Consult your CPA if you have questions.\nSimply click on whatever platform you wish to use for your contribution."
+}

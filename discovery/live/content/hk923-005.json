@@ -1,0 +1,45 @@
+{
+ "id": 2998,
+ "slug_path": "/hk923-005/",
+ "file_key": "hk923-005",
+ "link": "https://heartlandk9s.org/hk923-005/",
+ "title": "Jennifer and Toad (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2023-05-02T09:18:29",
+ "modified": "2023-05-02T09:19:49",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Jennifer and Toad (Service K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": "HK923-005 (from slug)",
+ "headings": [],
+ "text_chars": 470,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/05/image_50385665-169x300.jpg",
+   "alt": "",
+   "title": "image_50385665"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 4011,
+ "text": "Toad (Service K9)\nCream Poodle\nPTSD/Anxiety/Mobility Service Dog\nResponsibilities/Tasks –\nBlocking, post, orbit, pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\n[REDACTED LINE]\n[REDACTED LINE]\nVeterinary Contact – [VALUE REDACTED]\n[REDACTED LINE]\n[REDACTED LINE]\n[REDACTED LINE]\n[REDACTED LINE]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

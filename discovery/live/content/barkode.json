@@ -1,0 +1,46 @@
+{
+ "id": 2944,
+ "slug_path": "/barkode/",
+ "file_key": "barkode",
+ "link": "https://heartlandk9s.org/barkode/",
+ "title": "BarKode – A Service of Heartland Canines for Veterans",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 1,
+ "date": "2023-03-17T09:12:54",
+ "modified": "2025-11-25T09:29:21",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "BarKode - A Service of Heartland Canines for Veterans - Heartland Canines for Veterans",
+  "description": "BarKode © BarKode is a unique service provided by Heartland Canines For Veterans to facilitate Service K9 Teams public access and ensure that in an emergency th"
+ },
+ "classification": "marketing-page",
+ "registry_id": null,
+ "headings": [
+  "h1: BarKode ©",
+  "h5: BarKode is a unique service provided by Heartland Canines For Veterans to facilitate Service K9 Teams public access and ensure that in an emergency these uniquely trained Canines are not separated from their handler. This voluntary validation service provides verification for First Responders so Service K9s are provided the appropriate care and concern. BarKode can also remove ambiguity for businesses regarding Service K9 Team public access regarding the relevant aspects of the Americans With Disabilities Act (ADA).",
+  "h5: Heartland Canines For Veterans trained teams are assigned a unique team number and QR code which is documented in our secure database. By scanning the BarKode, a picture of the Service K9 is displayed along with information to identify the team and the tasks the canine is trained to perform along with emergency contact and pertinent veterinarian information. Heartland Canines For Veterans contact information is also displayed.",
+  "h5: BarKode is a free service only for Heartland Canines For Veterans trained Service K9 Teams. Service K9 Teams trained by other providers may be provided access to this service only after application, evaluation, any additional training and annual fee.",
+  "h5: Contact Heartland K9s for more information at (800) 913-6189 or director@heartlandk9s.org."
+ ],
+ "text_chars": 1303,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/11/Heartland-BarKode-with-SM-300x300.png",
+   "alt": "Heartland BarKode with SM",
+   "title": "Heartland BarKode with SM"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 4733,
+ "text": "BarKode © \nBarKode is a unique service provided by Heartland Canines For Veterans to facilitate Service K9 Teams public access and ensure that in an emergency these uniquely trained Canines are not separated from their handler. This voluntary validation service provides verification for First Responders so Service K9s are provided the appropriate care and concern. BarKode can also remove ambiguity for businesses regarding Service K9 Team public access regarding the relevant aspects of the Americans With Disabilities Act (ADA).\nHeartland Canines For Veterans trained teams are assigned a unique team number and QR code which is documented in our secure database. By scanning the BarKode, a picture of the Service K9 is displayed along with information to identify the team and the tasks the canine is trained to perform along with emergency contact and pertinent veterinarian information. Heartland Canines For Veterans contact information is also displayed.\nBarKode is a free service only for Heartland Canines For Veterans trained Service K9 Teams. Service K9 Teams trained by other providers may be provided access to this service only after application, evaluation, any additional training and annual fee.\nContact Heartland K9s for more information at (800) 913-6189 or [NON-ORG EMAIL REDACTED]"
+}

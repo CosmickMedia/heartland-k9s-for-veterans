@@ -1,0 +1,1653 @@
+{
+ "generated": "2026-09-10",
+ "source": "https://heartlandk9s.org/wp-json/wp/v2/pages?per_page=100 (40 pages) + rendered HTML fetches",
+ "platform": "WordPress 7.1 on Hostinger/LiteSpeed; theme Avada 3.16.1 (Fusion Builder); plugins seen: fusion-core, fusion-builder, foogallery (+foobox lightbox), slim-seo (+redirection), monsterinsights, simple-history, duplicate-post, cookie-notice-and-consent-banner; analytics Fathom; timezone America/Chicago; 0 published posts; 243 media items (195 jpeg, 38 png, 3 webp, 5 pdf, 1 docx, 1 mp4); 2 FooGalleries; users publicly enumerable (admin 'HK9 Web Admin' id 1, 'Jimmy Burgess' slug hk9director id 10)",
+ "site_facts": {
+  "org_name": "Heartland Canines for Veterans (a.k.a. Heartland K9s / HK9; Candid legal name: HEARTLAND CANINES FOR VETERANS INC)",
+  "tagline": "Providing Service Dogs To Eligible Disabled Veterans - So They Never Walk Alone (WP site description; slider h1 'So they never walk alone')",
+  "phones": [
+   {
+    "number": "800-913-6189",
+    "context": "Main line: homepage EMAIL/PHONE/HOURS blocks (top mobile-only + bottom desktop-only), Contact page, BarKode page '(800) 913-6189'"
+   },
+   {
+    "number": "417-312-7484",
+    "context": "Labelled 'Director cell' on Contact page; footer widget text (unlabelled); Donate page 'If you have any questions, please call us at'; every BarKode record 'Any questions please contact Executive Director Jimmy Burgess'"
+   }
+  ],
+  "emails": [
+   "info@heartlandk9s.org (homepage EMAIL block; obedience price sheet)",
+   "director@heartlandk9s.org (BarKode page, Events page, Meet the Team - Executive Director)",
+   "development@heartlandk9s.org (Meet the Team - Development Director)",
+   "[one personal non-org-domain email for the Volunteer Coordinator on Meet the Team - redacted]"
+  ],
+  "address": "12651 Gateway Dr, Neosho MO 64850 (footer, Contact, Donate mail-in). Stale: 'PO Box 101, Saginaw, MO 64864' on /thank-you/ (2021) for mailing the medical history form. Training location: 'At the Farm Training (Oronogo)' per obedience price sheet.",
+  "hours": "8:00am – 5:00pm (homepage HOURS block; no days of week stated anywhere on live site)",
+  "ein": "47-4991572 (Donate page: 'IRS recognized 501(c)(3) non-profit organization. IRS EIN 47-4991572'; also in Candid profile URL)",
+  "founding_facts": "'since its founding in 2015' (Meet the Team, Ted Donaldson bio); 'providing highly trained service dogs to qualified Veterans for ten years' (Obedience Training page, 2026); Jimmy Burgess (Executive Director) 'joined the HK9 Team in November of 2022'; Jim Burgess 'with HK9 since the spring of 2023'; Privacy Policy effective November 19, 2020; Madison Stratton 'found Heartland in 2023'; dedication: BarKode program 'dedicated to Derron and his service dog Rosie'. Current cost to train and place a K9: $18,000 (Service K9 Program page + Obedience page).",
+  "social": [
+   "https://www.facebook.com/heartlandk9s/ (footer social icon; Contact page link)"
+  ],
+  "donation_urls": [
+   "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives (Donate page 'Click the Zeffy Logo'; sticky footer button 'Support a Service Dog')",
+   "PayPal hosted button form: action https://www.paypal.com/cgi-bin/webscr, hosted_button_id METNHXQ9EBUMQ (Donate page 'Donate online with PayPal.')",
+   "https://www.amazon.com/hz/wishlist/ls/35NF4IVCKN76G?ref_=wl_share (Donate page 'Hk9s Daily Needs Wishlist')",
+   "Mail-in: 12651 Gateway Dr, Neosho MO 64850 (Donate page)",
+   "Heartland Gear on-donation-basis merch via https://linksinkllc.com/?s=Heartland"
+  ],
+  "footer_text": "Column 1 text widget: '417-312-7484 / 12651 Gateway Dr / Neosho MO 64850'. Column 1 custom HTML widget: fixed bottom-right sticky button '🐾 Support a Service Dog' (→ Zeffy) with caption 'Every donation helps train a service dog for a Veteran.' Column 2: Facebook social icon (→ facebook.com/heartlandk9s). Column 3: Candid/GuideStar transparency seal image (https://widgets.guidestar.org/prod/v1/pdp/transparency-seal/9494475/svg) linking to https://app.candid.org/profile/9494475/... Column 4: empty. No copyright line, no EIN, no footer nav, no hours, no email in footer. After footer: 'Go to Top' link only.",
+  "other_external": [
+   {
+    "url": "https://app.candid.org/profile/9494475/heartland-canines-for-veterans-inc-47-4991572/?pkId=0c9bd385-c54d-417d-8e44-a7057050afae",
+    "purpose": "Candid/GuideStar nonprofit profile (footer seal link)",
+    "page": "footer (all pages)"
+   },
+   {
+    "url": "https://widgets.guidestar.org/prod/v1/pdp/transparency-seal/9494475/svg",
+    "purpose": "GuideStar transparency seal image",
+    "page": "footer"
+   },
+   {
+    "url": "https://www.simpletix.com/e/joplin-jailbirds-vs-chillicothe-mudcats-7-tickets-255726?utm=MilitaryNight2026&promocode=MILITARYNITE26",
+    "purpose": "Event ticket purchase (SimpleTix) for Joplin Jailbirds Veteran Appreciation Night",
+    "page": "/events/"
+   },
+   {
+    "url": "https://linksinkllc.com/?s=Heartland",
+    "purpose": "Merch shop (Links Ink) 'BROWSE NOW'",
+    "page": "/heartland-gear/"
+   },
+   {
+    "url": "https://www.addadoption.org/",
+    "purpose": "A Dog's Dream adoption agency (partner referral)",
+    "page": "/heartland-obedience-training-2/"
+   },
+   {
+    "url": "https://www.anythingpawsable.com/before-partnering-with-a-service-dog",
+    "purpose": "'Learn More' source of the 5 Questions article",
+    "page": "/5-questions/"
+   },
+   {
+    "url": "https://archive.ada.gov/",
+    "purpose": "ADA FAQ full list",
+    "page": "/service-dogs-and-the-ada/"
+   },
+   {
+    "url": "http://www.ada.gov/service_animals_2010.htm",
+    "purpose": "ADA Revised Requirements: Service Animals",
+    "page": "/service-dogs-and-the-ada/"
+   },
+   {
+    "url": "https://www.hud.gov/sites/dfiles/FHEO/documents/19ServiceAnimalNoticeFHEO_508.pdf",
+    "purpose": "HUD Fair Housing service animal notice",
+    "page": "/service-dogs-and-the-ada/"
+   },
+   {
+    "url": "http://www.google.com/privacy_ads.html",
+    "purpose": "Google cookie opt-out",
+    "page": "/privacy-policy/"
+   },
+   {
+    "url": "https://customer.pinnaclepet.net/Home.aspx",
+    "purpose": "Sponsor logo link (Pinnacle Pet customer portal) in 'One of Us' and Coloring Book thank-you blocks",
+    "page": "/campaigns/"
+   },
+   {
+    "url": "https://petlandjoplin.com/",
+    "purpose": "Sponsor logo link (Petland Joplin) in 'One of Us' thank-you block",
+    "page": "/campaigns/"
+   },
+   {
+    "url": "https://www.facebook.com/heartlandk9s/",
+    "purpose": "Facebook page",
+    "page": "/contact/ and footer"
+   },
+   {
+    "url": "https://cdn.usefathom.com/script.js",
+    "purpose": "Fathom analytics script (site-wide)",
+    "page": "all"
+   },
+   {
+    "url": "https://heartlandk9s.org/wp-content/uploads/2021/06/medical-history-k9-vets.pdf",
+    "purpose": "Medical history form PDF for physicians",
+    "page": "/thank-you/"
+   },
+   {
+    "url": "https://heartlandk9s.org/wp-content/uploads/2026/03/HEARTLAND-OBEDIENCE-TRAINING.docx",
+    "purpose": "Obedience training price sheet (.docx)",
+    "page": "/heartland-obedience-training-2/"
+   },
+   {
+    "url": "https://heartlandk9s.org/wp-content/uploads/2023/01/CQ-Vet-Service-Dogs.mp4",
+    "purpose": "Homepage 'What we do' HTML5 video (self-hosted mp4)",
+    "page": "/"
+   },
+   {
+    "url": "https://heartlandk9s.org/wp-content/uploads/2025/11/Coloring-Book-Sponsor-1.pdf",
+    "purpose": "Coloring book sponsor PDF attached to Campaigns page but NOT linked in content",
+    "page": "/campaigns/ (attachment only)"
+   }
+  ]
+ },
+ "navigation": {
+  "header": [
+   "Logo (left): https://heartlandk9s.org/wp-content/uploads/2023/05/Concept-1-rocker-outlined-2-263x300.png alt 'Heartland Canines for Veterans Logo' → /",
+   "DONATE → /donate/",
+   "5 QUESTIONS → /5-questions/",
+   "APPLICATION → /online-application/",
+   "ADA FAQs → /service-dogs-and-the-ada/",
+   "CONTACT → /contact/",
+   "PARTNER WITH US → /back-the-pack/",
+   "PHOTOS → /photos/",
+   "VOLUNTEER → /volunteer/",
+   "EVENTS → /events/",
+   "CAMPAIGNS → /campaigns/",
+   "(no top bar, no header phone/email, no dropdowns; menu id 'menu-electrician-main-menu'; Avada header v1, sticky)"
+  ],
+  "footer": [
+   "417-312-7484 (text)",
+   "12651 Gateway Dr, Neosho MO 64850 (text)",
+   "Sticky button 'Support a Service Dog' → Zeffy",
+   "Facebook icon → https://www.facebook.com/heartlandk9s/",
+   "GuideStar seal → Candid profile",
+   "No footer menu / no copyright"
+  ],
+  "mobile": [
+   "Same 10 items in Avada modern mobile menu (hamburger 'Toggle mobile menu'); homepage shows EMAIL/PHONE/HOURS block at top on small/medium screens only (fusion-no-large-visibility) and at bottom on large screens only"
+  ]
+ },
+ "homepage_structure": [
+  "0. Avada Fusion Slider #66 (slider 'homepage-fusion', slide 'heartland-hero' id 1957): h1 'So they never walk alone', bg image /wp-content/uploads/2021/03/PandM.jpg, height 450px, autoplay, single slide (post type 'slide' redirects 301 to /)",
+  "1. Contact strip (mobile/tablet only): EMAIL info@heartlandk9s.org | PHONE 800-913-6189 | HOURS 8:00am – 5:00pm",
+  "2. HOW IT WORKS (red #e3111a bg, logo image): 'At Heartland Canines for Veterans, we are driven by a single goal...' + 'We ensure the right canine is paired with the right person...' ; buttons: 'Are You a Veteran interested in our Program? Apply for a service dog.' → /how-it-works-veteran-consideration/; 'Are you interested in providing a K9? Apply to provide a K9' → /the-service-k9-program/; 'We provide K9s at ZERO cost to our Veterans. But we need your help!' → /campaigns/",
+  "3. WHAT WE DO (bg image bg2-flipped.jpg): 'Meaningful Work. Unforgettable Experiences.' + 501(c)(3) paragraph + self-hosted video CQ-Vet-Service-Dogs.mp4 + button 'View Our Campaigns' → /campaigns/",
+  "4. Swag strip (navy #053360): image HK9-Swag.png (alt 'Adam and Sadie - Heartland Canines for Veterans'), 'To see all our latest gear, click below!' button 'SWAG AVAILABLE' → /heartland-gear/",
+  "5. SUPPORT US (bg image bg3.jpg, logo): paragraph + buttons 'Meet the HK9 Team' → /meet-the-team/, 'Meet the Teams in Training' → /hk9-current-teams-in-training/, 'Our Highlighted TEAM' → /our-highlighted-team/",
+  "6. BarKode (red): images Heartland-BarKode-Example.png + 1000008525.jpg; 'Our new program is now available to better track our K9s...' + Derron & Rosie dedication paragraph; buttons 'DONATE HERE!' → /donate/, 'BarKode Information' → /barkode/",
+  "7. Three-card CTA row (cream #fff5e1): intro paragraph; cards MAKE A DONATION / 'Help Us Help Veterans' (img Train-gym.jpg) button DONATE → /donate/; HEARTLAND CAMPAIGNS / 'COMPANY CAMPAIGNS' (img 502075699...jpg) button 'VIEW THE CAMPAIGNS' → /campaigns/; VOLUNTEER YOUR TIME / 'Make A True Change' (img DSC0259.jpeg) button 'Get In Touch' → /volunteer/",
+  "8. Empty navy spacer row",
+  "9. Contact strip (desktop only): EMAIL 'Click to email' → /contact/ | PHONE 800-913-6189 | HOURS 8:00am – 5:00pm",
+  "Footer as described. Page template: 100-width.php. Title: 'Heartland Canines for Veterans – Providing Service Dogs To Eligible Disabled Veterans – So They Never Walk Alone'. Meta description is auto-generated junk ('EMAIL info@heartlandk9s.org PHONE 800-913-6189 HOURS ...')."
+ ],
+ "five_questions": [
+  "1. Am I financially able to take on the costs of caring for a dog for 10 to 15 years?",
+  "2. Are you prepared to care or arrange for care for a dog every single day?",
+  "3. Are you prepared to always be the center of attention?",
+  "4. Are you willing and able to accept the training and socialization obligations accompanying a Service Dog?",
+  "5. Are you prepared to deal with conflict?"
+ ],
+ "barkode_record_fields": [
+  "Photo of the K9 (left column, fusion-image-element; Larry/Archie record additionally has an 'ID Back' card image)",
+  "Line 1: Dog name + program type in parentheses, e.g. 'Toad (Service K9)', 'Mosby (Therapy K9)', 'Kimber (Service K9 In Training)' (page title = 'Handler and Dog (Service K9)')",
+  "Optional: 'Service Number Identification: <ID>' (only Elke record)",
+  "Breed (free text; one record adds eye colour line)",
+  "Task description / disability category line, e.g. 'PTSD/Anxiety/Mobility Service Dog', 'Therapy Dog- Hk9 Therapy Certified'",
+  "'Responsibilities/Tasks –' + tasks line (e.g. 'Blocking, post, orbit, pressure therapy'; therapy: 'Petmaster/pressure therapy')",
+  "'Handler –' name (some records append handler phone)  [SENSITIVE]",
+  "'Emergency contact –' name + phone (sometimes on following lines)  [SENSITIVE]",
+  "'Veterinary Contact-' clinic + phone (one record: full clinic street address; one record labelled 'Emergency Vet Contact')  [SENSITIVE]",
+  "Certification line: 'HK9 certified Service Responsibilities' / '... (In training)' / 'HK9 certified Therapy Responsibilities & Hk9 Good Conduct Certified' / 'HK9 Certified'",
+  "'DO NOT SEPERATE FROM HANDLER' (sic) — therapy record Mosby instead has 'MOSBY is an ACTIVE traveler, he knows his way home.' followed by a home street address [SENSITIVE]",
+  "'Any questions please contact Executive Director Jimmy Burgess 417-312-7484'",
+  "Layout: Avada flex row, 2 columns (1/2 image, 1/2 fusion-text of <p> lines); no headings, no QR code rendered on page (QR is on the physical patch/ID and presumably encodes the page URL). Author user 'Jimmy Burgess' (hk9director). No noindex — records are indexable and in the sitemap.",
+  "ID scheme (inconsistent): Service K9 2023: 'HK9 23-001' (photo title), 'HK923-004' & 'HK923-005' (slugs hk923004, hk923-005); 2024: 'Hk9-2402'; 2026: 'HK926-002' (Tex, in title); In-training 2026: 'HK92026-01', 'HK92026-02' (slugs); Therapy 2026: 'HK9T26-01', 'K9T26-02'. Pattern ≈ HK9 + [T] + YY + '-' + seq (2- or 3-digit). Six records show no ID at all (Gunther, Nova, MJ, Willow, Riley, Bella)."
+ ],
+ "records": {
+  "campaigns": [
+   {
+    "record_type": "campaign",
+    "title": "Hk9 Educational Coloring Book Campaign",
+    "summary": "Heartland Kids' Coloring & Activity Book featuring real HK9 service dogs; taught at schools/libraries/veteran events; business sponsorships fund training; 'Featured on a 30,000-follower book review account'; 'Distributed across Missouri and surrounding states'",
+    "dates": "none on page (page modified 2025-11-26)",
+    "cta": "'Go to the Book page' → /the-hk9-coloring-book/; 'Sign us up! Let's change a life!' → /contact/",
+    "images": 2,
+    "sponsors": "Thank-you block shows one logo (313208610...jpg → customer.pinnaclepet.net, i.e. Pinnacle Pet)",
+    "financial": "none on this page (tiers on book page)"
+   },
+   {
+    "record_type": "campaign",
+    "title": "\"One of Us\" Campaign",
+    "summary": "Organization sponsors a specific Veteran/K-9 team: names the K-9; covers all training, routine vet care, gear, equipment, kenneling and admin costs; press releases; training updates; graduation event; ongoing visits/cards",
+    "dates": "none",
+    "cta": "'I would like more info on this' → /contact/; 'Sign us up! Let's change a life!' → /contact/",
+    "images": 4,
+    "sponsors": "Thank-you block logos: 313208610 (→ Pinnacle Pet portal), OIP.jpg (→ petlandjoplin.com), jack.jpg (no link, unidentified)",
+    "financial": "none stated"
+   },
+   {
+    "record_type": "campaign",
+    "title": "\"Paws\" for Giving",
+    "summary": "Businesses display HK9 logo sticker with QR donation code (counter/window/wall); 4\"x4\" stickers 'available by 2023' (stale); free to business",
+    "dates": "'available by 2023' (stale)",
+    "cta": "'Request your Stickers Here' → /contact/",
+    "images": 1,
+    "sponsors": "none",
+    "financial": "none"
+   },
+   {
+    "record_type": "campaign",
+    "title": "Dog House Donation Box",
+    "summary": "Counter-top cash donation boxes for businesses; free; includes info on where gifts go",
+    "dates": "none",
+    "cta": "'Request your Dog House Here' → /contact/",
+    "images": 1,
+    "sponsors": "none",
+    "financial": "none"
+   },
+   {
+    "record_type": "campaign",
+    "title": "The Heartland Ambassador Campaign",
+    "summary": "HK9 brings a service dog team to a business/venue: grand openings, employee/patron education, ADA rules, campaign Q&A",
+    "dates": "none",
+    "cta": "'We'd love to have a team visit us!' → /contact/",
+    "images": 1,
+    "sponsors": "none",
+    "financial": "none"
+   }
+  ],
+  "coloring_book_sponsor_tiers": [
+   "Bronze $500 – 50 Books",
+   "Silver $1,000 – 100 Books",
+   "Gold $4,000 – 500 Books",
+   "Platinum $10,000 – 1,000 Books",
+   "PAGE PARTNER $2,500",
+   "FEATURED PAGE SPONSOR $4,000",
+   "LEGACY PAGE SPONSOR $7,500 (+ second custom page $2,000)",
+   "Classroom Sponsorship $300 – 30 Books"
+  ],
+  "events": [
+   {
+    "record_type": "event",
+    "title": "Joplin Jailbirds Veteran Appreciation Night",
+    "dates": "25 July 2026; gates 6 PM, game 7 PM",
+    "venue": "Joe Becker Stadium, Joplin MO",
+    "registration": "https://www.simpletix.com/e/joplin-jailbirds-vs-chillicothe-mudcats-7-tickets-255726?utm=MilitaryNight2026&promocode=MILITARYNITE26 ('Purchase Game tickets here'); $9 pregame ($3/ticket to HK9), $10 at gate",
+    "status": "past (as of 2026-09-10)",
+    "contact": "director@heartlandk9s.org; 'actively looking for sponsors'",
+    "images": 1,
+    "summary": "Jailbirds are a non-profit MINK League team; HK9 partnership"
+   },
+   {
+    "record_type": "event-history (media library only, not on page)",
+    "title": "Prior event artefacts attached to Events page: HK9 Offroad Poker Run (2021 PDF/JPG), Steel Thunder Car Show (2023), 2023 VFW Car Show flyer (PDF), St. Puppy's Day Event (2023), Mend the Line movie flyer (2023), hk9 poker run flyer (Sept 2023), Putts for Paws (Jan 2025), 'We're back!' flyers (2025), Antlers and Anglers logo (Mar 2026), Bass Pro Shops logo, Joplin Outlaws image",
+    "dates": "2021–2026",
+    "status": "past; tags 'poker-run' and 'veterans-day' exist but have zero published posts"
+   }
+  ],
+  "team": [
+   {
+    "name": "Jimmy Burgess",
+    "role": "Executive Director & Service Dog Trainer",
+    "bio": true,
+    "portrait": true,
+    "email": "director@heartlandk9s.org"
+   },
+   {
+    "name": "Chris Flemming (heading) / Chris Fleming (bio) — spelling inconsistent",
+    "role": "Board President",
+    "bio": true,
+    "portrait": true
+   },
+   {
+    "name": "Robert Wood",
+    "role": "Board Vice President",
+    "bio": true,
+    "portrait": true
+   },
+   {
+    "name": "Larry Warren",
+    "role": "Board Member",
+    "bio": false,
+    "portrait": true
+   },
+   {
+    "name": "James Childers",
+    "role": "Board Member",
+    "bio": true,
+    "portrait": true
+   },
+   {
+    "name": "Jennifer Johnson",
+    "role": "Board Member",
+    "bio": true,
+    "portrait": true
+   },
+   {
+    "name": "Cody Simmons",
+    "role": "Board Member",
+    "bio": true,
+    "portrait": true
+   },
+   {
+    "name": "Madison Stratton",
+    "role": "Board Member",
+    "bio": true,
+    "portrait": true,
+    "note": "bio contains the only real testimonial-style quote on the live site"
+   },
+   {
+    "name": "Michael Johnson",
+    "role": "Board Member",
+    "bio": true,
+    "portrait": true
+   },
+   {
+    "name": "Ted Donaldson",
+    "role": "Development Director",
+    "bio": true,
+    "portrait": true,
+    "email": "development@heartlandk9s.org"
+   },
+   {
+    "name": "Jim Burgess",
+    "role": "Volunteer Coordinator",
+    "bio": true,
+    "portrait": true,
+    "email": "[personal non-org email - redacted]"
+   }
+  ],
+  "partners_back_the_pack": [
+   {
+    "name": "Pinnacle Pet",
+    "logo": true,
+    "website": "none on page (campaigns page links customer.pinnaclepet.net)",
+    "tier": "none"
+   },
+   {
+    "name": "unidentified (OIP.jpg; same image links to petlandjoplin.com on Campaigns → likely Petland Joplin)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "Petland ('Petland - Pets make life better')",
+    "logo": true,
+    "website": "none (petlandjoplin.com on Campaigns)",
+    "tier": "none"
+   },
+   {
+    "name": "Bennett (filename BENNETT-MODIFIED-Vertical-V2; org unknown)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "unidentified (jack.jpg)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "Alice CBD (filename aliceCBD_logo)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "unidentified (Facebook-sourced 293429547_...jpg)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "Trademark Poodles",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "Cup O Joe (filename cupojoe)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "Veterans of Foreign Wars",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "unidentified (Facebook-sourced 366902803_...jpg)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "'Joplin Main X' (filename; org unknown)",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   },
+   {
+    "name": "Compton CPA Group P.C.",
+    "logo": true,
+    "website": "none",
+    "tier": "none"
+   }
+  ],
+  "teams_in_training": [
+   {
+    "page": "/hk9-current-teams-in-training/",
+    "title": "Billy and Caddie-",
+    "canine": "Caddie (Lab, 3rd month of service training; block, post, watch, pressure therapy)",
+    "handler_as_published": "Billy",
+    "status": "in training",
+    "cta": "'CLICK HERE to Donate to help Caddie and Billy' → /donate/",
+    "image": true
+   },
+   {
+    "page": "/hk9-current-teams-in-training/",
+    "title": "Marilyn and Travis-",
+    "canine": "Travis (early training; obedience; to be trained for PTS and anxiety)",
+    "handler_as_published": "Marilyn",
+    "status": "in training",
+    "cta": "'CLICK HERE to Donate to help Marilyn and Travis!' → /donate/",
+    "image": true
+   },
+   {
+    "page": "/our-highlighted-team/",
+    "title": "Billy and Service K9 (In Training) Caddie",
+    "canine": "Caddie, 1-year-old black lab",
+    "handler_as_published": "Billy (Army Veteran)",
+    "status": "in training",
+    "cta": "none",
+    "image": true,
+    "note": "same Caddie image (1000016218.jpg) as teams page and Caddie BarKode record"
+   }
+  ],
+  "photos_gallery": {
+   "foogallery_id": 2468,
+   "name": "Heartland Canines for Veterans Image Gallery",
+   "items": 71,
+   "template": "default (fg-default, lightbox foobox, captions on hover)",
+   "captioned": 2,
+   "captions": [
+    "Time To Work — Sometimes the dogs want to train so bad they go get their own gear.",
+    "Hannibal visits Arkansas Veterans — Hannibal pays a visit to Arkansas during training to say hi to the Veterans at the American Legion."
+   ],
+   "page_featured_media": 2456,
+   "note": "remaining 69 items have no captions; ~47 are DSC0xxx event photos"
+  }
+ },
+ "conflicts_with_reference": [
+  "5 QUESTIONS: live questions are self-assessment questions (finances for 10–15 yrs, daily care, being the centre of attention, training/socialisation obligations, dealing with conflict) explicitly 'not meant to be answered with a simple yes or no' and sourced from anythingpawsable.com. Reference replaces them with 5 yes/no eligibility questions (honorable discharge, physical/psychological disability, participate in training, safe home, commitment) and 'If you answered Yes ... you may be eligible' — none of these appear on the live site.",
+  "ELIGIBILITY WORDING: reference 'military veteran with an honorable discharge' and 'physical or psychological disability' — live site never mentions discharge status; live says 'Veteran or Family Member of a Veteran considering a Service K9', 'HK9 reserves the right to deny any application', and 'does not provide funding ... for Veterans with a dog OUTSIDE of our network of breeders'.",
+  "PROGRAM STEPS: reference = 4 steps (Application & Assessment → Rigorous Training → Precision Matching → Team Placement) plus 'What to Expect' (Application Review, Interview & Assessment, Team Training). Live = Step One read 5 Questions; Step Two online screening application ('NOT the full application'); Step Three phone conversation & baseline assessment; Step Four full application emailed (medical info, living conditions, history); Step Five if selected, search for the 'right fit' K9; then training (service training not before 7 months old; HK9 pays K9 medical costs + food/kennel for 1st year; veteran training covers commands, de-escalation, conflict resolution, ADA; final practical exam → graduation; lifetime commitment, re-training available). Reference orders training before matching; live matches first.",
+  "NATIONWIDE CLAIM: reference says 'Nationwide Reach', 'Serving disabled U.S. veterans nationwide', 'providers across the country'. Live site makes no nationwide claim; evidence points regional: 'Distributed across Missouri and surrounding states', 'Not local to the 4 state area? add $5 shipping', obedience training 'Serving Joplin, Webb City, Carthage, Pittsburg & Surrounding Areas', training participation 'based on the location of the Veteran'.",
+  "TESTIMONIALS: reference has three quotes attributed to 'USMC Veteran, Paired in 2022', 'Army Veteran, Paired in 2023', 'Navy Veteran, Paired in 2021' — none exist on the live site. Live /success/ is an unpopulated placeholder ('Success Story / Read More' ×3 → sample page with 'Snippet About the breeder'). The only genuine quote is Madison Stratton's on Meet the Team ('Its truly night and day compared to where I was to where I am now...').",
+  "FOUNDING YEAR: reference 'Est. 2015' is SUPPORTED by live (Ted Donaldson bio 'since its founding in 2015'; EIN 47-xxxxxxx; 'ten years' on 2026 obedience page) — no conflict, but the fact is buried in a bio.",
+  "STATS: reference has no numeric stats; live has '$18,000' current cost to train and place a K9 (two pages), '30,000-follower' book review account, 'over 20 years working with dogs' (board president), '3 of each $9 ticket'. Reference omits $18,000.",
+  "PHONE/EMAIL/HOURS: reference 800-913-6189 and info@heartlandk9s.org match live. Reference omits 417-312-7484 (live 'Director cell', footer, donate, all BarKode records) and director@/development@ emails. Reference adds 'Mon–Fri' / 'Monday – Friday' to hours — live never states days.",
+  "ADDRESS/EIN: reference has no street address, no EIN, no Candid seal; live footer/contact/donate use 12651 Gateway Dr, Neosho MO 64850 and EIN 47-4991572.",
+  "BARKODE: reference describes 'a specialized BarKode patch', 'digital certification and emergency contact patch', 'Every Heartland K9 is equipped', 'Proprietary System'. Live: 'unique team number and QR code documented in our secure database'; 'voluntary validation service'; scan shows photo, team ID, trained tasks, emergency contact, vet info, HK9 contact; 'free service only for HK9-trained teams; other providers' teams only after application, evaluation, any additional training and annual fee'; branded 'BarKode ©' with SM logo. Live also states the program is 'new'/'now available' and asks for donations to it.",
+  "K9 PROVIDERS: reference 'elite K9 providers and trainers across the country ... View Our Providers'. Live /the-service-k9-program/ lists acceptance criteria (AKC registered, breed-matched, temperament exam, traceable history, 10 weeks–16 months, pre-birth arrangements possible) and rejections (strays, non-AKC, older than 14 months, undocumented, pets) — internal live inconsistency 16 vs 14 months. No provider directory exists; /back-the-pack/ is a sponsor logo wall.",
+  "NAVIGATION: reference nav About/Program/Veterans/BarKode/Stories/Get Involved/Contact/Donate Now; live nav DONATE/5 QUESTIONS/APPLICATION/ADA FAQs/CONTACT/PARTNER WITH US/PHOTOS/VOLUNTEER/EVENTS/CAMPAIGNS. Live has no About page; team/teams-in-training/highlighted team/BarKode/gear/program pages are reachable only from homepage buttons. Reference links Donate/Campaigns/Providers/ADA FAQs/Start Application/View Campaigns to the bare live root URL.",
+  "CONTACT FORM: reference form fields First Name, Last Name, Email Address, Subject (Veteran Application Inquiry / Donation Inquiry / Volunteer / Campaign / K9 Provider Partnership / Other), Message. Live contact & application forms are BROKEN: '[ccf_form id=\"2132\"]' and '[ccf_form id=\"2156\"]' print as literal text (Custom Contact Forms plugin inactive); live field lists are unknown.",
+  "MISSION COPY: reference 'Driven by a single goal...' and 'We use proven canine training strategies...' match live homepage HOW IT WORKS; reference 'Dedicated to Derron & Rosie' matches live. Reference logo path /heartland-k9s-logo.png vs live Concept-1-rocker-outlined-2.png.",
+  "VOLUNTEER: live mentions the 'Paws for Training' temporary-home program and facility visits; reference volunteer copy is generic (events, administration, spreading the word).",
+  "LIVE INTERNAL CONFLICTS worth resolving in the rebuild: Donate page says 'Donate online with PayPal' (hosted button still present) while homepage/footer push Zeffy; Heartland Gear says 'Your donation will go through paypal' but the button goes to linksinkllc.com; thank-you page mailing address (PO Box 101 Saginaw) differs from current (12651 Gateway Dr Neosho); 'Paws for Giving' stickers 'available by 2023'; Board President spelled Flemming/Fleming; Willow is described as 'in training' on Meet the Team but has a full BarKode record; Riley record lacks the 'Any questions' line; Caddie is both 'Service K9 In Training' record and highlighted team."
+ ],
+ "dispositions": {
+  "/": "REBUILD as new homepage; reuse HOW IT WORKS/WHAT WE DO/BarKode/Derron & Rosie copy; replace auto meta description; keep video or replace",
+  "/5-questions/": "MIGRATE verbatim (questions + intro/outro); keep attribution link; fix stray empty h1s",
+  "/online-application/": "REBUILD form (ccf shortcode broken); keep intro copy; route success to a real thank-you page",
+  "/contact/": "REBUILD form (ccf shortcode broken); keep address, both phones, Facebook link",
+  "/service-dogs-and-the-ada/": "MIGRATE (4 ADA FAQ excerpts + DOJ/HUD links); fix archive.ada.gov link target",
+  "/privacy-policy/": "MIGRATE + UPDATE (2020 generic policy mentions Google ad cookies; site now uses Fathom + cookie-notice plugin)",
+  "/donate/": "MIGRATE; consolidate Zeffy (primary), PayPal hosted button, Amazon wishlist, mail-in address, EIN statement",
+  "/back-the-pack/": "MIGRATE as partner records (13 logos, no names/links/tiers on live; 5 unidentified)",
+  "/volunteer/": "MIGRATE (short); keep 'Paws for Training' program mention",
+  "/photos/": "MIGRATE FooGallery 2468 (71 images, 2 captions) as gallery",
+  "/events/": "MIGRATE as events list; the sole event (25 Jul 2026) is past; archive prior-event flyers from media library if desired",
+  "/thank-you/": "REVIEW: orphan form-success page (2021) with stale PO Box address + medical-history PDF; rewrite for new form flow",
+  "/success/": "DO NOT PUBLISH (placeholder cards linking to sample story); rebuild only when real stories exist",
+  "/success/sample-success-story/": "DO NOT PUBLISH (template sample with placeholder text)",
+  "/campaigns/": "DECOMPOSE into 5 campaign records; strip stale '2023' sticker line; sponsor logos → partners",
+  "/meet-the-team/": "DECOMPOSE into 11 person records (bio + portrait); one member has no bio; remove personal email",
+  "/barkode/": "MIGRATE program page; note '©'/SM branding and fee wording for non-HK9 teams",
+  "/master_template_barkode/": "DO NOT PUBLISH (master template; currently public and indexable)",
+  "/the-service-k9-program/": "MIGRATE (K9 provider criteria); resolve 16 vs 14 months",
+  "/how-it-works-veteran-consideration/": "MIGRATE (5 steps + training process); fix typos ('provided', 'guidlines')",
+  "/hk9-current-teams-in-training/": "DECOMPOSE into team records (2)",
+  "/our-highlighted-team/": "DECOMPOSE into team record (1)",
+  "/heartland-gear/": "MIGRATE as external shop referral (Links Ink); remove stale PayPal instructions",
+  "/the-hk9-coloring-book/": "MIGRATE with sponsor tier table (8 tiers) and CTA → contact",
+  "/heartland-obedience-training-2/": "MIGRATE service page; convert .docx price sheet to on-page pricing (Basic $60/hr, Puppy $50/hr, Advanced $75/hr, travel +$25 within 25 mi of Oronogo, +$1/mi beyond, 3-session packages $150 farm / $200 travel); note slug suffix '-2' implies an older draft/trashed page",
+  "/sandy-therapy-k9t26-02/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/tex-service-k9-hk926-002/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/caddie-service-k9_hk92026-02/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/kimber_hk92026-01/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/barkode-mosby-hk9t26-01/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/cody-and-willow-service-k9/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/paul-and-mj-service-k9/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/jeremy-and-nova-service-k9/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/scott-and-elke-service-k9/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/madison-and-gunther-service-k9/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/hk923-005/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/hk923004/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/vern-and-bella-service-dog/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/jimmy-and-riley-service-k9/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)",
+  "/larry-and-archie-service-k9/": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+ },
+ "pages": [
+  {
+   "id": 3742,
+   "slug_path": "/heartland-obedience-training-2/",
+   "title": "Heartland Obedience Training",
+   "classification": "marketing-page",
+   "template": "default",
+   "modified": "2026-03-06T17:03:05",
+   "registry_id": null,
+   "headings": [
+    "h2: Do you have a dog that you want trained?",
+    "h2: Not everyone needs a Service Dog, everyone needs a dog."
+   ],
+   "text_chars": 3129,
+   "image_count": 2,
+   "internal_links": [
+    "http://heartlandk9s.org/wp-content/uploads/2026/03/HEARTLAND-OBEDIENCE-TRAINING.docx",
+    "https://heartlandk9s.org/contact/"
+   ],
+   "external_links": [
+    "https://www.addadoption.org/"
+   ],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE service page; convert .docx price sheet to on-page pricing (Basic $60/hr, Puppy $50/hr, Advanced $75/hr, travel +$25 within 25 mi of Oronogo, +$1/mi beyond, 3-session packages $150 farm / $200 travel); note slug suffix '-2' implies an older draft/trashed page"
+  },
+  {
+   "id": 3690,
+   "slug_path": "/sandy-therapy-k9t26-02/",
+   "title": "Sandy (Therapy K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2026-01-14T08:05:52",
+   "registry_id": "K9T26-02 (slug; presumably HK9T26-02)",
+   "headings": [],
+   "text_chars": 389,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3686,
+   "slug_path": "/tex-service-k9-hk926-002/",
+   "title": "Tex (Service K9) HK926-002 & James Lange",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2026-07-27T09:49:16",
+   "registry_id": "HK926-002 (in page title and slug)",
+   "headings": [],
+   "text_chars": 368,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3683,
+   "slug_path": "/caddie-service-k9_hk92026-02/",
+   "title": "Caddie (Service K9 In Training)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2026-01-14T06:45:52",
+   "registry_id": "HK92026-02 (slug)",
+   "headings": [],
+   "text_chars": 390,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3680,
+   "slug_path": "/kimber_hk92026-01/",
+   "title": "Kimber (Service K9 In Training)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2026-01-11T21:28:22",
+   "registry_id": "HK92026-01 (slug)",
+   "headings": [],
+   "text_chars": 424,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3675,
+   "slug_path": "/barkode-mosby-hk9t26-01/",
+   "title": "Mosby (Therapy K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2026-01-14T07:47:46",
+   "registry_id": "HK9T26-01 (slug; T = Therapy)",
+   "headings": [],
+   "text_chars": 431,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)",
+    "Home street address (handler residence) in free text"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3673,
+   "slug_path": "/master_template_barkode/",
+   "title": "Barkode Master Template (Service K9)",
+   "classification": "master-template",
+   "template": "default",
+   "modified": "2026-01-09T19:28:13",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 366,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Template labels only (Handler / Emergency contact / Veterinary Contact) – no values"
+   ],
+   "disposition": "DO NOT PUBLISH (master template; currently public and indexable)"
+  },
+  {
+   "id": 3627,
+   "slug_path": "/the-hk9-coloring-book/",
+   "title": "The Hk9 Coloring Book",
+   "classification": "marketing-page",
+   "template": "default",
+   "modified": "2025-11-30T18:30:11",
+   "registry_id": null,
+   "headings": [
+    "h1: More than a coloring book.",
+    "h1: Check them out!"
+   ],
+   "text_chars": 3386,
+   "image_count": 5,
+   "internal_links": [
+    "https://heartlandk9s.org/contact/"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE with sponsor tier table (8 tiers) and CTA → contact"
+  },
+  {
+   "id": 3597,
+   "slug_path": "/cody-and-willow-service-k9/",
+   "title": "Cody and Willow (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2025-09-03T11:39:53",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 370,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3496,
+   "slug_path": "/our-highlighted-team/",
+   "title": "Our Highlighted Team",
+   "classification": "source-of-records",
+   "template": "default",
+   "modified": "2026-01-16T12:19:35",
+   "registry_id": null,
+   "headings": [
+    "h1: Billy and Service K9 (In Training) Caddie"
+   ],
+   "text_chars": 218,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "DECOMPOSE into team record (1)"
+  },
+  {
+   "id": 3484,
+   "slug_path": "/paul-and-mj-service-k9/",
+   "title": "Paul and MJ (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2025-05-28T23:31:05",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 369,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3428,
+   "slug_path": "/jeremy-and-nova-service-k9/",
+   "title": "Jeremy and Nova (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2024-12-15T21:05:45",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 379,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3408,
+   "slug_path": "/heartland-gear/",
+   "title": "Heartland Gear",
+   "classification": "marketing-page",
+   "template": "default",
+   "modified": "2026-04-13T10:09:42",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 1299,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [
+    "https://linksinkllc.com/?s=Heartland"
+   ],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE as external shop referral (Links Ink); remove stale PayPal instructions"
+  },
+  {
+   "id": 3386,
+   "slug_path": "/scott-and-elke-service-k9/",
+   "title": "Scott and Elke (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2024-11-14T08:28:06",
+   "registry_id": "Hk9-2402 (body line \"Service Number Identification: Hk9-2402\")",
+   "headings": [],
+   "text_chars": 438,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3093,
+   "slug_path": "/how-it-works-veteran-consideration/",
+   "title": "How it Works (Veteran Consideration)",
+   "classification": "marketing-page",
+   "template": "default",
+   "modified": "2025-01-13T14:02:42",
+   "registry_id": null,
+   "headings": [
+    "h1: Are you a Veteran or Family Member of a Veteran considering a Service K9?"
+   ],
+   "text_chars": 3819,
+   "image_count": 0,
+   "internal_links": [
+    "https://heartlandk9s.org/5-questions/",
+    "https://heartlandk9s.org/donate/",
+    "https://heartlandk9s.org/online-application/"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Describes full application collecting medical information, living conditions, history (no fields on page)"
+   ],
+   "disposition": "MIGRATE (5 steps + training process); fix typos ('provided', 'guidlines')"
+  },
+  {
+   "id": 3084,
+   "slug_path": "/the-service-k9-program/",
+   "title": "The Service K9 Program",
+   "classification": "marketing-page",
+   "template": "default",
+   "modified": "2023-07-17T09:46:07",
+   "registry_id": null,
+   "headings": [
+    "h2: Possible K9 Matches For the HK9 Program"
+   ],
+   "text_chars": 973,
+   "image_count": 1,
+   "internal_links": [
+    "https://heartlandk9s.org/contact/"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE (K9 provider criteria); resolve 16 vs 14 months"
+  },
+  {
+   "id": 3046,
+   "slug_path": "/madison-and-gunther-service-k9/",
+   "title": "Madison and Gunther (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2023-06-14T07:54:23",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 353,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 3011,
+   "slug_path": "/hk9-current-teams-in-training/",
+   "title": "HK9 Teams in Training",
+   "classification": "source-of-records",
+   "template": "default",
+   "modified": "2026-02-18T10:52:44",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 413,
+   "image_count": 2,
+   "internal_links": [
+    "https://heartlandk9s.org/donate/"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "DECOMPOSE into team records (2)"
+  },
+  {
+   "id": 2998,
+   "slug_path": "/hk923-005/",
+   "title": "Jennifer and Toad (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2023-05-02T09:19:49",
+   "registry_id": "HK923-005 (from slug)",
+   "headings": [],
+   "text_chars": 470,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 2993,
+   "slug_path": "/hk923004/",
+   "title": "Alex and Sammi (Service Dog)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2023-05-02T09:08:40",
+   "registry_id": "HK923-004 (from slug hk923004)",
+   "headings": [],
+   "text_chars": 399,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 2979,
+   "slug_path": "/vern-and-bella-service-dog/",
+   "title": "Vern and Bella (Service Dog)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2023-04-12T10:23:38",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 423,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 2944,
+   "slug_path": "/barkode/",
+   "title": "BarKode – A Service of Heartland Canines for Veterans",
+   "classification": "marketing-page",
+   "template": "default",
+   "modified": "2025-11-25T09:29:21",
+   "registry_id": null,
+   "headings": [
+    "h1: BarKode ©",
+    "h5: BarKode is a unique service provided by Heartland Canines For Veterans to facilitate Service K9 Teams public access and ensure that in an emergency these uniquely trained Canines are not separated from their handler. This voluntary validation service provides verification for First Responders so Service K9s are provided the appropriate care and concern. BarKode can also remove ambiguity for businesses regarding Service K9 Team public access regarding the relevant aspects of the Americans With Disabilities Act (ADA).",
+    "h5: Heartland Canines For Veterans trained teams are assigned a unique team number and QR code which is documented in our secure database. By scanning the BarKode, a picture of the Service K9 is displayed along with information to identify the team and the tasks the canine is trained to perform along with emergency contact and pertinent veterinarian information. Heartland Canines For Veterans contact information is also displayed.",
+    "h5: BarKode is a free service only for Heartland Canines For Veterans trained Service K9 Teams. Service K9 Teams trained by other providers may be provided access to this service only after application, evaluation, any additional training and annual fee.",
+    "h5: Contact Heartland K9s for more information at (800) 913-6189 or director@heartlandk9s.org."
+   ],
+   "text_chars": 1303,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE program page; note '©'/SM branding and fee wording for non-HK9 teams"
+  },
+  {
+   "id": 2939,
+   "slug_path": "/jimmy-and-riley-service-k9/",
+   "title": "Jimmy and Riley (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2025-09-23T16:46:09",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 285,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Handler (name; some records include handler phone)",
+    "Emergency contact (name + phone)",
+    "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+    "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 2910,
+   "slug_path": "/larry-and-archie-service-k9/",
+   "title": "Larry and Archie (Service K9)",
+   "classification": "barkode-record",
+   "template": "default",
+   "modified": "2023-02-14T09:59:28",
+   "registry_id": "HK9 23-001 (from photo title \"Archi HK9 23-001\")",
+   "headings": [],
+   "text_chars": 0,
+   "image_count": 2,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "\"ID Back\" image (ID-Back.png) likely contains printed contact fields; text values not in HTML"
+   ],
+   "disposition": "MIGRATE as registry record behind privacy review: contains emergency-contact/vet/handler values; consider noindex + gated fields; keep URL stable (QR codes in the field point here)"
+  },
+  {
+   "id": 2856,
+   "slug_path": "/meet-the-team/",
+   "title": "Meet the Team",
+   "classification": "source-of-records",
+   "template": "default",
+   "modified": "2026-01-21T11:38:58",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 7240,
+   "image_count": 11,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Personal (non-org-domain) email address published for Volunteer Coordinator"
+   ],
+   "disposition": "DECOMPOSE into 11 person records (bio + portrait); one member has no bio; remove personal email"
+  },
+  {
+   "id": 2800,
+   "slug_path": "/campaigns/",
+   "title": "CAMPAIGNS",
+   "classification": "source-of-records",
+   "template": "default",
+   "modified": "2025-11-26T15:11:51",
+   "registry_id": null,
+   "headings": [
+    "h1: Hk9 Educational Coloring Book Campaign",
+    "h1: ",
+    "h2: Thank you for participating in the \"Educational Coloring Book\" Campaign!",
+    "h1: \"One of Us\" Campaign",
+    "h1: ",
+    "h2: Thank you for participating in the \"One of Us\" Campaign!",
+    "h1: \"Paws\" for Giving",
+    "h1: ",
+    "h1: Dog House Donation Box",
+    "h1: ",
+    "h1: The Heartland Ambassador Campaign",
+    "h1: "
+   ],
+   "text_chars": 5460,
+   "image_count": 9,
+   "internal_links": [
+    "http://heartlandk9s.org/contact/",
+    "https://heartlandk9s.org/the-hk9-coloring-book/"
+   ],
+   "external_links": [
+    "https://customer.pinnaclepet.net/Home.aspx",
+    "https://petlandjoplin.com/"
+   ],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "DECOMPOSE into 5 campaign records; strip stale '2023' sticker line; sponsor logos → partners"
+  },
+  {
+   "id": 2505,
+   "slug_path": "/thank-you/",
+   "title": "Thank You",
+   "classification": "thank-you/success-destination",
+   "template": "100-width.php",
+   "modified": "2021-06-04T21:13:52",
+   "registry_id": null,
+   "headings": [
+    "h2: Thank You!",
+    "h5: Please download or print the medical history form. Your physician will complete the form and return it to our office at: Mail to: Heartland Canines for Veterans PO Box 101 Saginaw, MO 64864",
+    "h3: Click The Image to Print or Download the Medical History Form"
+   ],
+   "text_chars": 262,
+   "image_count": 1,
+   "internal_links": [
+    "http://heartlandk9s.org/wp-content/uploads/2021/06/medical-history-k9-vets.pdf"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [
+    "Instructs applicant to mail a physician-completed medical history form (PDF link)"
+   ],
+   "disposition": "REVIEW: orphan form-success page (2021) with stale PO Box address + medical-history PDF; rewrite for new form flow"
+  },
+  {
+   "id": 2491,
+   "slug_path": "/success/",
+   "title": "Success",
+   "classification": "thank-you/success-destination",
+   "template": "100-width.php",
+   "modified": "2021-10-12T14:21:16",
+   "registry_id": null,
+   "headings": [
+    "h1: Our Success Stories",
+    "h2: Success Stories",
+    "h5: Heartland K9s bring together a community of dog trainers, dog breeders and kennels to provide service dogs for veterans. There is nothing more telling about the successful and lasting human-animal partnerships our community helps to create than the stories of the lives changed."
+   ],
+   "text_chars": 387,
+   "image_count": 3,
+   "internal_links": [
+    "http://heartlandk9s.org/success/sample-success-story/"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "DO NOT PUBLISH (placeholder cards linking to sample story); rebuild only when real stories exist"
+  },
+  {
+   "id": 2492,
+   "slug_path": "/success/sample-success-story/",
+   "title": "Sample-Success-Story",
+   "classification": "sample",
+   "template": "100-width.php",
+   "modified": "2021-06-03T09:07:33",
+   "registry_id": null,
+   "headings": [
+    "h2: Example Success Story",
+    "h5: Heartland K9s bring together a community of dog trainers, dog breeders and kennels to provide service dogs for veterans. There is nothing more telling about the successful and lasting human-animal partnerships our community helps to create than the stories of the lives changed.",
+    "h2: The kennel/breeder who donated the dog.",
+    "h2: A Hero's Story",
+    "h2: The Dogs Story"
+   ],
+   "text_chars": 441,
+   "image_count": 7,
+   "internal_links": [],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [
+    {
+     "kind": "fusion-image-carousel",
+     "src": "Avada image carousel element"
+    }
+   ],
+   "sensitive_fields_present": [],
+   "disposition": "DO NOT PUBLISH (template sample with placeholder text)"
+  },
+  {
+   "id": 2483,
+   "slug_path": "/events/",
+   "title": "Events",
+   "classification": "source-of-records",
+   "template": "100-width.php",
+   "modified": "2026-05-28T10:53:04",
+   "registry_id": null,
+   "headings": [
+    "h1: Joplin Jailbirds Veteran Appreciation Night"
+   ],
+   "text_chars": 800,
+   "image_count": 1,
+   "internal_links": [],
+   "external_links": [
+    "https://www.simpletix.com/e/joplin-jailbirds-vs-chillicothe-mudcats-7-tickets-255726?utm=MilitaryNight2026&promocode=MILITARYNITE26"
+   ],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE as events list; the sole event (25 Jul 2026) is past; archive prior-event flyers from media library if desired"
+  },
+  {
+   "id": 2455,
+   "slug_path": "/photos/",
+   "title": "Photos",
+   "classification": "gallery",
+   "template": "default",
+   "modified": "2021-03-24T15:20:00",
+   "registry_id": null,
+   "headings": [],
+   "text_chars": 214,
+   "image_count": 71,
+   "internal_links": [
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/123_13.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/328692330_576486077664770_6030566192957191494_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/329042947_931927034929169_3232757778153128033_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/329046611_1832257997155208_8198298589365974073_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/329097304_625581989614335_327909721061889155_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/329146424_892016148510128_3782328147530088947_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/329519127_592698582190879_3851980048173136353_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/903A0477-scaled.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/903A0740-scaled.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0012-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0030-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0036-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0041-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0054-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0057-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0086-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0161-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0206-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0219-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0243-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0256-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0259-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0787-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0793-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0796-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0799-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0803-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0805-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0809-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0811-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0813-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0819-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0827-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0828-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0829-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0834-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0837-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0844-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0851-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0859-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0861-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0869-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0908-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0915-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0917-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0936-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0945-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0960-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0966-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/DSC0971-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG-7971-scaled.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG-7973-scaled.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG_7689.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/IMG_curlyvest-scaled.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/PandM.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-105720_Messenger.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-202734_Video-Player.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-202846_Video-Player-1.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/Screenshot_20230206-202846_Video-Player.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/arlegoin3.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/billy-scaled.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/konor.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2021/03/team.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2022/12/justin.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2022/12/larryarchie.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2022/12/vet-parade.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2023/04/903A0881-2-scaled.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2025/01/2BD3EC8D-1E9A-4AA1-9A28-D78280CE66BC.jpeg",
+    "https://heartlandk9s.org/wp-content/uploads/2025/01/469965036_598815635990782_1987363041355702480_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2025/05/496009229_708289025043442_6654562698047626934_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2025/06/grad.jpg"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [
+    {
+     "kind": "foogallery",
+     "src": "FooGallery block (id 2094 back-the-pack-partners / 2468 image gallery)"
+    }
+   ],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE FooGallery 2468 (71 images, 2 captions) as gallery"
+  },
+  {
+   "id": 2124,
+   "slug_path": "/volunteer/",
+   "title": "Volunteer",
+   "classification": "marketing-page",
+   "template": "100-width.php",
+   "modified": "2022-12-16T17:38:46",
+   "registry_id": null,
+   "headings": [
+    "h2: Volunteer with Heartland K9s"
+   ],
+   "text_chars": 518,
+   "image_count": 2,
+   "internal_links": [
+    "http://heartlandk9s.org/contact/"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE (short); keep 'Paws for Training' program mention"
+  },
+  {
+   "id": 2120,
+   "slug_path": "/donate/",
+   "title": "Donate",
+   "classification": "marketing-page",
+   "template": "100-width.php",
+   "modified": "2026-03-06T16:15:50",
+   "registry_id": null,
+   "headings": [
+    "h4: Thank you for your consideration and donation to Heartland Canines For Veterans. Your donation allows us to help those who have done so much for all of us, the US Veterans by providing them with a properly trained and certified Service Dog. Heartland Canines For Veterans is an IRS recognized 501(c)(3) non-profit organization. IRS EIN 47-4991572. All donations are tax deductible to the extend allowed by law. Consult your CPA if you have questions."
+   ],
+   "text_chars": 902,
+   "image_count": 4,
+   "internal_links": [],
+   "external_links": [
+    "https://www.amazon.com/hz/wishlist/ls/35NF4IVCKN76G?ref_=wl_share",
+    "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives"
+   ],
+   "shortcodes": [],
+   "embeds": [
+    {
+     "kind": "html-form",
+     "src": "https://www.paypal.com/cgi-bin/webscr"
+    }
+   ],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE; consolidate Zeffy (primary), PayPal hosted button, Amazon wishlist, mail-in address, EIN statement"
+  },
+  {
+   "id": 2072,
+   "slug_path": "/back-the-pack/",
+   "title": "Back the Pack",
+   "classification": "source-of-records",
+   "template": "100-width.php",
+   "modified": "2022-12-19T13:44:59",
+   "registry_id": null,
+   "headings": [
+    "h2: Back the Pack"
+   ],
+   "text_chars": 216,
+   "image_count": 13,
+   "internal_links": [
+    "http://heartlandk9s.org/campaigns/",
+    "http://heartlandk9s.org/contact/",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/293429547_163411172920894_3757616234711033360_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/366902803_121841830998837_7639201652951336683_n.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/BENNETT-MODIFIED-Vertical-V2-color285.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/Compton-CPA-Group-P.C.png",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/Joplin_Main_X-1024x934-1.webp",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/Petland-Logo-Orange-With-Tag.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/VFW-Logo.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/aliceCBD_logo-1.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/cupojoe.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/new-pinnacle.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2020/02/trademarklogopoodleonly.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2023/05/OIP.jpg",
+    "https://heartlandk9s.org/wp-content/uploads/2023/05/jack.jpg"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [
+    {
+     "kind": "foogallery",
+     "src": "FooGallery block (id 2094 back-the-pack-partners / 2468 image gallery)"
+    }
+   ],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE as partner records (13 logos, no names/links/tiers on live; 5 unidentified)"
+  },
+  {
+   "id": 2032,
+   "slug_path": "/contact/",
+   "title": "Contact",
+   "classification": "form-page",
+   "template": "100-width.php",
+   "modified": "2023-01-27T08:48:37",
+   "registry_id": null,
+   "headings": [
+    "h2: CONTACT HEARTLAND CANINES FOR VETERANS"
+   ],
+   "text_chars": 133,
+   "image_count": 0,
+   "internal_links": [],
+   "external_links": [
+    "https://www.facebook.com/heartlandk9s/"
+   ],
+   "shortcodes": [
+    "[ccf_form id=\"2132\"]"
+   ],
+   "embeds": [
+    {
+     "kind": "ccf-shortcode-unrendered",
+     "src": "Custom Contact Forms shortcode printed as literal text (plugin not active)"
+    }
+   ],
+   "sensitive_fields_present": [],
+   "disposition": "REBUILD form (ccf shortcode broken); keep address, both phones, Facebook link"
+  },
+  {
+   "id": 1995,
+   "slug_path": "/service-dogs-and-the-ada/",
+   "title": "Service Dogs and the ADA",
+   "classification": "marketing-page",
+   "template": "100-width.php",
+   "modified": "2022-12-19T13:41:04",
+   "registry_id": null,
+   "headings": [
+    "h3: A Few Frequently Asked Questions about Service Animals and the Americans With Disabilities Act (ADA). Use the link below for a full list of questions from U.S. Department of Justice Civil Rights Division.",
+    "h3: QUESTION: WHAT IS A SERVICE ANIMAL?",
+    "h3: QUESTION: WHAT DOES “DO WORK OR PERFORM TASKS” MEAN?",
+    "h3: QUESTION: ARE EMOTIONAL SUPPORT, THERAPY, COMFORT, OR COMPANION ANIMALS CONSIDERED SERVICE ANIMALS UNDER THE ADA?",
+    "h3: QUESTION: CAN INDIVIDUALS WITH DISABILITIES BE REFUSED ACCESS TO A FACILITY BASED SOLELY ON THE BREED OF THEIR SERVICE ANIMAL?",
+    "h2: U.S. DEPARTMENT OF JUSTICE CIVIL RIGHTS DIVISION DISABILITY RIGHTS SECTION",
+    "h3: Questions about Service Animals and the ADA",
+    "h2: FAIR HOUSING ACT AND SERVICE ANIMALS",
+    "h3: The Fair Housing Act covers virtually all types of housing, including privately owned housing and federally assisted housing, with a few limited exceptions. Click on the image below for more info."
+   ],
+   "text_chars": 4500,
+   "image_count": 2,
+   "internal_links": [],
+   "external_links": [
+    "http://www.ada.gov/service_animals_2010.htm",
+    "https://archive.ada.gov/",
+    "https://www.hud.gov/sites/dfiles/FHEO/documents/19ServiceAnimalNoticeFHEO_508.pdf"
+   ],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE (4 ADA FAQ excerpts + DOJ/HUD links); fix archive.ada.gov link target"
+  },
+  {
+   "id": 1989,
+   "slug_path": "/online-application/",
+   "title": "Initial Online Application",
+   "classification": "form-page",
+   "template": "100-width.php",
+   "modified": "2024-11-17T20:52:31",
+   "registry_id": null,
+   "headings": [
+    "h1: Are You Ready",
+    "h3: Before you apply please read 5 Questions to Ask Before Partnering With a Service Dog"
+   ],
+   "text_chars": 592,
+   "image_count": 0,
+   "internal_links": [
+    "http://heartlandk9s.org/5-questions/"
+   ],
+   "external_links": [],
+   "shortcodes": [
+    "[ccf_form id=\"2156\"]"
+   ],
+   "embeds": [
+    {
+     "kind": "ccf-shortcode-unrendered",
+     "src": "Custom Contact Forms shortcode printed as literal text (plugin not active)"
+    }
+   ],
+   "sensitive_fields_present": [],
+   "disposition": "REBUILD form (ccf shortcode broken); keep intro copy; route success to a real thank-you page"
+  },
+  {
+   "id": 3,
+   "slug_path": "/privacy-policy/",
+   "title": "Privacy Policy",
+   "classification": "legal",
+   "template": "default",
+   "modified": "2020-11-20T10:58:08",
+   "registry_id": null,
+   "headings": [
+    "h2: Collection of Routine Information",
+    "h2: Cookies",
+    "h2: Advertisement and Other Third Parties",
+    "h2: Links to Third Party Websites",
+    "h2: Security",
+    "h2: Changes To This Privacy Policy",
+    "h2: Contact Information"
+   ],
+   "text_chars": 2289,
+   "image_count": 0,
+   "internal_links": [],
+   "external_links": [
+    "http://www.google.com/privacy_ads.html"
+   ],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE + UPDATE (2020 generic policy mentions Google ad cookies; site now uses Fathom + cookie-notice plugin)"
+  },
+  {
+   "id": 16,
+   "slug_path": "/5-questions/",
+   "title": "5 Questions To Ask Before Partnering With a Service Dog",
+   "classification": "marketing-page",
+   "template": "100-width.php",
+   "modified": "2020-03-04T10:54:11",
+   "registry_id": null,
+   "headings": [
+    "h1: 5 Questions to Ask Before Partnering With a Service Dog",
+    "h2: 5 Questions",
+    "h3: Still think a Service Dog is for you? Click the button below to apply."
+   ],
+   "text_chars": 2432,
+   "image_count": 1,
+   "internal_links": [
+    "http://heartlandk9s.org/online-application/"
+   ],
+   "external_links": [
+    "https://www.anythingpawsable.com/before-partnering-with-a-service-dog"
+   ],
+   "shortcodes": [],
+   "embeds": [],
+   "sensitive_fields_present": [],
+   "disposition": "MIGRATE verbatim (questions + intro/outro); keep attribution link; fix stray empty h1s"
+  },
+  {
+   "id": 6,
+   "slug_path": "/",
+   "title": "HOME",
+   "classification": "marketing-page",
+   "template": "100-width.php",
+   "modified": "2026-04-17T12:18:24",
+   "registry_id": null,
+   "headings": [
+    "h3: EMAIL",
+    "h3: info@heartlandk9s.org",
+    "h3: PHONE",
+    "h3: 800-913-6189",
+    "h3: HOURS",
+    "h3: 8:00am – 5:00pm",
+    "h1: HOW IT WORKS",
+    "h3: Meaningful Work. Unforgettable Experiences.",
+    "h2: WHAT WE DO",
+    "h3: To see all our latest gear, click below!",
+    "h1: SUPPORT US",
+    "h1: BarKode",
+    "h3: MAKE A DONATION",
+    "h3: HEARTLAND CAMPAIGNS",
+    "h3: VOLUNTEER YOUR TIME",
+    "h3: EMAIL",
+    "h3: Click to email",
+    "h3: PHONE",
+    "h3: 800-913-6189",
+    "h3: HOURS",
+    "h3: 8:00am – 5:00pm"
+   ],
+   "text_chars": 3296,
+   "image_count": 8,
+   "internal_links": [
+    "http://heartlandk9s.org/campaigns/",
+    "http://heartlandk9s.org/contact/",
+    "http://heartlandk9s.org/meet-the-team/",
+    "http://heartlandk9s.org/volunteer/",
+    "https://heartlandk9s.org/barkode/",
+    "https://heartlandk9s.org/campaigns/",
+    "https://heartlandk9s.org/donate/",
+    "https://heartlandk9s.org/heartland-gear/",
+    "https://heartlandk9s.org/hk9-current-teams-in-training/",
+    "https://heartlandk9s.org/how-it-works-veteran-consideration/",
+    "https://heartlandk9s.org/our-highlighted-team/",
+    "https://heartlandk9s.org/the-service-k9-program/"
+   ],
+   "external_links": [],
+   "shortcodes": [],
+   "embeds": [
+    {
+     "kind": "html5-video",
+     "src": "http://heartlandk9s.org/wp-content/uploads/2023/01/CQ-Vet-Service-Dogs.mp4"
+    }
+   ],
+   "sensitive_fields_present": [],
+   "disposition": "REBUILD as new homepage; reuse HOW IT WORKS/WHAT WE DO/BarKode/Derron & Rosie copy; replace auto meta description; keep video or replace"
+  }
+ ],
+ "orphans_no_inbound_links": [
+  "/heartland-obedience-training-2/",
+  "/sandy-therapy-k9t26-02/",
+  "/tex-service-k9-hk926-002/",
+  "/caddie-service-k9_hk92026-02/",
+  "/kimber_hk92026-01/",
+  "/barkode-mosby-hk9t26-01/",
+  "/master_template_barkode/",
+  "/cody-and-willow-service-k9/",
+  "/paul-and-mj-service-k9/",
+  "/jeremy-and-nova-service-k9/",
+  "/scott-and-elke-service-k9/",
+  "/madison-and-gunther-service-k9/",
+  "/hk923-005/",
+  "/hk923004/",
+  "/vern-and-bella-service-dog/",
+  "/jimmy-and-riley-service-k9/",
+  "/larry-and-archie-service-k9/",
+  "/thank-you/",
+  "/success/",
+  "/privacy-policy/"
+ ],
+ "redirect_notes": [
+  "/slide/heartland-hero/ → 301 → / (slide CPT)",
+  "/slide-page/homepage-fusion/ → 301 → / (slide-page taxonomy)",
+  "/tag/poker-run/ and /tag/veterans-day/ → 200 empty archives ('No posts have been published yet.') with default sidebar exposing 'Log in' link"
+ ]
+}

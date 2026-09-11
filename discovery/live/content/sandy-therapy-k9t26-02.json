@@ -1,0 +1,45 @@
+{
+ "id": 3690,
+ "slug_path": "/sandy-therapy-k9t26-02/",
+ "file_key": "sandy-therapy-k9t26-02",
+ "link": "https://heartlandk9s.org/sandy-therapy-k9t26-02/",
+ "title": "Sandy (Therapy K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2026-01-14T07:43:21",
+ "modified": "2026-01-14T08:05:52",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Sandy (Therapy K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": "K9T26-02 (slug; presumably HK9T26-02)",
+ "headings": [],
+ "text_chars": 389,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/01/sandy-297x300.jpg",
+   "alt": "Sandy",
+   "title": "sandy"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 3757,
+ "text": "Sandy (Therapy K9)\nBlack Lab\nTherapy Dog- Hk9 Therapy Certified\nResponsibilities/Tasks – Petmaster/pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Therapy Responsibilities & Hk9 Good Conduct Certified\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

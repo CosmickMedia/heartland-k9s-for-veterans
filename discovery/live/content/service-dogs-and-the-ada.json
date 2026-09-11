@@ -1,0 +1,68 @@
+{
+ "id": 1995,
+ "slug_path": "/service-dogs-and-the-ada/",
+ "file_key": "service-dogs-and-the-ada",
+ "link": "https://heartlandk9s.org/service-dogs-and-the-ada/",
+ "title": "Service Dogs and the ADA",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2020-01-23T17:24:15",
+ "modified": "2022-12-19T13:41:04",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Service Dogs and the ADA - Heartland Canines for Veterans",
+  "description": "A Few Frequently Asked Questions about Service Animals and the Americans With Disabilities Act (ADA). Use the link below for a full list of questions from U.S."
+ },
+ "classification": "marketing-page",
+ "registry_id": null,
+ "headings": [
+  "h3: A Few Frequently Asked Questions about Service Animals and the Americans With Disabilities Act (ADA). Use the link below for a full list of questions from U.S. Department of Justice Civil Rights Division.",
+  "h3: QUESTION: WHAT IS A SERVICE ANIMAL?",
+  "h3: QUESTION: WHAT DOES “DO WORK OR PERFORM TASKS” MEAN?",
+  "h3: QUESTION: ARE EMOTIONAL SUPPORT, THERAPY, COMFORT, OR COMPANION ANIMALS CONSIDERED SERVICE ANIMALS UNDER THE ADA?",
+  "h3: QUESTION: CAN INDIVIDUALS WITH DISABILITIES BE REFUSED ACCESS TO A FACILITY BASED SOLELY ON THE BREED OF THEIR SERVICE ANIMAL?",
+  "h2: U.S. DEPARTMENT OF JUSTICE CIVIL RIGHTS DIVISION DISABILITY RIGHTS SECTION",
+  "h3: Questions about Service Animals and the ADA",
+  "h2: FAIR HOUSING ACT AND SERVICE ANIMALS",
+  "h3: The Fair Housing Act covers virtually all types of housing, including privately owned housing and federally assisted housing, with a few limited exceptions. Click on the image below for more info."
+ ],
+ "text_chars": 4500,
+ "image_count": 2,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2020/01/vet-with-dog.jpg",
+   "alt": "Veteran with service dog",
+   "title": "Veteran with service dog"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2020/01/k9-3-circle.png",
+   "alt": "Veteran walking his dog",
+   "title": "Veteran walking his dog"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [
+  {
+   "href": "https://archive.ada.gov/",
+   "text": "Frequently Asked Questions"
+  },
+  {
+   "href": "http://www.ada.gov/service_animals_2010.htm",
+   "text": "ADA Revised Requirements: Service Animals at https://www.ada.gov/service_animals_2010.htm"
+  },
+  {
+   "href": "https://www.hud.gov/sites/dfiles/FHEO/documents/19ServiceAnimalNoticeFHEO_508.pdf",
+   "text": "Click For More Info"
+  }
+ ],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 20331,
+ "text": "A Few Frequently Asked Questions about Service Animals and the Americans With Disabilities Act (ADA). Use the link below for a full list of questions from U.S. Department of Justice Civil Rights Division.\nFrequently Asked Questions\nQUESTION: WHAT IS A SERVICE ANIMAL?\nUnder the ADA, a service animal is defined as a dog that has been individually trained to do work or perform tasks for an individual with a disability.  The task(s) performed by the dog must be directly related to the person’s disability.\nQUESTION: WHAT DOES “DO WORK OR PERFORM TASKS” MEAN?\nThe dog must be trained to take a specific action when needed to assist the person with a disability. For example, a person with diabetes may have a dog that is trained to alert him when his blood sugar reaches high or low levels. A person with depression may have a dog that is trained to remind her to take her medication. Or, a person who has epilepsy may have a dog that is trained to detect the onset of a seizure and then help the person remain safe during the seizure.\nQUESTION: ARE EMOTIONAL SUPPORT, THERAPY, COMFORT, OR COMPANION ANIMALS CONSIDERED SERVICE ANIMALS UNDER THE ADA?\nNo. These terms are used to describe animals that provide comfort just by being with a person. Because they have not been trained to perform a specific job or task, they do not qualify as service animals under the ADA. However, some State or local governments have laws that allow people to take emotional support animals into public places. You may check with your State and local government agencies to find out about these laws.\nQUESTION: CAN INDIVIDUALS WITH DISABILITIES BE REFUSED ACCESS TO A FACILITY BASED SOLELY ON THE BREED OF THEIR SERVICE ANIMAL?\nNo. A service animal may not be excluded based on assumptions or stereotypes about the animal’s breed or how the animal might behave. However, if a particular service animal behaves in a way that poses a direct threat to the health or safety of others, has a history of such behavior, or is not under the control of the handler, that animal may be excluded. If an animal is excluded for such reasons, staff must still offer their goods or services to the person without the animal present.\nU.S. DEPARTMENT OF JUSTICE CIVIL RIGHTS DIVISION DISABILITY RIGHTS SECTION\nQuestions about Service Animals and the ADA\nMany people with disabilities use a service animal in order to fully participate in everyday life. Dogs can be trained to perform many important tasks to assist people with disabilities, such as providing stability for a person who has difficulty walking, picking up items for a person who uses a wheelchair, preventing a child with autism from wandering away, or alerting a person who has hearing loss when someone is approaching from behind.\nThe Department of Justice continues to receive many questions about how the Americans with Disabilities Act (ADA) applies to service animals. The ADA requires State and local government agencies, businesses, and non-profit organizations (covered entities) that provide goods or services to the public to make “reasonable modifications” in their policies, practices, or procedures when necessary to accommodate people with disabilities. The service animal rules fall under this general principle. Accordingly, entities that have a “no pets” policy generally must modify the policy to allow service animals into their facilities. This publication provides guidance on the ADA’s service animal provisions and should be read in conjunction with the publication.\nADA Revised Requirements: Service Animals at https://www.ada.gov/service_animals_2010.htm\nFAIR HOUSING ACT AND SERVICE ANIMALS\nThe Fair Housing Act covers virtually all types of housing, including privately owned housing and federally assisted housing, with a few limited exceptions. Click on the image below for more info.\nThe ADA applies to housing programs administered by state and local governments, such as public housing authorities, and by places of public accommodation, such as public and private universities.  In addition, the Fair Housing Act applies to virtually all types of housing, both public and privately-owned, including housing covered by the ADA.  Under the Fair Housing Act, housing providers are obligated to permit, as a reasonable accommodation, the use of animals that work, provide assistance, or perform tasks that benefit persons with a disabilities, or provide emotional support to alleviate a symptom or effect of a disability.\nClick For More Info"
+}

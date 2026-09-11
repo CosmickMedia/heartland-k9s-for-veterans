@@ -1,0 +1,12 @@
+node_modules/
+.idea/
+.DS_Store
+dist/*.zip
+payload/media/
+payload/source/
+docs/reports/screenshots/**/*.png
+docs/reports/diffs/**/*.png
+tools/.cache/
+theme/heartland-k9s/assets/dist/*.map
+*.log
+docker/.env

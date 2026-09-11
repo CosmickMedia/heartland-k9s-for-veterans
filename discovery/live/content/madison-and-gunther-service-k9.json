@@ -1,0 +1,45 @@
+{
+ "id": 3046,
+ "slug_path": "/madison-and-gunther-service-k9/",
+ "file_key": "madison-and-gunther-service-k9",
+ "link": "https://heartlandk9s.org/madison-and-gunther-service-k9/",
+ "title": "Madison and Gunther (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2023-06-14T07:35:15",
+ "modified": "2023-06-14T07:54:23",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Madison and Gunther (Service K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 353,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/05/342875492_603296628150848_6405403638217824602_n-225x300.jpg",
+   "alt": "",
+   "title": "342875492_603296628150848_6405403638217824602_n"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 3516,
+ "text": "Gunther (Service K9)\nFull size Cream Poodle\nPTSD/Anxiety Service K9\nResponsibilities/Tasks:\nBlocking/orbit/pressure\nHandler – [VALUE REDACTED]\nEmergency Contact – [VALUE REDACTED]\nEmergency Vet Contact – [VALUE REDACTED]\n[REDACTED LINE]\nHK9 Certified\nDO NOT SEPERATE FROM HANDLER\nAny questions, contact HK9 Executive Director, Jimmy Burgess 417-312-7484"
+}

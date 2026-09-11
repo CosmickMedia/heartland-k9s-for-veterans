@@ -1,0 +1,47 @@
+{
+ "id": 2910,
+ "slug_path": "/larry-and-archie-service-k9/",
+ "file_key": "larry-and-archie-service-k9",
+ "link": "https://heartlandk9s.org/larry-and-archie-service-k9/",
+ "title": "Larry and Archie (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2023-02-14T09:59:28",
+ "modified": "2023-02-14T09:59:28",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Larry and Archie (Service K9) - Heartland Canines for Veterans",
+  "description": ""
+ },
+ "classification": "barkode-record",
+ "registry_id": "HK9 23-001 (from photo title \"Archi HK9 23-001\")",
+ "headings": [],
+ "text_chars": 0,
+ "image_count": 2,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/02/Archi-HK9-23-001-219x300.jpg",
+   "alt": "",
+   "title": "Archi HK9 23-001"
+  },
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/02/ID-Back-300x171.png",
+   "alt": "",
+   "title": "ID Back"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "\"ID Back\" image (ID-Back.png) likely contains printed contact fields; text values not in HTML"
+ ],
+ "raw_html_chars": 4188,
+ "text": ""
+}

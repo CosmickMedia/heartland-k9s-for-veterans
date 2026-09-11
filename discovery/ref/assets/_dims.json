@@ -1,0 +1,83 @@
+[
+ {
+  "file": "_live-3028-Concept-1-rocker-outlined-2.png",
+  "bytes": 159325,
+  "sha256_16": "558ab18952bd238a",
+  "dims": [
+   1073,
+   1223
+  ],
+  "same_size_live": [
+   3028
+  ]
+ },
+ {
+  "file": "about-dog.jpg",
+  "bytes": 141462,
+  "sha256_16": "0e8932901fcfcc15",
+  "dims": [
+   1024,
+   1024
+  ],
+  "same_size_live": null
+ },
+ {
+  "file": "barkode.jpg",
+  "bytes": 200864,
+  "sha256_16": "a27487a9b1e40deb",
+  "dims": [
+   1024,
+   1024
+  ],
+  "same_size_live": null
+ },
+ {
+  "file": "favicon.svg",
+  "bytes": 163,
+  "sha256_16": "8ffbde9092b1fa4d",
+  "dims": null,
+  "same_size_live": null
+ },
+ {
+  "file": "heartland-k9s-logo.png",
+  "bytes": 159325,
+  "sha256_16": "558ab18952bd238a",
+  "dims": [
+   1073,
+   1223
+  ],
+  "same_size_live": [
+   3028
+  ]
+ },
+ {
+  "file": "hero-home.jpg",
+  "bytes": 177848,
+  "sha256_16": "6dbd75aeda4f0774",
+  "dims": [
+   1024,
+   1024
+  ],
+  "same_size_live": null
+ },
+ {
+  "file": "training.jpg",
+  "bytes": 156008,
+  "sha256_16": "090fae7ac97a8d8b",
+  "dims": [
+   1024,
+   1024
+  ],
+  "same_size_live": null
+ },
+ {
+  "file": "veteran-story.jpg",
+  "bytes": 209692,
+  "sha256_16": "9ffdf2565314ce7c",
+  "dims": [
+   1024,
+   1024
+  ],
+  "same_size_live": null
+ }
+]

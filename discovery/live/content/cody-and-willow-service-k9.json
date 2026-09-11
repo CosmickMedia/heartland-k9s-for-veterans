@@ -1,0 +1,45 @@
+{
+ "id": 3597,
+ "slug_path": "/cody-and-willow-service-k9/",
+ "file_key": "cody-and-willow-service-k9",
+ "link": "https://heartlandk9s.org/cody-and-willow-service-k9/",
+ "title": "Cody and Willow (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2025-09-03T11:28:53",
+ "modified": "2025-09-03T11:39:53",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Cody and Willow (Service K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 370,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/09/cody-and-willow-156x300.jpg",
+   "alt": "Cody and willow",
+   "title": "cody and willow"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 3634,
+ "text": "Willow (Service K9)\nGiant Schnauzer\nPTSD/Anxiety Service Dog\nResponsibilities/Tasks –\nBlocking, post, orbit, pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

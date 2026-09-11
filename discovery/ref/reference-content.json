@@ -1,0 +1,872 @@
+{
+  "source": {
+    "bundle": "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/ref/index.js",
+    "router": "wouter v3 (Switch/Route with path:, base '/'); fallback route renders 404 component",
+    "component_map": {
+      "/": "gE",
+      "/about": "yE",
+      "/program": "vE",
+      "/veterans": "xE",
+      "/get-involved": "bE",
+      "/barkode": "wE",
+      "/stories": "SE",
+      "/contact": "EE",
+      "404": "QS",
+      "Layout": "pE",
+      "Navbar": "hE",
+      "Footer": "mE"
+    },
+    "byte_offsets": {
+      "gE": 336324,
+      "yE": 345945,
+      "vE": 350269,
+      "xE": 356186,
+      "bE": 362255,
+      "wE": 366571,
+      "SE": 371496,
+      "EE": 376046,
+      "QS": 322521,
+      "hE/mE": "~330400-336324",
+      "routes": 381591
+    },
+    "html_meta": {
+      "title": "Heartland Canines for Veterans | So They Never Walk Alone",
+      "description": "An IRS-recognized 501(c)(3) nonprofit pairing eligible disabled U.S. veterans with highly trained service dogs at zero cost.",
+      "og_image": "/assets/hero-home.jpg",
+      "favicon": "/favicon.svg",
+      "logo": "/heartland-k9s-logo.png"
+    },
+    "theme": {
+      "fonts": {
+        "sans": "Inter (400,500,600,700)",
+        "serif": "Fraunces (variable, used for all h1-h6 via --app-font-serif)",
+        "mono": "Menlo",
+        "google_fonts_import": "https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..800&family=Inter:wght@400;500;600;700&display=swap"
+      },
+      "light_hsl": {
+        "background": "40 20% 98%",
+        "foreground": "220 30% 12%",
+        "border": "30 15% 88%",
+        "card": "0 0% 100%",
+        "primary": "215 45% 20% (navy)",
+        "primary-foreground": "0 0% 100%",
+        "secondary": "350 60% 45% (crimson red)",
+        "secondary-foreground": "0 0% 100%",
+        "muted": "35 25% 94%",
+        "muted-foreground": "215 20% 40%",
+        "accent": "35 30% 88%",
+        "ring": "215 45% 20%",
+        "radius": ".25rem"
+      },
+      "dark_hsl": {
+        "background": "220 30% 10%",
+        "foreground": "40 20% 95%",
+        "primary": "40 20% 95%",
+        "secondary": "350 50% 55%",
+        "muted": "220 20% 20%"
+      },
+      "custom_classes": {
+        ".hero-gradient": "linear-gradient(#0f172a4d,#0f172ae6)",
+        ".card-hover-effect": "transition all .3s; hover translate-y/shadow"
+      },
+      "layout_wrapper": "Layout scrolls window to top on route change; min-h-[100dvh] flex-col; container mx-auto px-4 md:px-8; sticky nav h-20 (80px) with backdrop-blur"
+    },
+    "all_assets_referenced": [
+      "/assets/hero-home.jpg",
+      "/assets/veteran-story.jpg",
+      "/assets/training.jpg",
+      "/assets/about-dog.jpg",
+      "/assets/barkode.jpg",
+      "/heartland-k9s-logo.png",
+      "/favicon.svg"
+    ],
+    "all_lucide_icons_in_bundle": [
+      "arrow-right",
+      "calendar",
+      "check",
+      "circle-alert",
+      "circle-check",
+      "clipboard-check",
+      "clock",
+      "dog",
+      "dollar-sign",
+      "file-text",
+      "graduation-cap",
+      "hand-heart",
+      "heart-handshake",
+      "heart-pulse",
+      "heart",
+      "mail",
+      "map-pin",
+      "menu",
+      "phone-call",
+      "phone",
+      "qr-code",
+      "quote",
+      "shield-alert",
+      "shield-check",
+      "users",
+      "x"
+    ]
+  },
+  "header": {
+    "brand": {
+      "logo": "/heartland-k9s-logo.png (h-16, alt 'Heartland Canines for Veterans')",
+      "wordmark_line1": "Heartland K9s (font-serif semibold)",
+      "wordmark_line2": "FOR VETERANS (10px uppercase tracking-wider muted)",
+      "href": "/"
+    },
+    "nav_order": [
+      {
+        "label": "About",
+        "href": "/about"
+      },
+      {
+        "label": "Program",
+        "href": "/program"
+      },
+      {
+        "label": "Veterans",
+        "href": "/veterans"
+      },
+      {
+        "label": "BarKode",
+        "href": "/barkode"
+      },
+      {
+        "label": "Stories",
+        "href": "/stories"
+      },
+      {
+        "label": "Get Involved",
+        "href": "/get-involved"
+      },
+      {
+        "label": "Contact",
+        "href": "/contact",
+        "note": "separated by a left border divider, after main nav"
+      }
+    ],
+    "cta": {
+      "label": "Donate Now",
+      "href": "https://heartlandk9s.org/",
+      "target": "_blank",
+      "style": "primary (bg-secondary crimson, white text)"
+    },
+    "mobile": "lg:hidden hamburger (lucide menu / x) toggles absolute dropdown under 80px bar with same links + full-width Donate Now",
+    "active_state": "current route link gets text-secondary"
+  },
+  "footer": {
+    "bg": "bg-primary (navy) text-primary-foreground; grid 1 / md:2 / lg:4 cols gap-12; py-16",
+    "columns": [
+      {
+        "heading": "(brand column, no heading)",
+        "items": [
+          "logo /heartland-k9s-logo.png h-20 + 'Heartland K9s' / 'FOR VETERANS' wordmark",
+          "An IRS-recognized 501(c)(3) nonprofit pairing eligible disabled U.S. veterans with highly trained service dogs at zero cost.",
+          "Tagline (serif italic, crimson): So They Never Walk Alone."
+        ]
+      },
+      {
+        "heading": "Quick Links",
+        "items": [
+          "Our Mission -> /about",
+          "The Program -> /program",
+          "For Veterans -> /veterans",
+          "BarKode Program -> /barkode",
+          "Success Stories -> /stories"
+        ]
+      },
+      {
+        "heading": "Get Involved",
+        "items": [
+          "Make a Donation -> https://heartlandk9s.org/ (placeholder, _blank)",
+          "Volunteer -> /get-involved",
+          "Campaigns & Events -> /get-involved",
+          "K9 Providers -> https://heartlandk9s.org/ (placeholder, _blank)"
+        ]
+      },
+      {
+        "heading": "Contact Us",
+        "items": [
+          "[mail icon] info@heartlandk9s.org -> mailto:info@heartlandk9s.org",
+          "[phone icon] 800-913-6189 -> tel:800-913-6189, sub-line 'Mon–Fri, 8:00am–5:00pm'",
+          "[map-pin icon] Serving disabled U.S. veterans nationwide"
+        ]
+      }
+    ],
+    "bottom_bar": {
+      "copyright": "© {currentYear} Heartland Canines for Veterans. All rights reserved.",
+      "right": "Built with [heart icon, crimson filled] for our veterans."
+    }
+  },
+  "routes": [
+    {
+      "path": "/",
+      "title": "Home",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero",
+          "eyebrow": "IRS-Recognized 501(c)(3) Nonprofit (pill badge with shield-check icon, white/10 glass)",
+          "heading": "So They Never Walk Alone.",
+          "text": "Pairing eligible disabled U.S. veterans with highly trained service dogs at zero cost. Restoring independence, dignity, and purpose.",
+          "ctas": [
+            {
+              "label": "Support a Service Dog",
+              "href": "https://heartlandk9s.org/",
+              "style": "primary (bg-secondary)"
+            },
+            {
+              "label": "Apply for a Dog",
+              "href": "/veterans",
+              "style": "outline (white/10 glass, white border)"
+            }
+          ],
+          "images": [
+            "/assets/hero-home.jpg"
+          ],
+          "icons": [
+            "shield-check"
+          ],
+          "layout": "h-[85vh] min-h-600 full-bleed bg-cover; overlays bg-primary/60 mix-blend-multiply + .hero-gradient; centered text; h1 text-4xl/6xl/7xl serif with md:<br> after 'Never'; staggered slide-in animations"
+        },
+        {
+          "order": 2,
+          "kind": "mission",
+          "heading": "We believe those who served our nation deserve the highest level of care and support upon their return.",
+          "text": "At Heartland Canines for Veterans, our mission is simple yet profound: to place exceptional service dogs with disabled veterans at no financial burden to the veteran. Through empirical strategies, rigorous training, and a deep understanding of our veterans' needs, we forge partnerships that save lives.",
+          "layout": "py-24 centered max-w-4xl; h2 serif text-primary; 24x1 crimson divider bar; muted paragraph"
+        },
+        {
+          "order": 3,
+          "kind": "feature-cards",
+          "heading": "(no section heading)",
+          "items": [
+            "Zero Cost to Veterans [shield-check, navy] — We believe a veteran has already paid the price. Every service dog, complete with training and equipment, is provided entirely free of charge. — link 'Learn about funding' -> /program",
+            "Unbreakable Bond [heart-handshake, crimson] — We don't just hand over a leash. We ensure the right canine is paired with the right person, fostering a bond built on trust and mutual support. — link 'Our matching process' -> /program",
+            "Nationwide Reach [map-pin, navy] — While our roots are in the heartland, our impact spans the country. We serve eligible disabled veterans wherever they call home. — link 'Read our story' -> /about"
+          ],
+          "ctas": [
+            {
+              "label": "Learn about funding",
+              "href": "/program",
+              "style": "text link + arrow-right"
+            },
+            {
+              "label": "Our matching process",
+              "href": "/program",
+              "style": "text link + arrow-right"
+            },
+            {
+              "label": "Read our story",
+              "href": "/about",
+              "style": "text link + arrow-right"
+            }
+          ],
+          "icons": [
+            "shield-check",
+            "heart-handshake",
+            "map-pin",
+            "arrow-right"
+          ],
+          "layout": "py-20 bg-muted/50 border-y; grid 1 / md:3 gap-10; centered cards p-8 rounded-xl with 64px round icon; middle card has decorative crimson corner blob"
+        },
+        {
+          "order": 4,
+          "kind": "image-text (BarKode promo)",
+          "eyebrow": "Proprietary System (crimson badge, uppercase tracking-widest)",
+          "heading": "The BarKode Program",
+          "text": "Every Heartland K9 is equipped with a specialized BarKode patch. This vital tool serves as a certification beacon and emergency contact system, ensuring the safety of the veteran and their dog in critical situations.",
+          "items": [
+            "Image card overlay caption: Dedicated to Derron & Rosie"
+          ],
+          "ctas": [
+            {
+              "label": "Explore BarKode",
+              "href": "/barkode",
+              "style": "outline (white/30 border on navy)"
+            }
+          ],
+          "images": [
+            "/assets/barkode.jpg"
+          ],
+          "layout": "py-24 bg-primary navy full-bleed with 10%-opacity SVG diagonal grid pattern; lg:flex-row image LEFT (square max-w-md rounded-2xl, gradient overlay, caption bottom-left) / text RIGHT (lg:w-1/2 each); text centered on mobile, left on lg"
+        },
+        {
+          "order": 5,
+          "kind": "testimonial",
+          "heading": "(none)",
+          "text": "\"Having my service dog hasn't just given me my independence back—it's given me my life back. For the first time in years, I can navigate the world without fear.\"",
+          "items": [
+            "Attribution: USMC Veteran — Paired in 2022"
+          ],
+          "ctas": [
+            {
+              "label": "Read More Stories",
+              "href": "/stories",
+              "style": "ghost (crimson text + arrow-right)"
+            }
+          ],
+          "images": [
+            "/assets/veteran-story.jpg"
+          ],
+          "icons": [
+            "arrow-right",
+            "(inline SVG quote glyph, not lucide)"
+          ],
+          "layout": "py-24; max-w-5xl bg-muted rounded-3xl md:flex-row; image LEFT md:w-2/5 h-64; text RIGHT md:w-3/5 p-10/14; blockquote serif text-xl/2xl; attribution + button justify-between"
+        }
+      ]
+    },
+    {
+      "path": "/about",
+      "title": "Our Mission",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero (solid navy band)",
+          "heading": "Our Mission",
+          "text": "Driven by a single goal: to do our part in making the world a better place for the veterans who have served this great nation.",
+          "layout": "bg-primary pt-24 pb-32 centered; h1 serif text-4xl/6xl white; p text-xl white/80 max-w-2xl"
+        },
+        {
+          "order": 2,
+          "kind": "image-text (overlapping card)",
+          "eyebrow": "Est. 2015 (crimson/10 badge)",
+          "heading": "A Legacy of Service",
+          "text": "Heartland Canines for Veterans was founded on a simple premise: a veteran has already paid the price. We believe that no eligible disabled veteran should face financial barriers to receiving a life-changing service dog. || We use proven canine training strategies to produce a highly skilled and capable team, ensuring the right canine is paired with the right person.",
+          "images": [
+            "/assets/about-dog.jpg"
+          ],
+          "layout": "-mt-16 overlap card max-w-5xl rounded-2xl shadow-xl md:flex-row; image LEFT md:w-1/2 h-80; text RIGHT p-10/12"
+        },
+        {
+          "order": 3,
+          "kind": "feature-cards (values)",
+          "heading": "Our Core Values",
+          "items": [
+            "Dignity [shield-check] — We treat every veteran with the utmost respect, ensuring the application and pairing process honors their service and sacrifices.",
+            "Excellence [circle-check] — We partner with premier K9 providers and utilize rigorous training standards to deliver highly capable service dogs.",
+            "Commitment [heart] — Our support doesn't end at placement. We remain committed to the veteran-canine team throughout their journey together."
+          ],
+          "icons": [
+            "shield-check",
+            "circle-check",
+            "heart"
+          ],
+          "layout": "py-24 max-w-5xl; centered h2 + crimson divider; grid 1 / md:3 gap-8; cards p-8 bg-muted rounded-xl, left-aligned, crimson 40px icons"
+        },
+        {
+          "order": 4,
+          "kind": "cta-band",
+          "heading": "Join Us in Our Mission",
+          "text": "Every donation, volunteer hour, and shared story helps us provide another service dog to a veteran in need.",
+          "ctas": [
+            {
+              "label": "Make a Donation",
+              "href": "https://heartlandk9s.org/",
+              "style": "primary (bg-secondary)"
+            },
+            {
+              "label": "Ways to Volunteer",
+              "href": "/get-involved",
+              "style": "outline (navy border)"
+            }
+          ],
+          "layout": "bg-primary/5 py-20 border-y centered max-w-3xl; buttons sm:flex-row centered"
+        }
+      ]
+    },
+    {
+      "path": "/program",
+      "title": "The Program",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero (image)",
+          "heading": "The Program",
+          "text": "Rigorous training, precise matching, and lifelong support.",
+          "images": [
+            "/assets/training.jpg"
+          ],
+          "layout": "h-[60vh] min-h-400 bg-cover; overlay bg-primary/70 multiply; centered"
+        },
+        {
+          "order": 2,
+          "kind": "steps",
+          "heading": "How It Works",
+          "text": "Our decision-making process is informed by comprehensive empirical data. We don't just assign a dog; we carefully craft a team designed for mutual success and safety.",
+          "items": [
+            "1. Application & Assessment [clipboard-check] — Veterans complete a thorough application detailing their needs, lifestyle, and environment. We review this to ensure our program is the right fit.",
+            "2. Precision Matching [users] — Using proven empirical strategies, we match the veteran with a canine whose temperament, drive, and skills perfectly complement the veteran's needs.",
+            "3. Rigorous Training [dog] — Our dogs undergo extensive training tailored to the specific disabilities of their matched veteran, learning precise commands and behaviors.",
+            "4. Team Placement [graduation-cap] — The veteran and dog train together as a unit. Upon successful completion, they graduate as a certified Heartland K9s team."
+          ],
+          "icons": [
+            "clipboard-check",
+            "users",
+            "dog",
+            "graduation-cap"
+          ],
+          "layout": "py-24 max-w-5xl; centered heading + crimson divider + intro; 2-col staggered timeline: vertical center line (md), left column steps 1 & 3, right column steps 2 & 4 offset md:mt-24; numbered crimson circles hang off card edge toward center line"
+        },
+        {
+          "order": 3,
+          "kind": "cta-band (providers)",
+          "heading": "Our K9 Providers",
+          "text": "We partner with elite K9 providers and trainers across the country. These professionals specialize in breeding and preparing working dogs of the highest caliber, ensuring that our veterans receive a partner capable of performing complex, life-saving tasks under any circumstance.",
+          "ctas": [
+            {
+              "label": "View Our Providers",
+              "href": "https://heartlandk9s.org/",
+              "style": "outline (navy)"
+            }
+          ],
+          "icons": [
+            "shield-alert"
+          ],
+          "layout": "py-20 bg-muted/50 border-y centered max-w-4xl; crimson 48px icon on top"
+        },
+        {
+          "order": 4,
+          "kind": "cta-band (navy)",
+          "heading": "Are You a Veteran in Need?",
+          "text": "If you are a disabled U.S. veteran seeking the support of a service dog, we invite you to review our eligibility requirements and begin the application process.",
+          "ctas": [
+            {
+              "label": "Review 5 Questions & Apply",
+              "href": "/veterans",
+              "style": "primary (bg-secondary) + arrow-right"
+            }
+          ],
+          "icons": [
+            "arrow-right"
+          ],
+          "layout": "py-24 bg-primary white centered max-w-3xl"
+        }
+      ]
+    },
+    {
+      "path": "/veterans",
+      "title": "For Veterans",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero (solid navy band with star pattern)",
+          "heading": "For Veterans",
+          "text": "Your service earned this. We are here to provide the support you deserve at zero cost.",
+          "layout": "bg-primary pt-24 pb-32 centered; 10%-opacity SVG 5-point star tile pattern (60x60)"
+        },
+        {
+          "order": 2,
+          "kind": "list (eligibility checklist card)",
+          "heading": "The 5 Questions",
+          "text": "Basic eligibility requirements before applying. || If you answered \"Yes\" to these questions, you may be eligible to receive a highly trained service dog from Heartland Canines for Veterans.",
+          "items": [
+            "Are you a military veteran with an honorable discharge?",
+            "Do you have a physical or psychological disability?",
+            "Are you able to participate in our specialized training program?",
+            "Can you provide a safe, stable, and loving home environment for a canine?",
+            "Are you committed to maintaining the dog's training and well-being?"
+          ],
+          "ctas": [
+            {
+              "label": "Start Application",
+              "href": "https://heartlandk9s.org/",
+              "style": "primary (bg-primary navy) + file-text icon; w-full on mobile"
+            }
+          ],
+          "icons": [
+            "circle-alert",
+            "check",
+            "file-text"
+          ],
+          "layout": "-mt-16 overlap card max-w-4xl p-8/12; header row with crimson circle-alert in 48px circle; ul space-y-6, each li p-4 bg-muted/50 rounded-lg with navy check icon; footer box bg-primary/5 rounded-xl centered"
+        },
+        {
+          "order": 3,
+          "kind": "steps + image-text (2-col)",
+          "heading": "What to Expect",
+          "items": [
+            "1. Application Review — Our team carefully reviews your application to understand your unique needs and circumstances.",
+            "2. Interview & Assessment — We conduct in-depth interviews to ensure our program is the right fit and to gather data for a precision match.",
+            "3. Team Training — You will train alongside your matched dog under the guidance of our expert handlers."
+          ],
+          "text_summary": "Right column card: 'The BarKode System' [shield-check] — As a Heartland K9s recipient, your service dog will be equipped with our proprietary BarKode system—a digital certification and emergency contact patch designed to protect both you and your canine partner in any situation.",
+          "ctas": [
+            {
+              "label": "Learn about BarKode",
+              "href": "/barkode",
+              "style": "outline"
+            }
+          ],
+          "icons": [
+            "shield-check"
+          ],
+          "layout": "py-24 max-w-5xl grid 1 / md:2 gap-16; LEFT numbered steps (crimson 40px number circles); RIGHT bg-muted p-8 rounded-2xl card"
+        },
+        {
+          "order": 4,
+          "kind": "cta-band (navy)",
+          "heading": "ADA Rights & FAQs",
+          "text": "As a service dog handler, you have specific rights protected under the Americans with Disabilities Act (ADA). We provide comprehensive education on these rights during your training.",
+          "ctas": [
+            {
+              "label": "Read ADA FAQs",
+              "href": "https://heartlandk9s.org/",
+              "style": "outline (white/30 on navy)"
+            }
+          ],
+          "layout": "py-20 bg-primary centered max-w-3xl"
+        }
+      ]
+    },
+    {
+      "path": "/get-involved",
+      "title": "Get Involved",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero (solid navy band)",
+          "heading": "Get Involved",
+          "text": "It takes a community to save a life. Join us in providing independence to those who served.",
+          "layout": "bg-primary pt-24 pb-32 centered"
+        },
+        {
+          "order": 2,
+          "kind": "feature-cards (3 ways)",
+          "heading": "(none)",
+          "items": [
+            "Donate [dollar-sign, crimson] — Your financial support directly funds the acquisition, training, and placement of service dogs for veterans. Every dollar makes a tangible difference. — CTA 'Make a Donation' (primary crimson, w-full) -> placeholder",
+            "Campaigns [calendar, navy] — Participate in our fundraising campaigns and events throughout the year. Help us spread awareness and raise crucial funds for our mission. — CTA 'View Campaigns' (outline navy, w-full) -> placeholder",
+            "Volunteer [hand-heart, navy] — Give your time and skills. Whether helping at events, assisting with administration, or spreading the word, volunteers are the backbone of our organization. — CTA 'Contact Us to Help' (outline navy, w-full) -> /contact"
+          ],
+          "ctas": [
+            {
+              "label": "Make a Donation",
+              "href": "https://heartlandk9s.org/",
+              "style": "primary"
+            },
+            {
+              "label": "View Campaigns",
+              "href": "https://heartlandk9s.org/",
+              "style": "outline"
+            },
+            {
+              "label": "Contact Us to Help",
+              "href": "/contact",
+              "style": "outline"
+            }
+          ],
+          "icons": [
+            "dollar-sign",
+            "calendar",
+            "hand-heart"
+          ],
+          "layout": "-mt-16 overlap; max-w-6xl grid 1 / md:3 gap-8; cards rounded-2xl shadow-xl p-8 centered, hover lift -translate-y-1; 64px round icon; full-width buttons pinned to bottom (flex-col, p flex-1)"
+        },
+        {
+          "order": 3,
+          "kind": "cta-band (partners)",
+          "heading": "Corporate & Community Partners",
+          "text": "We are deeply grateful for the businesses and organizations that stand with us. Partnering with Heartland K9s demonstrates a profound commitment to our nation's veterans. || If your organization is interested in sponsorship opportunities, matching gifts, or hosting an event, we would love to connect.",
+          "ctas": [
+            {
+              "label": "Discuss a Partnership",
+              "href": "/contact",
+              "style": "primary (bg-primary navy)"
+            }
+          ],
+          "icons": [
+            "heart"
+          ],
+          "layout": "py-24; max-w-4xl bg-muted rounded-3xl p-10/16 centered; crimson 48px heart icon"
+        }
+      ]
+    },
+    {
+      "path": "/barkode",
+      "title": "The BarKode Program",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero (image)",
+          "eyebrow": "PROPRIETARY SYSTEM (pill, bg-secondary/20, uppercase tracking-widest)",
+          "heading": "The BarKode Program",
+          "text": "A vital safety net dedicated to the memory of Derron and his service dog, Rosie.",
+          "images": [
+            "/assets/barkode.jpg"
+          ],
+          "layout": "h-[70vh] min-h-500 bg-cover; overlays bg-primary/80 multiply + .hero-gradient; centered; h1 up to text-7xl"
+        },
+        {
+          "order": 2,
+          "kind": "story / dedication",
+          "heading": "Dedicated to Derron & Rosie",
+          "text": "The BarKode program was born out of profound necessity and heartbreaking loss. It is dedicated to Derron, a veteran, and his beloved service dog, Rosie. Their story highlighted a critical gap in the safety protocols for working dog teams when emergencies strike. || When a veteran experiences a medical emergency in public, first responders need immediate access to vital information—not only about the veteran, but also about the service dog standing guard. Without clear identification and instructions, dogs can be separated from their handlers or misunderstood in chaotic situations. BarKode ensures this never happens again.",
+          "icons": [
+            "heart-pulse"
+          ],
+          "layout": "py-20 max-w-4xl; bg-primary/5 rounded-2xl p-8/12 border; heading centered, paragraphs text-left; crimson 48px heart-pulse icon"
+        },
+        {
+          "order": 3,
+          "kind": "feature-cards",
+          "heading": "How BarKode Protects",
+          "items": [
+            "Instant Identification [qr-code] — Every Heartland K9 wears a specialized patch featuring a unique BarKode. First responders can instantly identify the dog as a certified, trained service animal.",
+            "Emergency Contacts [phone-call] — Scanning the BarKode provides immediate access to emergency contact protocols, ensuring the dog's well-being is managed safely while the veteran receives care.",
+            "Legitimacy & Trust [shield-check] — In an era of fraudulent service dogs, BarKode serves as undeniable proof of the team's rigorous training and certification through Heartland K9s."
+          ],
+          "icons": [
+            "qr-code",
+            "phone-call",
+            "shield-check"
+          ],
+          "layout": "py-24 bg-muted/30 border-y max-w-5xl; centered h2 + crimson divider; grid 1 / md:3 gap-8; cards p-8 rounded-xl left-aligned, navy 40px icons"
+        },
+        {
+          "order": 4,
+          "kind": "cta-band",
+          "heading": "Support the BarKode Initiative",
+          "text": "Providing these specialized patches and maintaining the underlying registry requires ongoing resources. Your donation directly supports the safety of our veterans and their K9 partners.",
+          "ctas": [
+            {
+              "label": "Donate to Protect a Team",
+              "href": "https://heartlandk9s.org/",
+              "style": "primary (bg-secondary)"
+            }
+          ],
+          "layout": "py-20 centered max-w-3xl (no bg)"
+        }
+      ]
+    },
+    {
+      "path": "/stories",
+      "title": "Success Stories",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero (solid navy band)",
+          "heading": "Success Stories",
+          "text": "The true measure of our mission is found in the lives we help restore.",
+          "layout": "bg-primary pt-24 pb-32 centered"
+        },
+        {
+          "order": 2,
+          "kind": "testimonial (featured, image-text)",
+          "heading": "(none)",
+          "text": "\"Before I got my dog, I rarely left the house. The anxiety was just too much. Now, we go everywhere together. He's not just a dog; he's my lifeline, my battle buddy, and my freedom.\"",
+          "items": [
+            "Attribution: USMC Veteran — Paired in 2022"
+          ],
+          "images": [
+            "/assets/veteran-story.jpg"
+          ],
+          "icons": [
+            "quote"
+          ],
+          "layout": "-mt-16 overlap card max-w-5xl rounded-2xl shadow-xl md:flex-row; image LEFT md:w-1/2 h-80; text RIGHT p-10/12 bg-muted/30; crimson quote icon 48px opacity-40; blockquote serif text-2xl"
+        },
+        {
+          "order": 3,
+          "kind": "testimonial grid",
+          "heading": "(none)",
+          "items": [
+            "\"The BarKode system gave my family peace of mind. Knowing that if something happens to me, first responders know exactly what to do with my service dog is an incredible relief.\" — Army Veteran — Paired in 2023",
+            "\"I didn't think I deserved a service dog, and I definitely couldn't afford one. Heartland K9s treated me with such dignity and completely covered the cost. It changed my trajectory.\" — Navy Veteran — Paired in 2021"
+          ],
+          "icons": [
+            "quote"
+          ],
+          "layout": "max-w-5xl grid 1 / md:2 gap-8; cards p-8 rounded-xl flex-col; italic text-lg; attribution below border-t"
+        },
+        {
+          "order": 4,
+          "kind": "cta-band",
+          "heading": "Help Us Write the Next Chapter",
+          "text": "There are many more eligible disabled veterans waiting for their lifeline. Your support makes these stories possible.",
+          "ctas": [
+            {
+              "label": "Support Our Mission",
+              "href": "https://heartlandk9s.org/",
+              "style": "primary (bg-secondary)"
+            }
+          ],
+          "layout": "py-24 mt-12 centered max-w-3xl"
+        }
+      ]
+    },
+    {
+      "path": "/contact",
+      "title": "Contact Us",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "hero (solid navy band)",
+          "heading": "Contact Us",
+          "text": "We are here to answer your questions, discuss partnerships, and support our veterans.",
+          "layout": "bg-primary pt-24 pb-32 centered"
+        },
+        {
+          "order": 2,
+          "kind": "contact info + form (2-col card)",
+          "heading": "Get in Touch / Send a Message",
+          "items": [
+            "[phone] Phone — 800-913-6189 (tel:800-913-6189)",
+            "[mail] Email — info@heartlandk9s.org (mailto:)",
+            "[clock] Office Hours — Monday – Friday / 8:00am – 5:00pm",
+            "[map-pin] Service Area — Serving eligible disabled U.S. veterans nationwide."
+          ],
+          "text_summary": "LEFT (lg:w-2/5, bg-muted, border-r): 'Get in Touch' heading + 4 info rows with navy 40px round icons. RIGHT (lg:w-3/5, bg-card): 'Send a Message' heading + form. No physical street address shown anywhere in reference.",
+          "icons": [
+            "phone",
+            "mail",
+            "clock",
+            "map-pin"
+          ],
+          "layout": "-mt-16 overlap card max-w-5xl rounded-2xl shadow-xl lg:flex-row"
+        }
+      ]
+    },
+    {
+      "path": "(404 fallback)",
+      "title": "404 Page Not Found",
+      "sections": [
+        {
+          "order": 1,
+          "kind": "card",
+          "heading": "404 Page Not Found",
+          "text": "Did you forget to add the page to the router?",
+          "icons": [
+            "circle-alert (red)"
+          ],
+          "layout": "min-h-screen centered bg-gray-50 card max-w-md (Replit template default)"
+        }
+      ]
+    }
+  ],
+  "placeholder_links": [
+    {
+      "route": "header (desktop + mobile, 2 occurrences)",
+      "label": "Donate Now",
+      "href": "https://heartlandk9s.org/",
+      "intended": "Donate page — https://heartlandk9s.org/donate/ (WP page id 2120)"
+    },
+    {
+      "route": "footer > Get Involved",
+      "label": "Make a Donation",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/donate/ (id 2120)"
+    },
+    {
+      "route": "footer > Get Involved",
+      "label": "K9 Providers",
+      "href": "https://heartlandk9s.org/",
+      "intended": "Provider application/info — live home has 'Apply to provide a K9' CTA; nearest WP pages: /the-service-k9-program/ (id 3084) or /online-application/ (id 1989); exact provider page unknown (no dedicated 'providers' page in the 40 live pages)"
+    },
+    {
+      "route": "/ (hero)",
+      "label": "Support a Service Dog",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/donate/ (id 2120); live site uses identical label 'Support a Service Dog' for its donate CTA"
+    },
+    {
+      "route": "/about (Join Us band)",
+      "label": "Make a Donation",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/donate/ (id 2120)"
+    },
+    {
+      "route": "/program (K9 Providers)",
+      "label": "View Our Providers",
+      "href": "https://heartlandk9s.org/",
+      "intended": "Provider/partner listing — unknown; no live 'providers' page exists. Closest: /the-service-k9-program/ (id 3084) or /hk9-current-teams-in-training/ (id 3011)"
+    },
+    {
+      "route": "/veterans (5 Questions card)",
+      "label": "Start Application",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/online-application/ (id 1989, 'Initial Online Application'); live /5-questions/ page's 'Submit an Application' button also points here"
+    },
+    {
+      "route": "/veterans (ADA band)",
+      "label": "Read ADA FAQs",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/service-dogs-and-the-ada/ (id 1995)"
+    },
+    {
+      "route": "/get-involved (Donate card)",
+      "label": "Make a Donation",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/donate/ (id 2120)"
+    },
+    {
+      "route": "/get-involved (Campaigns card)",
+      "label": "View Campaigns",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/campaigns/ (id 2800); related: /events/ (id 2483), /back-the-pack/ (id 2072)"
+    },
+    {
+      "route": "/barkode (Support band)",
+      "label": "Donate to Protect a Team",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/donate/ (id 2120); alt: /barkode/ (id 2944)"
+    },
+    {
+      "route": "/stories (CTA band)",
+      "label": "Support Our Mission",
+      "href": "https://heartlandk9s.org/",
+      "intended": "https://heartlandk9s.org/donate/ (id 2120)"
+    }
+  ],
+  "placeholder_link_count_note": "13 raw occurrences of https://heartlandk9s.org/ in bundle: 2 header Donate Now + 2 footer + 9 in-page CTAs. All open in new tab (target=_blank rel=noopener noreferrer).",
+  "contact_form": {
+    "fields": [
+      "firstName — <Input> text, required, label 'First Name', placeholder 'John' (half width md:grid-cols-2)",
+      "lastName — <Input> text, required, label 'Last Name', placeholder 'Doe' (half width)",
+      "email — <Input type=email>, required, label 'Email Address', placeholder 'john@example.com'",
+      "subject — native <select>, required, label 'Subject'; options: '' (disabled hidden placeholder 'Select a subject'), 'veteran-application' => 'Veteran Application Inquiry', 'donation' => 'Donation Inquiry', 'volunteer' => 'Volunteer / Campaign', 'provider' => 'K9 Provider Partnership', 'other' => 'Other'",
+      "message — <Textarea>, required, label 'Message', placeholder 'How can we help you?', min-h-[120px] resize-y",
+      "submit — <Button type=submit size=lg w-full bg-primary h-14>, label 'Send Message', shows 'Sending...' while disabled"
+    ],
+    "behavior": "No network request. onSubmit: e.preventDefault(); setSending(true); setTimeout(() => { setSending(false); toast({ title: 'Message Sent', description: 'Thank you for reaching out. We will get back to you shortly.' }); e.target.reset(); }, 1000). Uses shadcn use-toast + <Toaster/> mounted at app root. Inputs have id but NO name attributes; no validation beyond HTML required; no honeypot/captcha; no backend endpoint."
+  },
+  "veteran_questions": [
+    "Are you a military veteran with an honorable discharge?",
+    "Do you have a physical or psychological disability?",
+    "Are you able to participate in our specialized training program?",
+    "Can you provide a safe, stable, and loving home environment for a canine?",
+    "Are you committed to maintaining the dog's training and well-being?"
+  ],
+  "veteran_questions_note": "These 5 questions are INVENTED by the reference and do NOT match the live site's '5 Questions To Ask Before Partnering With a Service Dog' (WP page id 16, /5-questions/), which are self-reflection questions: 1. Am I financially able to take on the costs of caring for a dog for 10 to 15 years? 2. Are you prepared to care or arrange for care for a dog every single day? 3. Are you prepared to always be the center of attention? 4. Are you willing and able to accept the training and socialization obligations accompanying a Service Dog? 5. Are you prepared to deal with conflict? The live page explicitly says they are 'not meant to be answered with a simple yes or no', whereas the reference frames them as yes/no eligibility gates ('If you answered Yes...').",
+  "unverified_claims": [
+    "Home/Stories testimonial: 'Having my service dog hasn't just given me my independence back...' attributed to 'USMC Veteran', 'Paired in 2022' — generic branch, no name, not found on live site (fabricated placeholder)",
+    "Stories featured testimonial: 'Before I got my dog, I rarely left the house...' — 'USMC Veteran', 'Paired in 2022' — fabricated placeholder",
+    "Stories: 'The BarKode system gave my family peace of mind...' — 'Army Veteran', 'Paired in 2023' — fabricated placeholder",
+    "Stories: 'I didn't think I deserved a service dog...' — 'Navy Veteran', 'Paired in 2021' — fabricated placeholder",
+    "About: 'Est. 2015' badge — PARTIALLY verified: live Meet the Team page says 'since its founding in 2015'; but live homepage was first published 2017-11-15. Treat 2015 as likely correct but confirm with client.",
+    "Home hero badge + footer + meta: 'IRS-Recognized 501(c)(3) Nonprofit' — VERIFIED on live homepage ('IRS recognized 501(c)(3) non-profit organization')",
+    "Home card 'Nationwide Reach' / footer 'Serving disabled U.S. veterans nationwide' / contact 'Service Area: Serving eligible disabled U.S. veterans nationwide.' — NOT found anywhere on live site; live site lists a physical address (12651 Gateway Dr, Neosho MO 64850) which the reference omits entirely",
+    "Home card: 'While our roots are in the heartland, our impact spans the country.' — unverified",
+    "Footer/contact hours 'Mon–Fri, 8:00am–5:00pm' / 'Monday – Friday' — live homepage says only 'HOURS 8:00am – 5:00pm'; the Mon–Fri qualifier is NOT on the live site",
+    "Phone 800-913-6189 — VERIFIED on live site. Reference omits Director cell 417-312-7484 that live site shows.",
+    "Email info@heartlandk9s.org — VERIFIED on live site (live also uses director@ and development@)",
+    "Program: 'We partner with elite K9 providers and trainers across the country' / 'specialize in breeding and preparing working dogs' — unverified",
+    "Program step 4: 'they graduate as a certified Heartland K9s team' — certification claim unverified",
+    "About values: 'We partner with premier K9 providers' — unverified",
+    "Veterans: 'We provide comprehensive education on these rights during your training' (ADA) — unverified",
+    "Veterans/Home/BarKode: BarKode described as 'proprietary system', 'digital certification', 'certification beacon', 'underlying registry' — live BarKode page calls it 'a unique service provided by Heartland Canines For Veterans to facilitate Service K9 Teams'; 'proprietary'/'registry' wording unverified",
+    "BarKode: 'In an era of fraudulent service dogs, BarKode serves as undeniable proof...' — marketing claim, unverified",
+    "BarKode dedication narrative: 'born out of profound necessity and heartbreaking loss... Derron, a veteran, and his beloved service dog, Rosie' — Derron & Rosie dedication VERIFIED on live homepage ('At Derron's untimely death, first responders, the humane society and coroner did not know what to do with Rosie. She ended up spending multiple days away from her family.'); reference's expanded narrative is paraphrase",
+    "Home mission: 'We believe those who served our nation deserve the highest level of care...' — not verbatim on live site; 'empirical' and 'right canine is paired with the right person' and 'single goal' sentences ARE verbatim from live homepage",
+    "Home: 'Every service dog, complete with training and equipment, is provided entirely free of charge' — 'ZERO cost' verified on live; 'equipment' included is unverified",
+    "About: 'a veteran has already paid the price' — not found on live site",
+    "Home 'Zero Cost to Veterans' card / 'Learn about funding' link — no funding page exists; links to /program",
+    "Get Involved: 'sponsorship opportunities, matching gifts' — unverified offerings",
+    "Contact subject option 'K9 Provider Partnership' — live site has 'Apply to provide a K9' so plausible, but no dedicated provider page verified",
+    "No statistics/numbers-of-dogs-placed figures appear anywhere in the reference (none to flag)."
+  ],
+  "notes": "Reference bundle is a Vite build of a wouter+shadcn/Tailwind v4 SPA. All 8 routes use shared Layout (sticky 80px nav, footer). Visual system: navy primary (hsl 215 45% 20%), crimson secondary (350 60% 45%), warm off-white background (40 20% 98%), Fraunces serif headings + Inter body, radius .25rem. Recurring patterns: solid-navy 'band' heroes (pt-24 pb-32) followed by an overlapping card (-mt-16) on About/Veterans/Get Involved/Stories/Contact; full-bleed image heroes on Home (85vh), Program (60vh), BarKode (70vh); 24x1 crimson divider under section h2s; every page ends with a CTA band. Only 5 images used, all reused: hero-home (home hero), barkode.jpg (home promo + barkode hero), veteran-story.jpg (home testimonial + stories feature), about-dog.jpg (about), training.jpg (program hero). Contact form is purely simulated (setTimeout 1000ms, toast, reset) with no name attributes on inputs. Live-site cross-checks used /live/pages.json and /live/home.html; key discrepancies: invented 5 Questions, missing physical address, 'nationwide' and 'Mon–Fri' not on live site, all four testimonials are placeholders."
+}

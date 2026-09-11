@@ -1,0 +1,38 @@
+{
+  "name": "heartland-k9s-for-veterans",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Heartland Canines for Veterans — WordPress theme (heartland-k9s) + companion plugin (heartland-k9s-core), migration payload and verification tooling.",
+  "license": "GPL-2.0-or-later",
+  "engines": { "node": ">=20" },
+  "scripts": {
+    "build": "npm run build:css && npm run build:js && npm run build:icons",
+    "build:css": "node tools/build-css.mjs",
+    "build:js": "node tools/build-js.mjs",
+    "build:icons": "node tools/build-icons.mjs",
+    "build:fonts": "python3 tools/fonts/build-fonts.py",
+    "watch:css": "node tools/build-css.mjs --watch",
+    "media:fetch": "node tools/fetch-media.mjs",
+    "payload:build": "node tools/build-payload.mjs",
+    "verify:screenshots": "node tools/screenshot.mjs",
+    "verify:compare": "node tools/compare.mjs",
+    "verify:lighthouse": "node tools/lighthouse.mjs",
+    "verify:axe": "node tools/axe.mjs",
+    "verify:network": "node tools/network-audit.mjs",
+    "verify:urls": "bash tools/url-matrix.sh",
+    "package": "node tools/package.mjs"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.10.2",
+    "bootstrap": "5.3.8",
+    "cheerio": "^1.0.0",
+    "esbuild": "^0.25.10",
+    "lighthouse": "^12.8.2",
+    "lucide-static": "^1.44.0",
+    "pixelmatch": "^7.1.0",
+    "playwright": "^1.55.0",
+    "pngjs": "^7.0.0",
+    "sass": "^1.93.2",
+    "sharp": "^0.34.4"
+  }
+}

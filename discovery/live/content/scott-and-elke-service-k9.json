@@ -1,0 +1,45 @@
+{
+ "id": 3386,
+ "slug_path": "/scott-and-elke-service-k9/",
+ "file_key": "scott-and-elke-service-k9",
+ "link": "https://heartlandk9s.org/scott-and-elke-service-k9/",
+ "title": "Scott and Elke (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2024-10-28T09:24:24",
+ "modified": "2024-11-14T08:28:06",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Scott and Elke (Service K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": "Hk9-2402 (body line \"Service Number Identification: Hk9-2402\")",
+ "headings": [],
+ "text_chars": 438,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/11/394716935_343523608186654_7049433947848764253_n-240x300.jpg",
+   "alt": "394716935 343523608186654 7049433947848764253 N",
+   "title": "394716935_343523608186654_7049433947848764253_n"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 4098,
+ "text": "Elke (Service K9)\nService Number Identification: Hk9-2402\nBlack Schnauzer\nPTSD/Anxiety/Mobility Service Dog\nResponsibilities/Tasks –\nBlocking, post, watch, orbit, pressure therapy, Vocal Notification\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\n[REDACTED LINE]\n[REDACTED LINE]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

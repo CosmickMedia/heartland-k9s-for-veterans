@@ -1,0 +1,45 @@
+{
+ "id": 2979,
+ "slug_path": "/vern-and-bella-service-dog/",
+ "file_key": "vern-and-bella-service-dog",
+ "link": "https://heartlandk9s.org/vern-and-bella-service-dog/",
+ "title": "Vern and Bella (Service Dog)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2023-04-12T09:31:25",
+ "modified": "2023-04-12T10:23:38",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Vern and Bella (Service Dog) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 423,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2023/04/IMG_1245-225x300.jpg",
+   "alt": "",
+   "title": "IMG_1245"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 3735,
+ "text": "Bella (Service K9)\nBlack German Shephard\nPTSD/Anxiety/Mobility Service Dog\nResponsibilities/Tasks –\nBlocking, post, orbit, pressure therapy\nItem Retreival\nHandler – [VALUE REDACTED]\nEmergency contact (417) 389 – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Service Responsibilities (In training)\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

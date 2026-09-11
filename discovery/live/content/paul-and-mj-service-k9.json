@@ -1,0 +1,45 @@
+{
+ "id": 3484,
+ "slug_path": "/paul-and-mj-service-k9/",
+ "file_key": "paul-and-mj-service-k9",
+ "link": "https://heartlandk9s.org/paul-and-mj-service-k9/",
+ "title": "Paul and MJ (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2025-05-28T22:57:27",
+ "modified": "2025-05-28T23:31:05",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Paul and MJ (Service K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 369,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/05/496009229_708289025043442_6654562698047626934_n-300x200.jpg",
+   "alt": "496009229 708289025043442 6654562698047626934 n",
+   "title": "496009229_708289025043442_6654562698047626934_n"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 4099,
+ "text": "MJ (Service K9)\nBlack Lab\nPTSD/Anxiety/Mobility Service Dog\nResponsibilities/Tasks –\nBlocking, post, orbit, pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

@@ -1,0 +1,45 @@
+{
+ "id": 2939,
+ "slug_path": "/jimmy-and-riley-service-k9/",
+ "file_key": "jimmy-and-riley-service-k9",
+ "link": "https://heartlandk9s.org/jimmy-and-riley-service-k9/",
+ "title": "Jimmy and Riley (Service K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2023-03-15T10:08:46",
+ "modified": "2025-09-23T16:46:09",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Jimmy and Riley (Service K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": null,
+ "headings": [],
+ "text_chars": 285,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2025/09/495966562_707553925116952_3867278415108864407_n-275x300.jpg",
+   "alt": "495966562 707553925116952 3867278415108864407 n",
+   "title": "495966562_707553925116952_3867278415108864407_n"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)"
+ ],
+ "raw_html_chars": 3978,
+ "text": "Riley (Service K9)\nPTSD/Anxiety Service Dog\nResponsibilities/Tasks –\nBlocking, post, watch, orbit, pressure therapy\nHandler – [VALUE REDACTED]\nEmergency Contact – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Service Responsibilities\nDO NOT SEPERATE FROM HANDLER"
+}

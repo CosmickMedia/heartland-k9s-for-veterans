@@ -1,0 +1,46 @@
+{
+ "id": 3675,
+ "slug_path": "/barkode-mosby-hk9t26-01/",
+ "file_key": "barkode-mosby-hk9t26-01",
+ "link": "https://heartlandk9s.org/barkode-mosby-hk9t26-01/",
+ "title": "Mosby (Therapy K9)",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2026-01-09T20:26:14",
+ "modified": "2026-01-14T07:47:46",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Mosby (Therapy K9) - Heartland Canines for Veterans",
+  "description": "[slim_seo auto-generated from record body; omitted because it repeats contact fields]"
+ },
+ "classification": "barkode-record",
+ "registry_id": "HK9T26-01 (slug; T = Therapy)",
+ "headings": [],
+ "text_chars": 431,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/01/1000014590-225x300.jpg",
+   "alt": "1000014590",
+   "title": "1000014590"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Handler (name; some records include handler phone)",
+  "Emergency contact (name + phone)",
+  "Veterinary Contact (clinic + phone; one record includes full clinic street address)",
+  "Task description line names disability category (e.g. PTSD/Anxiety/Mobility)",
+  "Home street address (handler residence) in free text"
+ ],
+ "raw_html_chars": 3884,
+ "text": "Mosby (Therapy K9)\nGerman Shephard\n(Brown & Blue Eye)\nTherapy Dog\nResponsibilities/Tasks – Petmaster/pressure therapy\nHandler – [VALUE REDACTED]\nEmergency contact – [VALUE REDACTED]\nVeterinary Contact – [VALUE REDACTED]\nHK9 certified Therapy Responsibilities & Hk9( Good Conduct Certified\nMOSBY is an ACTIVE traveler, he knows his way home.\n[REDACTED LINE]\nAny questions please contact Executive Director Jimmy Burgess 417-312-7484"
+}

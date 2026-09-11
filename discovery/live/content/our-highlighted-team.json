@@ -1,0 +1,42 @@
+{
+ "id": 3496,
+ "slug_path": "/our-highlighted-team/",
+ "file_key": "our-highlighted-team",
+ "link": "https://heartlandk9s.org/our-highlighted-team/",
+ "title": "Our Highlighted Team",
+ "status": "publish",
+ "parent": 0,
+ "template": "default",
+ "author_id": 10,
+ "date": "2025-06-16T15:12:12",
+ "modified": "2026-01-16T12:19:35",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Our Highlighted Team - Heartland Canines for Veterans",
+  "description": "Billy and Service K9 (In Training) Caddie Billy is an Army Veteran. He is partnered with Caddie, a 1 year old black lab. Caddie is training in \"block\" \"post\" an"
+ },
+ "classification": "source-of-records",
+ "registry_id": null,
+ "headings": [
+  "h1: Billy and Service K9 (In Training) Caddie"
+ ],
+ "text_chars": 218,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/01/1000016218-300x225.jpg",
+   "alt": "1000016218",
+   "title": "1000016218"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 5003,
+ "text": "Billy and Service K9 (In Training) Caddie\nBilly is an Army Veteran. He is partnered with Caddie, a 1 year old black lab. Caddie is training in “block” “post” and “watch” and other skill sets related to PTS and anxiety."
+}

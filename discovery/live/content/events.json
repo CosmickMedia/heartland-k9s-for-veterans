@@ -1,0 +1,47 @@
+{
+ "id": 2483,
+ "slug_path": "/events/",
+ "file_key": "events",
+ "link": "https://heartlandk9s.org/events/",
+ "title": "Events",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2021-05-28T16:13:49",
+ "modified": "2026-05-28T10:53:04",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Events - Heartland Canines for Veterans",
+  "description": "Joplin Jailbirds Veteran Appreciation Night Date: 25 July 2026 Gates open at 6 PM game starts at 7 pm Location: Joe Becker Stadium Joplin MO Pregame tickets are"
+ },
+ "classification": "source-of-records",
+ "registry_id": null,
+ "headings": [
+  "h1: Joplin Jailbirds Veteran Appreciation Night"
+ ],
+ "text_chars": 800,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2026/05/were-back-2-232x300.png",
+   "alt": "Jailbirds Vet Night Flyer for July 25th",
+   "title": "Jailbird Vet Night Flyer"
+  }
+ ],
+ "internal_links": [],
+ "external_links": [
+  {
+   "href": "https://www.simpletix.com/e/joplin-jailbirds-vs-chillicothe-mudcats-7-tickets-255726?utm=MilitaryNight2026&promocode=MILITARYNITE26",
+   "text": "Purchase Game tickets here"
+  }
+ ],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [],
+ "raw_html_chars": 6686,
+ "text": "Joplin Jailbirds Veteran Appreciation Night\nDate: 25 July 2026\nGates open at 6 PM game starts at 7 pm\nLocation: Joe Becker Stadium Joplin MO\nPregame tickets are $9 by going to the website listed. $3 of each ticket goes to Heartland Canines for Veterans!\nYou can purchase tickets the night of the game for $10 at the gate, so save a dollar and help us out by getting your tickets here!\nQuestions? Contact Jimmy Burgess, director@heartlandk9s.org\nWe are actively looking for sponsors for this event.\nThe Joplin Jailbirds are a Non-Profit MINK League Team (Like the Joplin Outlaws used to be). We are excited to partner with them to bring good wholesome baseball back to Joplin. Help them help us by attending! There will be more info to follow as we get closer to game night!\nPurchase Game tickets here"
+}

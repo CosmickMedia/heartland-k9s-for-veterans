@@ -1,0 +1,51 @@
+{
+ "id": 2505,
+ "slug_path": "/thank-you/",
+ "file_key": "thank-you",
+ "link": "https://heartlandk9s.org/thank-you/",
+ "title": "Thank You",
+ "status": "publish",
+ "parent": 0,
+ "template": "100-width.php",
+ "author_id": 1,
+ "date": "2021-06-04T20:40:35",
+ "modified": "2021-06-04T21:13:52",
+ "featured_media": 0,
+ "menu_order": 0,
+ "seo": {
+  "title": "Thank You - Heartland Canines for Veterans",
+  "description": "Thank You! Please download or print the medical history form. Your physician will complete the form and return it to our office at: Mail to: Heartland Canines f"
+ },
+ "classification": "thank-you/success-destination",
+ "registry_id": null,
+ "headings": [
+  "h2: Thank You!",
+  "h5: Please download or print the medical history form. Your physician will complete the form and return it to our office at: Mail to: Heartland Canines for Veterans PO Box 101 Saginaw, MO 64864",
+  "h3: Click The Image to Print or Download the Medical History Form"
+ ],
+ "text_chars": 262,
+ "image_count": 1,
+ "images": [
+  {
+   "src": "http://heartlandk9s.org/wp-content/uploads/2021/06/medical-history-k9-vets-pdf-232x300.jpg",
+   "alt": "Medical History Form",
+   "title": ""
+  }
+ ],
+ "internal_links": [
+  {
+   "href": "http://heartlandk9s.org/wp-content/uploads/2021/06/medical-history-k9-vets.pdf",
+   "text": ""
+  }
+ ],
+ "external_links": [],
+ "shortcodes": [],
+ "embeds": [],
+ "forms": [],
+ "inputs": [],
+ "sensitive_fields_present": [
+  "Instructs applicant to mail a physician-completed medical history form (PDF link)"
+ ],
+ "raw_html_chars": 22751,
+ "text": "Thank You!\nPlease download or print the medical history form. Your physician will complete the form and return it to our office at:\nMail to: Heartland Canines for Veterans\nPO Box 101\nSaginaw, MO 64864\nClick The Image to Print or Download the Medical History Form"
+}
