@@ -212,8 +212,25 @@ final class Admin {
 							<input type="hidden" id="hk9-import-path" value="<?php echo esc_attr( $payload['dir'] ?? '' ); ?>" />
 						</div>
 					<?php else : ?>
-						<input type="hidden" id="hk9-import-path" value="" />
+						<input type="hidden" id="hk9-import-path" value="<?php echo esc_attr( $payload['dir'] ?? '' ); ?>" />
 					<?php endif; ?>
+					<div class="hk9-import__serverpath">
+						<h3><?php esc_html_e( 'Large payloads: use a directory on the server', 'heartland-k9s-core' ); ?></h3>
+						<p class="description">
+							<?php
+							printf(
+								/* translators: %s: example directory */
+								esc_html__( 'Upload the unpacked payload (manifest.json, content/, media/) with SFTP into a folder named hk9-payload-<anything> inside the uploads directory, e.g. %s, then enter that path here. The folder is protected and removed after a successful import.', 'heartland-k9s-core' ),
+								'<code>' . esc_html( trailingslashit( wp_upload_dir( null, false )['basedir'] ) . 'hk9-payload-2026/' ) . '</code>'
+							);
+							?>
+						</p>
+						<p>
+							<label for="hk9-import-path-manual" class="screen-reader-text"><?php esc_html_e( 'Payload directory on the server', 'heartland-k9s-core' ); ?></label>
+							<input type="text" id="hk9-import-path-manual" class="regular-text code" placeholder="<?php echo esc_attr( trailingslashit( wp_upload_dir( null, false )['basedir'] ) . 'hk9-payload-2026' ); ?>" />
+							<button type="button" class="button hk9-import__use-manual"><?php esc_html_e( 'Use this path', 'heartland-k9s-core' ); ?></button>
+						</p>
+					</div>
 				</section>
 
 				<section class="hk9-import__card" aria-labelledby="hk9-import-run-h">

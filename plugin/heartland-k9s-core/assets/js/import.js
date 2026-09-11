@@ -360,6 +360,13 @@
 			render();
 			return;
 		}
+		const manual = ev.target.closest( '.hk9-import__use-manual' );
+		if ( manual && el.path ) {
+			const input = document.getElementById( 'hk9-import-path-manual' );
+			el.path.value = input ? input.value.trim() : '';
+			render();
+			return;
+		}
 		const rb = ev.target.closest( '.hk9-import__rollback-btn' );
 		if ( rb ) {
 			openRollback( rb.dataset.run, rb.closest( 'tr' ) );
