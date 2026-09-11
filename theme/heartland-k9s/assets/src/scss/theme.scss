@@ -30,3 +30,9 @@
 @import "blog";
 @import "grids";
 @import "utilities";
+
+// Wave 2 template streams (each partial is owned by one stream; keep them independent)
+@import "pages-reference";
+@import "pages-migrated";
+@import "singles";
+@import "blog-states";
