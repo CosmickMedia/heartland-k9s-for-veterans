@@ -42,12 +42,31 @@ class Repeater extends Type {
 		if ( null === $value ) {
 			$value = $field['default'] ?? [];
 		}
+		$fields = $field['fields'] ?? [];
+		$min    = ! empty( $field['min'] ) ? max( 0, (int) $field['min'] ) : 0;
+		$max    = ! empty( $field['max'] ) ? (int) $field['max'] : 0;
+		if ( $max > 0 && $min > $max ) {
+			$min = $max;
+		}
+		$rows = $this->rows( $fields, $value, $max );
+		if ( $min > 0 && count( $rows ) < $min ) {
+			// Fewer rows than 'min' (UI bypassed): keep the submitted rows and fill the missing
+			// positions from the declared default rows, then with empty rows, so the stored value
+			// always satisfies the schema's minItems.
+			$defaults = $this->rows( $fields, $field['default'] ?? [], $max );
+			for ( $i = count( $rows ); $i < $min; $i++ ) {
+				$rows[] = $defaults[ $i ] ?? Sanitizer::sanitize( $fields, [] );
+			}
+		}
+		return $rows;
+	}
+
+	/** Sanitized rows of a raw list (non-array rows dropped, capped at $max). */
+	private function rows( array $fields, mixed $value, int $max ): array {
 		if ( ! is_array( $value ) ) {
 			return [];
 		}
-		$fields = $field['fields'] ?? [];
-		$max    = ! empty( $field['max'] ) ? (int) $field['max'] : 0;
-		$rows   = [];
+		$rows = [];
 		foreach ( $value as $row ) {
 			if ( ! is_array( $row ) ) {
 				continue;
@@ -65,8 +84,13 @@ class Repeater extends Type {
 			'type'  => 'array',
 			'items' => Schema::for( $field['fields'] ?? [] ),
 		];
+		$min = ! empty( $field['min'] ) ? max( 0, (int) $field['min'] ) : 0;
 		if ( ! empty( $field['max'] ) ) {
 			$schema['maxItems'] = (int) $field['max'];
+			$min                = min( $min, (int) $field['max'] );
+		}
+		if ( $min > 0 ) {
+			$schema['minItems'] = $min;
 		}
 		return $schema;
 	}

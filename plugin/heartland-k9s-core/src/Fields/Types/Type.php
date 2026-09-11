@@ -109,6 +109,14 @@ abstract class Type {
 		return array_merge( $attrs, $extra );
 	}
 
+	/** ` aria-describedby="<id>-help"` only when the field has help text (the referenced element must exist). */
+	protected function describedby( array $field, string $id ): string {
+		if ( empty( $field['help'] ) ) {
+			return '';
+		}
+		return ' aria-describedby="' . esc_attr( $id . '-help' ) . '"';
+	}
+
 	/** Resolves a filename label for an attachment id. */
 	protected function attachment_label( int $id ): string {
 		if ( $id <= 0 ) {

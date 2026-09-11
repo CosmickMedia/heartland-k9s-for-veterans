@@ -32,6 +32,7 @@ $hk9_options  = [
 		<?php if ( $hk9_has_gal ) : ?>
 			<div class="hk9-gallery-wrap hk9-gallery-wrap--<?php echo esc_attr( (string) $hk9_columns ); ?> hk9-prose">
 				<?php
+				hk9_rec_prime_content_images( $hk9_content );
 				hk9_rec_gallery_begin( $hk9_options );
 				the_content();
 				hk9_rec_gallery_end();

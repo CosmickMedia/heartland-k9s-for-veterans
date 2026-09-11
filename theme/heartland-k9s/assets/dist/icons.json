@@ -15,6 +15,7 @@
 	"dollar-sign",
 	"download",
 	"external-link",
+	"facebook",
 	"file-text",
 	"graduation-cap",
 	"hand-heart",
@@ -23,6 +24,8 @@
 	"heart-pulse",
 	"image",
 	"info",
+	"instagram",
+	"linkedin",
 	"mail",
 	"map-pin",
 	"menu",
@@ -37,5 +40,7 @@
 	"star",
 	"ticket",
 	"users",
-	"x"
+	"x",
+	"x-social",
+	"youtube"
 ]

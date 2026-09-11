@@ -351,7 +351,8 @@
 		text-transform: uppercase;
 		margin-bottom: 0;
 
-		span { line-height: 1.4; }
+		// Static warning text: <strong> for importance (no role=alert — nothing is injected live).
+		strong { font-weight: inherit; line-height: 1.4; }
 	}
 
 	&__notice {

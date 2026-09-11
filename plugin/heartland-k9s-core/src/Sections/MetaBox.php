@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace HK9\Core\Sections;
 
+use HK9\Core\Fields\Access;
+
 defined( 'ABSPATH' ) || exit;
 
 final class MetaBox {
@@ -98,7 +100,8 @@ final class MetaBox {
 				continue;
 			}
 			$clean = $def->sanitize( wp_unslash( $_POST[ $key ] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized by the field sanitizer.
-			if ( Registry::is_default_write( $key, $post_id, $clean ) ) {
+			$clean = Access::restrict( $def->fields, $clean, get_post_meta( $post_id, $key, true ) ); // Drop post references this user may not introduce.
+			if ( Registry::is_default_write( $key, $post_id, $clean, $template ) ) {
 				continue; // Untouched defaults are never materialized.
 			}
 			update_post_meta( $post_id, $key, wp_slash( $clean ) );
@@ -106,7 +109,7 @@ final class MetaBox {
 
 		if ( isset( $_POST[ Layout::META_KEY ] ) && is_array( $_POST[ Layout::META_KEY ] ) ) {
 			$clean = Layout::sanitize( wp_unslash( $_POST[ Layout::META_KEY ] ) ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
-			if ( ! Registry::is_default_write( Layout::META_KEY, $post_id, $clean ) ) {
+			if ( ! Registry::is_default_write( Layout::META_KEY, $post_id, $clean, $template ) ) {
 				update_post_meta( $post_id, Layout::META_KEY, wp_slash( $clean ) );
 			}
 		}

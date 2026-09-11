@@ -8,8 +8,9 @@
  * 3. Hero entrance animation is CSS-only and already gated by
  *    prefers-reduced-motion; JS only marks the document as "js" so that
  *    scripted enhancements can be styled.
- * 4. <details> accordion enhancement (single-open groups).
- * 5. External link rel safety (target=_blank → rel="noopener noreferrer").
+ * 4. External link rel safety (target=_blank → rel="noopener noreferrer").
+ *
+ * FAQ items are native <details>/<summary> and need no script.
  */
 
 const config = Object.assign(
@@ -132,26 +133,6 @@ function initStickyOffset() {
 }
 
 /* ---------------------------------------------------------------------- */
-/* Accordion enhancement                                                   */
-/* ---------------------------------------------------------------------- */
-
-function initAccordions() {
-	document.querySelectorAll('[data-hk9-accordion="single"]').forEach((group) => {
-		group.addEventListener('toggle', (event) => {
-			const details = event.target;
-			if (!(details instanceof HTMLDetailsElement) || !details.open) {
-				return;
-			}
-			group.querySelectorAll('details[open]').forEach((other) => {
-				if (other !== details) {
-					other.open = false;
-				}
-			});
-		}, true);
-	});
-}
-
-/* ---------------------------------------------------------------------- */
 /* External link safety                                                    */
 /* ---------------------------------------------------------------------- */
 
@@ -182,7 +163,6 @@ function boot() {
 	}
 	initStickyOffset();
 	initMobileMenu();
-	initAccordions();
 	initExternalLinks();
 }
 
@@ -193,4 +173,4 @@ if (document.readyState === 'loading') {
 }
 
 window.HK9 = window.HK9 || {};
-window.HK9.version = '1.0.0';
+window.HK9.version = '1.0.1';

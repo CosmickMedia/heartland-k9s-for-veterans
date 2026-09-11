@@ -12,6 +12,7 @@ declare(strict_types=1);
 
 namespace HK9\Core\Meta;
 
+use HK9\Core\Fields\Access;
 use HK9\Core\Fields\Renderer;
 use HK9\Core\Fields\Sanitizer;
 
@@ -98,9 +99,11 @@ final class MetaBox {
 		}
 		$input = wp_unslash( $_POST[ self::INPUT ] ); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized per field below.
 		foreach ( Definitions::for( $post->post_type ) as $field ) {
-			$value = array_key_exists( $field['key'], $input ) ? $input[ $field['key'] ] : null;
-			$clean = Sanitizer::sanitize_field( $field, $value );
-			update_post_meta( $post_id, Definitions::meta_key( $field['key'] ), wp_slash( $clean ) );
+			$value    = array_key_exists( $field['key'], $input ) ? $input[ $field['key'] ] : null;
+			$meta_key = Definitions::meta_key( $field['key'] );
+			$clean    = Sanitizer::sanitize_field( $field, $value );
+			$clean    = Access::restrict_field( $field, $clean, get_post_meta( $post_id, $meta_key, true ) ); // Drop post references this user may not introduce.
+			update_post_meta( $post_id, $meta_key, wp_slash( $clean ) );
 		}
 	}
 }

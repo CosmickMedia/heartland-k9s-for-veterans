@@ -5,7 +5,7 @@
   "slug": "thank-you",
   "title": "Thank You",
   "template": "page-templates/landing.php",
-  "excerpt": "Please download or print the medical history form. Your physician will complete the form and return it to our office.",
+  "excerpt": "",
   "date": "2021-06-05T01:40:35Z",
   "menu_order": 0,
   "content": "content/live__page__2505.html",
@@ -15,7 +15,7 @@
       "value": {
         "eyebrow": "",
         "heading": "Thank You",
-        "text": "Please download or print the medical history form. Your physician will complete the form and return it to our office.",
+        "text": "",
         "pattern": "none"
       }
     },

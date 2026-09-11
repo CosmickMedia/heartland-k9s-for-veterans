@@ -6,7 +6,8 @@
  * - From name/email from settings or site defaults
  * - Reply-To = validated submitter email only (no other user input reaches a header)
  * - HTML body + plain-text alternative rendered from templates/emails/*.php
- * - Logs only wp_mail failures (error code/message with addresses redacted; never the content)
+ * - Logs only failures (error code/message with addresses redacted; never the content) and fires
+ *   `hk9/forms/mail_failed` ($submission_id, WP_Error, $form_id) for retry/alerting integrations
  *
  * @package HK9\Core
  */
@@ -30,8 +31,12 @@ final class Mailer {
 	 * @return bool Whether wp_mail() reported success.
 	 */
 	public static function send( AbstractForm $form, array $values, array $context = [] ): bool {
-		$recipients = $form->recipients();
+		$recipients    = $form->recipients();
+		$submission_id = (int) ( $context['submission_id'] ?? 0 );
 		if ( [] === $recipients ) {
+			$error = new \WP_Error( 'hk9_no_recipients', 'No valid recipient address is configured (Heartland → Settings → Forms) and the site admin email is invalid.' );
+			self::log_failure( $form->id(), $error );
+			self::failed( $submission_id, $error, $form->id() );
 			return false;
 		}
 
@@ -85,10 +90,24 @@ final class Mailer {
 		self::$alt_body = '';
 
 		if ( ! $sent ) {
-			self::log_failure( $form->id(), self::$last_error );
+			$error = self::$last_error instanceof \WP_Error ? self::$last_error : new \WP_Error( 'wp_mail_failed', 'wp_mail() returned false' );
+			self::log_failure( $form->id(), $error );
+			self::failed( $submission_id, $error, $form->id() );
 		}
 
 		return $sent;
+	}
+
+	/** Fire the failure hook (retry / alerting integrations). */
+	private static function failed( int $submission_id, \WP_Error $error, string $form_id ): void {
+		/**
+		 * Fires when the notification mail for a submission could not be sent.
+		 *
+		 * @param int       $submission_id Stored submission id (0 when storage is off).
+		 * @param \WP_Error $error         Transport error (`wp_mail_failed`) or `hk9_no_recipients`.
+		 * @param string    $form_id       Form id.
+		 */
+		do_action( 'hk9/forms/mail_failed', $submission_id, $error, $form_id );
 	}
 
 	/** Adds the plain-text alternative to the outgoing PHPMailer message. */

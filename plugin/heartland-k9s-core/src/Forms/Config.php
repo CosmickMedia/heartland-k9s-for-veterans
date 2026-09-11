@@ -133,6 +133,41 @@ final class Config {
 		return max( 0, (int) self::get( 'forms.retention_days', 90 ) );
 	}
 
+	/**
+	 * Trusted reverse-proxy addresses (IPs / CIDRs) from `forms.trusted_proxies`
+	 * (one per line). Empty = off: REMOTE_ADDR is always the client.
+	 *
+	 * @return string[]
+	 */
+	public static function trusted_proxies(): array {
+		$raw = self::get( 'forms.trusted_proxies', '' );
+		if ( is_array( $raw ) ) {
+			$raw = implode( "\n", array_map( 'strval', $raw ) );
+		}
+		$out = [];
+		foreach ( preg_split( '/[\r\n,;\s]+/', (string) $raw ) ?: [] as $entry ) {
+			$entry = trim( $entry );
+			if ( '' === $entry ) {
+				continue;
+			}
+			[ $net, $prefix ] = array_pad( explode( '/', $entry, 2 ), 2, null );
+			if ( false === filter_var( $net, FILTER_VALIDATE_IP ) ) {
+				continue;
+			}
+			if ( null !== $prefix && ( ! ctype_digit( $prefix ) || (int) $prefix > ( str_contains( $net, ':' ) ? 128 : 32 ) ) ) {
+				continue;
+			}
+			$out[] = $entry;
+		}
+		return array_values( array_unique( $out ) );
+	}
+
+	/** Header carrying the client IP behind a trusted proxy (`forms.proxy_header`, e.g. X-Forwarded-For); '' = none. */
+	public static function proxy_header(): string {
+		$header = (string) self::get( 'forms.proxy_header', 'X-Forwarded-For' );
+		return (string) preg_replace( '/[^A-Za-z0-9\-]/', '', $header );
+	}
+
 	public static function store_submissions(): bool {
 		$value = self::get( 'forms.store_submissions', true );
 		return (bool) filter_var( $value, FILTER_VALIDATE_BOOLEAN );

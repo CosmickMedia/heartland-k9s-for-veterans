@@ -24,6 +24,18 @@ defined( 'ABSPATH' ) || exit;
 
 final class Renderer {
 
+	/** Whether an element on this page already carries `autofocus` (only one may). */
+	private static bool $autofocused = false;
+
+	/** Claims the page's single autofocus slot; '' once it has been used. */
+	private static function autofocus(): string {
+		if ( self::$autofocused ) {
+			return '';
+		}
+		self::$autofocused = true;
+		return ' autofocus';
+	}
+
 	/**
 	 * @param array<string,mixed> $args  Render options (see Handler::render()).
 	 * @param array<string,mixed> $state {errors, values, sent, message, code, tokens}
@@ -43,7 +55,7 @@ final class Renderer {
 		$out = '<div class="' . esc_attr( $classes ) . '" id="' . esc_attr( $dom_id ) . '" data-hk9-form-wrap="' . esc_attr( $form_id ) . '">';
 
 		if ( ! empty( $state['sent'] ) ) {
-			return $out . str_replace( '<div class="hk9-form__success"', '<div class="hk9-form__success" tabindex="-1" autofocus', $success_html ) . '</div>';
+			return $out . str_replace( '<div class="hk9-form__success"', '<div class="hk9-form__success" tabindex="-1"' . self::autofocus(), $success_html ) . '</div>';
 		}
 
 		$heading = array_key_exists( 'heading', $args ) ? $args['heading'] : $form->heading();
@@ -76,6 +88,7 @@ final class Renderer {
 			'action'            => esc_url( admin_url( 'admin-post.php' ) ),
 			'data-hk9-form'     => $form_id,
 			'data-hk9-endpoint' => esc_url_raw( rest_url( 'hk9/v1/forms/' . $form_id ) ),
+			'data-hk9-token'    => esc_url_raw( rest_url( 'hk9/v1/forms/' . $form_id . '/token' ) ),
 			'data-hk9-mode'     => $mode,
 			'data-hk9-id'       => $dom_id,
 		];
@@ -89,7 +102,7 @@ final class Renderer {
 
 		// Error summary (role=alert). Rendered always so JS can populate it; hidden when empty.
 		$has_summary = [] !== $errors || '' !== $message;
-		$out        .= '<div class="hk9-form__summary" id="' . esc_attr( $dom_id . '-summary' ) . '" role="alert" tabindex="-1"' . ( $has_summary ? ' autofocus' : ' hidden' ) . '>';
+		$out        .= '<div class="hk9-form__summary" id="' . esc_attr( $dom_id . '-summary' ) . '" role="alert" tabindex="-1"' . ( $has_summary ? self::autofocus() : ' hidden' ) . '>';
 		$out        .= '<p class="hk9-form__summary-title">' . esc_html( '' !== $message ? $message : __( 'Please correct the following:', 'heartland-k9s-core' ) ) . '</p>';
 		$out        .= '<ul class="hk9-form__summary-list">';
 		foreach ( $errors as $key => $error ) {
@@ -122,6 +135,12 @@ final class Renderer {
 		$out  .= '<label for="' . esc_attr( $hp_id ) . '">' . esc_html__( 'Leave this field empty', 'heartland-k9s-core' ) . '</label>';
 		$out  .= '<input type="text" id="' . esc_attr( $hp_id ) . '" name="hk9_website" value="" tabindex="-1" autocomplete="off">';
 		$out  .= '</div>';
+
+		// Legend for the required marker (the "*" in labels is aria-hidden; controls carry aria-required).
+		$has_required = [] !== array_filter( $fields, static fn( array $f ): bool => ! empty( $f['required'] ) );
+		if ( $has_required ) {
+			$out .= '<p class="hk9-form__required-note"><span class="hk9-form__required" aria-hidden="true">*</span> ' . esc_html__( 'Required', 'heartland-k9s-core' ) . '</p>';
+		}
 
 		$out .= '<div class="hk9-form__grid">';
 		foreach ( $fields as $key => $field ) {

@@ -316,6 +316,7 @@ function hk9_pages_stories_auto( int $count, array $exclude = [] ): array {
 	];
 
 	$posts = get_posts( $args );
+	hk9_rec_prime( array_map( static fn( WP_Post $p ): int => (int) $p->ID, $posts ) );
 
 	// Featured first, keeping the menu order inside each group.
 	usort(
@@ -355,6 +356,7 @@ function hk9_pages_featured_story_id( array $exclude = [] ): int {
  * @return WP_Post[]
  */
 function hk9_pages_records_by_ids( array $ids, string $post_type ): array {
+	hk9_rec_prime( $ids );
 	$out = [];
 	foreach ( $ids as $id ) {
 		$id = (int) $id;

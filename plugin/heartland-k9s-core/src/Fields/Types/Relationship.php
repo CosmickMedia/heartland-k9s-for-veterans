@@ -131,10 +131,11 @@ class Relationship extends Type {
 		}
 		$html .= '</ul>';
 		$html .= sprintf(
-			'<label class="screen-reader-text" for="%1$s">%2$s</label><input type="search" class="regular-text hk9-input hk9-pick__search" id="%1$s" placeholder="%3$s" autocomplete="off" data-hk9-pick-search aria-controls="%1$s-results" aria-expanded="false" aria-describedby="%1$s-help" />',
+			'<label class="screen-reader-text" for="%1$s">%2$s</label><input type="search" class="regular-text hk9-input hk9-pick__search" id="%1$s" placeholder="%3$s" autocomplete="off" data-hk9-pick-search aria-controls="%1$s-results" aria-expanded="false"%4$s />',
 			esc_attr( $id ),
 			esc_html( sprintf( /* translators: %s: field label */ __( 'Search %s', 'heartland-k9s-core' ), $field['label'] ) ),
-			esc_attr__( 'Type to search…', 'heartland-k9s-core' )
+			esc_attr__( 'Type to search…', 'heartland-k9s-core' ),
+			$this->describedby( $field, $id )
 		);
 		$html .= sprintf( '<ul class="hk9-pick__results" id="%s-results" role="listbox" data-hk9-pick-results hidden></ul>', esc_attr( $id ) );
 		$html .= '</div>';

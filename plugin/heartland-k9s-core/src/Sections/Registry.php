@@ -17,6 +17,7 @@ declare(strict_types=1);
 
 namespace HK9\Core\Sections;
 
+use HK9\Core\Fields\Access;
 use HK9\Core\Fields\Assets;
 use HK9\Core\Meta\RevisionGuard;
 
@@ -39,6 +40,7 @@ final class Registry {
 	public static function register(): void {
 		add_action( 'init', [ self::class, 'register_meta' ], 20 );
 		add_filter( 'rest_pre_insert_page', [ self::class, 'rest_pre_insert' ], 10, 2 );
+		add_filter( 'rest_prepare_page', [ self::class, 'rest_prepare' ], 10, 3 );
 		if ( class_exists( Assets::class ) ) {
 			Assets::register();
 		}
@@ -243,9 +245,11 @@ final class Registry {
 						'prepare_callback' => static function ( $value, $request ) use ( $def, $key ) {
 							$post_id = $request instanceof \WP_REST_Request ? absint( $request->get_param( 'id' ) ) : 0;
 							if ( $post_id > 0 && 'page' === get_post_type( $post_id ) && ! metadata_exists( 'post', $post_id, $key ) ) {
-								// Absent key: expose the defaults of the page's own template (shared keys differ per template).
-								$value = self::template_default( $key, $post_id ) ?? $def->defaults();
+								// Absent key: expose the defaults of the page's own template (shared keys differ per template);
+								// a template sent with the request (create/update) wins over the stored one.
+								$value = self::template_default( $key, $post_id, self::template_from_request( $request, $post_id ) ) ?? $def->defaults();
 							}
+							// Routes without an id (collections, create): rest_prepare() below fixes absent keys up from the post's template.
 							$value = $def->sanitize( is_array( $value ) || $value instanceof \stdClass ? $value : [] );
 							$ctx   = $request instanceof \WP_REST_Request ? (string) $request->get_param( 'context' ) : 'view';
 							if ( 'edit' !== $ctx ) {
@@ -312,12 +316,19 @@ final class Registry {
 		return user_can( (int) $user_id, 'edit_post', (int) $post_id );
 	}
 
-	/** Defaults of the section stored under $key for the page's own template (null when the template lacks it). */
-	public static function template_default( string $key, int $post_id ): ?array {
+	/**
+	 * Defaults of the section stored under $key for a page's template (null
+	 * when the template lacks it).
+	 *
+	 * @param string      $key      Meta key.
+	 * @param int         $post_id  Page id (its stored template is used unless $template is given).
+	 * @param string|null $template Template slug to use instead of the stored one (e.g. from the request).
+	 */
+	public static function template_default( string $key, int $post_id, ?string $template = null ): ?array {
 		if ( Layout::META_KEY === $key ) {
 			return Layout::empty_value();
 		}
-		$template = Accessor::template_for_post( $post_id );
+		$template = $template ?? Accessor::template_for_post( $post_id );
 		foreach ( self::definitions( $template ) as $def ) {
 			if ( $def->meta_key() === $key ) {
 				return $def->defaults();
@@ -326,27 +337,51 @@ final class Registry {
 		return null;
 	}
 
+	/** Template slug carried by a REST request (`template` param), or null when absent. */
+	public static function template_from_request( $request, int $post_id ): ?string {
+		if ( ! $request instanceof \WP_REST_Request ) {
+			return null;
+		}
+		$template = $request->get_param( 'template' );
+		if ( ! is_string( $template ) ) {
+			return null;
+		}
+		return Accessor::resolve_template( $template, $post_id );
+	}
+
 	/**
 	 * Whether writing $clean to an absent key would only materialize defaults.
 	 *
 	 * Untouched keys are never stored: the accessor supplies defaults, the
 	 * block editor round-trips every meta key on save, and absent keys stay
-	 * protected on revision restore.
+	 * protected on revision restore. For the layout key both the empty value
+	 * and the template's reference layout count as defaults.
+	 *
+	 * @param string      $key      Meta key.
+	 * @param int         $post_id  Page id (0 = new).
+	 * @param array       $clean    Sanitized value about to be written.
+	 * @param string|null $template Template slug when the request switches it (else the stored template).
 	 */
-	public static function is_default_write( string $key, int $post_id, array $clean ): bool {
+	public static function is_default_write( string $key, int $post_id, array $clean, ?string $template = null ): bool {
 		if ( $post_id > 0 && metadata_exists( 'post', $post_id, $key ) ) {
 			return false;
+		}
+		if ( null === $template && $post_id > 0 ) {
+			$template = Accessor::template_for_post( $post_id );
 		}
 		$candidates = [];
 		if ( Layout::META_KEY === $key ) {
 			$candidates[] = Layout::empty_value();
+			if ( null !== $template ) {
+				$candidates[] = Layout::reference( self::definitions( $template ) );
+			}
 		} elseif ( isset( self::$keys[ $key ] ) ) {
 			$candidates[] = self::$keys[ $key ]->defaults();
-		}
-		if ( $post_id > 0 ) {
-			$tpl = self::template_default( $key, $post_id );
-			if ( null !== $tpl ) {
-				$candidates[] = $tpl;
+			if ( null !== $template ) {
+				$tpl = self::template_default( $key, $post_id, $template );
+				if ( null !== $tpl ) {
+					$candidates[] = $tpl;
+				}
 			}
 		}
 		foreach ( $candidates as $candidate ) {
@@ -355,6 +390,45 @@ final class Registry {
 			}
 		}
 		return false;
+	}
+
+	/**
+	 * rest_prepare_page: on routes without an `id` (collections) the meta
+	 * prepare_callback cannot know the page, so absent keys would show the
+	 * canonical template's defaults. Replace them with the page's own template
+	 * defaults (private fields stripped outside the edit context).
+	 */
+	public static function rest_prepare( $response, $post, $request ) {
+		if ( ! $response instanceof \WP_REST_Response || ! $post instanceof \WP_Post ) {
+			return $response;
+		}
+		$data = $response->get_data();
+		if ( ! is_array( $data ) || empty( $data['meta'] ) || ! is_array( $data['meta'] ) ) {
+			return $response;
+		}
+		self::load();
+		$ctx      = $request instanceof \WP_REST_Request ? (string) $request->get_param( 'context' ) : 'view';
+		$template = self::template_from_request( $request, $post->ID );
+		$changed  = false;
+		foreach ( self::$keys as $key => $def ) {
+			if ( ! array_key_exists( $key, $data['meta'] ) || metadata_exists( 'post', $post->ID, $key ) ) {
+				continue;
+			}
+			$value = self::template_default( $key, $post->ID, $template ) ?? $def->defaults();
+			if ( 'edit' !== $ctx ) {
+				foreach ( $def->private_keys() as $private ) {
+					unset( $value[ $private ] );
+				}
+			}
+			if ( $data['meta'][ $key ] !== $value ) {
+				$data['meta'][ $key ] = $value;
+				$changed              = true;
+			}
+		}
+		if ( $changed ) {
+			$response->set_data( $data );
+		}
+		return $response;
 	}
 
 	/**
@@ -372,8 +446,9 @@ final class Registry {
 			return $prepared_post;
 		}
 		self::load();
-		$post_id = isset( $prepared_post->ID ) ? (int) $prepared_post->ID : 0;
-		$changed = false;
+		$post_id  = isset( $prepared_post->ID ) ? (int) $prepared_post->ID : 0;
+		$template = self::template_from_request( $request, $post_id ); // A switched template is written after this filter.
+		$changed  = false;
 		foreach ( $meta as $key => $value ) {
 			if ( null === $value ) {
 				continue;
@@ -386,9 +461,11 @@ final class Registry {
 					continue;
 				}
 				$clean = $def->sanitize( $value );
+				// Post references the current user may not introduce are dropped (stored ones are kept).
+				$clean = Access::restrict( $def->fields, $clean, $post_id > 0 ? get_post_meta( $post_id, (string) $key, true ) : [] );
 			}
 			$changed = true;
-			if ( self::is_default_write( (string) $key, $post_id, $clean ) ) {
+			if ( self::is_default_write( (string) $key, $post_id, $clean, $template ) ) {
 				unset( $meta[ $key ] );
 				continue;
 			}

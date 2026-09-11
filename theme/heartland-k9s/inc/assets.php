@@ -125,10 +125,3 @@ function hk9_disable_emoji_tinymce( $plugins ): array {
 	return is_array( $plugins ) ? array_diff( $plugins, [ 'wpemoji' ] ) : [];
 }
 add_filter( 'tiny_mce_plugins', 'hk9_disable_emoji_tinymce' );
-
-/**
- * Hero images are rendered as <img> so core's lazy-loading defaults apply; the hero
- * itself is marked eager/high priority by hk9_image(). Make sure core does not add a
- * second fetchpriority on the same page.
- */
-add_filter( 'wp_lazy_loading_enabled', '__return_true' );

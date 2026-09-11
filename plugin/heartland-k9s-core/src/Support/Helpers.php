@@ -55,11 +55,15 @@ namespace HK9\Core\Support {
 		}
 
 		/**
-		 * Icon names: the theme's built sprite manifest when present, else the reference list.
+		 * Icon names read from the theme's built sprite manifest (assets/dist/icons.json).
 		 *
-		 * @return string[]
+		 * Returns [] when no manifest is readable. The result is only cached once a
+		 * manifest was found, so a sprite that becomes available later in the request
+		 * (theme loaded after the plugin) is picked up.
+		 *
+		 * @return string[] Sorted, unique names ([] = unavailable).
 		 */
-		public static function icon_names(): array {
+		public static function sprite_icon_names(): array {
 			static $cache = null;
 			if ( null !== $cache ) {
 				return $cache;
@@ -98,17 +102,35 @@ namespace HK9\Core\Support {
 				}
 			}
 			if ( ! $names ) {
-				$names = self::REFERENCE_ICONS;
+				return []; // Not cached: unavailable now, maybe readable later in the request.
 			}
 			$names = array_values( array_unique( $names ) );
 			sort( $names );
+			$cache = $names;
+			return $cache;
+		}
+
+		/** Whether a real icon list (the theme sprite manifest) is available for validation. */
+		public static function icon_list_available(): bool {
+			return [] !== self::sprite_icon_names();
+		}
+
+		/**
+		 * Icon names: the theme's built sprite manifest when present, else the reference list.
+		 *
+		 * @return string[]
+		 */
+		public static function icon_names(): array {
+			$names = self::sprite_icon_names();
+			if ( ! $names ) {
+				$names = self::REFERENCE_ICONS;
+			}
 			/**
 			 * Filters the list of valid icon names.
 			 *
 			 * @param string[] $names Icon names.
 			 */
-			$cache = (array) apply_filters( 'hk9/icons/names', $names );
-			return $cache;
+			return (array) apply_filters( 'hk9/icons/names', $names );
 		}
 
 		/**

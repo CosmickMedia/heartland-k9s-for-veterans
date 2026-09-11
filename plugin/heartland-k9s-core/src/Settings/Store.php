@@ -310,6 +310,30 @@ final class Store {
 			case 'textarea':
 				return is_scalar( $value ) ? sanitize_textarea_field( (string) $value ) : '';
 
+			case 'cidrs':
+				// One IP or CIDR (v4/v6) per line; anything else is dropped.
+				$value = is_scalar( $value ) ? (string) $value : '';
+				$clean = [];
+				foreach ( preg_split( '/[\r\n,;\s]+/', $value ) ?: [] as $entry ) {
+					$entry = trim( $entry );
+					if ( '' === $entry ) {
+						continue;
+					}
+					[ $net, $prefix ] = array_pad( explode( '/', $entry, 2 ), 2, null );
+					if ( false === filter_var( $net, FILTER_VALIDATE_IP ) ) {
+						continue;
+					}
+					if ( null !== $prefix && ( ! ctype_digit( $prefix ) || (int) $prefix > ( str_contains( $net, ':' ) ? 128 : 32 ) ) ) {
+						continue;
+					}
+					$clean[] = $entry;
+				}
+				return implode( "\n", array_values( array_unique( $clean ) ) );
+
+			case 'header':
+				// HTTP header name: letters, digits and dashes only.
+				return is_scalar( $value ) ? (string) preg_replace( '/[^A-Za-z0-9\-]/', '', (string) $value ) : '';
+
 			case 'slug':
 				return is_scalar( $value ) ? sanitize_title( (string) $value ) : '';
 

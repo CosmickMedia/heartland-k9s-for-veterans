@@ -28,12 +28,21 @@ final class Accessor {
 		if ( $post_id <= 0 ) {
 			return 'default';
 		}
-		$slug = (string) get_page_template_slug( $post_id );
-		$slug = '' === $slug ? 'default' : sanitize_key( preg_replace( '/\.php$/', '', wp_basename( $slug ) ) ?? 'default' );
+		return self::resolve_template( (string) get_page_template_slug( $post_id ), $post_id );
+	}
+
+	/**
+	 * Resolves a template value (file name as stored in `_wp_page_template` or
+	 * sent by the editor, e.g. `page-templates/about.php`) to a registry slug
+	 * for a post, applying the front-page → 'home' rule and the filter.
+	 */
+	public static function resolve_template( string $template, int $post_id ): string {
+		$slug = trim( $template );
+		$slug = ( '' === $slug || 'default' === $slug ) ? 'default' : sanitize_key( preg_replace( '/\.php$/', '', wp_basename( $slug ) ) ?? 'default' );
 		if ( '' === $slug ) {
 			$slug = 'default';
 		}
-		if ( 'default' === $slug && 'page' === get_option( 'show_on_front' ) && (int) get_option( 'page_on_front' ) === $post_id ) {
+		if ( 'default' === $slug && $post_id > 0 && 'page' === get_option( 'show_on_front' ) && (int) get_option( 'page_on_front' ) === $post_id ) {
 			$slug = 'home';
 		}
 		/**

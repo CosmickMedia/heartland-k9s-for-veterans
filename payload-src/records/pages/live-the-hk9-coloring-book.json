@@ -5,7 +5,7 @@
   "slug": "the-hk9-coloring-book",
   "title": "The HK9 Coloring Book",
   "template": "page-templates/landing.php",
-  "excerpt": "Help fund service dogs for Veterans – and get your business featured in a fun, family-friendly coloring book that teaches kids about service dog heroes.",
+  "excerpt": "",
   "date": "2025-11-06T01:04:09Z",
   "menu_order": 0,
   "content": "content/live__page__3627.html",
@@ -15,7 +15,7 @@
       "value": {
         "eyebrow": "",
         "heading": "The HK9 Coloring Book",
-        "text": "Help fund service dogs for Veterans – and get your business featured in a fun, family-friendly coloring book that teaches kids about service dog heroes.",
+        "text": "",
         "pattern": "none"
       }
     },
@@ -43,7 +43,7 @@
       "type": "object",
       "value": {
         "heading": "HK9 Educational Coloring Book Sponsor Opportunities",
-        "intro": "This educational coloring book will be featured on a major book review social media account with over 30,000 followers — giving sponsors national-level visibility and brand exposure. In the book sponsorships, these books are YOURS for distribution; the Page Partner, Featured Page and Legacy Page levels are dedicated page sponsorships included in our coloring books.",
+        "intro": "This educational coloring book will be featured on a major book review social media account with over 30,000 followers — giving sponsors national-level visibility and brand exposure. In THIS sponsorship, these books are YOURS for distribution! This is for dedicated PAGE sponsor levels that can be included in our coloring books.",
         "items": [
           {
             "name": "Bronze",
@@ -133,7 +133,7 @@
             "name": "Legacy Page Sponsor",
             "price": "$7,500",
             "quantity": "Dedicated page sponsorship",
-            "benefits": "Premium, showcased full page design\nTwo additional branded cameos throughout the book\nTop billing on inside back cover\nRecognized as a Legacy Partner at events and online\nIncluded in all social promos + reviewer account features\nAdd a second custom page for the same sponsor — $2,000",
+            "benefits": "Premium, showcased full page design\nTwo additional branded cameos throughout the book\nTop billing on inside back cover\nRecognized as a Legacy Partner at events and online\nIncluded in all social promos + reviewer account features\nAdd a second custom page for same sponsor — $2,000",
             "highlight": false,
             "button": {
               "label": "Sign us up!",
@@ -147,7 +147,7 @@
             "name": "Classroom Sponsorship",
             "price": "$300",
             "quantity": "30 Books",
-            "benefits": "Help us educate an entire classroom! Currently we go to different schools to teach children about service dogs. Let’s put this educational tool in their hands!\nWith this sponsorship, you get your own custom page and a copy for yourself or business as well.",
+            "benefits": "Help us educate an entire classroom! Currently we go to different schools to teach children about service dogs. Let’s put this educational tool in their hands!\nWith this sponsorship, you get your own custom page and a copy for yourself or business as well. Sign up now!",
             "highlight": false,
             "button": {
               "label": "Sponsor a class!",
@@ -164,7 +164,7 @@
       "type": "object",
       "value": {
         "heading": "Sign us up! Let’s change a life!",
-        "text": "Ready to sponsor a tier or a classroom? Contact us and we will get you set up.",
+        "text": "",
         "buttons": [
           {
             "link": {

@@ -74,7 +74,7 @@ class File extends Type {
 		}
 		$html .= '</div>';
 		$html .= '<div class="hk9-media__actions">';
-		$html .= sprintf( '<button type="button" class="button" data-hk9-media-select aria-describedby="%s">%s</button>', esc_attr( $id . '-help' ), esc_html__( 'Select file', 'heartland-k9s-core' ) );
+		$html .= sprintf( '<button type="button" class="button" data-hk9-media-select%s>%s</button>', $this->describedby( $field, $id ), esc_html__( 'Select file', 'heartland-k9s-core' ) );
 		$html .= sprintf( '<button type="button" class="button hk9-media__replace" data-hk9-media-select>%s</button>', esc_html__( 'Replace', 'heartland-k9s-core' ) );
 		$html .= sprintf( '<button type="button" class="button-link hk9-media__remove" data-hk9-media-remove>%s</button>', esc_html__( 'Remove', 'heartland-k9s-core' ) );
 		$html .= '</div></div>';

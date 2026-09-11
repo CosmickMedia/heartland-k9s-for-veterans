@@ -1,0 +1,279 @@
+{
+ "plugin": {
+  "summary": "Addressed every finding in reviews.fields and reviews.forms in plugin/heartland-k9s-core (version bumped to 1.0.1). Fields: Select sanitizer now returns the default for any non-option value (incl. ''), the '\u2014 Select \u2014' placeholder is only offered when the default is '' (an empty value shows the default selected); Icon validates only against a real sprite list (Helpers::sprite_icon_names()/icon_list_available(); empty list is never cached; without a list any sanitize_key name is kept and the picker offers FALLBACK \u222a current value); aria-describedby on Image/Gallery/File buttons and the Relationship search only when help exists (Type::describedby()); Repeater 'min' \u2192 schema minItems + sanitizer pads missing rows from the default rows/empty rows (capped at max); collection-route defaults fixed via a rest_prepare_page filter (absent keys \u2192 the page's own template defaults, private keys stripped outside edit) and prepare_callback honours $request['template']; new Fields\\Access applied on the write paths (Sections Registry::rest_pre_insert, Sections MetaBox::save, Meta Registry::rest_pre_insert, Meta MetaBox::save) zeroing relationship ids / link post_ids the current user cannot edit_post unless already stored (sanitizers stay pure); Layout::reference() (declaration order + hidden_default ids) counts as a default write and rest_pre_insert/is_default_write/template_default take the request's template (Accessor::resolve_template) when a PUT switches it. Forms: token is claimed atomically (Antispam::claim: add_option row insert / wp_cache_add) only after validation and released on send_failed, which now returns a refresh token; new GET hk9/v1/forms/{id}/token \u2192 {nonce,ts,token} with no-store headers and forms-frontend.js refreshes hidden fields at init (data-hk9-token); no-JS path: template_redirect sends nocache_headers()+DONOTCACHEPAGE for ?hk9_form= results and for singular pages whose layout contains a form/application_form section (Handler::page_renders_form + filter), render() repeats it; forms.trusted_proxies (cidrs, off by default) + forms.proxy_header (default X-Forwarded-For) in Settings\\Schema/Store/Page (Forms tab), Antispam::client_ip() reads the header only when REMOTE_ADDR is a trusted proxy (right-most untrusted hop wins, v4/v6 CIDR); Mailer fires do_action('hk9/forms/mail_failed', $submission_id, WP_Error, $form_id) and logs the empty-recipient case; Submissions shows a dismissible admin notice (dashboard + plugin screens) counting _hk9_mail_sent=0 in the last 7 days with a 'Notification failed' list view/filter (hk9_mail=failed), dismissal per user re-armed by newer failures; failed-POST transients carry no typed values for unknown_form/nonce/honeypot/token/expired, values capped at 2000 chars, and the retention cron purges expired hk9_form_* option rows; retention query includes trash; rate-limit key no longer rolls at UTC midnight; JS falls back to native submit whenever the response lacks the {ok,mode} envelope; '* Required' legend, a single autofocus per page (error transient deleted on shutdown so a second copy still renders values), translatable placeholders, neutral duplicate message.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/heartland-k9s-core.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Access.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/Select.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/Icon.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/Image.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/Gallery.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/File.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/Relationship.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/Repeater.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Types/Type.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Support/Helpers.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Registry.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Accessor.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Layout.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/MetaBox.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Meta/Registry.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Meta/MetaBox.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Antispam.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Handler.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Mailer.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Renderer.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Submissions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Config.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/ContactForm.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/ApplicationForm.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Rest/Forms.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Store.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Page.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/js/forms-frontend.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/sections-test.php"
+  ],
+  "tests": [
+   {
+    "name": "php -l every touched PHP file (local PHP 8.5.2) + node --check forms-frontend.js",
+    "result": "PASS",
+    "evidence": "30 plugin PHP files (incl. new src/Fields/Access.php): 'No syntax errors detected' for all; JS OK."
+   },
+   {
+    "name": "tools/wp.sh eval-file tests/sections-test.php",
+    "result": "PASS",
+    "evidence": "39 checks, 0 failed (was 33). New: rest_put_empty_select_ok (PUT hk9_sec_hero_band.pattern='' \u2192 200, stored 'none'), select_empty_always_schema_valid (36 top-level enum props sanitize '' and garbage to schema-valid values), select_placeholder_only_when_empty_default, rest_collection_template_defaults (GET /wp/v2/pages?include= \u2192 home page hk9_sec_hero_image = home defaults, canonical owner barkode), layout_reference_is_default_write (about reference layout skipped, reordered stored; landing reference only default with template=landing), repeater_min_enforced (minItems=2; 1 row padded from default row 2; [] \u2192 defaults; 4 rows capped at max 3; idempotent), relationship_write_capability (editor keeps stored record id, new record id zeroed via REST PUT 200; admin allowed)."
+   },
+   {
+    "name": "tools/wp.sh eval-file tests/core-fixes-test.php --user=admin",
+    "result": "PASS",
+    "evidence": "== 32 passed, 0 failed =="
+   },
+   {
+    "name": "Reproduction of the HIGH finding before the fix",
+    "result": "PASS",
+    "evidence": "Definition::sanitize(['pattern'=>'']) \u2192 '' and rest_validate_value_from_schema \u2192 'hk9_sec_hero_band[pattern] is not one of none, stars, and grid' (pre-fix); post-fix the same input yields 'none' and validates."
+   },
+   {
+    "name": "Icon without a sprite list (standalone PHP harness, no WP/theme)",
+    "result": "PASS",
+    "evidence": "icon_list_available=false, names()=0 (not cached), sanitize('custom-icon') \u2192 'custom-icon', 'Bad Name!' \u2192 'badname', choices('custom-icon') = 27 (FALLBACK + current); with the theme sprite present: 44 names, 'not-an-icon' \u2192 ''. Image control without help emits no aria-describedby; with help emits aria-describedby=\"i-help\"."
+   },
+   {
+    "name": "hk9_render_form('contact')",
+    "result": "PASS",
+    "evidence": "Markup contains data-hk9-token=\".../hk9/v1/forms/contact/token\", <p class=\"hk9-form__required-note\">* Required</p>, translated placeholders; no PHP notices in debug.log."
+   },
+   {
+    "name": "curl -i GET /wp-json/hk9/v1/forms/contact/token",
+    "result": "PASS",
+    "evidence": "HTTP 200 {\"nonce\":\"\u2026\",\"ts\":\"\u2026\",\"token\":\"\u2026\"} with Cache-Control: no-store, no-cache, must-revalidate, max-age=0, private; Pragma: no-cache; Expires 1984. Unknown form id \u2192 400."
+   },
+   {
+    "name": "Valid no-JS POST via admin-post with a fresh token, then replay",
+    "result": "PASS",
+    "evidence": "303 \u2192 /contact/?hk9_form=contact&status=sent&t=\u2026; submission stored with _hk9_mail_sent=1; Mailpit received '[HK9 Contact] Other from Tmp Reviewfix' \u2192 info@heartlandk9s.org. Replay of the same token \u2192 303 status=error, code=duplicate, message 'This form was already submitted from this page. Please reload the page and try again.' (no second mail)."
+   },
+   {
+    "name": "Stop-mail scenario (forms.store_submissions=false + docker stop hk9-mailpit-1)",
+    "result": "PASS",
+    "evidence": "REST POST \u2192 HTTP 500 {ok:false, code:'send_failed', refresh:{ts,token}}; debug.log '[hk9] Form notification failed (form=contact): wp_mail_failed: SMTP Error\u2026' (no content). After docker start hk9-mailpit-1: retry with the returned refresh token \u2192 200 code=sent; retry with the ORIGINAL (released) token via admin-post \u2192 303 status=sent; Mailpit count 2."
+   },
+   {
+    "name": "Storage-on mail failure: hook + admin notice",
+    "result": "PASS",
+    "evidence": "With Mailpit down: no-JS POST \u2192 status=sent, submission stored with _hk9_mail_sent=0; do_action('hk9/forms/mail_failed') fired with (0, 'wp_mail_failed', 'contact'); empty recipients \u2192 hook (0,'hk9_no_recipients','contact') + log line; Submissions::mail_failures() = {count:2, latest:1765}; dashboard notice rendered 'Heartland forms: 2 submissions in the last 7 days were saved but their email notifications could not be sent. Review them'; list view 'Notification failed (2)'."
+   },
+   {
+    "name": "Atomic token claim under concurrency",
+    "result": "PASS",
+    "evidence": "4 parallel REST POSTs with the same token \u2192 409,409,409,200 (codes duplicate\u00d73, sent\u00d71); Mailpit +1. Unit: claim#1=true claim#2=false, release \u2192 is_used=false, claim#3=true; timeout row removed after release."
+   },
+   {
+    "name": "Failed-POST transient hardening",
+    "result": "PASS",
+    "evidence": "Bad-token no-JS POST \u2192 error state code=token values=[]; cap_values truncates a 3000-char message to 2000 and drops non-scalar entries."
+   },
+   {
+    "name": "Trusted proxy resolution (Antispam::client_ip)",
+    "result": "PASS",
+    "evidence": "proxies '10.0.0.0/8, 2001:db8::/32' + XFF: REMOTE 10.1.2.3 + '203.0.113.9, 10.9.9.9' \u2192 203.0.113.9; untrusted REMOTE 192.0.2.44 \u2192 header ignored; v6 proxy \u2192 203.0.113.77; proxies off (default) \u2192 REMOTE_ADDR. Store 'cidrs' sanitizer drops 'not-an-ip' and '1.2.3.4/40'; 'header' strips non [A-Za-z0-9-]. Settings Forms tab renders the textarea (large-text code) and header input."
+   },
+   {
+    "name": "Retention incl. trash + expired transient purge",
+    "result": "PASS",
+    "evidence": "tmp trashed submission dated 100 days ago deleted by run_retention (deleted=1); 6 expired _transient(_timeout)_hk9_form_* rows removed, live row kept; pre-existing submissions 311/338/372 untouched."
+   },
+   {
+    "name": "No-JS cache exclusion",
+    "result": "PASS",
+    "evidence": "curl -I /contact/ and /online-application/ \u2192 Cache-Control: no-cache, must-revalidate, max-age=0, no-store, private + Expires; /about/ has no such headers; page_renders_form(): contact=true (template contact), online-application=true (application), about/donate=false; DONOTCACHEPAGE defined by render()."
+   },
+   {
+    "name": "Browser (Chrome DevTools) JS path on /contact/",
+    "result": "PASS",
+    "evidence": "On load: GET /wp-json/hk9/v1/forms/contact/token [200] and the live hk9_token differs from the server-rendered one (captured via initScript). Submit \u2192 POST 429 shown inline (rate limit from earlier test sends, counter then cleared) \u2192 POST 200 \u2192 form replaced by 'Message Sent' with focus on .hk9-form__success. Endpoint pointed at a rest_no_route URL \u2192 native admin-post fallback \u2192 303 sent page, exactly 1 autofocus. No console errors."
+   },
+   {
+    "name": "Double render with an error state",
+    "result": "PASS",
+    "evidence": "Two copies of the contact form on one request both render the stored values; ' autofocus' appears once; the error transient survives until Handler::purge_consumed() (shutdown) then is gone."
+   },
+   {
+    "name": "Cleanup",
+    "result": "PASS",
+    "evidence": "Deleted tmp submissions 1764,1765,1766,1768,1769 (pre-existing 311/338/372 remain); DELETE Mailpit messages \u2192 0; removed test hk9_form_* transient rows; settings restored (store_submissions=true, trusted_proxies='', proxy_header default); no 'HK9 Test'/'tmp-core-fixes' posts or hk9_test_* users left; Mailpit container running; debug.log only has the two expected [hk9] failure lines."
+   }
+  ],
+  "issues": [
+   "Reference-layout as default write: a stored layout equal to the template reference is now skipped, so if a template definition later changes hidden_default for a section, pages that never customised their layout follow the new default (same as absent-key behaviour); this is what the finding asked for but worth knowing.",
+   "Relationship/link write-path check zeroes (does not revert) an id the current user cannot edit_post; ids already referenced anywhere in the stored value of the same meta key are always kept, so editors never lose admin-added references. The rule uses edit_post to match hk9/v1/pick; filter hk9/fields/can_reference_post can relax it.",
+   "The 'Required' legend uses a new class .hk9-form__required-note which the theme CSS (not my area) does not style yet; it renders as a plain paragraph.",
+   "Mailpit stores messages in memory: stopping/starting the container during the stop-mail scenario cleared earlier test messages (this is why counts reset mid-test); all test mail was deleted at the end anyway.",
+   "Settings keys forms.trusted_proxies / forms.proxy_header were materialised in the hk9_settings option by the test run with their default values ('' and 'X-Forwarded-For'), which is equivalent to them being absent.",
+   "Non-plugin files show as modified in git status (docs/, payload-src/, theme/, tools/build-icons.mjs) \u2014 those changes are from other areas, not made by me; nothing was committed."
+  ],
+  "integration_notes": "New REST route GET hk9/v1/forms/{id}/token (public, no-store) used by assets/js/forms-frontend.js at init via the form's data-hk9-token attribute; the JS also sends X-WP-Nonce when HK9.forms.restNonce is set so logged-in users get a nonce for their own session. New hooks: do_action('hk9/forms/mail_failed', int $submission_id, WP_Error $error, string $form_id); filter 'hk9/forms/page_renders_form' (bool, $post_id) to mark extra pages for cache exclusion; filter 'hk9/fields/can_reference_post' (bool, $id); 'hk9/forms/client_ip' now receives ($ip, $remote_addr). New settings forms.trusted_proxies (type 'cidrs', one IP/CIDR per line, off when empty) and forms.proxy_header (type 'header', default X-Forwarded-For) on the Forms tab; the theme's inc/defaults.php does not need them (plugin-only). Theme should style .hk9-form__required-note. Helpers::icon_names()/hk9_icon_name_list() keep returning the reference list when the sprite is missing (theme pickers unchanged); Icon fields now use Helpers::sprite_icon_names()/icon_list_available() and only validate when a real list exists. Sections\\\\Registry gained rest_prepare_page handling, template_from_request(), template_default(..., ?string $template) and is_default_write(..., ?string $template); Accessor::resolve_template($file, $post_id) is the shared template-slug resolver; Layout::reference($definitions) gives the template reference layout. Antispam::claim()/release()/duplicate()/ip_in_list() are new (mark_used() kept for BC). Submissions::run_retention() now also runs purge_expired_transients() and includes trashed posts; Submissions::mail_failures() is cached 5 minutes (cleared by record_mail on failure). Handler::RESULT_PREFIX is now public. Plugin version 1.0.1 (header + HK9_CORE_VERSION)."
+ },
+ "theme": {
+  "summary": "Addressed every reviews.theme finding (10/10) and bumped the theme to 1.0.1.\n\nN+1 / bounded queries (inc/template-tags-records.php): new hk9_rec_prime() (posts + meta + featured-image posts/meta in 2\u20134 batched queries), hk9_rec_query() now calls update_post_thumbnail_cache() and defaults posts_per_page to hk9_rec_query_limit() (filter `hk9/theme/rec_query_limit`, default 200, instead of -1); hk9_rec_by_ids() primes meta + thumbnails; hk9_rec_gallery() primes attachments before the wp_attachment_is_image() filter; hk9_rec_events() primes thumbnails on the plugin path and the plugin-less fallback is now a bounded WP_Query (posts_per_page => $count, meta_query on hk9_end/hk9_start vs current_time('Y-m-d H:i') with the no-end branch, ordered by hk9_start) instead of loading every event and filtering in PHP; campaigns_list.php collects all sponsor ids from raw meta and primes them once before the card loop; gallery_options.php primes the image ids referenced by the page's gallery block before the_content(); template-tags-pages.php story helpers prime too. Measured after wp_cache_flush() via hk9_rec_render_sections(): teams 10\u21929, campaigns 27\u219214, people 31\u219212, partners 37\u219214, stories 16\u219213, events 9\u21929, photos gallery 147\u21929 (71 images). Remaining counts are fixed per page (page meta, options, listing query, 2 record batches, 2 thumbnail batches, CTA link lookups) \u2014 no per-record growth.\n\nSocial/brand icons: assets/dist/icons.svg did NOT contain facebook/instagram/youtube/linkedin \u2014 they had been added ad hoc in inc/icons.php (hk9_icon_brand_extras(), lucide outline copies) and X mapped to a non-existent 'brand-x'. Moved them into tools/build-icons.mjs as embedded CC0 Simple Icons paths (fetched verbatim from simple-icons@16.30.0; linkedin from 13.21.0, the last release that shipped it \u2014 Simple Icons removed LinkedIn in v14 at the brand owner's request, documented), emitted as filled symbols (fill=\"currentColor\" stroke=\"none\") and a distinct `x-social` symbol; the script now also writes docs/licenses/LICENSE-simple-icons.txt (provenance + CC0 text). Rebuilt: 39 lucide symbols unchanged + 5 brand symbols (44 total, icons.json updated). Removed hk9_icon_brand_extras() from icons.php. footer.php: X \u2192 'x-social'; the screen-reader label span is emitted only when an icon renders, otherwise the visible text label alone.\n\nFAQ: reference has no accordion \u2014 kept native <details>, removed the dead data-hk9-accordion attribute and initAccordions() from theme.js (rebuilt, 2.1 kB). i18n: all hk9_rec_section_defaults() strings wrapped in __(); CTA links resolve via new hk9_rec_settings_link('links.donate'|'links.volunteer'|'forms.application_success_page', label, fallback path) using the footer's page-exists rule. BarKode: role=\"alert\" removed, text now <strong> with `strong { font-weight: inherit }` so the visual is unchanged. Removed the no-op wp_lazy_loading_enabled filter + misleading comment from inc/assets.php. Menus: hk9_primary_menu() no longer calls wp_get_nav_menu_items(); the last top-level id is computed in a wp_nav_menu_objects filter (verified the divider class still lands on the last desktop item). Hero fragments: hk9_rec_hero() now runs badge and meta items through hk9_rec_fragment() (wp_kses with span + the SVG subset the sprite uses; viewBox case restored) \u2014 all 44 sprite icons round-trip unchanged apart from `/>` spacing; onclick/script/img/javascript: stripped.\n\nVersion: style.css Version 1.0.1, HK9_THEME_VERSION 1.0.1, readme Stable tag 1.0.1 + changelog + Simple Icons licence line, window.HK9.version 1.0.1. npm run build:css && build:js clean; php -l (PHP 8.5.2) clean on every touched file.\n\nVisual regression: 14 of 16 route/width captures differ by 0.00\u20130.02%. home-1440 = 0.98%: (a) the footer Facebook glyph (intentional outline\u2192filled Simple Icons), (b) the BarKode feature image \u2014 the ARCHIVED capture has that lazy image unloaded (blank navy card) while the new capture shows it loaded, i.e. a timing artefact in the archive, not a regression. contact 390/1440 = +64px / ~8%: caused by a new \"* Required\" note the forms agent added to plugin/heartland-k9s-core/src/Forms/Renderer.php (uncommitted, outside my area), not by theme changes.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags-records.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags-pages.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/icons.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/menus.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/assets.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/footer.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_barkode.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/faq.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/campaigns_list.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/gallery_options.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/js/theme.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_singles.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/icons.svg",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/icons.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/style.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/functions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/readme.txt",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/build-icons.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/licenses/LICENSE-simple-icons.txt"
+  ],
+  "tests": [
+   {
+    "name": "Query counts per listing after wp_cache_flush() (wp eval-file, hk9_rec_render_sections)",
+    "result": "PASS",
+    "evidence": "before \u2192 after: teams(2 cards) 10\u21929, campaigns(5) 27\u219214, people(11) 31\u219212, partners(13 logos) 37\u219214, stories 16\u219213, events 9\u21929, photos gallery (71 imgs) 147\u21929. SAVEQUERIES profile shows only batched IN(...) post/meta loads remain; no per-record SELECT ... WHERE ID = N loops."
+   },
+   {
+    "name": "Plugin-less events fallback SQL is bounded and classifies correctly",
+    "result": "PASS",
+    "evidence": "Generated SQL (WP_Query with the new meta_query) ends in `LIMIT 0, 6`; PAST returns the one event whose hk9_start (2026-07-25 18:00) < now and hk9_end is absent; UPCOMING returns none \u2014 matches hk9_rec_event_upcoming() PHP classification (upcoming=0 past=1). With the plugin deactivated /events/ /campaigns/ /meet-the-team/ /back-the-pack/ /online-application/ /photos/ all HTTP 200; hk9_event CPT is plugin-registered so the fallback query is otherwise empty. Plugin re-activated (Status: Active)."
+   },
+   {
+    "name": "Sprite contains brand symbols; icons.php extras removed",
+    "result": "PASS",
+    "evidence": "icons.svg: 39 lucide symbols byte-identical + hk9-icon-facebook/instagram/linkedin/x-social/youtube with fill=\"currentColor\" stroke=\"none\"; icons.json 44 names; docs/licenses/LICENSE-simple-icons.txt written; `grep hk9_icon_brand_extras|brand-x|data-hk9-accordion|wp_lazy_loading_enabled` over theme/plugin/docs/tools \u2192 none. Rendered home footer: <a ...><svg class=\"hk9-icon hk9-icon--facebook\"...><span class=\"screen-reader-text\">Facebook</span></a>; crop comparison shows filled glyph replacing the outline."
+   },
+   {
+    "name": "wp_kses hero fragments round-trip",
+    "result": "PASS",
+    "evidence": "All 44 sprite icons via hk9_icon() + status badge + titled/filled heart icon pass hk9_rec_fragment() unchanged except `/>`\u2192` />`; malicious input `<span onclick class=a>a</span><script>b</script><img onerror><use href=\"javascript:alert(1)\">` \u2192 `<span class=\"a\">a</span>b<use href=\"alert(1)\"></use>`. Live singles (story/team/campaign/event/barkode) HTTP 200 with hero meta lists and status badges intact; role=\"alert\" absent, `<strong>DO NOT SEPARATE FROM HANDLER</strong>` present on the BarKode single."
+   },
+   {
+    "name": "Menu query dedupe keeps the divider class",
+    "result": "PASS",
+    "evidence": "Home HTML contains exactly one `hk9-header__item hk9-header__item--divider` (desktop Contact item) with hk9_primary_menu() no longer calling wp_get_nav_menu_items()."
+   },
+   {
+    "name": "Lint / builds",
+    "result": "PASS",
+    "evidence": "php -l (PHP 8.5.2): no syntax errors in all 9 touched PHP files; node --check tools/build-icons.mjs + theme.js ok; npm run build:css (theme.css 172.4 kB, editor.css unchanged) and build:js (theme.js 2.1 kB, version 1.0.1, no initAccordions) clean; node tools/build-icons.mjs idempotent; wp theme status \u2192 Version 1.0.1."
+   },
+   {
+    "name": "Visual regression (tools/screenshot.mjs 390,1440 + tools/compare.mjs vs docs/reports/screenshots/wp/chromium)",
+    "result": "PASS with explained diffs",
+    "evidence": "14/16 captures 0.00\u20130.02%. home-1440 0.98%: footer Facebook glyph (intentional) + BarKode feature image that is UNLOADED in the archived capture and loaded in the new one (archive timing artefact; verified by side-by-side crop). contact-390/1440 +64px (~8%): new `<p class=\"hk9-form__required-note\">* Required</p>` from the forms agent's uncommitted plugin/heartland-k9s-core/src/Forms/Renderer.php change, not theme. Report: scratchpad/wave4/theme-diff/report.md."
+   },
+   {
+    "name": "debug.log / real content",
+    "result": "PASS",
+    "evidence": "debug.log empty after curling 20 routes and 5 record singles; the only 2 lines afterwards are `[hk9] Form notification failed (form=contact) ... SMTP` from a concurrent contact-form submission test (forms area; Mailpit unreachable) \u2014 no theme notices. No imported objects deleted/renamed; no tmp- objects were needed."
+   }
+  ],
+  "issues": [
+   "LinkedIn is not in current Simple Icons (removed in v14.0.0 at LinkedIn's request); its CC0 path is embedded from simple-icons@13.21.0 and the provenance is documented in docs/licenses/LICENSE-simple-icons.txt and tools/build-icons.mjs. Swap it for an officially supplied asset if the org prefers.",
+   "The archived reference capture docs/reports/screenshots/wp/chromium/home-1440.png has the lazy-loaded BarKode feature image unloaded (blank card); it should be re-captured so future compares don't report ~1% on that route.",
+   "contact route now +64px vs archive because of the forms agent's `* Required` note in plugin Forms/Renderer.php (uncommitted, outside my area); the theme has no styles for `.hk9-form__required-note` yet \u2014 whoever owns that change should add a rule in assets/src/scss/_forms.scss or the archived contact captures need refreshing.",
+   "The plugin-less events fallback can only return rows when something registers hk9_event without the plugin; with the plugin off the CPT is absent, so the bounded query was validated by running the identical WP_Query with the plugin on (LIMIT 0, 6; correct past/upcoming split).",
+   "Two debug.log lines (`[hk9] Form notification failed ... SMTP`) appeared during the session from a concurrent contact-form submission \u2014 not theme related."
+  ],
+  "integration_notes": "New theme API: hk9_rec_prime(int[] $ids) (posts+meta+thumbnails), hk9_rec_query_limit($post_type) with filter `hk9/theme/rec_query_limit` (default 200, replaces posts_per_page -1 in hk9_rec_query()), hk9_rec_prime_content_images(string $content), hk9_rec_settings_link($setting,$label,$fallback), hk9_rec_site_path_exists($url), hk9_rec_fragment()/hk9_rec_fragment_kses() (hero badge/meta are now kses'd \u2014 callers may still pass hk9_icon()+<span> fragments), hk9_primary_menu_objects() on wp_nav_menu_objects (sets $args->hk9_last_id). Removed: hk9_icon_brand_extras(), initAccordions() in theme.js, data-hk9-accordion attribute, wp_lazy_loading_enabled filter. Icon names: footer X now uses `x-social`; `facebook|instagram|youtube|linkedin|x-social` are sprite symbols and appear in icons.json (plugin icon picker will list them). tools/build-icons.mjs now also writes docs/licenses/LICENSE-simple-icons.txt; `npm run build:icons` is the source of truth for brand glyphs (paths embedded in BRAND_ICONS). Theme version 1.0.1 in style.css, HK9_THEME_VERSION, readme Stable tag, window.HK9.version. Nothing committed (per instructions); docs/conflict-log.md, docs/migration-map.md, docs/unresolved.md and plugin/** show as modified by other agents and were not touched by me."
+ },
+ "content": {
+  "summary": "Addressed every reviews.content finding from wave3-results.json and consolidated the docs. Content: deleted the invented \"We are grateful to the businesses participating in this campaign.\" paragraph from both campaign content files; restored the coloring-book tiers text verbatim (intro = live sentence + \"In THIS sponsorship, these books are YOURS for distribution!\" + \"This is for dedicated PAGE sponsor levels that can be included in our coloring books.\", Classroom tier ends \"Sign up now!\", Legacy tier \"for same sponsor\" restored, invented CTA body blanked); authored real alt text for the coloring-book cover and classroom images (verified by viewing both files); de-duplicated the donate option cards (\"Click the Zeffy logo to donate.\" / \"Click through to HK9's Daily Needs Wishlist on Amazon.\"); fixed the four hero duplications (5-questions, thank-you, how-it-works, coloring-book) by blanking hero_band.text AND the excerpt so the band renders the title only (the theme falls back to the excerpt, so both had to be empty; meta description falls back to content). Docs: migration-map.md now records every silent edit (Paws for Giving stale 2023 line, \"Educate you patrons\", \"Human- Animal\", \"work\u2192works\", \"alllll\", Platinum typo, campaigns CTA paraphrase, donate copy provenance, hero-band changes, alt text, removed invented line); conflict-log.md gained \u00a712 (12 rows: PO Box\u2192Gateway Dr, ADA FAQ link, all typo fixes, removed PayPal ordering text, retained-verbatim flags, invented-sentence removal, hero policy, UI copy, registry handling) and \u00a713 (9 theme fidelity deviations incl. BarKode tile on mobile, footer tagline tint, brand icons, gallery caption clamp), plus S13 (editable values copy) and an explicit past-event decision in R4; unresolved.md trimmed to business decisions (dropped U11 past event, U12 Est. 2015, U13 values copy \u2014 all now in the conflict log), U14 folded into new U15 \"Registry privacy scope\" (emergency-contact phone in 13/15 records, handler surname in 7/15 \u2014 verified structurally, no data printed; team\u2194record links) and added U16 \"PayPal retirement\". Build succeeded (363 records); dry run showed exactly the 8 changed records with 0 conflicts; applied with --overwrite; rendered pages verified.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/content/live__campaign__one-of-us.html",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/content/live__campaign__educational-coloring-book.html",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/content/live__page__3627.html",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/pages/live-the-hk9-coloring-book.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/pages/live-donate.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/pages/live-5-questions.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/pages/live-thank-you.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/pages/live-how-it-works-veteran-consideration.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/migration-map.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/conflict-log.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/unresolved.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload/manifest.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload/content/live__page__3627.html",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload/content/live__campaign__one-of-us.html",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload/content/live__campaign__educational-coloring-book.html"
+  ],
+  "tests": [
+   {
+    "name": "node tools/build-payload.mjs",
+    "result": "pass",
+    "evidence": "wrote payload/manifest.json \u2014 records: 363 (attachment=250, term=6, hk9_barkode=16, hk9_campaign=5, hk9_event=1, page=30, hk9_partner=13, hk9_person=11, hk9_story=1, hk9_team=2, menu=4, option=1, reading=1, redirect=22); content files: 34; only the pre-existing favicon SVG warning."
+   },
+   {
+    "name": "tools/wp.sh hk9 import --dry-run --user=admin",
+    "result": "pass",
+    "evidence": "Run 20260911-164124-xvxiqa50: posts_hierarchy update=5 (live:page:16, live:page:2120, live:page:3093, live:page:2505, live:page:3627), posts_content update=3 (live:campaign:educational-coloring-book 28 blocks, live:campaign:one-of-us 10 blocks, live:page:3627 24 blocks); every other step create=0 update=0 conflict=0 fail=0 \u2014 exactly the records I changed, no conflicts."
+   },
+   {
+    "name": "tools/wp.sh hk9 import --overwrite --user=admin",
+    "result": "pass",
+    "evidence": "Run 20260911-164158-syhz2s9q: same 8 UPDATE keys applied, 0 conflict, 0 fail, 'Success: Import complete.'; wp-content/debug.log is 0 bytes afterwards."
+   },
+   {
+    "name": "Rendered page verification (curl + strip tags, <main> sentence-duplicate scan)",
+    "result": "pass",
+    "evidence": "/5-questions/, /thank-you/, /how-it-works-veteran-consideration/, /the-hk9-coloring-book/, /campaigns/, /campaigns/one-of-us/, /campaigns/educational-coloring-book/, /donate/ all HTTP 200, 0 '{{' residues, 0 href=\"#\"; 'We are grateful to the businesses\u2026' absent on all campaign pages; 'Ready to sponsor a tier\u2026' and the merged paraphrase absent; 'In THIS sponsorship\u2026', 'This is for dedicated PAGE sponsor levels\u2026', '\u2026Sign up now!', 'for same sponsor \u2014 $2,000', 'Highlighted page that includes\u2026' each present exactly once; no duplicated sentence inside <main> on any of the 8 pages; 'Donating has never been easier!' appears once on /donate/; the four hero bands render title-only (no .hk9-hero__text) and meta descriptions fall back to content; sponsor logos still render after both 'Thank you for participating\u2026' headings; new alt texts present on the coloring-book page."
+   },
+   {
+    "name": "Registry emergency-contact count (structural, values not printed)",
+    "result": "pass",
+    "evidence": "15 published barkode records: 13 emergency-contact lines contain a phone pattern, 7 also contain the handler's surname \u2014 matches the reviewer's '7 of 15'; recorded in unresolved U15."
+   },
+   {
+    "name": "Markdown table integrity for the three edited docs",
+    "result": "pass",
+    "evidence": "Column-count check over every table row in conflict-log.md, migration-map.md, unresolved.md: no mismatched rows."
+   },
+   {
+    "name": "php -l",
+    "result": "not applicable",
+    "evidence": "No PHP files were touched in this task (changes limited to payload-src, payload output and docs)."
+   }
+  ],
+  "issues": [
+   "/donate/ hero text and excerpt are the tax statement's second sentence with an added comma ('Your donation allows us to help those who have done so much for all of us, the US Veterans, by providing\u2026'), so a near-identical sentence appears in the hero and in the tax section. It was not one of the four pages in the finding and is not an exact-string duplicate, so I left it and documented it in the migration-map donate row; blanking hero text + excerpt on live:page:2120 would remove it if wanted.",
+   "The campaign sponsor logos on the local site now carry titles 'Petland Charities' and 'Jack Henry & Associates' (seen in rendered alt text) while docs/conflict-log R2 and unresolved U7 still describe them as 'Petland Joplin' and 'Jack' \u2014 the partner records are outside my area and I did not change the docs' partner rows; the owner of the partner records should reconcile R2/U7.",
+   "git status also shows uncommitted changes in plugin/heartland-k9s-core/src/Fields/Types/*, Support/Helpers.php, theme/heartland-k9s/assets/dist/icons.*, tools/build-icons.mjs and a new docs/licenses/LICENSE-simple-icons.txt \u2014 those are other agents' work, untouched by me.",
+   "Per instructions, nothing was committed; the importer's standing warning about the payload directory living inside the web root without an .htaccess deny rule still prints on every run."
+  ],
+  "integration_notes": "Record keys updated on the local site: posts_hierarchy \u2014 live:page:16, live:page:2120, live:page:3093, live:page:2505, live:page:3627; posts_content \u2014 live:campaign:educational-coloring-book, live:campaign:one-of-us, live:page:3627. Hero-band policy now in effect for the four migrated landing pages: hero_band.text AND excerpt are empty (theme falls back excerpt\u2192title, so both must be blank to avoid repeating the first paragraph); hk9_meta_description() then derives the meta description from post_content \u2014 no theme change needed. Coloring-book tiers.intro concatenates the shared live sentence with both live tier-group sentences because the landing template renders one intro above all eight tiers. docs/conflict-log.md is now the single complete list (\u00a712 migrated-page copy edits incl. the migrated-pages agent's items, \u00a713 theme deviations from visual-comparison.md \u00a77, S13 values copy, R4 past-event decision); docs/unresolved.md keeps U1\u2013U10 unchanged and adds U15 (registry privacy scope: emergency-contact phone/surname exposure + team\u2194record links; fix path is extract-registry.mjs parseLines() diverting phone-bearing emergency lines to _hk9_review_notes, then re-import) and U16 (PayPal retirement: links.paypal_hosted_button_id + the Donate option card). U11\u2013U14 numbers are retired; the only cross-reference to them was my own, now pointing at U15. docs/install.md's going-live checklist already names the U15/U16 topics and needs no change."
+ }
+}

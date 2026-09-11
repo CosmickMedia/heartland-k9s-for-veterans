@@ -72,7 +72,7 @@ class Image extends Type {
 		$html .= sprintf( '<input type="hidden" id="%s" name="%s" value="%d" data-hk9-control="1" />', esc_attr( $id ), esc_attr( $name ), $id_value );
 		$html .= '<div class="hk9-media__preview" data-hk9-media-preview>' . $preview . '</div>';
 		$html .= '<div class="hk9-media__actions">';
-		$html .= sprintf( '<button type="button" class="button hk9-media__select" data-hk9-media-select aria-describedby="%s">%s</button>', esc_attr( $id . '-help' ), esc_html__( 'Select image', 'heartland-k9s-core' ) );
+		$html .= sprintf( '<button type="button" class="button hk9-media__select" data-hk9-media-select%s>%s</button>', $this->describedby( $field, $id ), esc_html__( 'Select image', 'heartland-k9s-core' ) );
 		$html .= sprintf( '<button type="button" class="button hk9-media__replace" data-hk9-media-select>%s</button>', esc_html__( 'Replace', 'heartland-k9s-core' ) );
 		$html .= sprintf( '<button type="button" class="button-link hk9-media__remove" data-hk9-media-remove>%s</button>', esc_html__( 'Remove', 'heartland-k9s-core' ) );
 		$html .= '</div></div>';

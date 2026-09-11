@@ -103,6 +103,50 @@ function hk9_rec_render_sections( int $post_id, string $template, array $inject 
 }
 
 /**
+ * Whether a site URL points at an existing page (by path), so a settings default
+ * that names a reference slug only counts when that page exists here.
+ *
+ * @param string $url Absolute URL under home_url().
+ * @return bool
+ */
+function hk9_rec_site_path_exists( string $url ): bool {
+	$path = trim( (string) wp_parse_url( $url, PHP_URL_PATH ), '/' );
+	$rel  = trim( (string) wp_parse_url( home_url( '/' ), PHP_URL_PATH ), '/' );
+	if ( '' !== $rel && str_starts_with( $path, $rel ) ) {
+		$path = trim( substr( $path, strlen( $rel ) ), '/' );
+	}
+	if ( '' === $path ) {
+		return true;
+	}
+	$page = get_page_by_path( $path );
+	return $page instanceof WP_Post && 'publish' === $page->post_status;
+}
+
+/**
+ * CTA link from a `links.*` / `forms.*` setting with the label overridden, falling
+ * back to a site path when the setting is empty or its default names a page that
+ * does not exist here (same rule as hk9_footer_fallback_links()).
+ *
+ * @param string $setting  Settings key (`links.donate`, …).
+ * @param string $label    Link label.
+ * @param string $fallback Fallback path (`/donate/`).
+ * @return array Link value.
+ */
+function hk9_rec_settings_link( string $setting, string $label, string $fallback ): array {
+	$link = hk9_theme_option( $setting );
+	if ( is_array( $link ) ) {
+		$url = hk9_theme_link_url( $link );
+		if ( '' !== $url && empty( $link['post_id'] ) && str_starts_with( $url, home_url( '/' ) ) && ! hk9_rec_site_path_exists( $url ) ) {
+			$url = '';
+		}
+		if ( '' !== $url ) {
+			return array_merge( $link, [ 'label' => $label ] );
+		}
+	}
+	return hk9_theme_link( $label, home_url( $fallback ) );
+}
+
+/**
  * Plugin-less fallback section defaults for the migrated templates so the
  * page structure (and the record lists) still render without the plugin.
  *
@@ -115,15 +159,15 @@ function hk9_rec_section_defaults( array $sections, string $template ): array {
 		'type'   => 'cta_band',
 		'hidden' => $hidden,
 		'data'   => [
-			'heading' => 'Join Us in Our Mission',
-			'text'    => 'Every donation, volunteer hour, and shared story helps us provide another service dog to a veteran in need.',
+			'heading' => __( 'Join Us in Our Mission', 'heartland-k9s' ),
+			'text'    => __( 'Every donation, volunteer hour, and shared story helps us provide another service dog to a veteran in need.', 'heartland-k9s' ),
 			'buttons' => [
 				[
-					'link'  => hk9_theme_link( 'Make a Donation', home_url( '/donate/' ) ),
+					'link'  => hk9_rec_settings_link( 'links.donate', __( 'Make a Donation', 'heartland-k9s' ), '/donate/' ),
 					'style' => 'primary',
 				],
 				[
-					'link'  => hk9_theme_link( 'Ways to Volunteer', home_url( '/get-involved/' ) ),
+					'link'  => hk9_rec_settings_link( 'links.volunteer', __( 'Ways to Volunteer', 'heartland-k9s' ), '/get-involved/' ),
 					'style' => 'outline',
 				],
 			],
@@ -135,46 +179,46 @@ function hk9_rec_section_defaults( array $sections, string $template ): array {
 	switch ( $template ) {
 		case 'donate':
 			$extra = [
-				'options' => [ 'type' => 'options', 'hidden' => false, 'data' => [ 'heading' => 'Ways to Give', 'intro' => '', 'items' => [] ] ],
-				'mail_in' => [ 'type' => 'mail_in', 'hidden' => false, 'data' => [ 'heading' => 'Donate by Mail', 'text' => '', 'use_settings_address' => true ] ],
+				'options' => [ 'type' => 'options', 'hidden' => false, 'data' => [ 'heading' => __( 'Ways to Give', 'heartland-k9s' ), 'intro' => '', 'items' => [] ] ],
+				'mail_in' => [ 'type' => 'mail_in', 'hidden' => false, 'data' => [ 'heading' => __( 'Donate by Mail', 'heartland-k9s' ), 'text' => '', 'use_settings_address' => true ] ],
 				'tax'     => [ 'type' => 'tax', 'hidden' => false, 'data' => [ 'text' => '' ] ],
 				'cta'     => $cta(),
 			];
 			break;
 		case 'events':
 			$extra = [
-				'upcoming' => [ 'type' => 'upcoming', 'hidden' => false, 'data' => [ 'heading' => 'Upcoming Events', 'empty_text' => 'There are no upcoming events scheduled right now. Check back soon.', 'count' => 10 ] ],
-				'past'     => [ 'type' => 'past', 'hidden' => false, 'data' => [ 'show' => true, 'heading' => 'Past Events', 'count' => 6 ] ],
+				'upcoming' => [ 'type' => 'upcoming', 'hidden' => false, 'data' => [ 'heading' => __( 'Upcoming Events', 'heartland-k9s' ), 'empty_text' => __( 'There are no upcoming events scheduled right now. Check back soon.', 'heartland-k9s' ), 'count' => 10 ] ],
+				'past'     => [ 'type' => 'past', 'hidden' => false, 'data' => [ 'show' => true, 'heading' => __( 'Past Events', 'heartland-k9s' ), 'count' => 6 ] ],
 				'cta'      => $cta(),
 			];
 			break;
 		case 'campaigns':
 			$extra = [
-				'list' => [ 'type' => 'campaigns_list', 'hidden' => false, 'data' => [ 'heading' => 'Campaigns', 'intro' => '', 'mode' => 'auto', 'campaigns' => [], 'show_sponsors' => true ] ],
+				'list' => [ 'type' => 'campaigns_list', 'hidden' => false, 'data' => [ 'heading' => __( 'Campaigns', 'heartland-k9s' ), 'intro' => '', 'mode' => 'auto', 'campaigns' => [], 'show_sponsors' => true ] ],
 				'cta'  => $cta(),
 			];
 			break;
 		case 'partners':
 			$extra = [
-				'logos' => [ 'type' => 'logos', 'hidden' => false, 'data' => [ 'heading' => 'Back the Pack Partners', 'intro' => '', 'mode' => 'auto', 'type' => 'back-the-pack', 'partners' => [], 'columns' => '4' ] ],
+				'logos' => [ 'type' => 'logos', 'hidden' => false, 'data' => [ 'heading' => __( 'Back the Pack Partners', 'heartland-k9s' ), 'intro' => '', 'mode' => 'auto', 'type' => 'back-the-pack', 'partners' => [], 'columns' => '4' ] ],
 				'cta'   => $cta(),
 			];
 			break;
 		case 'people':
 			$extra = [
-				'grid' => [ 'type' => 'grid', 'hidden' => false, 'data' => [ 'heading' => 'Meet the Team', 'intro' => '', 'mode' => 'auto', 'people' => [], 'columns' => '3' ] ],
+				'grid' => [ 'type' => 'grid', 'hidden' => false, 'data' => [ 'heading' => __( 'Meet the Team', 'heartland-k9s' ), 'intro' => '', 'mode' => 'auto', 'people' => [], 'columns' => '3' ] ],
 				'cta'  => $cta(),
 			];
 			break;
 		case 'teams':
 			$extra = [
-				'list' => [ 'type' => 'teams_list', 'hidden' => false, 'data' => [ 'heading' => 'Current Teams in Training', 'intro' => '', 'mode' => 'auto', 'status' => 'in-training', 'teams' => [] ] ],
+				'list' => [ 'type' => 'teams_list', 'hidden' => false, 'data' => [ 'heading' => __( 'Current Teams in Training', 'heartland-k9s' ), 'intro' => '', 'mode' => 'auto', 'status' => 'in-training', 'teams' => [] ] ],
 				'cta'  => $cta(),
 			];
 			break;
 		case 'highlighted-team':
 			$extra = [
-				'team' => [ 'type' => 'team', 'hidden' => false, 'data' => [ 'team' => 0, 'heading' => 'Our Highlighted Team', 'intro' => '' ] ],
+				'team' => [ 'type' => 'team', 'hidden' => false, 'data' => [ 'team' => 0, 'heading' => __( 'Our Highlighted Team', 'heartland-k9s' ), 'intro' => '' ] ],
 				'cta'  => $cta(),
 			];
 			break;
@@ -185,7 +229,7 @@ function hk9_rec_section_defaults( array $sections, string $template ): array {
 			break;
 		case 'application':
 			$extra = [
-				'form' => [ 'type' => 'application_form', 'hidden' => false, 'data' => [ 'heading' => 'Initial Application Inquiry', 'notice' => '', 'success_page' => hk9_theme_link( '', home_url( '/thank-you/' ) ), 'show_five_questions_link' => true ] ],
+				'form' => [ 'type' => 'application_form', 'hidden' => false, 'data' => [ 'heading' => __( 'Initial Application Inquiry', 'heartland-k9s' ), 'notice' => '', 'success_page' => hk9_rec_settings_link( 'forms.application_success_page', '', '/thank-you/' ), 'show_five_questions_link' => true ] ],
 			];
 			break;
 		case 'thank-you':
@@ -283,7 +327,53 @@ function hk9_rec_status_badge( string $status, string $class = '' ): string {
  * ---------------------------------------------------------------------- */
 
 /**
+ * Upper bound for an "all records" listing query.
+ *
+ * @param string $post_type Post type being listed.
+ * @return int posts_per_page value (> 0).
+ */
+function hk9_rec_query_limit( string $post_type ): int {
+	/**
+	 * Filter the maximum number of records an auto-mode listing loads.
+	 *
+	 * @param int    $limit     Default 200.
+	 * @param string $post_type Post type.
+	 */
+	$limit = (int) apply_filters( 'hk9/theme/rec_query_limit', 200, $post_type );
+	return $limit > 0 ? $limit : 200;
+}
+
+/**
+ * Prime the object cache for a set of records: the posts, their meta and their
+ * featured images (post + meta), so a card loop over them issues no per-record
+ * queries. Already-cached ids are skipped by core.
+ *
+ * @param int[] $ids Post ids.
+ */
+function hk9_rec_prime( array $ids ): void {
+	$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ), static fn( int $id ) => $id > 0 ) ) );
+	if ( empty( $ids ) ) {
+		return;
+	}
+	_prime_post_caches( $ids, false, true );
+
+	$thumbs = [];
+	foreach ( $ids as $id ) {
+		$thumb = (int) get_post_meta( $id, '_thumbnail_id', true );
+		if ( $thumb > 0 ) {
+			$thumbs[] = $thumb;
+		}
+	}
+	if ( ! empty( $thumbs ) ) {
+		_prime_post_caches( array_values( array_unique( $thumbs ) ), false, true );
+	}
+}
+
+/**
  * Published records of a type in editorial order (menu_order, then title).
+ *
+ * Bounded by hk9_rec_query_limit() unless `posts_per_page` is passed; featured
+ * images are primed so the cards render from the object cache.
  *
  * @param string $post_type Post type.
  * @param array  $args      Extra WP_Query args (meta_query, tax_query, posts_per_page…).
@@ -298,7 +388,7 @@ function hk9_rec_query( string $post_type, array $args = [] ): array {
 			[
 				'post_type'              => $post_type,
 				'post_status'            => 'publish',
-				'posts_per_page'         => -1,
+				'posts_per_page'         => hk9_rec_query_limit( $post_type ),
 				'orderby'                => [ 'menu_order' => 'ASC', 'title' => 'ASC' ],
 				'no_found_rows'          => true,
 				'ignore_sticky_posts'    => true,
@@ -307,6 +397,7 @@ function hk9_rec_query( string $post_type, array $args = [] ): array {
 			$args
 		)
 	);
+	update_post_thumbnail_cache( $query );
 	return array_values( array_filter( $query->posts, static fn( $p ) => $p instanceof WP_Post ) );
 }
 
@@ -322,7 +413,7 @@ function hk9_rec_by_ids( array $ids, string $post_type ): array {
 	if ( empty( $ids ) ) {
 		return [];
 	}
-	_prime_post_caches( $ids, false, false );
+	hk9_rec_prime( $ids );
 	$out = [];
 	foreach ( $ids as $id ) {
 		$post = get_post( $id );
@@ -556,19 +647,85 @@ function hk9_rec_events( string $scope, int $count ): array {
 	$scope = 'past' === $scope ? 'past' : 'upcoming';
 	if ( function_exists( 'hk9_events_query' ) ) {
 		$posts = hk9_events_query( [ 'scope' => $scope, 'count' => $count, 'return' => 'posts' ] );
-		return array_values( array_filter( (array) $posts, static fn( $p ) => $p instanceof WP_Post ) );
+		$posts = array_values( array_filter( (array) $posts, static fn( $p ) => $p instanceof WP_Post ) );
+		hk9_rec_prime( array_map( static fn( WP_Post $p ): int => (int) $p->ID, $posts ) );
+		return $posts;
 	}
 
-	$posts = hk9_rec_query(
+	// Plugin-less fallback: classify in SQL against the site-local "now" (`hk9_start`/`hk9_end`
+	// are stored as `Y-m-d H:i` or `Y-m-d`, so a CHAR comparison orders correctly) and load
+	// only `$count` rows. An event with an end date is upcoming until its end; otherwise
+	// until its start — the same rule hk9_rec_event_upcoming() applies per event.
+	$upcoming = 'upcoming' === $scope;
+	$boundary = current_time( 'Y-m-d H:i' );
+	$no_end   = [
+		'relation' => 'OR',
+		[
+			'key'     => 'hk9_end',
+			'compare' => 'NOT EXISTS',
+		],
+		[
+			'key'     => 'hk9_end',
+			'value'   => '',
+			'compare' => '=',
+		],
+	];
+	if ( $upcoming ) {
+		$by_end = [
+			'key'     => 'hk9_end',
+			'value'   => $boundary,
+			'compare' => '>=',
+			'type'    => 'CHAR',
+		];
+	} else {
+		$by_end = [
+			'relation' => 'AND',
+			[
+				'key'     => 'hk9_end',
+				'value'   => '',
+				'compare' => '!=',
+			],
+			[
+				'key'     => 'hk9_end',
+				'value'   => $boundary,
+				'compare' => '<',
+				'type'    => 'CHAR',
+			],
+		];
+	}
+	$meta_query = [
+		'relation' => 'AND',
+		[
+			'key'     => 'hk9_start',
+			'value'   => '',
+			'compare' => '!=',
+		],
+		[
+			'relation' => 'OR',
+			$by_end,
+			[
+				'relation' => 'AND',
+				$no_end,
+				[
+					'key'     => 'hk9_start',
+					'value'   => $boundary,
+					'compare' => $upcoming ? '>=' : '<',
+					'type'    => 'CHAR',
+				],
+			],
+		],
+	];
+
+	return hk9_rec_query(
 		'hk9_event',
 		[
-			'meta_key' => 'hk9_start', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
-			'orderby'  => 'meta_value',
-			'order'    => 'past' === $scope ? 'DESC' : 'ASC',
+			'posts_per_page' => $count > 0 ? $count : hk9_rec_query_limit( 'hk9_event' ),
+			'meta_key'       => 'hk9_start', // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_key
+			'meta_query'     => $meta_query, // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+			'orderby'        => 'meta_value',
+			'order'          => $upcoming ? 'ASC' : 'DESC',
 		]
 	);
-	$posts = array_values( array_filter( $posts, static fn( WP_Post $p ) => hk9_rec_event_upcoming( (int) $p->ID ) === ( 'upcoming' === $scope ) ) );
-	return $count > 0 ? array_slice( $posts, 0, $count ) : $posts;
 }
 
 /**
@@ -737,6 +894,30 @@ function hk9_rec_gallery_rewrite_html( array $parsed, callable $callback ): arra
 }
 
 /**
+ * Prime the attachments referenced by image/gallery blocks in a block-content
+ * string (`"id":N` attributes and `wp-image-N` classes) before it is rendered, so
+ * the core image block (lightbox metadata, srcset, alt) works from the cache.
+ *
+ * @param string $content Block content.
+ */
+function hk9_rec_prime_content_images( string $content ): void {
+	if ( '' === $content ) {
+		return;
+	}
+	$ids = [];
+	if ( preg_match_all( '/"id":\s*(\d+)/', $content, $m ) ) {
+		$ids = array_merge( $ids, $m[1] );
+	}
+	if ( preg_match_all( '/\bwp-image-(\d+)\b/', $content, $m ) ) {
+		$ids = array_merge( $ids, $m[1] );
+	}
+	$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ), static fn( int $id ) => $id > 0 ) ) );
+	if ( ! empty( $ids ) ) {
+		_prime_post_caches( $ids, false, true );
+	}
+}
+
+/**
  * Render attachment ids as a core gallery block (so the core lightbox and
  * gallery navigation apply), wrapped in `.hk9-gallery-wrap`.
  *
@@ -745,7 +926,14 @@ function hk9_rec_gallery_rewrite_html( array $parsed, callable $callback ): arra
  * @return string
  */
 function hk9_rec_gallery( array $ids, array $options = [] ): string {
-	$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ), static fn( int $id ) => $id > 0 && wp_attachment_is_image( $id ) ) ) );
+	$ids = array_values( array_unique( array_filter( array_map( 'intval', $ids ), static fn( int $id ) => $id > 0 ) ) );
+	if ( empty( $ids ) ) {
+		return '';
+	}
+	// One round trip for the attachment posts + meta (attached file, image meta, alt) so the
+	// per-image checks and hk9_image() below run from the object cache.
+	_prime_post_caches( $ids, false, true );
+	$ids = array_values( array_filter( $ids, 'wp_attachment_is_image' ) );
 	if ( empty( $ids ) ) {
 		return '';
 	}
@@ -797,16 +985,83 @@ function hk9_rec_gallery( array $ids, array $options = [] ): string {
  * ---------------------------------------------------------------------- */
 
 /**
+ * Allowed HTML for the small inline fragments the record heroes accept (a status
+ * pill, an hk9_icon() SVG followed by a text span): `span` plus the SVG subset the
+ * sprite is built from (lucide primitives + the inlined <symbol>/<use>).
+ *
+ * @return array wp_kses allowed-HTML array.
+ */
+function hk9_rec_fragment_kses(): array {
+	static $allowed = null;
+	if ( null !== $allowed ) {
+		return $allowed;
+	}
+	$allowed = [
+		'span'     => [ 'class' => true ],
+		'svg'      => [
+			'xmlns'           => true,
+			'xmlns:xlink'     => true,
+			'class'           => true,
+			'width'           => true,
+			'height'          => true,
+			'viewbox'         => true,
+			'role'            => true,
+			'aria-hidden'     => true,
+			'aria-labelledby' => true,
+			'focusable'       => true,
+		],
+		'symbol'   => [
+			'id'              => true,
+			'viewbox'         => true,
+			'fill'            => true,
+			'stroke'          => true,
+			'stroke-width'    => true,
+			'stroke-linecap'  => true,
+			'stroke-linejoin' => true,
+		],
+		'use'      => [ 'href' => true, 'xlink:href' => true ],
+		'title'    => [ 'id' => true ],
+		'path'     => [ 'd' => true ],
+		'circle'   => [ 'cx' => true, 'cy' => true, 'r' => true ],
+		'ellipse'  => [ 'cx' => true, 'cy' => true, 'rx' => true, 'ry' => true ],
+		'rect'     => [ 'x' => true, 'y' => true, 'width' => true, 'height' => true, 'rx' => true, 'ry' => true ],
+		'line'     => [ 'x1' => true, 'y1' => true, 'x2' => true, 'y2' => true ],
+		'polyline' => [ 'points' => true ],
+		'polygon'  => [ 'points' => true ],
+	];
+	return $allowed;
+}
+
+/**
+ * Sanitise a hero fragment (badge / meta chip) to the allowed span + icon markup.
+ *
+ * @param string $html Fragment.
+ * @return string
+ */
+function hk9_rec_fragment( string $html ): string {
+	if ( '' === $html ) {
+		return '';
+	}
+	// kses lowercases attribute names; restore the one camelCase SVG attribute the sprite uses
+	// (HTML parsers adjust it inside <svg> anyway, this keeps the markup byte-identical).
+	return str_replace( ' viewbox="', ' viewBox="', wp_kses( $html, hk9_rec_fragment_kses() ) );
+}
+
+/**
  * Hero band for a record single: eyebrow, title (h1), optional meta chips and text.
  *
- * @param array $args { eyebrow: string, title: string, text: string, meta: string[] (escaped HTML), badge: string (HTML), pattern: string }.
+ * `badge` and each `meta` entry are small HTML fragments (hk9_rec_status_badge(),
+ * hk9_icon() + <span>); they are run through hk9_rec_fragment() (wp_kses) here.
+ *
+ * @param array $args { eyebrow: string, title: string, text: string, meta: string[] (HTML fragments), badge: string (HTML), pattern: string }.
  */
 function hk9_rec_hero( array $args ): void {
 	$title   = trim( (string) ( $args['title'] ?? get_the_title() ) );
 	$eyebrow = trim( (string) ( $args['eyebrow'] ?? '' ) );
 	$text    = trim( (string) ( $args['text'] ?? '' ) );
 	$meta    = array_values( array_filter( is_array( $args['meta'] ?? null ) ? $args['meta'] : [], static fn( $m ) => is_string( $m ) && '' !== trim( $m ) ) );
-	$badge   = (string) ( $args['badge'] ?? '' );
+	$meta    = array_values( array_filter( array_map( 'hk9_rec_fragment', $meta ), static fn( string $m ): bool => '' !== trim( $m ) ) );
+	$badge   = hk9_rec_fragment( (string) ( $args['badge'] ?? '' ) );
 	$pattern = (string) ( $args['pattern'] ?? 'none' );
 	$pattern = in_array( $pattern, [ 'none', 'stars', 'grid' ], true ) ? $pattern : 'none';
 
@@ -823,14 +1078,14 @@ function hk9_rec_hero( array $args ): void {
 					<?php if ( '' !== $eyebrow ) : ?>
 						<span class="hk9-hero__eyebrow"><?php echo esc_html( $eyebrow ); ?></span>
 					<?php endif; ?>
-					<?php echo $badge; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- built with hk9_rec_status_badge(). ?>
+					<?php echo $badge; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_kses'd in hk9_rec_fragment(). ?>
 				</div>
 			<?php endif; ?>
 			<h1 id="hk9-hero-title" class="hk9-hero__title"><?php echo esc_html( $title ); ?></h1>
 			<?php if ( ! empty( $meta ) ) : ?>
 				<ul class="hk9-hero__meta">
 					<?php foreach ( $meta as $item ) : ?>
-						<li><?php echo $item; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- callers pass escaped fragments. ?></li>
+						<li><?php echo $item; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- wp_kses'd in hk9_rec_fragment(). ?></li>
 					<?php endforeach; ?>
 				</ul>
 			<?php endif; ?>

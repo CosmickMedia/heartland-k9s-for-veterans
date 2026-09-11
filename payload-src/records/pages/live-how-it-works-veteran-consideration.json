@@ -5,7 +5,7 @@
   "slug": "how-it-works-veteran-consideration",
   "title": "How it Works (Veteran Consideration)",
   "template": "page-templates/landing.php",
-  "excerpt": "Thank you for considering HK9 for yourself, or your Veteran. This is how the process works.",
+  "excerpt": "",
   "date": "2023-07-17T15:48:33Z",
   "menu_order": 0,
   "content": "content/live__page__3093.html",
@@ -15,7 +15,7 @@
       "value": {
         "eyebrow": "",
         "heading": "How it Works (Veteran Consideration)",
-        "text": "Thank you for considering HK9 for yourself, or your Veteran. This is how the process works.",
+        "text": "",
         "pattern": "none"
       }
     },

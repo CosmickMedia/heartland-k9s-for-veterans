@@ -91,6 +91,18 @@
 		margin: 0;
 	}
 
+	&__required-note {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+		margin: 0;
+
+		span,
+		&::first-letter {
+			color: var(--hk9-secondary);
+		}
+	}
+
 	&__required {
 		color: var(--hk9-secondary);
 		margin-left: .125rem;

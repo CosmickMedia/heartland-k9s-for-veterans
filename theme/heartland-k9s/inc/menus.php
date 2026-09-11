@@ -33,22 +33,7 @@ function hk9_reference_nav(): array {
  * @param string $flavour `desktop` | `mobile`.
  */
 function hk9_primary_menu( string $flavour = 'desktop' ): void {
-	$mobile  = 'mobile' === $flavour;
-	$last_id = 0;
-
-	// Id of the last top-level item (gets the divider group class on desktop).
-	if ( ! $mobile && hk9_theme_option( 'header.divider_before_last' ) ) {
-		$locations = get_nav_menu_locations();
-		if ( ! empty( $locations['primary'] ) ) {
-			$items = wp_get_nav_menu_items( (int) $locations['primary'] );
-			if ( is_array( $items ) ) {
-				$top = array_values( array_filter( $items, static fn( $i ) => 0 === (int) $i->menu_item_parent ) );
-				if ( count( $top ) > 1 ) {
-					$last_id = (int) end( $top )->ID;
-				}
-			}
-		}
-	}
+	$mobile = 'mobile' === $flavour;
 
 	wp_nav_menu(
 		[
@@ -60,10 +45,34 @@ function hk9_primary_menu( string $flavour = 'desktop' ): void {
 			'depth'          => 1,
 			'fallback_cb'    => 'hk9_primary_menu_fallback',
 			'hk9_flavour'    => $flavour,
-			'hk9_last_id'    => $last_id,
+			'hk9_last_id'    => 0, // Set by hk9_primary_menu_objects() once the items are loaded.
 		]
 	);
 }
+
+/**
+ * Record the id of the last top-level item of the desktop primary menu on the
+ * wp_nav_menu() args (it gets the divider group class) using the items the
+ * menu call already loaded — no second menu query.
+ *
+ * @param array    $items Sorted menu items.
+ * @param stdClass $args  wp_nav_menu args (object; shared with the walker filters).
+ * @return array Unchanged items.
+ */
+function hk9_primary_menu_objects( array $items, $args ): array {
+	if ( ! is_object( $args ) || 'primary' !== ( $args->theme_location ?? '' ) || 'mobile' === ( $args->hk9_flavour ?? 'desktop' ) ) {
+		return $items;
+	}
+	if ( ! hk9_theme_option( 'header.divider_before_last' ) ) {
+		return $items;
+	}
+	$top = array_values( array_filter( $items, static fn( $i ) => is_object( $i ) && 0 === (int) ( $i->menu_item_parent ?? 0 ) ) );
+	if ( count( $top ) > 1 ) {
+		$args->hk9_last_id = (int) end( $top )->ID;
+	}
+	return $items;
+}
+add_filter( 'wp_nav_menu_objects', 'hk9_primary_menu_objects', 10, 2 );
 
 /**
  * Fallback for an unassigned primary menu: reference order, existing pages only.

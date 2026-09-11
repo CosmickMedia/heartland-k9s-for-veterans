@@ -2,10 +2,12 @@
  * Heartland K9s forms — progressive enhancement.
  *
  * Without this script the forms POST to admin-post.php and the server renders the
- * result. With it: client-side required/email checks with inline errors + an error
- * summary (focus moved), fetch() to the REST endpoint, aria-live status, a disabled
- * "Sending..." submit state (no double submit), inline success or redirect, and a
- * native-submit fallback when the endpoint cannot be reached.
+ * result. With it: fresh anti-spam fields fetched at init (so a page served from a
+ * full-page cache never hands every visitor the same single-use token), client-side
+ * required/email checks with inline errors + an error summary (focus moved), fetch()
+ * to the REST endpoint, aria-live status, a disabled "Sending..." submit state (no
+ * double submit), inline success or redirect, and a native-submit fallback whenever
+ * the endpoint cannot be reached or does not answer with the plugin's envelope.
  *
  * No dependencies. Config: window.HK9.forms = { restNonce, i18n }.
  */
@@ -187,12 +189,51 @@
 		}
 		var token = form.querySelector('input[name="hk9_token"]');
 		var ts = form.querySelector('input[name="hk9_ts"]');
+		var nonce = form.querySelector('input[name="hk9_nonce"]');
 		if (token && refresh.token) {
 			token.value = refresh.token;
 		}
 		if (ts && refresh.ts) {
 			ts.value = refresh.ts;
 		}
+		if (nonce && refresh.nonce) {
+			nonce.value = refresh.nonce;
+		}
+	}
+
+	function restHeaders() {
+		var headers = { Accept: 'application/json' };
+		if (config.restNonce) {
+			headers['X-WP-Nonce'] = config.restNonce;
+		}
+		return headers;
+	}
+
+	/**
+	 * Replace the server-rendered nonce/timestamp/token with fresh ones from
+	 * GET hk9/v1/forms/{id}/token (Cache-Control: no-store). The rendered values
+	 * are kept whenever the request fails, so nothing is lost without it.
+	 */
+	function fetchFreshTokens(form) {
+		var url = form.getAttribute('data-hk9-token');
+		if (!url || typeof window.fetch !== 'function') {
+			return;
+		}
+		form.dataset.hk9TokenPending = '1';
+		window.fetch(url, { method: 'GET', credentials: 'same-origin', headers: restHeaders(), cache: 'no-store' }).then(function (response) {
+			if (!response.ok) {
+				throw new Error('status');
+			}
+			return response.json();
+		}).then(function (data) {
+			if (data && typeof data.token === 'string' && typeof data.ts === 'string') {
+				refreshTokens(form, data);
+			}
+		}).catch(function () {
+			// Keep the rendered fields.
+		}).then(function () {
+			form.dataset.hk9TokenPending = '';
+		});
 	}
 
 	function showSuccess(form) {
@@ -241,15 +282,10 @@
 		setBusy(form, true);
 		announce(form, t('sending', 'Sending your message…'));
 
-		var headers = { Accept: 'application/json' };
-		if (config.restNonce) {
-			headers['X-WP-Nonce'] = config.restNonce;
-		}
-
 		window.fetch(endpoint, {
 			method: 'POST',
 			credentials: 'same-origin',
-			headers: headers,
+			headers: restHeaders(),
 			body: new FormData(form)
 		}).then(function (response) {
 			return response.json().then(function (data) {
@@ -259,6 +295,12 @@
 			});
 		}).then(function (result) {
 			var data = result.data || {};
+			if (typeof data.ok !== 'boolean' || !data.mode) {
+				// Not the plugin's envelope (security plugin, REST disabled, no route, invalid cookie
+				// nonce, ...): let admin-post.php handle and render the result.
+				nativeSubmit(form);
+				return;
+			}
 			if (data.ok) {
 				if (form.getAttribute('data-hk9-mode') === 'redirect' && data.redirect) {
 					announce(form, t('sent', 'Your message has been sent.'));
@@ -269,10 +311,6 @@
 				if (!showSuccess(form) && data.redirect) {
 					window.location.assign(data.redirect);
 				}
-				return;
-			}
-			if (data.code === 'rest_cookie_invalid_nonce') {
-				nativeSubmit(form);
 				return;
 			}
 			setBusy(form, false);
@@ -299,6 +337,7 @@
 			form.dataset.hk9Enhanced = '1';
 			form.noValidate = true; // errors are rendered inline (consistent across browsers/AT)
 			form.addEventListener('submit', handleSubmit);
+			fetchFreshTokens(form);
 			form.querySelectorAll('.hk9-form__field').forEach(function (field) {
 				var control = controlOf(field);
 				if (control) {

@@ -92,6 +92,28 @@ final class Layout {
 	}
 
 	/**
+	 * The reference layout of a template: every section id in declaration
+	 * order, with the hide-by-default sections hidden. Storing it changes
+	 * nothing compared with an absent key, so writes equal to it are skipped.
+	 *
+	 * @param Definition[] $sections Template definitions in reference order.
+	 */
+	public static function reference( array $sections ): array {
+		$order  = [];
+		$hidden = [];
+		foreach ( $sections as $def ) {
+			$order[] = $def->id;
+			if ( $def->can_hide && $def->hidden_default ) {
+				$hidden[] = $def->id;
+			}
+		}
+		return [
+			'order'  => $order,
+			'hidden' => $hidden,
+		];
+	}
+
+	/**
 	 * Resolves the visible, ordered section ids for a template given a stored
 	 * layout. Sections missing from the stored order are appended in the
 	 * template's default order; unknown ids are ignored.

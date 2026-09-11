@@ -152,20 +152,76 @@ $r1 = end( $after );
 	? $hk9_pass( 'default_write_skipped', 'hk9_sec_legacy / hk9_sec_features still absent after a full-meta PUT' )
 	: $hk9_fail( 'default_write_skipped', 'defaults were materialized' );
 
-// Simulate the meta-box-loader POST that follows a block-editor save (same values → no second revision).
-$_POST = [
-	'post_ID'              => $page_id,
-	MetaBox::NONCE_FIELD   => wp_create_nonce( MetaBox::NONCE_ACTION . $page_id ),
-	'hk9_sec_hero_band'    => wp_slash( array_merge( $hero_v1, [ '__present' => '1' ] ) ),
-	'hk9_sec_legacy'       => wp_slash( array_merge( Registry::definition( 'about', 'legacy' )->defaults(), [ '__present' => '1' ] ) ),
-	'hk9_sections_layout'  => [ '__present' => '1' ],
-];
-wp_update_post( [ 'ID' => $page_id, 'post_title' => get_the_title( $page_id ) ] );
-$_POST  = [];
-$after2 = $hk9_revisions( $page_id );
-( count( $after2 ) === count( $after ) && 'Heading v1' === get_post_meta( $page_id, 'hk9_sec_hero_band', true )['heading'] && ! metadata_exists( 'post', $page_id, 'hk9_sec_legacy' ) )
-	? $hk9_pass( 'metabox_loader_no_second_revision', sprintf( 'save_post_page with identical values: revisions still %d, legacy defaults not written', count( $after2 ) ) )
-	: $hk9_fail( 'metabox_loader_no_second_revision', sprintf( 'revisions %d → %d', count( $after ), count( $after2 ) ) );
+/* 4b. Block-editor-style PUT carrying the "— Select —" placeholder ('') for an enum select must not 400. */
+$empty_select              = $full;
+$empty_select['hk9_sec_hero_band'] = array_merge( $hero_v1, [ 'pattern' => '' ] );
+$put_empty = $hk9_rest( 'PUT', "/wp/v2/pages/$page_id", [ 'meta' => $empty_select ] );
+$pattern_now = get_post_meta( $page_id, 'hk9_sec_hero_band', true )['pattern'] ?? null;
+$pattern_def = Registry::definition( 'about', 'hero_band' )->defaults()['pattern'];
+( 200 === $put_empty->get_status() && $pattern_def === $pattern_now )
+	? $hk9_pass( 'rest_put_empty_select_ok', "PUT with pattern '' → 200, stored pattern = default \"$pattern_def\"" )
+	: $hk9_fail( 'rest_put_empty_select_ok', wp_json_encode( [ $put_empty->get_status(), $put_empty->get_data()['message'] ?? '', $pattern_now ] ) );
+// Every enum property of every registered key: sanitizing '' (and garbage) yields a schema-valid value.
+$enum_bad   = [];
+$enum_count = 0;
+$hk9_walk   = static function ( array $props, array $path, callable $visit ) use ( &$hk9_walk ): void {
+	foreach ( $props as $name => $prop ) {
+		if ( isset( $prop['enum'] ) ) {
+			$visit( array_merge( $path, [ $name ] ), $prop );
+		}
+		if ( isset( $prop['properties'] ) ) {
+			$hk9_walk( $prop['properties'], array_merge( $path, [ $name ] ), $visit );
+		}
+		if ( isset( $prop['items']['properties'] ) ) {
+			$hk9_walk( $prop['items']['properties'], array_merge( $path, [ $name, '[]' ] ), $visit );
+		}
+	}
+};
+foreach ( Registry::meta_keys() as $key ) {
+	$def = Registry::by_key( $key );
+	$hk9_walk(
+		$def->schema()['properties'],
+		[],
+		static function ( array $path, array $prop ) use ( $def, $key, &$enum_bad, &$enum_count ): void {
+			if ( in_array( '[]', $path, true ) ) {
+				return; // Repeater sub-fields are covered by the direct Sanitizer check below.
+			}
+			$enum_count++;
+			foreach ( [ '', 'not-an-option' ] as $bad ) {
+				$clean = $def->sanitize( [ $path[0] => $bad ] );
+				if ( is_wp_error( rest_validate_value_from_schema( $clean, $def->schema(), $key ) ) ) {
+					$enum_bad[] = $key . '.' . implode( '.', $path ) . "='" . $bad . "'";
+				}
+			}
+		}
+	);
+}
+$sub_ok = '' === Sanitizer::sanitize_field( [ 'type' => 'select', 'key' => 's', 'options' => [ 'a' => 'A' ] ], '' )
+	&& 'a' === Sanitizer::sanitize_field( [ 'type' => 'select', 'key' => 's', 'options' => [ 'a' => 'A' ], 'default' => 'a' ], '' )
+	&& 'a' === Sanitizer::sanitize_field( [ 'type' => 'select', 'key' => 's', 'options' => [ 'a' => 'A' ], 'default' => 'a' ], 'zzz' );
+( [] === $enum_bad && $enum_count > 0 && $sub_ok )
+	? $hk9_pass( 'select_empty_always_schema_valid', "$enum_count top-level enum properties: '' and garbage sanitize to schema-valid values; '' allowed only when the default is ''" )
+	: $hk9_fail( 'select_empty_always_schema_valid', wp_json_encode( [ $enum_bad, $sub_ok ] ) );
+// Rendered control: no placeholder option when the default is non-empty; placeholder kept when '' is legal.
+$sel_renderer = new HK9\Core\Fields\Renderer();
+$sel_html_def = HK9\Core\Fields\Field::type( 'select' )->render( HK9\Core\Fields\Field::normalize( [ 'type' => 'select', 'key' => 'p', 'options' => [ 'a' => 'A', 'b' => 'B' ], 'default' => 'a' ] ), '', 'n', 'i', $sel_renderer );
+$sel_html_opt = HK9\Core\Fields\Field::type( 'select' )->render( HK9\Core\Fields\Field::normalize( [ 'type' => 'select', 'key' => 'p', 'options' => [ 'a' => 'A' ] ] ), '', 'n', 'i', $sel_renderer );
+( ! str_contains( $sel_html_def, 'value=""' ) && str_contains( $sel_html_def, '<option value="a" selected>' ) && str_contains( $sel_html_opt, '<option value="" selected>' ) )
+	? $hk9_pass( 'select_placeholder_only_when_empty_default', 'non-empty default: no "" option, default selected; empty default: placeholder offered' )
+	: $hk9_fail( 'select_placeholder_only_when_empty_default', $sel_html_def . ' | ' . $sel_html_opt );
+
+/* 4c. Collection route (no id): absent keys report each page's own template defaults (shared key hk9_sec_hero_image: home vs canonical barkode). */
+$list = $hk9_rest( 'GET', '/wp/v2/pages', [ 'include' => [ $page_id, $home_id ], 'context' => 'edit', 'per_page' => 10 ] );
+$list_meta = [];
+foreach ( (array) $list->get_data() as $row ) {
+	$list_meta[ (int) ( $row['id'] ?? 0 ) ] = $row['meta'] ?? [];
+}
+$canonical_hero_image = Registry::by_key( 'hk9_sec_hero_image' )->template;
+( 200 === $list->get_status() && 'home' !== $canonical_hero_image
+	&& 'So They Never Walk Alone.' === ( $list_meta[ $home_id ]['hk9_sec_hero_image']['heading'] ?? null )
+	&& 'Heading v1' === ( $list_meta[ $page_id ]['hk9_sec_hero_band']['heading'] ?? null ) )
+	? $hk9_pass( 'rest_collection_template_defaults', "GET /wp/v2/pages?include=: home page hk9_sec_hero_image = home defaults (canonical key owner: $canonical_hero_image); stored about hero_band kept (rest_prepare_page)" )
+	: $hk9_fail( 'rest_collection_template_defaults', wp_json_encode( [ $list->get_status(), $canonical_hero_image, $list_meta[ $home_id ]['hk9_sec_hero_image']['heading'] ?? null, $list_meta[ $page_id ]['hk9_sec_hero_band']['heading'] ?? null ] ) );
 
 /* 5. Other template keys untouched. */
 get_post_meta( $page_id, 'hk9_sec_mission', true ) === $mission ? $hk9_pass( 'other_template_keys_untouched', 'hk9_sec_mission (home) unchanged after about-page saves' ) : $hk9_fail( 'other_template_keys_untouched', wp_json_encode( get_post_meta( $page_id, 'hk9_sec_mission', true ) ) );
@@ -233,6 +289,61 @@ $landing = hk9_sections_layout( 0, 'landing' );
 [ 'hero_band' ] === $landing ? $hk9_pass( 'layout_hidden_by_default', 'landing with no layout → [hero_band] (cards/faq/tiers/cta hidden by default)' ) : $hk9_fail( 'layout_hidden_by_default', wp_json_encode( $landing ) );
 $form_layout = Layout::sanitize( [ 'order' => [ 'legacy', 'values', 'nope' ], 'shown' => [ 'legacy' ], '__present' => '1' ] );
 [ 'order' => [ 'legacy', 'values' ], 'hidden' => [ 'values' ] ] === $form_layout ? $hk9_pass( 'layout_form_shape_sanitized', 'form shape {order, shown} → {order, hidden}, unknown ids dropped' ) : $hk9_fail( 'layout_form_shape_sanitized', wp_json_encode( $form_layout ) );
+
+/* 12b. Reference layout (declaration order + hidden-by-default) is a default write; a switched request template is honoured. */
+delete_post_meta( $page_id, 'hk9_sections_layout' );
+$ref_layout = Layout::reference( Registry::definitions( 'about' ) );
+$ref_is_default = Registry::is_default_write( Layout::META_KEY, $page_id, $ref_layout );
+$moved = $ref_layout;
+$moved['order'] = array_reverse( $moved['order'] );
+$moved_is_default = Registry::is_default_write( Layout::META_KEY, $page_id, $moved );
+$landing_ref = Layout::reference( Registry::definitions( 'landing' ) );
+$switch_is_default = Registry::is_default_write( Layout::META_KEY, $page_id, $landing_ref, 'landing' ) && ! Registry::is_default_write( Layout::META_KEY, $page_id, $landing_ref );
+( $ref_is_default && ! $moved_is_default && $switch_is_default && [] !== $landing_ref['hidden'] )
+	? $hk9_pass( 'layout_reference_is_default_write', 'about reference layout skipped, reordered layout stored; landing reference (hidden: ' . implode( ',', $landing_ref['hidden'] ) . ') only default with template=landing' )
+	: $hk9_fail( 'layout_reference_is_default_write', wp_json_encode( [ $ref_is_default, $moved_is_default, $switch_is_default ] ) );
+
+/* 12c. Repeater min: schema minItems + sanitizer fills missing rows from the default rows. */
+$rep = HK9\Core\Fields\Field::normalize( [ 'type' => 'repeater', 'key' => 'rows', 'min' => 2, 'max' => 3, 'fields' => [ [ 'type' => 'text', 'key' => 't' ] ], 'default' => [ [ 't' => 'one' ], [ 't' => 'two' ] ] ] );
+$rep_schema = HK9\Core\Fields\Schema::property( $rep );
+$rep_one    = Sanitizer::sanitize_field( $rep, [ [ 't' => 'mine' ] ] );
+$rep_none   = Sanitizer::sanitize_field( $rep, [] );
+$rep_four   = Sanitizer::sanitize_field( $rep, [ [ 't' => 'a' ], [ 't' => 'b' ], [ 't' => 'c' ], [ 't' => 'd' ] ] );
+( 2 === ( $rep_schema['minItems'] ?? 0 ) && [ [ 't' => 'mine' ], [ 't' => 'two' ] ] === $rep_one && [ [ 't' => 'one' ], [ 't' => 'two' ] ] === $rep_none && 3 === count( $rep_four )
+	&& ! is_wp_error( rest_validate_value_from_schema( $rep_one, $rep_schema, 'rows' ) ) && $rep_one === Sanitizer::sanitize_field( $rep, $rep_one ) )
+	? $hk9_pass( 'repeater_min_enforced', 'minItems=2 in schema; 1 row → padded with default row 2; [] → defaults; 4 rows → capped at max 3; idempotent' )
+	: $hk9_fail( 'repeater_min_enforced', wp_json_encode( [ $rep_schema['minItems'] ?? null, $rep_one, $rep_none, count( $rep_four ) ] ) );
+
+/* 12d. Write-path capability check: an editor cannot introduce a BarKode record id, but keeps one already stored. */
+if ( post_type_exists( 'hk9_barkode' ) && post_type_exists( 'hk9_team' ) ) {
+	$ed_id  = wp_insert_user( [ 'user_login' => 'hk9_test_editor_' . wp_rand( 1000, 9999 ), 'user_pass' => wp_generate_password(), 'role' => 'editor' ] );
+	$rec_a  = wp_insert_post( [ 'post_type' => 'hk9_barkode', 'post_title' => 'HK9 Test Record A', 'post_status' => 'publish', 'post_author' => (int) $hk9_admin ] );
+	$rec_b  = wp_insert_post( [ 'post_type' => 'hk9_barkode', 'post_title' => 'HK9 Test Record B', 'post_status' => 'publish', 'post_author' => (int) $hk9_admin ] );
+	$team   = wp_insert_post( [ 'post_type' => 'hk9_team', 'post_title' => 'HK9 Test Team', 'post_status' => 'publish', 'post_author' => (int) $hk9_admin ] );
+	update_post_meta( $team, 'hk9_barkode', $rec_a );
+	$bark_field = HK9\Core\Meta\Definitions::field( 'hk9_team', 'barkode' );
+	wp_set_current_user( (int) $ed_id );
+	$editor_can_edit_record = current_user_can( 'edit_post', $rec_b );
+	$keep = HK9\Core\Fields\Access::restrict_field( $bark_field, $rec_a, $rec_a );
+	$deny = HK9\Core\Fields\Access::restrict_field( $bark_field, $rec_b, $rec_a );
+	// REST write as editor: hk9_barkode meta pre-sanitized + restricted (team supports custom-fields → meta in REST).
+	$put_team = $hk9_rest( 'PUT', "/wp/v2/hk9_team/$team", [ 'meta' => [ 'hk9_barkode' => $rec_b ] ] );
+	$team_now = (int) get_post_meta( $team, 'hk9_barkode', true );
+	wp_set_current_user( (int) $hk9_admin );
+	$admin_ok = (int) HK9\Core\Fields\Access::restrict_field( $bark_field, $rec_b, 0 ) === $rec_b;
+	( ! $editor_can_edit_record && $keep === $rec_a && 0 === $deny && $admin_ok && 200 === $put_team->get_status() && 0 === $team_now )
+		? $hk9_pass( 'relationship_write_capability', "editor: stored record $rec_a kept when re-sent, new record $rec_b zeroed (REST PUT 200 → meta 0, not $rec_b); admin may reference it" )
+		: $hk9_fail( 'relationship_write_capability', wp_json_encode( [ $editor_can_edit_record, $keep, $deny, $admin_ok, $put_team->get_status(), $team_now ] ) );
+	wp_delete_post( $team, true );
+	wp_delete_post( $rec_a, true );
+	wp_delete_post( $rec_b, true );
+	if ( ! is_wp_error( $ed_id ) ) {
+		require_once ABSPATH . 'wp-admin/includes/user.php';
+		wp_delete_user( (int) $ed_id );
+	}
+} else {
+	$hk9_blocked( 'relationship_write_capability', 'hk9_barkode/hk9_team not registered' );
+}
 
 /* 13. hero_band fallbacks + hk9_section for unknown ids. */
 delete_post_meta( $page_id, 'hk9_sec_hero_band' );

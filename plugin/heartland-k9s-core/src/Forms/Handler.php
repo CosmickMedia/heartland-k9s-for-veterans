@@ -7,8 +7,10 @@
  * Result states after a non-JS POST are carried by a short-lived transient
  * (`?hk9_form=<id>&status=sent|error&t=<key>`): the "sent" state is keyed by the
  * single-use token, error states by a fresh random key. No submitted data ever
- * appears in a URL; error states (which hold the typed values for re-rendering)
- * are deleted as soon as they are rendered once.
+ * appears in a URL; error states (which hold the typed values for re-rendering,
+ * only for requests that passed the nonce + token checks, capped in size) are
+ * deleted at the end of the request that rendered them. Pages rendering a form
+ * and result pages are excluded from page caches (tokens are per visitor).
  *
  * @package HK9\Core
  */
@@ -23,9 +25,16 @@ namespace HK9\Core\Forms {
 
 		public const ACTION = 'hk9_form_submit';
 
-		private const RESULT_PREFIX = 'hk9_form_res_';
-		private const SENT_TTL      = 10 * MINUTE_IN_SECONDS;
-		private const ERROR_TTL     = 5 * MINUTE_IN_SECONDS;
+		public const RESULT_PREFIX = 'hk9_form_res_';
+		private const SENT_TTL     = 10 * MINUTE_IN_SECONDS;
+		private const ERROR_TTL    = 5 * MINUTE_IN_SECONDS;
+		/** Longest value kept in an error-state transient (typed values re-rendered after a no-JS failure). */
+		private const STORED_VALUE_MAX = 2000;
+		/** Outcomes for which typed values are never persisted (the request never proved a real form session). */
+		private const NO_VALUE_CODES = [ 'unknown_form', 'nonce', 'honeypot', 'token', 'expired' ];
+
+		/** Error-state transient keys consumed during this request (deleted on shutdown, after every render). */
+		private static array $consumed = [];
 
 		/** @var array<string,AbstractForm>|null */
 		private static ?array $forms = null;
@@ -35,6 +44,7 @@ namespace HK9\Core\Forms {
 			add_action( 'admin_post_nopriv_' . self::ACTION, [ self::class, 'handle_admin_post' ] );
 			add_action( 'wp_enqueue_scripts', [ self::class, 'register_assets' ] );
 			add_action( 'template_redirect', [ self::class, 'no_cache_for_results' ] );
+			add_action( 'shutdown', [ self::class, 'purge_consumed' ] );
 
 			if ( class_exists( 'HK9\\Core\\Rest\\Forms' ) ) {
 				\HK9\Core\Rest\Forms::register();
@@ -107,11 +117,64 @@ namespace HK9\Core\Forms {
 			);
 		}
 
-		/** Result pages must not be cached (state is per token). */
+		/**
+		 * Result pages (state is per token) and pages that render a form (the
+		 * nonce, timestamp and single-use token are baked into the HTML) must
+		 * not be served from a full-page cache. Runs before output so the
+		 * headers can still be sent; render() repeats the exclusion late.
+		 */
 		public static function no_cache_for_results(): void {
 			if ( isset( $_GET['hk9_form'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only state flag.
+				self::do_not_cache();
+				return;
+			}
+			if ( is_singular() && self::page_renders_form( (int) get_queried_object_id() ) ) {
+				self::do_not_cache();
+			}
+		}
+
+		/**
+		 * Whether a page renders one of the forms: its template layout contains
+		 * a form section (contact `form`, application `form`), or a theme/plugin
+		 * says so via `hk9/forms/page_renders_form`.
+		 */
+		public static function page_renders_form( int $post_id ): bool {
+			$renders = false;
+			if ( $post_id > 0 && function_exists( 'hk9_sections_layout' ) && class_exists( 'HK9\\Core\\Sections\\Registry' ) ) {
+				$template = class_exists( 'HK9\\Core\\Sections\\Accessor' ) ? \HK9\Core\Sections\Accessor::template_for_post( $post_id ) : '';
+				foreach ( hk9_sections_layout( $post_id, $template ) as $section_id ) {
+					$def = \HK9\Core\Sections\Registry::definition( $template, (string) $section_id );
+					if ( $def && in_array( $def->type, [ 'form', 'application_form' ], true ) ) {
+						$renders = true;
+						break;
+					}
+				}
+			}
+			/**
+			 * Filters whether a page renders a form (used to exclude it from page caches).
+			 *
+			 * @param bool $renders
+			 * @param int  $post_id
+			 */
+			return (bool) apply_filters( 'hk9/forms/page_renders_form', $renders, $post_id );
+		}
+
+		/** Send no-cache headers (when still possible) and flag the page for caching plugins. */
+		private static function do_not_cache(): void {
+			if ( ! defined( 'DONOTCACHEPAGE' ) ) {
+				define( 'DONOTCACHEPAGE', true );
+			}
+			if ( ! headers_sent() ) {
 				nocache_headers();
 			}
+		}
+
+		/** shutdown: error states consumed by a render are deleted once the page has rendered (all copies of the form). */
+		public static function purge_consumed(): void {
+			foreach ( array_unique( self::$consumed ) as $key ) {
+				delete_transient( self::RESULT_PREFIX . $key );
+			}
+			self::$consumed = [];
 		}
 
 		/* -----------------------------------------------------------------
@@ -133,6 +196,7 @@ namespace HK9\Core\Forms {
 				return '';
 			}
 			wp_enqueue_script( 'hk9-forms' );
+			self::do_not_cache(); // No-JS path: the tokens in the markup are per visitor.
 
 			$state = [
 				'errors'  => [],
@@ -157,7 +221,7 @@ namespace HK9\Core\Forms {
 						$state['values']  = is_array( $stored['values'] ?? null ) ? $stored['values'] : [];
 						$state['message'] = (string) ( $stored['message'] ?? '' );
 						$state['code']    = (string) ( $stored['code'] ?? '' );
-						delete_transient( self::RESULT_PREFIX . $q_token ); // consumed: submitted values never linger.
+						self::$consumed[] = $q_token; // consumed: deleted on shutdown so submitted values never linger (and a second copy of the form on the page still renders them).
 					}
 				}
 			}
@@ -192,7 +256,9 @@ namespace HK9\Core\Forms {
 
 			$blocked = Antispam::check( $form_id, $input, $ip );
 			if ( null !== $blocked ) {
-				$values = 'honeypot' === $blocked['code'] ? [] : $form->validate( $input )['values'];
+				// Typed values are only carried (and later persisted for the no-JS re-render) once the
+				// nonce and the token proved a real form session; cheap failures never store anything.
+				$values = in_array( (string) $blocked['code'], self::NO_VALUE_CODES, true ) ? [] : $form->validate( $input )['values'];
 				return new Result(
 					false,
 					(int) $blocked['status'],
@@ -212,7 +278,12 @@ namespace HK9\Core\Forms {
 				return new Result( false, 422, 'validation', __( 'Please correct the highlighted fields and try again.', 'heartland-k9s-core' ), $errors, $values, '', $mode, $key );
 			}
 
-			Antispam::mark_used( $token );
+			// Claim the single-use token atomically only now (valid + validated); released below when
+			// the submission is neither stored nor mailed, so a retry is not answered with "duplicate".
+			if ( ! Antispam::claim( $token ) ) {
+				$dup = Antispam::duplicate();
+				return new Result( false, (int) $dup['status'], (string) $dup['code'], (string) $dup['message'], [], $values, '', $mode, $key );
+			}
 
 			$source_post   = self::source_post( $input );
 			$submitted_gmt = current_time( 'mysql', true );
@@ -241,7 +312,8 @@ namespace HK9\Core\Forms {
 			Submissions::record_mail( $submission_id, $sent );
 
 			if ( ! $sent && 0 === $submission_id ) {
-				return new Result( false, 500, 'send_failed', __( 'We could not send your message right now. Please try again in a few minutes.', 'heartland-k9s-core' ), [], $values, '', $mode, $key );
+				Antispam::release( $token );
+				return new Result( false, 500, 'send_failed', __( 'We could not send your message right now. Please try again in a few minutes.', 'heartland-k9s-core' ), [], $values, '', $mode, $key, Antispam::issue( $form_id ) );
 			}
 
 			Antispam::record_send( $ip );
@@ -292,6 +364,7 @@ namespace HK9\Core\Forms {
 			}
 
 			// Error states get their own random key so they never overwrite a stored "sent" state.
+			// Values are only present for outcomes past the nonce/token checks (see process()) and are capped.
 			$key = bin2hex( random_bytes( 16 ) );
 			set_transient(
 				self::RESULT_PREFIX . $key,
@@ -301,7 +374,7 @@ namespace HK9\Core\Forms {
 					'code'    => $result->code,
 					'message' => $result->message,
 					'errors'  => $result->errors,
-					'values'  => $result->values,
+					'values'  => self::cap_values( $result->values ),
 				],
 				self::ERROR_TTL
 			);
@@ -313,6 +386,18 @@ namespace HK9\Core\Forms {
 		/* -----------------------------------------------------------------
 		 * Helpers
 		 * -------------------------------------------------------------- */
+
+		/** Shorten stored values so a failed POST can never persist more than a bounded payload. */
+		private static function cap_values( array $values ): array {
+			foreach ( $values as $k => $v ) {
+				if ( is_string( $v ) && mb_strlen( $v ) > self::STORED_VALUE_MAX ) {
+					$values[ $k ] = mb_substr( $v, 0, self::STORED_VALUE_MAX );
+				} elseif ( ! is_scalar( $v ) ) {
+					unset( $values[ $k ] );
+				}
+			}
+			return $values;
+		}
 
 		/** Validated source page id (must be a published post), else 0. */
 		private static function source_post( array $input ): int {

@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace HK9\Core\Meta;
 
+use HK9\Core\Fields\Access;
 use HK9\Core\Fields\Assets;
 use HK9\Core\Fields\Field;
 use HK9\Core\Fields\Sanitizer;
@@ -124,13 +125,16 @@ final class Registry {
 			$filter    = current_filter();
 			$post_type = str_starts_with( $filter, 'rest_pre_insert_' ) ? substr( $filter, strlen( 'rest_pre_insert_' ) ) : '';
 		}
+		$post_id = ! empty( $prepared_post->ID ) ? (int) $prepared_post->ID : 0;
 		$changed = false;
 		foreach ( Definitions::for( $post_type ) as $field ) {
 			$key = Definitions::meta_key( $field['key'] );
 			if ( ! array_key_exists( $key, $meta ) || null === $meta[ $key ] ) {
 				continue;
 			}
-			$meta[ $key ] = Sanitizer::sanitize_field( $field, $meta[ $key ] );
+			$clean = Sanitizer::sanitize_field( $field, $meta[ $key ] );
+			// Post references the current user may not introduce are dropped (stored ones are kept).
+			$meta[ $key ] = Access::restrict_field( $field, $clean, $post_id > 0 ? get_post_meta( $post_id, $key, true ) : null );
 			$changed      = true;
 		}
 		if ( $changed ) {

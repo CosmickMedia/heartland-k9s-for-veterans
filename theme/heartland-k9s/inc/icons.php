@@ -11,8 +11,10 @@
  * A missing or unreadable sprite is guarded: a small built-in set covers the icons
  * the theme chrome needs (header, footer, cards); unknown names render nothing.
  *
- * Icon shapes: lucide (ISC) — https://lucide.dev — notice in docs/licenses/LICENSE-lucide.txt
- * (shipped with the sprite) and in the theme readme.
+ * Icon shapes: lucide (ISC) — https://lucide.dev — notice in docs/licenses/LICENSE-lucide.txt,
+ * plus the filled brand glyphs for the footer social links from Simple Icons (CC0) —
+ * docs/licenses/LICENSE-simple-icons.txt. Both are embedded in the sprite by
+ * tools/build-icons.mjs; the X logo is `x-social` (`x` is the close glyph).
  *
  * @package heartland-k9s
  */
@@ -38,23 +40,6 @@ function hk9_icon_fallbacks(): array {
 		'external-link' => '<path d="M15 3h6v6"/><path d="M10 14 21 3"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>',
 		'clock'         => '<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
 		'calendar'      => '<path d="M8 2v3"/><path d="M16 2v3"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/>',
-	];
-}
-
-/**
- * Brand glyphs for the footer social links. lucide-static ≥ 1.0 no longer ships brand
- * icons, so these carry the shapes from the last lucide release that did (ISC, same
- * notice as the sprite: docs/licenses/LICENSE-lucide.txt). They are merged after the
- * sprite so a future sprite build with the same names wins.
- *
- * @return array<string, string>
- */
-function hk9_icon_brand_extras(): array {
-	return [
-		'facebook'  => '<path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/>',
-		'instagram' => '<rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/>',
-		'youtube'   => '<path d="M2.5 17a24.12 24.12 0 0 1 0-10 2 2 0 0 1 1.4-1.4 49.56 49.56 0 0 1 16.2 0A2 2 0 0 1 21.5 7a24.12 24.12 0 0 1 0 10 2 2 0 0 1-1.4 1.4 49.55 49.55 0 0 1-16.2 0A2 2 0 0 1 2.5 17"/><path d="m10 15 5-3-5-3z"/>',
-		'linkedin'  => '<path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/>',
 	];
 }
 
@@ -90,15 +75,15 @@ function hk9_icon_symbols(): array {
 		}
 	}
 
-	$extras = empty( $symbols ) ? array_merge( hk9_icon_fallbacks(), hk9_icon_brand_extras() ) : hk9_icon_brand_extras();
-	foreach ( $extras as $name => $inner ) {
-		if ( isset( $symbols[ $name ] ) ) {
-			continue;
+	// Sprite missing/unreadable: the built-in chrome set keeps header, footer and cards
+	// usable (no brand glyphs — the footer prints the text label instead).
+	if ( empty( $symbols ) ) {
+		foreach ( hk9_icon_fallbacks() as $name => $inner ) {
+			$symbols[ $name ] = [
+				'inner' => $inner,
+				'attrs' => sprintf( 'id="hk9-icon-%s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"', $name ),
+			];
 		}
-		$symbols[ $name ] = [
-			'inner' => $inner,
-			'attrs' => sprintf( 'id="hk9-icon-%s" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"', $name ),
-		];
 	}
 
 	return $symbols;

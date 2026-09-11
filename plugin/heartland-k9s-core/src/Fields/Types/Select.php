@@ -64,7 +64,9 @@ class Select extends Type {
 			return $default;
 		}
 		$value = sanitize_text_field( (string) $value );
-		if ( $has_opts && ! isset( $options[ $value ] ) && '' !== $value ) {
+		// Anything that is not a valid option (including the "— Select —" placeholder '') becomes the
+		// default, so the stored value always passes the schema enum (the default is always in it).
+		if ( $has_opts && ! isset( $options[ $value ] ) ) {
 			return $default;
 		}
 		return $value;
@@ -105,10 +107,18 @@ class Select extends Type {
 			]
 		);
 		unset( $attrs['placeholder'] );
-		$selected = $multiple ? array_map( 'strval', (array) $value ) : [ (string) $value ];
+		$default = isset( $field['default'] ) && is_scalar( $field['default'] ) ? (string) $field['default'] : '';
+		if ( $multiple ) {
+			$selected = array_map( 'strval', (array) $value );
+		} else {
+			// An empty value on a select with a non-empty default shows the default: '' is not a legal option there.
+			$selected = [ ( '' === (string) $value && '' !== $default && ! empty( $options ) ) ? $default : (string) $value ];
+		}
 
 		$html = '<select' . $this->attrs( $attrs ) . '>';
-		if ( ! $multiple && ! isset( $options[''] ) && ( empty( $field['required'] ) || '' === (string) $value ) ) {
+		// The placeholder is only offered when '' is a storable value (empty default); otherwise the
+		// sanitizer would silently turn it into the default and the control would misrepresent the state.
+		if ( ! $multiple && ! isset( $options[''] ) && '' === $default && ( empty( $field['required'] ) || '' === (string) $value ) ) {
 			$html .= '<option value=""' . ( '' === (string) $value ? ' selected' : '' ) . '>' . esc_html( $field['placeholder'] ?: __( '— Select —', 'heartland-k9s-core' ) ) . '</option>';
 		}
 		foreach ( $options as $opt_value => $label ) {

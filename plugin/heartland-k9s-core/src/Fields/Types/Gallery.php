@@ -82,7 +82,7 @@ class Gallery extends Type {
 		$html .= '</ul>';
 		$html .= '<p class="hk9-gallery__empty" data-hk9-gallery-empty' . ( empty( $ids ) ? '' : ' hidden' ) . '>' . esc_html__( 'No images selected.', 'heartland-k9s-core' ) . '</p>';
 		$html .= '<div class="hk9-media__actions">';
-		$html .= sprintf( '<button type="button" class="button" data-hk9-gallery-add aria-describedby="%s">%s</button>', esc_attr( $id . '-help' ), esc_html__( 'Add images', 'heartland-k9s-core' ) );
+		$html .= sprintf( '<button type="button" class="button" data-hk9-gallery-add%s>%s</button>', $this->describedby( $field, $id ), esc_html__( 'Add images', 'heartland-k9s-core' ) );
 		$html .= sprintf( '<button type="button" class="button-link hk9-media__remove" data-hk9-gallery-clear>%s</button>', esc_html__( 'Remove all', 'heartland-k9s-core' ) );
 		$html .= '</div></div>';
 		return $html;

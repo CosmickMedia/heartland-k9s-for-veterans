@@ -3,7 +3,7 @@ Contributors: heartlandk9s
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -34,7 +34,7 @@ self-hosted Fraunces + Inter and an inline lucide icon sprite. Pairs with the
     npm install
     npm run build:css   # tools/build-css.mjs → assets/dist/theme.css + editor.css
     npm run build:js    # tools/build-js.mjs  → assets/dist/theme.js
-    npm run build:icons # lucide sprite       → assets/dist/icons.svg + icons.json
+    npm run build:icons # lucide + brand sprite → assets/dist/icons.svg + icons.json
     npm run build:fonts # Fraunces/Inter woff2 → assets/fonts/ + assets/src/scss/_fonts.scss
 
 Compiled files in assets/dist/ are committed so the theme installs without Node.
@@ -52,3 +52,18 @@ screenshot.png in the theme root. Do not ship a placeholder image.
 * Bootstrap 5.3.8 — MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
 * Fraunces, Inter — SIL Open Font License 1.1 (assets/fonts/OFL-*.txt)
 * lucide icons — ISC (docs/licenses/LICENSE-lucide.txt)
+* Simple Icons brand glyphs (facebook, instagram, youtube, linkedin, x-social) — CC0 1.0
+  (docs/licenses/LICENSE-simple-icons.txt); embedded in tools/build-icons.mjs
+
+== Changelog ==
+
+= 1.0.1 =
+* Record listings prime featured images / meta (no per-card queries); auto listings are
+  capped (filter hk9/theme/rec_query_limit) and the plugin-less events fallback is bounded in SQL.
+* Footer social icons come from the sprite (Simple Icons brand glyphs, X as `x-social`).
+* Plugin-less section defaults are translatable and use the links.* settings for CTAs.
+* Record hero fragments pass through wp_kses; BarKode "do not separate" notice is static text.
+* Dead FAQ accordion script and no-op lazy-loading filter removed; primary menu query deduped.
+
+= 1.0.0 =
+* Initial release.

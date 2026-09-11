@@ -105,9 +105,9 @@ while ( have_posts() ) :
 					<?php endif; ?>
 
 					<?php if ( $hk9_separate ) : ?>
-						<p class="hk9-record__alert" role="alert">
+						<p class="hk9-record__alert">
 							<?php echo hk9_icon( 'shield-alert', [ 'size' => 20 ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper. ?>
-							<span><?php esc_html_e( 'DO NOT SEPARATE FROM HANDLER', 'heartland-k9s' ); ?></span>
+							<strong><?php esc_html_e( 'DO NOT SEPARATE FROM HANDLER', 'heartland-k9s' ); ?></strong>
 						</p>
 					<?php endif; ?>
 

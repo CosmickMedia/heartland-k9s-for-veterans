@@ -16,6 +16,21 @@ $hk9_intro    = trim( (string) ( $hk9_data['intro'] ?? '' ) );
 $hk9_sponsors = ! isset( $hk9_data['show_sponsors'] ) || ! empty( $hk9_data['show_sponsors'] );
 $hk9_posts    = hk9_rec_section_records( $hk9_data, 'campaigns', 'hk9_campaign' );
 
+// Prime every card's sponsors (partner posts, meta, logos) in one go instead of per campaign.
+// The raw meta is read here (campaign meta is already cached): the plugin's relationship
+// accessor validates each id with get_post(), which then hits the primed cache in the cards.
+if ( $hk9_sponsors && ! empty( $hk9_posts ) ) {
+	$hk9_sponsor_ids = [];
+	foreach ( $hk9_posts as $hk9_campaign ) {
+		$hk9_raw = get_post_meta( (int) $hk9_campaign->ID, 'hk9_sponsors', true );
+		if ( is_array( $hk9_raw ) ) {
+			$hk9_sponsor_ids = array_merge( $hk9_sponsor_ids, array_map( 'intval', array_filter( $hk9_raw, 'is_scalar' ) ) );
+		}
+	}
+	hk9_rec_prime( $hk9_sponsor_ids );
+	unset( $hk9_sponsor_ids, $hk9_campaign, $hk9_raw );
+}
+
 hk9_section_open( $hk9_id, 'hk9-section--py24 hk9-campaigns-section', hk9_rec_section_attrs( $hk9_id, '' !== $hk9_heading ? $hk9_heading : __( 'Campaigns', 'heartland-k9s' ), (int) ( $args['post_id'] ?? get_the_ID() ) ) );
 ?>
 <div class="container">

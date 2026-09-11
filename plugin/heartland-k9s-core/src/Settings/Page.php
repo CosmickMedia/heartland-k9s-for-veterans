@@ -187,13 +187,15 @@ final class Page {
 
 			case 'textarea':
 			case 'emails':
+			case 'cidrs':
 				printf(
-					'<textarea id="%1$s" name="%2$s" rows="%3$d" class="large-text"%4$s>%5$s</textarea>',
+					'<textarea id="%1$s" name="%2$s" rows="%3$d" class="large-text%6$s"%4$s>%5$s</textarea>',
 					esc_attr( $id ),
 					esc_attr( $name ),
-					'emails' === $field['type'] ? 3 : 4,
+					'textarea' === $field['type'] ? 4 : 3,
 					$desc, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
-					esc_textarea( (string) $value )
+					esc_textarea( (string) $value ),
+					'cidrs' === $field['type'] ? ' code' : ''
 				);
 				break;
 
@@ -246,6 +248,7 @@ final class Page {
 			case 'email':
 			case 'url':
 			case 'code':
+			case 'header':
 			case 'slug':
 			case 'text':
 			default:
@@ -260,7 +263,7 @@ final class Page {
 					esc_attr( $id ),
 					esc_attr( $name ),
 					esc_attr( (string) $value ),
-					'code' === $field['type'] ? ' code' : '',
+					in_array( $field['type'], [ 'code', 'header' ], true ) ? ' code' : '',
 					$desc, // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
 					'url' === $field['type'] ? ' placeholder="https://"' : ''
 				);

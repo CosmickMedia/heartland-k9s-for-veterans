@@ -28,7 +28,7 @@
             "icon": "heart-handshake",
             "logo": "{{media:live:media:3718}}",
             "title": "Donate online with Zeffy",
-            "text": "Donating has never been easier! Click the Zeffy logo to donate.",
+            "text": "Click the Zeffy logo to donate.",
             "button": {
               "label": "Donate with Zeffy",
               "url": "https://www.zeffy.com/en-US/donation-form/donate-to-heartland-k9s-it-will-change-lives",
@@ -56,7 +56,7 @@
             "icon": "gift",
             "logo": "{{media:live:media:3678}}",
             "title": "HK9’s Daily Needs Wishlist",
-            "text": "Donating has never been easier! Click through to HK9’s Daily Needs Wishlist on Amazon.",
+            "text": "Click through to HK9’s Daily Needs Wishlist on Amazon.",
             "button": {
               "label": "View the Amazon Wishlist",
               "url": "https://www.amazon.com/hz/wishlist/ls/35NF4IVCKN76G?ref_=wl_share",

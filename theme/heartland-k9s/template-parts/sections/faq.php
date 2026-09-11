@@ -1,6 +1,7 @@
 <?php
 /**
- * Section: faq — accessible accordion built from native <details>/<summary>.
+ * Section: faq — native <details>/<summary> items (independently collapsible; the
+ * reference design has no single-open accordion, so no script is involved).
  *
  * @package heartland-k9s
  *
@@ -39,7 +40,7 @@ hk9_section_open( $hk9_id, 'hk9-section--py24' );
 		</div>
 	<?php endif; ?>
 
-	<div class="hk9-faq" data-hk9-accordion>
+	<div class="hk9-faq">
 		<?php foreach ( $hk9_items as $hk9_index => $hk9_item ) : ?>
 			<?php $hk9_item_id = 'hk9-faq-' . sanitize_html_class( $hk9_id ) . '-' . ( $hk9_index + 1 ); ?>
 			<details class="hk9-faq__item" id="<?php echo esc_attr( $hk9_item_id ); ?>">
