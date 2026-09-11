@@ -18,22 +18,21 @@ function hk9_dev_create_blog_fixtures( string $marker ): string {
 	require_once ABSPATH . 'wp-admin/includes/file.php';
 	require_once ABSPATH . 'wp-admin/includes/media.php';
 
-	$cats = [];
-	foreach ( [ 'Program Updates', 'Events', 'Community' ] as $name ) {
-		$t = wp_insert_term( $name, 'category' );
-		$id = is_wp_error( $t ) ? (int) ( $t->error_data['term_exists'] ?? 0 ) : (int) $t['term_id'];
-		if ( $id ) { add_term_meta( $id, $marker, 1, true ); $cats[] = $id; }
-	}
-	$tags = [];
-	foreach ( [ 'service dogs', 'training', 'fundraising', 'veterans day', 'poker run' ] as $name ) {
-		$t = wp_insert_term( $name, 'post_tag' );
-		$id = is_wp_error( $t ) ? (int) ( $t->error_data['term_exists'] ?? 0 ) : (int) $t['term_id'];
-		if ( $id ) { add_term_meta( $id, $marker, 1, true ); $tags[] = $id; }
-	}
-	// An existing tag with no posts (empty archive state; the live site has such tags, e.g. poker-run).
-	$empty_tag = wp_insert_term( 'fixture empty tag', 'post_tag' );
-	$empty_tag = is_wp_error( $empty_tag ) ? (int) ( $empty_tag->error_data['term_exists'] ?? 0 ) : (int) $empty_tag['term_id'];
-	if ( $empty_tag ) { add_term_meta( $empty_tag, $marker, 1, true ); }
+	// Terms: only a term this function actually CREATES gets the marker. A term that already exists
+	// (e.g. the imported "Poker Run" / "Veterans Day" tags) is reused for the posts but never marked,
+	// otherwise `fixtures delete` would remove real site data along with the fixtures.
+	$term = static function ( string $name, string $taxonomy ) use ( $marker ): int {
+		$t = wp_insert_term( $name, $taxonomy );
+		if ( is_wp_error( $t ) ) {
+			return (int) ( $t->error_data['term_exists'] ?? 0 ); // pre-existing: reuse, do not mark
+		}
+		add_term_meta( (int) $t['term_id'], $marker, 1, true );
+		return (int) $t['term_id'];
+	};
+	$cats = array_values( array_filter( array_map( static fn( string $n ) => $term( $n, 'category' ), [ 'Program Updates', 'Events', 'Community' ] ) ) );
+	$tags = array_values( array_filter( array_map( static fn( string $n ) => $term( $n, 'post_tag' ), [ 'service dogs', 'training', 'fundraising', 'veterans day', 'poker run' ] ) ) );
+	// A tag with no posts (empty archive state; the live site has such tags, e.g. poker-run).
+	$term( 'fixture empty tag', 'post_tag' );
 
 	// Second author for author archives.
 	$author2 = username_exists( 'hk9_fixture_author' ) ?: wp_insert_user( [ 'user_login' => 'hk9_fixture_author', 'user_pass' => wp_generate_password( 24 ), 'display_name' => 'Fixture Author', 'role' => 'author', 'user_email' => 'fixture-author@hk9.test' ] );

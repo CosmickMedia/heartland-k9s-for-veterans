@@ -1,0 +1,97 @@
+[
+  {
+    "name": "Home 1440: Tab order skip link → brand → 7 nav links → Donate → hero CTAs",
+    "pass": true,
+    "evidence": "a.hk9-skip-link[Skip to content] → a.hk9-header__brand[Heartland K9sFor Veterans Heartland Canines for Veterans] → a.hk9-header__nav-link[About] → a.hk9-header__nav-link[Program] → a.hk9-header__nav-link[Veterans] → a.hk9-header__nav-link[BarKode] → a.hk9-header__nav-link[Stories] → a.hk9-header__nav-link[Get Involved] → a.hk9-header__nav-link[Contact] → a.hk9-btn[Donate Now] → a.hk9-btn[Support a Service Dog] → a.hk9-btn[Apply for a Dog]"
+  },
+  {
+    "name": "Home 1440: skip link becomes visible on focus",
+    "pass": true,
+    "evidence": "rect=[16,16,156,48] outline=2px solid rgb(255, 255, 255) shadow=rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0p"
+  },
+  {
+    "name": "Home 1440: every focused control has a visible focus indicator (outline or box-shadow)",
+    "pass": true,
+    "evidence": "Skip to cont: 2px solid rgb(255, 255, 255); Heartland K9: 2px solid rgb(28, 47, 74); About: 2px solid rgb(28, 47, 74); Program: 2px solid rgb(28, 47, 74); Veterans: 2px solid rgb(28, 47, 74); BarKode: 2px solid rgb(28, 47, 74); Stories: 2px solid rgb(28, 47, 74); Get Involved: 2px solid rgb(28, 47, 74); Contact: 2px solid rgb(28, 47, 74); Donate Now: rgb(28, 47, 74) 0px 0px 0px 1px; Support a Se: rgb(28, 47, 74) 0px 0px 0px 1px; Apply for a : rgb(28, 47, 74) 0px 0px 0px 1px"
+  },
+  {
+    "name": "Home 1440: Enter on skip link moves focus into <main> (next Tab lands inside main content)",
+    "pass": true,
+    "evidence": "{\"hash\":\"#main\",\"active\":\"main\",\"mainTabindex\":\"-1\",\"scrollY\":0}; next Tab → a[Support a Service Dog]"
+  },
+  {
+    "name": "Home 390: Tab reaches the menu toggle (skip link → brand → toggle)",
+    "pass": true,
+    "evidence": "a[Skip to content] → a[Heartland K9sFor Veterans Heartland Canines for Veterans] → button[Open menu]"
+  },
+  {
+    "name": "Home 390: Enter on toggle opens the panel (aria-expanded=true, panel not hidden)",
+    "pass": true,
+    "evidence": "{\"expanded\":\"true\",\"hidden\":false,\"visible\":true,\"label\":\"Close menu\"}"
+  },
+  {
+    "name": "Home 390: Tab moves through the panel items (7 links + Donate) in order",
+    "pass": true,
+    "evidence": "a[About] → a[Program] → a[Veterans] → a[BarKode] → a[Stories] → a[Get Involved] → a[Contact] → a[Donate Now] → (left panel to a[Support a Service Dog])"
+  },
+  {
+    "name": "Home 390: tabbing past the last panel item closes the panel (focusout rule)",
+    "pass": true,
+    "evidence": "{\"expanded\":\"false\",\"hidden\":true}"
+  },
+  {
+    "name": "Home 390: Escape closes the open panel and returns focus to the toggle",
+    "pass": true,
+    "evidence": "focus was on a[Program] → {\"expanded\":\"false\",\"hidden\":true,\"activeIsToggle\":true}"
+  },
+  {
+    "name": "Contact: Tab order goes first name → last name → email → subject → message → Send (honeypot skipped)",
+    "pass": true,
+    "evidence": "input#hk9-form-contact-first_name[] → input#hk9-form-contact-last_name[] → input#hk9-form-contact-email[] → select#hk9-form-contact-subject[Select a subje] → textarea#hk9-form-contact-message[] → button#[Send Message] | controls: input[hk9_website](tabindex -1), input[first_name], input[last_name], input[email], select[subject], textarea[message]"
+  },
+  {
+    "name": "Contact: each form control shows a focus indicator",
+    "pass": true,
+    "evidence": "hk9-form-contact-first_name: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1; hk9-form-contact-last_name: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1; hk9-form-contact-email: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1; hk9-form-contact-subject: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1; hk9-form-contact-message: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px, rgba(0, 0, 0, 0.1) 0px 1; Send Messa: rgb(28, 47, 74) 0px 0px 0px 1px"
+  },
+  {
+    "name": "Contact: submitting an invalid form moves focus to the error summary (role=alert)",
+    "pass": true,
+    "evidence": "{\"summaryHidden\":false,\"summaryRole\":\"alert\",\"summaryText\":\"Please correct the following:First Name is required.Last Name is required.Email Address is required.Please select an option for Subject.Message is required.\",\"activeIsSummary\":true,\"activeDesc\":\"div#hk9-form-contact-summary\",\"invalidCount\":5,\"describedby\":\"hk9-form-contact-first_name-error\",\"noValidate\":true,\"url\":\"http://localhost:8093/contact/\",\"summaryTop\":96,\"headerBottom\":81,\"obscuredPx\":0,\"scrollPaddingTop\":\"96px\"}"
+  },
+  {
+    "name": "Contact: the focused error summary is not obscured by the sticky header (scroll-padding-top honoured)",
+    "pass": true,
+    "evidence": "summaryTop=96px headerBottom=81px scroll-padding-top=96px"
+  },
+  {
+    "name": "Contact: first summary link focuses its field",
+    "pass": true,
+    "evidence": "a[First Name is required.] → input#hk9-form-contact-first_name aria-invalid=true"
+  },
+  {
+    "name": "Photos: gallery images have keyboard lightbox triggers (WP core image lightbox)",
+    "pass": true,
+    "evidence": "{\"figures\":71,\"triggers\":71,\"overlay\":true,\"overlayRole\":null,\"overlayModal\":null,\"firstTriggerLabel\":\"Enlarge 1 of 71\"}"
+  },
+  {
+    "name": "Photos: Tab reaches the first lightbox trigger button",
+    "pass": true,
+    "evidence": "button.lightbox-trigger[Enlarge 1 of 71] outline=3px auto rgb(0, 95, 204) shadow=none focusVisible=true"
+  },
+  {
+    "name": "Photos: Enter opens the lightbox (overlay active, role=dialog, aria-modal, focus inside)",
+    "pass": true,
+    "evidence": "{\"active\":true,\"visibility\":\"visible\",\"ariaModal\":\"true\",\"role\":\"dialog\",\"activeInOverlay\":true,\"activeDesc\":\"div.wp-lightbox-overlay[Enlarged image 1 of 71]\",\"bodyOverflow\":\"visible\",\"imgSrc\":\"IMG_curlyvest-1536x799.jpg\"}"
+  },
+  {
+    "name": "Photos: Tab cycles within the open lightbox (focus stays inside the dialog)",
+    "pass": true,
+    "evidence": "button.wp-lightbox-close-button[Close] → button.wp-lightbox-navigation-button[Previous] → button.wp-lightbox-navigation-button[Next]"
+  },
+  {
+    "name": "Photos: Escape closes the lightbox and returns focus to the trigger",
+    "pass": true,
+    "evidence": "{\"active\":false,\"visibility\":\"hidden\",\"activeDesc\":\"button.lightbox-trigger[Enlarge 1 of 71]\",\"focusOnTrigger\":true,\"focusInFigure\":true}"
+  }
+]

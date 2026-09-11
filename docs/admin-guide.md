@@ -1,0 +1,206 @@
+# Admin guide — where staff edit each part of the site
+
+Log in at `/wp-admin/`. Everything specific to Heartland lives under the **Heartland** menu (paw icon); pages under **Pages**; blog posts under **Posts**. Field names below are quoted exactly as they appear on screen.
+
+![Heartland overview](reports/screenshots/admin-guide/heartland-overview.png)
+
+## How page editing works
+
+Every page has two layers: the **block editor canvas** at the top (used on migrated pages, News and Privacy Policy) and a box titled **Sections — <template name>** below it (open the **Meta Boxes** bar if collapsed). Each section is a collapsible panel of fields; which sections exist depends on the page's **Template** (sidebar → **Page** tab → **Template**).
+
+The sidebar panel **Page sections** controls order and visibility: *"Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content."* The hero is always shown. Save with the blue **Save** button.
+
+![About editor overview](reports/screenshots/admin-guide/about-editor-overview.png)
+![Page sections panel](reports/screenshots/admin-guide/about-page-sections-panel.png)
+
+Field types you will meet everywhere:
+
+- **Image** — **Select image** / **Replace** / **Remove**; the picker has **Upload files** and **Media Library** tabs, then **Use this**.
+- **Link** — **Label**, then **Page / record** (type in "Search pages and records…") or **External URL**; optional **Open in a new tab**. Prefer Page / record: it follows the page if its slug changes.
+- **Repeaters** (cards, buttons, tiers, rows) — **Add …** button, ↑ ↓ to reorder, × to remove.
+- **Story / Team / Partner pickers** — "Type to search…" and pick a chip.
+
+![Media picker](reports/screenshots/admin-guide/about-media-picker.png)
+
+## Edit the Home page hero
+
+**Pages → Home** (template *Home (sections)*) → section **Hero (image)**: **Eyebrow badge**, **Eyebrow icon**, **Heading** (required), **Line break after word**, **Text**, **Background image**, **Background image (mobile)**, **Focal point**, **Height**, **Navy overlay opacity**, **Add dark gradient**, **Buttons** (max 2: **Link** + **Style** = Primary (crimson) / Outline (light)), **Entrance animation**.
+
+![Home hero](reports/screenshots/admin-guide/home-section-hero.png)
+![Home hero buttons](reports/screenshots/admin-guide/home-section-hero-buttons.png)
+
+The paragraph under the hero is section **Mission statement** (**Heading**, **Show crimson divider**, **Text**).
+
+## Change the three feature cards
+
+**Pages → Home** → section **Feature cards** → **Cards** repeater. Each card: **Icon**, **Icon color** (Navy / Crimson), **Title**, **Text**, **Link**, **Decorative corner accent**. Section-level options: **Heading**, **Intro**, **Show crimson divider under the heading**, **Card alignment**, **Columns** (2 / 3). Use **Add card** for more; keep three for the reference layout.
+
+![Feature cards](reports/screenshots/admin-guide/home-section-features-cards.png)
+
+The "BarKode Program" band lower on the page is section **BarKode feature** (**Eyebrow**, **Heading**, **Text**, **Image**, **Image caption**, **Button**, **Show diagonal grid pattern**).
+
+## Swap the testimonial
+
+**Pages → Home** → section **Testimonial** → **Source**:
+
+- **From a Story** — pick a published Story in **Story** (leave empty to use the latest story marked *Featured story*). Quote, name and image come from the Story's Details box.
+- **Manual quote** — fill **Quote**, **Name**, **Attribution line** ("Only publish verified details"), **Image**.
+
+**Button** is the "Read More Stories" link. The same pattern exists on the Success Stories page (section **Featured story (overlap card)**).
+
+![Testimonial](reports/screenshots/admin-guide/home-section-testimonial.png)
+
+## Edit the About / Program / Veterans / Get Involved / BarKode / Stories / Contact sections
+
+Open the page under **Pages** and edit the section panels. Sections per page:
+
+| Page (template) | Sections |
+|---|---|
+| About (*About / Mission*) | **Hero (band)**, **Legacy (image + text card)** (Eyebrow badge, Heading, Body, Image, Image position), **Core values** (cards), **Call to action** |
+| The Program (*Program*) | **Hero (image)**, **How it works (timeline)** (Heading, Intro, **Steps**: Icon, Title, Text), **K9 providers** (Icon, Heading, Text, Button), **Call to action** |
+| For Veterans (*For Veterans*) | **Hero (band)**, **The 5 Questions (checklist card)** (Heading, Intro, **Questions**, Footer text, buttons), **What to expect** (Steps + card fields), **ADA rights band** |
+| Get Involved (*Get Involved*) | **Hero (band)**, **Ways to help (cards with buttons)**, **Corporate & community partners** (Icon, Heading, Body, Button, **Show partner logos**) |
+| The BarKode Program (*BarKode Program*) | **Hero (image)**, **Dedication story** (Icon, Heading, Body), **How BarKode protects** (cards), **Call to action** |
+| Success Stories (*Stories (listing)*) | **Hero (band)**, **Featured story (overlap card)**, **Story list** (Heading, **Source**: automatic or *Pick manually* → **Stories (manual)**, **Number of stories**, **Empty state text**), **Teams in training** (**Show this block**), **Call to action** |
+| Contact Us (*Contact*) | **Hero (band)**, **Contact info column** (**Rows**: **Value source** pulls Main phone / Secondary phone / Email / Office hours / Address from Settings, or **Custom text**; Icon, Label), **Form column** (**Form**: Contact form / Application inquiry form; **Success heading**, **Success text**) |
+
+**Hero (band)** fields: **Eyebrow**, **Heading** (defaults to the page title), **Text** (defaults to the page excerpt), **Background pattern** (None / Stars / Diagonal grid). **Call to action** fields: **Heading**, **Text**, **Buttons** (max 2, **Style**), **Background** (Navy / Navy tint / Plain / Muted).
+
+![About legacy section](reports/screenshots/admin-guide/about-section-legacy.png)
+![About core values](reports/screenshots/admin-guide/about-section-values.png)
+
+Phone numbers, e-mails and the address on the Contact page come from **Heartland → Settings → Contact** — change them there, not on the page.
+
+## Add or edit a Story, Team, Person, Partner, Campaign, Event
+
+All live under **Heartland → Stories / Teams / People / Partners / Campaigns / Events**. Each has a title, body text, **Featured image** (sidebar) and a **Details** box. Display order for Teams, People, Partners and Campaigns is **Post Attributes → Order** (lower first).
+
+| Type | Details fields | Where it shows |
+|---|---|---|
+| Story | **Veteran display name** ("Only the name the veteran approved for publication"), **Branch of service**, **Canine name**, **Relationship**, **Pairing year** ("Only if verified"), **Quote**, **Featured story**, **Gallery**, **Related team**, **Source note (internal)** (not shown on the site) | `/stories/<slug>/`, Success Stories page, Home testimonial |
+| Team | **Canine name**, **Handler display name**, **Status** (In training / Graduated / Therapy), **Year**, **Featured / highlighted team**, **Gallery**, **Donate link**, **BarKode record**, **Summary** | `/teams/<slug>/`, HK9 Teams in Training page, Our Highlighted Team page |
+| Person | **Role / title**, **Email (organization domain only)** (only @heartlandk9s.org is published), **Links**, **Quote** | Meet the Team page (no single page) |
+| Partner | **Website**, **Tier**, **Partner since**; tick a **Partner Types** box (Back the Pack Partner, Campaign Sponsor, Community Partner, K9 Provider); logo = Featured image | Back the Pack page, campaign sponsor logos |
+| Campaign | **Summary**, **Status** (Active / Completed / Paused), **Start date**, **End date**, **Primary call to action**, **Secondary call to action**, **Sponsors** (pick Partners), **Gallery**, **Goal text**, **Featured campaign** | `/campaigns/<slug>/`, Campaigns page |
+| Event | **Start** (required; date + optional time), **End**, **All-day event**, **Time to be announced**, **Timezone**, **Venue**, **Address**, **Registration / tickets link**, **Ticket information**, **Organizer name**, **Organizer contact**, **Status** (Scheduled / Cancelled / Postponed), **Featured event**, **Flyer** | `/events/<slug>/`, Events page (**Upcoming events** / **Past events** split automatically by Start/End) |
+
+![Stories list](reports/screenshots/admin-guide/stories-list.png)
+![Story details](reports/screenshots/admin-guide/stories-details.png)
+![Team details](reports/screenshots/admin-guide/teams-details.png)
+![Event details](reports/screenshots/admin-guide/events-details.png)
+![Campaign details](reports/screenshots/admin-guide/campaigns-details-2.png)
+![Partner details](reports/screenshots/admin-guide/partners-details.png)
+
+Listing pages (Events, Campaigns, HK9 Teams in Training, Meet the Team, Back the Pack) have a **Source** select: leave it automatic, or choose *Pick manually* and fill the "(manual)" picker to hand-pick and order items.
+
+## Add or update a BarKode record
+
+**Heartland → BarKode Records** (Administrators only, unless *Let Editors manage BarKode registry records* is on under Settings → Advanced). **Add New BarKode Record**, give it a title, upload the dog photo as **Featured image**, fill **Details** and **Publish**. The record URL is `/barkode/<slug>/`.
+
+![BarKode record fields (placeholder record)](reports/screenshots/admin-guide/barkode-record-details.png)
+
+Privacy rules — what is public:
+
+- **Everything in Details is printed on the public record page when filled in**, except **Review notes (never published)**: **Dog name**, **Program type**, **Registry ID**, **Breed**, **Task description**, **Tasks**, **Handler name**, **Emergency contact**, **Veterinary contact**, **Certification**, **Do not separate dog and handler** (red banner), **Notice**, **Contact line**, **ID card images**, **Status note**, plus the photo. Only enter what the handler has agreed to publish.
+- **Review notes (never published)** is the place for restricted details: it is never rendered and never exposed through the REST API.
+- Record pages are `noindex, nofollow`, excluded from sitemaps, site search, embeds and feeds, and never listed anywhere on the site. They are reached only by scanning the QR patch.
+- **Legacy path** documents the original root-level URL printed on the patch (e.g. `/hk923-005/`). The redirect itself is a rule under **Heartland → Redirects** — the rules for existing printed patches are seeded, so for a **new** patch add a redirect there: **Source path** = the printed path, **Destination** = *A BarKode record*, pick the record, **Type** 301. Keep old rules **Enabled** as long as patches are in circulation.
+- Do not put records in menus or link to them from pages.
+
+![BarKode list (placeholder row)](reports/screenshots/admin-guide/barkode-list.png)
+
+## Edit migrated pages (block editor + optional sections)
+
+Pages such as The HK9 Coloring Book, Heartland Gear, Volunteer, 5 Questions, Service Dogs and the ADA, The Service K9 Program, How it Works, Heartland Obedience Training and Thank You use the **Landing Page** template: text and images are ordinary blocks in the canvas, rendered in the card under the navy hero. Optional sections are ticked off by default in **Page sections** — tick one to show it:
+
+- **Feature cards** — same fields as the Home cards.
+- **FAQ** — **Heading**, **Intro**, **Questions** (**Question**, **Answer**), **Source note** (internal).
+- **Sponsor tiers** — **Heading**, **Intro**, **Tiers** (**Name**, **Price**, **Quantity / availability**, **Benefits (one per line)**, **Highlight this tier**, **Button**). Used on the Coloring Book page.
+- **Call to action**.
+
+![Landing page overview](reports/screenshots/admin-guide/landing-editor-overview.png)
+![Sponsor tiers](reports/screenshots/admin-guide/landing-section-tiers-items.png)
+
+News and Privacy Policy use the default template (hero band + block content, optional Call to action).
+
+## Photos gallery
+
+**Pages → Photos** (template *Photo Gallery*). The pictures are a **Gallery block** in the page canvas — select it and use the block toolbar to add, remove or reorder images. Section **Gallery options**: **Open images in a lightbox**, **Columns** (2 / 3 / 4), **Show captions**, and **Images**, which is used only when the page has no gallery block.
+
+![Gallery options](reports/screenshots/admin-guide/gallery-section-options.png)
+
+## Donate page options
+
+**Pages → Donate** (template *Donate*) → section **Ways to give** → **Options** repeater: **Icon**, **Logo (optional, replaces the icon)**, **Title**, **Text**, **Button**, **Primary option** (crimson button + "Recommended"). Also **Donate by mail** (**Heading**, **Text**, **Show the mailing address from Settings**) and **Tax statement** (defaults to the *Tax-deductibility statement* in Settings → Contact).
+
+The destinations that "Donate"/"Support a Service Dog" buttons use site-wide are in **Heartland → Settings → Destinations**: **Donate page** and **Online donation form (external)** (the Zeffy form).
+
+![Donate options](reports/screenshots/admin-guide/donate-section-options.png)
+
+## Menus
+
+**Appearance → Menus**. Four locations (**Manage Locations** tab): **Primary navigation**, **Footer — Quick Links**, **Footer — Get Involved**, **Footer — Legal**. Edit items on the **Edit Menus** tab (add pages from the left column, drag to reorder, nest for dropdowns) and **Save Menu**. Footer column headings live in Settings → Footer.
+
+![Menu locations](reports/screenshots/admin-guide/menus-locations.png)
+![Edit menus](reports/screenshots/admin-guide/menus-edit.png)
+
+## Global contact details, logos, colors, header CTA, footer
+
+**Heartland → Settings**, one tab each; **Save changes** at the bottom.
+
+- **Branding** — **Header logo**, **Header logo height (px)**, **Footer logo**, **Footer logo height (px)**, **Show the two-line wordmark next to the logo**, **Wordmark line 1 / 2**. The favicon is **Appearance → Customize → Site Identity → Site Icon**.
+- **Colors & Fonts** — **Primary (navy)**, **Secondary (crimson)**, **Page background**, **Body text**, **Muted background**, **Muted text**, **Borders**, **Accent**; **Heading font**, **Body font**.
+- **Contact** — phones and labels, **General email**, **Director email**, **Development email**, address, **Office hours**, **Office days**, **Service area line**, social URLs, **Candid / GuideStar profile URL**, **EIN**, **Legal name**, **Tax-deductibility statement**. Feeds the footer, Contact page, Donate page and structured data.
+- **Destinations** — where recurring buttons point (Donate page, Online donation form, Veteran application, 5 Questions page, Volunteer, listings, gear shop, …). "Pick a page or enter an external address — never an ID."
+- **Header** — **Show the header button**, **Header button label**, **Header button destination** (falls back to the Donate page), **Sticky header**.
+- **Footer** — **Description**, **Tagline**, **Column 2/3/4 heading**, **Copyright line** (`{year}` auto-fills), **Credit line**, **Show the GuideStar seal in the footer**.
+
+![Settings — Branding](reports/screenshots/admin-guide/settings-branding.png)
+![Settings — Contact](reports/screenshots/admin-guide/settings-contact.png)
+![Settings — Header](reports/screenshots/admin-guide/settings-header.png)
+![Settings — Footer](reports/screenshots/admin-guide/settings-footer.png)
+
+## Forms: recipients, viewing submissions, retention
+
+**Heartland → Settings → Forms**: **Contact form recipients** and **Application inquiry recipients** (one address per line), **From name**, **From email** (must be on the site's domain), **Contact form subjects** (Value / Label rows), **Submissions per hour per visitor**, **Keep a copy of each submission in Heartland → Submissions**, **Delete stored submissions after (days)** (0 keeps forever), **Contact form success message**, **Application inquiry success page**. Leave **Trusted proxy addresses** / **Client IP header** alone unless the host puts a CDN in front of the site.
+
+**Heartland → Submissions** lists stored submissions (Form, Name, Email, Date, **Mail sent**); open one to read it. Submissions are read-only — use Trash to remove one. A yellow notice on Heartland screens warns when a notification e-mail could not be sent; the message is still stored, so check the list.
+
+![Settings — Forms](reports/screenshots/admin-guide/settings-forms.png)
+![Submissions list](reports/screenshots/admin-guide/submissions-list.png)
+
+## Blog / News
+
+Write under **Posts**. The listing is the **News** page, set as **Posts page** in **Settings → Reading** (keep **Homepage** = Home, **Posts page** = News). Listing appearance is **Heartland → Settings → Blog**: **Listing layout**, **Listing title**, **Listing intro**, **Listing hero image**, **Show featured images / dates / author names / categories / tags / related posts**, **Related posts count**.
+
+![Reading settings](reports/screenshots/admin-guide/reading.png)
+![Settings — Blog](reports/screenshots/admin-guide/settings-blog.png)
+
+## Redirects
+
+**Heartland → Redirects**. **Add redirect**: **Source path** (site-relative, e.g. `/old-page/`), **Destination** (*A page or item on this site*, *A BarKode record*, or *A path or web address*), **Type** (301 Permanent, 302 Temporary, 410 Gone), **Note**, **Enabled**. Rules marked **seed** cover the printed BarKode patch URLs and old gallery/slider links: they cannot be deleted, only disabled. **Restore missing seeds** puts them back. Row actions let you enable, disable and test a rule.
+
+![Redirects list](reports/screenshots/admin-guide/redirects-list.png)
+![Add redirect](reports/screenshots/admin-guide/redirects-add.png)
+
+## Re-running the importer safely
+
+**Heartland → Setup & Import** (Administrators). Re-runs skip what is already in place and **keep edits made on this site** — changed items show as a *Conflict* count, not an overwrite.
+
+1. Select the payload (**Upload a payload ZIP** → **Upload & unpack**, or a server path).
+2. Click **Dry run**; only *Create* / *Update* counts will change anything.
+3. Click **Import**. Leave **Overwrite conflicts (revert edits made on this site to the payload values)** unticked unless you deliberately want to discard site edits.
+4. If needed, **3. Runs & rollback** → **Rollback…** removes only what that run created; edited records are skipped unless you tick *Force*.
+
+Never leave a payload ZIP in a web-readable folder: it contains registry data.
+
+![Setup & Import](reports/screenshots/admin-guide/import.png)
+
+## What not to do
+
+- **Do not add BarKode records to menus or link to them from pages.** They are reached only from the QR patch; the menu screen does not offer them, so do not add them as custom links either.
+- **Do not delete the listing pages** Success Stories, Events, Campaigns, The BarKode Program, Meet the Team, HK9 Teams in Training, Back the Pack, Photos, News (or Home, Donate, Contact Us): buttons, menus, Destinations and pagination depend on them. Hide a section instead.
+- **Do not change the slugs** `stories`, `events`, `campaigns`, `barkode`, `meet-the-team`, `hk9-current-teams-in-training`, `back-the-pack`, `photos`, `news` — the `/page/2/` rules, seeded redirects and Destinations point at them. Do not nest pages under them (the editor refuses).
+- **Do not change a page's Template casually**: the sections box switches to the new template's sections.
+- **Do not publish unverified names, years or quotes** — use approved display names only; keep sourcing notes in the internal fields.
+- **Do not turn on Settings → Advanced → *Delete all Heartland content and settings when the plugin is deleted*** unless you intend to wipe the content.

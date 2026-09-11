@@ -86,3 +86,9 @@ Base http://localhost:8093 · 2026-09-11T17:05:09Z · `HK9_EXPECT_FIXTURES=1 bas
 | `/this-page-does-not-exist/` | 404 | 404 | — | ✅ |
 | `/wp-sitemap.xml` | 200 | 200 | — | ✅ |
 | `/feed/` | 200 | 200 | — | ✅ |
+
+## Post-cleanup run
+
+`bash tools/url-matrix.sh` after `tools/wp.sh hk9-dev fixtures delete` (no fixtures, so the `/news/page/2/` row is skipped by the script's guard): exit 0 · 81 rows, 81 ✅, 0 ❌ — including `/tag/poker-run/` and `/tag/veterans-day/` = 200.
+
+Note: the first `fixtures delete` of this session removed those two imported tags (term ids 72/73) because `docker/fixtures/blog-fixtures.php` marked pre-existing terms adopted via `term_exists` as fixtures. The fixture was fixed (only terms it creates are marked), the tags were recreated by slug (`wp term create post_tag "Poker Run" --slug=poker-run` → 89, `"Veterans Day" --slug=veterans-day` → 90), `wp hk9 import … --dry-run` reports `terms 0 create / 0 update / 6 skip` (the importer adopts them by slug and will re-point its map rows from 72/73 on its next real pass), and a second create → delete cycle with the fixed fixture left both tags in place.

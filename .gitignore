@@ -4,8 +4,9 @@ node_modules/
 dist/*.zip
 payload/media/
 payload/source/
-docs/reports/screenshots/**/*.png
-docs/reports/diffs/**/*.png
+# evidence screenshots are committed (handoff kit); raw per-engine full-page duplicates and raw Lighthouse JSON are not
+docs/reports/screenshots/cross-engine/
+docs/reports/lighthouse/*.json
 tools/.cache/
 theme/heartland-k9s/assets/dist/*.map
 *.log

@@ -1,0 +1,289 @@
+{
+ "editor": {
+  "summary": "Wrote a re-runnable Playwright editor-task matrix (tools/editor-matrix.mjs, chromium 1440x900, logs in as admin/admin) that performs all 14 required editor tasks through wp-admin, proves each on the frontend with a plain HTTP fetch of the rendered page (curl-equivalent, parsed with cheerio), reverts every change through the UI (Revisions restore / re-selecting the original value / deleting created records) and compares the end state with a WP-CLI snapshot. Final result: 14 pass, 0 fail, 0 blocked, 0 end-state differences. Report: docs/reports/editor-matrix.md (steps / expected / observed / screenshots / result per task, usability findings, site-state comparison); 34 screenshots under docs/reports/screenshots/admin/em-NN-*.png. Two plugin bugs surfaced (blank icon previews in every Icon field; the Header settings tab drops header.cta_link.label on every save) plus five usability findings (WP core revision-restore redirect + no new revision on meta-only restore, autosave notice after preview, story card heading = veteran display name, new Person defaults to Order 0 and jumps to first position, sticky \"Save Menu\" button click not registering in a specific scroll geometry). Site verified identical at the end with WP-CLI: About/Home section meta, titles/slugs/content, hk9_settings (byte-identical to the option read at session start), 7 primary menu items, story/event/person/partner/submission lists, no \"tmp Editor Matrix\" records, Mailpit empty, no autosaves, admin editor preferences put back. Only revision counts grew (About 1 \u2192 23, Home 1 \u2192 29, all from this verifier's iterations; the original revisions 1531/1535 are intact) \u2014 allowed by the brief. No git commit/checkout was performed.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/editor-matrix.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/editor-matrix.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin/ (em-01 \u2026 em-14 *.png, 34 files)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin/editor-matrix-results.json (sidecar used to merge partial --only runs into the report)"
+  ],
+  "tests": [
+   {
+    "name": "1 About hero_band heading \u2192 Update \u2192 frontend h1 \u2192 restore via Revisions",
+    "result": "PASS",
+    "evidence": "REST 200; /about/ h1 = new heading; revisions +1 on Update; Revisions screen 'Restore This Revision' put hk9_sec_hero_band back byte-identical and /about/ h1 = 'Our Mission'. Restore adds no revision (core saves the revision before wp_restore_post_revision_meta) and WP 7.1 bounces from post.php?message=5&revision= back to revision.php (findings). em-01-*.png"
+   },
+   {
+    "name": "2 About Legacy image via media picker \u2192 Update \u2192 frontend img \u2192 revert",
+    "result": "PASS",
+    "evidence": "Picker set image 1404 \u2192 1405; .hk9-legacy__media img src about-dog.jpg \u2192 barkode.jpg; re-selecting 'About split-card image' restored meta identical and src back. em-02-*.png"
+   },
+   {
+    "name": "3 Home primary hero CTA label + link (internal page picker) \u2192 Update \u2192 revert",
+    "result": "PASS",
+    "evidence": "hk9/v1/pick picked Donate (1434); frontend button 'Give Today (tmp\u2026)' \u2192 http://localhost:8093/donate/; revert (label + External URL tab) left hk9_sec_hero_image identical, button 'Support a Service Dog' \u2192 zeffy URL. em-03-*.png"
+   },
+   {
+    "name": "4 Home feature cards: card 3 \u2192 position 1 (mouse move buttons), revert with keyboard (Enter on Move down \u00d72)",
+    "result": "PASS",
+    "evidence": "Frontend order [A Lifelong Commitment | Zero Cost to Veterans | Unbreakable Bond] after Update; keyboard moves kept focus on the moved row; meta + frontend identical after revert. Icon previews 0/3 rendered (bug finding). em-04-*.png"
+   },
+   {
+    "name": "5 Home hide 'mission' via Page sections panel \u2192 Update \u2192 show again",
+    "result": "PASS",
+    "evidence": "hidden=[mission], no #hk9-mission on /; re-ticked \u2192 hk9_sections_layout identical, section back. em-05-*.png"
+   },
+   {
+    "name": "6 Preview without saving (About hero heading)",
+    "result": "PASS",
+    "evidence": "Autosave 200; preview tab h1 = 'Preview only (tmp Editor Matrix 6)' while live /about/ h1 = 'Our Mission' and stored meta unchanged; editor reload shows the saved value; autosave revision removed in cleanup (notice finding). em-06-*.png"
+   },
+   {
+    "name": "7 Add Story (title, quote, veteran name, canine, featured image, featured toggle) \u2192 publish \u2192 /stories/ + single URL \u2192 delete permanently",
+    "result": "PASS",
+    "evidence": "Published /stories/tmp-editor-matrix-story/ (200, h1 = title); one card on /stories/ (heading = veteran display name, quote, image) with a single href; Trash \u2192 Delete Permanently via list; gone. em-07-*.png"
+   },
+   {
+    "name": "8 Add Event (future date/time, venue, registration link) \u2192 Upcoming \u2192 past date \u2192 Past \u2192 delete",
+    "result": "PASS",
+    "evidence": "start '2026-10-21 18:00', venue, registration URL saved; listed inside #hk9-upcoming only; after start 2024-01-15 listed inside #hk9-past only; deleted via UI. em-08-*.png"
+   },
+   {
+    "name": "9 Add Person (name, role, portrait) \u2192 /meet-the-team/ (order) \u2192 delete; add Partner (name, logo, website, type back-the-pack) \u2192 /back-the-pack/ \u2192 delete",
+    "result": "PASS",
+    "evidence": "Classic editor; person card rendered with role + portrait at position 1 of 12 (menu_order 0 default \u2014 finding); partner tile is a link to https://example.com/ with logo, term back-the-pack; both deleted via UI. em-09-*.png"
+   },
+   {
+    "name": "10 Appearance \u2192 Menus custom link \u2192 header desktop + mobile panel \u2192 remove",
+    "result": "PASS",
+    "evidence": "Item saved; .hk9-header__list link + #hk9-mobile-menu link present in HTML; anonymous 390px page shows it in the opened panel (opacity 1); removed \u2192 menu items identical to start. Mouse click on sticky Save Menu did not register in this geometry (finding; keyboard/scroll-to-bottom works). em-10-*.png"
+   },
+   {
+    "name": "11 Settings \u2192 Contact main phone \u2192 footer + contact page \u2192 restore; Branding header logo swap \u2192 header img \u2192 restore",
+    "result": "PASS",
+    "evidence": "Footer tel + contact info rows show 800-555-0199, old number gone, 'Settings saved.' notice; restored identical. Header logo src Concept-1-rocker\u2026 \u2192 hero-home\u2026 and back; effective settings identical. em-11-*.png"
+   },
+   {
+    "name": "12 Settings \u2192 Header Donate CTA label \u2192 header \u2192 restore",
+    "result": "PASS",
+    "evidence": "Header + mobile CTA show the new label, then 'Donate Now' again. DEFECT: the Header tab save drops header.cta_link.label ('Donate Now' \u2192 '') \u2014 no visible effect; restored with WP-CLI in cleanup (bug finding). em-12-*.png"
+   },
+   {
+    "name": "13 Quick Edit on About (title only) \u2192 section meta untouched \u2192 restore title",
+    "result": "PASS",
+    "evidence": "Title changed via Quick Edit, slug unchanged; all 5 hk9_sec_*/layout keys + content byte-identical before/after (WP-CLI); title restored via Quick Edit. em-13-about-quick-edit.png"
+   },
+   {
+    "name": "14 Contact form anonymous: no-JS POST to admin-post.php + JS submit \u2192 Submissions + Mailpit \u2192 delete",
+    "result": "PASS",
+    "evidence": "No-JS: 303 \u2192 /contact/?hk9_form=contact&status=sent&t=\u2026 with 'Message Sent' panel; JS: REST 200 + inline success; two rows under Heartland \u2192 Submissions with 'Sent' badges (_hk9_mail_sent=1); Mailpit 2\u00d7 '[HK9 Contact] \u2026'; rows deleted via Trash \u2192 Delete Permanently, Mailpit messages deleted. Run used --reset-rate-limit because earlier iterations had exhausted the 5/hour limit. em-14-*.png"
+   },
+   {
+    "name": "End-state verification (WP-CLI)",
+    "result": "PASS",
+    "evidence": "hk9_settings option byte-identical to the value read at session start; About/Home meta + titles identical; 0 'tmp Editor Matrix' records; 7 menu items; Mailpit empty; 0 autosaves; admin wp_persisted_preferences restored. Revisions: About 1 \u2192 23, Home 1 \u2192 29 (this verifier's iterations; originals 1531/1535 intact)."
+   }
+  ],
+  "issues": [
+   "BUG (plugin, task 4): the icon preview beside every Icon select is blank \u2014 Fields/Renderer::icon_svg() emits <use href=\"\u2026icons.svg#<name>\"> while the theme sprite ids are hk9-icon-<name>; nothing hooks the hk9/fields/icon_symbol_prefix filter (fix: theme or plugin adds the 'hk9-icon-' prefix).",
+   "BUG (plugin, task 12): saving Heartland \u2192 Settings \u2192 Header drops header.cta_link.label ('Donate Now' \u2192 '') because the settings link field posts only mode/post_id/url/target; the same applies to every links.* label on the Destinations tab. No visible effect today (theme prints header.cta_label / its own labels).",
+   "WP core (task 1): after 'Restore This Revision' the block editor bounces back to the Compare Revisions screen (useClassicRevisionRedirect), so the 'restored' notice never shows; and a meta-only restore adds no revision, leaving the newest revision showing the temporary value.",
+   "Usability (task 6): after Preview + reload the editor shows 'There is an autosave of this post that is more recent\u2026' for the previewed value (the script deletes that autosave in cleanup).",
+   "Usability (task 7): /stories/ cards use the Veteran display name as heading; no help text says so.",
+   "Usability (task 9): a new Person defaults to Order 0 and jumps to first position on /meet-the-team/ (existing people are 1\u201311).",
+   "WP core (task 10): with the item list just taller than the viewport, a mouse click on the sticky 'Save Menu' footer button does not register (mousedown focus scrolls 33px); Enter / scrolling to the bottom first works.",
+   "Site residue allowed by the brief: About/Home revision counts grew to 23/29 across my iterations (many carry 'tmp Editor Matrix' headings in their history); no other content changed. Pre-existing 'Heartland forms: 1 submission \u2026 could not be sent' admin notice and 3 test submissions (8:10\u20138:51 am, example.com) belong to other agents' earlier runs, not this verifier.",
+   "Task 14 shares the per-IP contact-form rate limit (5/hour) with the other agents' submissions (same docker gateway IP); the script marks the task BLOCKED when the limit is already reached unless --reset-rate-limit is passed."
+  ],
+  "integration_notes": "Run: `node tools/editor-matrix.mjs` (all 14 tasks, ~4 min) or `--only=7,8` for a subset (merged into the previous results via docs/reports/screenshots/admin/editor-matrix-results.json so the report always lists all 14); `--headed` to watch; `--reset-rate-limit` deletes the hk9_form_rl_* transient before task 14. Options: --base, --mailpit, --out, --report, --user, --pass. Exit code 1 on any FAIL. Dependencies already in package.json (playwright, cheerio); uses tools/wp.sh for WP-CLI. The script purges leftover 'tmp Editor Matrix' records from an interrupted run, restores page meta / hk9_settings with WP-CLI if a UI revert did not leave the original value (reported per task), restores the admin user's wp_persisted_preferences, and re-normalises the raw hk9_settings option after Settings-API saves (effective values are compared via Store::all()). Suggested fixes for the two plugin bugs: hook `hk9/fields/icon_symbol_prefix` to return 'hk9-icon-' (theme inc/icons.php or plugin Renderer default), and carry the existing label through Settings\\\\Store::sanitize_link / the settings link field (add a hidden label input or merge the stored label when the posted value lacks one). No git operations were performed; docs/reports/editor-matrix.md and tools/editor-matrix.mjs are untracked additions."
+ },
+ "audits": {
+  "summary": "Audit runner completed all 9 steps against http://localhost:8093 (session 17:04\u201317:40 UTC). Results: URL matrix 82/82 \u2705 with fixtures (and 81/81 \u2705 after cleanup); axe-core 4.13 over 23 URLs \u00d7 2 widths: zero serious/critical violations in first-party markup (the only 6 hits are inside the YouTube iframe of the local-only fixture post); network audit 23/24 URLs clean, every first-party page served solely from localhost:8093 (the single flag is the fixture post's YouTube embed: fonts.gstatic.com inside the frame + Chromium's 'web-share' allow-attribute warning from WP core's oEmbed markup); cross-engine (Chromium 153 / WebKit 26.6 / Firefox 155, Playwright 1.63.0): 24 captures, page heights within 6px, no font/form-control/hero-crop differences beyond text rasterisation and the native textarea grip; Lighthouse 12.8.2 + Chrome 152 mobile (simulate, Slow 4G): Performance 84/87/87/91/90/87/87 for / , /about/, /program/, /contact/, /news/, /fixture-rich-blocks/, /barkode/hk923-005/ (a11y 100 everywhere; SEO 69 on the two intentionally-noindexed URLs), desktop 99 and 100; keyboard walk 19/19 checks pass with screenshots; debug.log contains only the 2 pre-session lines from another agent's contact-form test while Mailpit was restarting; fixtures deleted and site back to 0 posts / admin-only.\n\nReal findings (theme/plugin, reported not edited): (1) fonts download twice on every page \u2014 inc/assets.php preloads fraunces-var.woff2?v=\u2026 and inter-var.woff2?v=\u2026 but @font-face requests the same files without ?v=, wasting 106 KB per page and delaying LCP; (2) render-blocking 173 KB (28 KB gz) theme.css is the main mobile-performance cost (est. 1.46\u20131.62 s per page); (3) .hk9-btn:focus-visible (_buttons.scss:35-38) replaces the 2px outline with a 1px navy ring that is invisible on dark sections (hero CTAs). Tool bugs fixed: axe.mjs (full selector details, in-iframe attribution, axe/browser versions), network-audit.mjs (document 404 counted as failed request; pageerror listener leak; requests from the previous page's embeds leaking into the next URL via shared page; main-frame vs embedded-frame attribution), lighthouse.mjs (versions/throttling/per-run scores, --desktop, automatic HTML diagnostic + opportunities for perf<90, --reuse, correct multi-output file naming, alt-text masking and full privacy scrubbing for /barkode/ runs), and docker/fixtures/blog-fixtures.php (fixtures delete removed the imported 'Poker Run'/'Veterans Day' tags because pre-existing terms adopted via term_exists were marked as fixtures \u2014 fixed, tags restored by slug, verified with importer dry-run and a second create/delete cycle).",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/url-matrix.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/axe.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/network-audit.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/cross-engine.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/cross-engine/ (16 triptychs + 8 detail crops)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/cross-engine/{chromium,webkit,firefox}/ (24 full-page + 24 viewport captures)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/report.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/report-desktop.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/summary.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/*-run{1,2,3}.json, *-desktop-run1.json, {home,about,program,fixture-rich-blocks}-diagnostic.report.{html,json}",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/keyboard.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/keyboard/ (17 focus-state PNGs, 5 composite sheets, results.json, keyboard-walk.mjs)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/axe.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/network-audit.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/lighthouse.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docker/fixtures/blog-fixtures.php"
+  ],
+  "tests": [
+   {
+    "name": "Step 1 \u2014 tools/wp.sh hk9-dev fixtures create",
+    "result": "pass",
+    "evidence": "\"Created 14 posts (last one sticky), 3 categories, 5 tags (+1 empty), 4 images, author #38.\" \u2192 post count 14 (ids 1808\u20131821), attachments 244 (240+4), users admin + hk9_fixture_author (#38). Fixture rich post URL is /fixture-rich-blocks/ (permalink /%postname%/); story slug is /stories/madison-and-gunther/."
+   },
+   {
+    "name": "Step 2 \u2014 HK9_EXPECT_FIXTURES=1 bash tools/url-matrix.sh",
+    "result": "pass",
+    "evidence": "exit 0; 82 rows, 82 \u2705, 0 \u274c (all 8 reference routes, 20 migrated pages, 15 registry legacy\u2192/barkode/ 301s with x-redirect-by: hk9-legacy + 15 record pages 200 with x-robots-tag: noindex, case/UTM/trailing-slash variants, embed 404, /success/, /slide/, foogallery, /teams/, hk9_barkode query/REST 404, users REST 401, tag archives, /news/page/2/, /stories/page/2/, search, 404, sitemap, feed). Post-cleanup run: 81 rows, 81 \u2705 (the /news/page/2/ row is guarded when fixtures are absent). Saved to docs/reports/url-matrix.md."
+   },
+   {
+    "name": "Step 3 \u2014 node tools/axe.mjs (23 URLs \u00d7 390/1440, axe-core 4.13.0, chromium 153.0.8010.12, tags wcag2a/2aa/21a/21aa/22aa/best-practice)",
+    "result": "pass (first-party); exit 1 only because of iframe content",
+    "evidence": "0 critical / 0 serious / 0 moderate / 0 minor on 22 of 23 URLs at both widths (/, /about/, /program/, /veterans/, /get-involved/, /barkode/, /stories/, /contact/, /news/, /donate/, /events/, /campaigns/, /meet-the-team/, /photos/, /?s=dog, /nonexistent-page/, /back-the-pack/, /the-hk9-coloring-book/, /online-application/, /barkode/hk923-005/, /hk9-current-teams-in-training/, /stories/madison-and-gunther/). /fixture-rich-blocks/ @390 and @1440: aria-allowed-attr (critical, `iframe .ytmVideoInfoVideoTitle` aria-level on a non-heading), aria-prohibited-attr (serious, `iframe #movie_player` aria-label on a div), button-name (critical, `iframe .ytmVideoInfoChannelAvatar`) \u2014 all three are inside the cross-origin YouTube embed iframe on the LOCAL-ONLY fixture post; the report's Result line states \"6 of the 6 group(s) are entirely inside a cross-origin <iframe> \u2026 0 are in first-party markup\". docs/reports/axe.md."
+   },
+   {
+    "name": "Step 4 \u2014 node tools/network-audit.mjs (24 URLs incl. fixture rich post, chromium 153, 1440\u00d7900, networkidle + scroll)",
+    "result": "pass (23/24 clean; 1 flagged = documented YouTube exception)",
+    "evidence": "Every first-party page loads only from localhost:8093 (e.g. / 12 requests, /photos/ 81, /get-involved/ 22), no forbidden host, no failed/4xx sub-request, no console error/warning. /nonexistent-page/: document status 404, no failed sub-requests, clean. /fixture-rich-blocks/ (flagged): main-frame console warning \"Unrecognized feature: 'web-share'\" = Chromium parsing the allow=\"\u2026web-share\" attribute on the iframe emitted by WP core's YouTube oEmbed (grep web-share theme plugin \u2192 0 hits); embedded-frame hosts www.youtube.com (8), fonts.gstatic.com (1, matches forbidden pattern but inside the embed), googleads.g.doubleclick.net (2), static.doubleclick.net, www.google.com, i.ytimg.com, jnn-pa.googleapis.com, yt3.ggpht.com, www.gstatic.com; embedded-frame warning \"No available adapters.\" Notes section in docs/reports/network-audit.md."
+   },
+   {
+    "name": "Step 5 \u2014 cross-engine screenshots + triptychs + report",
+    "result": "pass",
+    "evidence": "node tools/screenshot.mjs --engines=chromium,webkit,firefox --widths=390,1440 --routes=/,/program/,/contact/,/news/ \u2192 24/24 captured (exit 0). Versions: Playwright 1.63.0; chromium 153.0.8010.12 (HeadlessChrome/153.0.8010.12); webkit 26.6 (AppleWebKit/605.1.15 Version/26.6); firefox 155.0. Full-page heights: / 6514/6513/6513 (390), 3706\u00d73 (1440); /program/ 5833\u00d73, 3832\u00d73; /contact/ 3441\u00d73, 1773\u00d73; /news/ 7944/7938/7938 (390), 4815/4813/4813 (1440). 16 triptychs + detail crops composed with sharp in docs/reports/cross-engine/. Row-wise pixel diff (alpha stripped; flat colours byte-identical: 251,250,249 / 28,47,74) shows differences only on text rows (rasteriser); hero crop pixel-identical; forms identical (Bootstrap .form-select SVG chevron in all engines; only the native textarea grip differs: 2 thin strokes Chromium, 2 heavier WebKit, 4-stroke hatch Firefox); the 6 px /news/ delta is Chromium rounding the 4-line excerpt line-height 1 px per card. Fonts Fraunces/Inter self-hosted and loaded in all three. docs/reports/cross-engine.md."
+   },
+   {
+    "name": "Step 6a \u2014 Lighthouse mobile (Lighthouse 12.8.2, Chrome 152.0.7977.84, simulate throttling: 150 ms RTT / 1638 Kbps / 4\u00d7 CPU, 412\u00d7823 @1.75, 3 runs each)",
+    "result": "pass (tool worked after improvements); 5 of 7 URLs score < 90 on Performance",
+    "evidence": "Medians (per-run): / 84 (84/84/84) FCP 2.11 s LCP 4.21 s TBT 0 CLS 0.003; /about/ 87 (87/87/85) LCP 3.76 CLS 0.027; /program/ 87 (87/87/87) LCP 3.76; /contact/ 91 (90/91/91) LCP 3.16; /news/ 90 (90/90/90) LCP 3.30; /fixture-rich-blocks/ 87 (86/88/87) LCP 3.61 CLS 0.050 BP 96 (YouTube third-party cookie) SEO 69; /barkode/hk923-005/ 87 (87/87/87) LCP 3.76 SEO 69. Accessibility 100 on all 7; SEO 69 on the two URLs is only is-crawlable, intentional: hk9_robots() in theme/heartland-k9s/inc/compat.php:181-190 noindexes registry singles and local-fixture posts. HTML diagnostics written for /, /about/, /program/, /fixture-rich-blocks/ (barkode skipped for privacy; its run JSON is scrubbed). Top opportunities on every page: render-blocking theme.css (28 KB gz / 173 KB, est. 1,460\u20131,620 ms), next-gen image formats (49\u2013128 KiB), properly size images (52\u201384 KiB: the 263\u00d7300 crest PNG rendered at 80px, hero JPEGs), unused CSS ~23 KiB. LCP on / = hero <img> (fetchpriority=high, eager, discoverable): TTFB 453 / load delay 2218 / load 121 / render delay 1417 ms. Root cause found in network-requests of every page: 5 font downloads instead of 3 \u2014 the preload URLs carry ?v=\u2026 (theme/heartland-k9s/inc/assets.php:79-81) but the compiled @font-face src does not, so fraunces-var (66 KB) and inter-var (40 KB) are fetched twice. docs/reports/lighthouse/report.md + summary.md."
+   },
+   {
+    "name": "Step 6b \u2014 Lighthouse desktop (--preset=desktop: 1350\u00d7940, simulate 40 ms / 10240 Kbps / 1\u00d7 CPU, 1 run)",
+    "result": "pass",
+    "evidence": "/ Performance 99, A11y 100, BP 100, SEO 100, FCP 0.49 s, LCP 0.89 s, TBT 0, CLS 0.003; /about/ 100/100/100/100, FCP 0.49 s, LCP 0.73 s, CLS 0.004. docs/reports/lighthouse/report-desktop.md."
+   },
+   {
+    "name": "Step 7 \u2014 keyboard walk (Playwright chromium 153, docs/reports/screenshots/keyboard/keyboard-walk.mjs)",
+    "result": "pass 19/19",
+    "evidence": "Home 1440: Tab order a.hk9-skip-link \u2192 a.hk9-header__brand \u2192 About, Program, Veterans, BarKode, Stories, Get Involved, Contact \u2192 Donate Now \u2192 hero 'Support a Service Dog' \u2192 'Apply for a Dog'; skip link visible on focus (rect 16,16 156\u00d748, 2px white outline); Enter on skip link \u2192 hash #main, main[tabindex=-1] focused, next Tab lands on the first hero CTA. Home 390: skip \u2192 brand \u2192 button.hk9-header__toggle; Enter \u2192 aria-expanded=true, #hk9-mobile-menu shown, label 'Close menu'; Tab walks About\u2026Contact \u2192 Donate Now (8 items) in order; Tab past last closes (focusout); Escape from 'Program' closes and focus returns to the toggle. Contact: Tab order first_name \u2192 last_name \u2192 email \u2192 subject \u2192 message \u2192 Send, honeypot (tabindex -1) skipped; every control has a focus ring; Tab to Send + Enter \u2192 #hk9-form-contact-summary[role=alert][tabindex=-1] shown and focused with 5 errors, 5 controls aria-invalid + aria-describedby; summary top = 96 px = scroll-padding-top, 0 px under the 81 px sticky header (1440 and 390); summary link \u2192 input#hk9-form-contact-first_name focused. Photos: 71 figure.wp-lightbox-container / 71 button.lightbox-trigger; Tab reaches 'Enlarge 1 of 71' (3px auto ring after WP core's 0.2 s fade-in); Enter \u2192 .wp-lightbox-overlay.active role=dialog aria-modal=true with focus inside; Tab cycles Close \u2192 Previous \u2192 Next inside the dialog; Escape closes and returns focus to the trigger. 17 screenshots + composites; docs/reports/keyboard.md."
+   },
+   {
+    "name": "Step 8 \u2014 PHP debug.log",
+    "result": "pass (nothing attributable to this run)",
+    "evidence": "docker exec hk9-wordpress-1 cat \u2026/debug.log \u2192 exactly 2 lines, file mtime 2026-09-11 16:54:32 UTC, unchanged through the session (17:04:29\u201317:40:23 UTC): \"[11-Sep-2026 16:53:56 UTC] [hk9] Form notification failed (form=contact): wp_mail_failed: SMTP Error: Could not connect to SMTP host. Failed to connect to server\" and the same at 16:54:32 UTC \u2014 another agent's contact-form submissions 2 s before the Mailpit container restarted (docker inspect StartedAt 16:54:34Z). Mailpit holds 0 messages. My contact test used client-side validation only (no submission)."
+   },
+   {
+    "name": "Step 9 \u2014 tools/wp.sh hk9-dev fixtures delete + state verification",
+    "result": "pass after fixing a fixture bug",
+    "evidence": "First delete: \"Deleted 18 fixture posts, 9 fixture terms and 1 fixture users.\" \u2192 posts 0, attachments 240, users admin only, fixture-marked objects 0, comments 0, sticky []. BUT post_tag list was empty and /tag/poker-run/, /tag/veterans-day/ returned 404: the fixture had adopted the imported terms (term_exists) and marked them, so delete removed real data (import map rows term:post_tag:poker-run \u2192 72, veterans-day \u2192 73). Fixed docker/fixtures/blog-fixtures.php (only terms the fixture creates get the marker), recreated the tags with wp term create (ids 89, 90; both URLs 200), `wp hk9 import \u2026 --dry-run` \u2192 terms 0 create / 0 update / 6 skip (importer adopts by slug; map rows self-heal on the next real pass \u2014 a direct SQL update of wp_hk9_import_map was blocked by the permission classifier and not attempted otherwise), then a second create \u2192 delete cycle with the fixed fixture: \"Deleted 18 fixture posts, 7 fixture terms and 1 fixture users\", tags 89/90 intact, poker-run had no marker during fixtures. Final: 0 posts, 240 attachments, 1 user (admin), 0 fixture-marked objects, 0 comments, categories = Uncategorized only."
+   }
+  ],
+  "issues": [
+   "THEME (not edited) \u2014 fonts download twice on every page: theme/heartland-k9s/inc/assets.php:79-81 (hk9_preload_fonts) preloads assets/fonts/fraunces-var.woff2?v=<mtime> and inter-var.woff2?v=<mtime>, but the compiled @font-face src in assets/dist/theme.css is url(\"../fonts/fraunces-var.woff2\") / inter-var.woff2 without the query, so the preloads never match and both fonts are fetched again at VeryHigh priority (network-requests on all 8 Lighthouse URLs: 5 font requests, 106 KB wasted, competing with the LCP image on Slow 4G). Fix: use identical URLs in the preload and @font-face.",
+   "THEME (not edited) \u2014 mobile Lighthouse Performance 84\u201387 on /, /about/, /program/, /fixture-rich-blocks/, /barkode/hk923-005/ (contact 91, news 90): render-blocking theme.css (173 KB raw / 28 KB gz; est. 1.46\u20131.62 s per page, ~23 KB unused per page), the double font fetch above, and image delivery (crest PNG Concept-1-rocker-outlined-2-263x300.png 68 KB served for an 80 px logo in header and footer; hero/feature JPEGs 108\u2013119 KB not in WebP/AVIF). Desktop is 99\u2013100 so the gap is purely bandwidth/RTT-bound. Details + estimates in docs/reports/lighthouse/summary.md.",
+   "THEME (not edited) \u2014 .hk9-btn:focus-visible { outline: none; box-shadow: 0 0 0 1px var(--hk9-ring) } (assets/src/scss/_buttons.scss:35-38, ring = --hk9-primary #1c2f4a) overrides the generic 2 px outline with a 1 px navy ring that is imperceptible on dark sections: the focused hero CTA 'Support a Service Dog' is visually identical to its unfocused state (docs/reports/screenshots/keyboard/zoom-hero-cta.png; computed styles confirm the only change is that shadow). Fails the intent of WCAG 2.4.7/2.4.13 for every .hk9-btn on a navy background. Suggested: two-tone ring (0 0 0 2px var(--hk9-bg), 0 0 0 4px var(--hk9-ring)) or don't override the outline.",
+   "FIXTURE BUG FIXED (docker/fixtures/blog-fixtures.php) \u2014 `fixtures delete` deleted the imported 'Poker Run' and 'Veterans Day' post tags because create() marked terms it merely adopted via term_exists. The two tags were recreated by slug (new ids 89/90); the importer map still lists 72/73 until the next real import pass adopts them by slug (dry-run confirms 0 create/0 update/6 skip). Other agents running fixtures create/delete before this fix may have removed those tags earlier in the day too.",
+   "Local Apache serves /wp-content/uploads/* without Cache-Control (Lighthouse cache-insight, 612 KB on /). Hosting-level; verify on the production server, not a theme issue.",
+   "Known/documented exceptions, not defects: /fixture-rich-blocks/ (LOCAL-ONLY) YouTube embed causes the only axe serious/critical hits (inside the iframe), the only network-audit flag (fonts.gstatic.com + doubleclick inside the frame, Chromium 'web-share' warning from WP core's oEmbed allow attribute), Best Practices 96 (third-party cookie) and CLS 0.050; SEO 69 on /barkode/hk923-005/ and the fixture post is the intentional noindex in theme/heartland-k9s/inc/compat.php:181-190.",
+   "Tool notes: tools/axe.mjs still exits 1 when the only serious/critical hits are inside cross-origin iframes (kept strict; the Result line now says how many are first-party). tools/network-audit.mjs now uses a fresh page per URL and attributes requests/console messages to main frame vs embedded frames; only main-frame problems fail. tools/lighthouse.mjs scrubs screenshots/DOM snippets/text from run JSON of URLs matching --private (default /barkode/) and writes no HTML diagnostic for them; --reuse re-renders from saved JSON. The barkode run files from this session were scrubbed in place with the same routine and its earlier HTML/JSON diagnostic was deleted.",
+   "Artifacts are large: docs/reports/lighthouse 22 MB (raw LHR JSON + 4 HTML diagnostics), docs/reports/cross-engine 27 MB, docs/reports/screenshots/cross-engine 28 MB, keyboard 10 MB \u2014 consider .gitignore rules before committing (no git operations were performed)."
+  ],
+  "integration_notes": "All reports live under docs/reports/: url-matrix.md, axe.md, network-audit.md, cross-engine.md (+ cross-engine/ triptychs, screenshots/cross-engine/<engine>/), lighthouse/{report.md,report-desktop.md,summary.md,*.json,*-diagnostic.report.html}, keyboard.md (+ screenshots/keyboard/ with results.json and the reproducible keyboard-walk.mjs \u2014 run from the repo root with `node docs/reports/screenshots/keyboard/keyboard-walk.mjs`). Re-run commands used: `HK9_EXPECT_FIXTURES=1 bash tools/url-matrix.sh > docs/reports/url-matrix.md`; `node tools/axe.mjs --urls=<list> --out=docs/reports/axe.md`; `node tools/network-audit.mjs --urls=<list> --out=docs/reports/network-audit.md`; `node tools/screenshot.mjs --engines=chromium,webkit,firefox --widths=390,1440 --routes=/,/program/,/contact/,/news/ --out=docs/reports/screenshots/cross-engine`; `node tools/lighthouse.mjs --urls=/,/about/,/program/,/contact/,/news/,/fixture-rich-blocks/,/barkode/hk923-005/ --runs=3 --out=docs/reports/lighthouse` (add --reuse to re-render, --desktop for the desktop preset, --no-html to skip diagnostics, --private=<regex> to change the scrubbed URL set). Tool changes are backwards compatible with the npm scripts (verify:axe / verify:network / verify:lighthouse). The fixture fix changes docker/fixtures/blog-fixtures.php only (docker/mu-plugins/hk9-dev.php untouched). No theme/plugin files were edited; no git commit/checkout/stash/reset was run; the site is back to 0 posts, 240 attachments, admin-only, with the imported post tags poker-run (89) and veterans-day (90) restored \u2014 the importer map will re-point from 72/73 to 89/90 on its next real pass (dry-run already shows 0 create / 0 update). docs/admin-guide.md and tools/editor-matrix.mjs in the working tree belong to the other agents."
+ },
+ "guide": {
+  "summary": "Wrote docs/admin-guide.md (~2,510 words excluding image markup) organised by task exactly as briefed, and captured 55 read-only admin screenshots at 1440x900 into docs/reports/screenshots/admin-guide/ (35 of them embedded in the guide with relative paths). Every field label cited in the guide was verified verbatim against plugin/heartland-k9s-core/src/Sections/definitions/*.php + Sections/Shared.php, src/Meta/Definitions.php, src/Settings/Schema.php, Redirects/Admin.php, Import/Admin.php and the theme's menu locations (304 bolded labels checked by script; the only non-matches are menu paths/warnings, not field labels). Screenshots were taken with Playwright with every non-GET request aborted except admin-ajax heartbeat/media-library queries, so no content or editor preference was saved (the only intercepted write was the block editor trying to persist the sidebar-open preference). The BarKode record edit screen and list were captured using a temporary placeholder draft (ID 1822, placeholder text only) that was deleted afterwards (verified: post not found, record count back to 16); the real record rows were removed from the DOM before the list shot, BarKode-destination rows in the Redirects list and all Submissions rows were blurred in-browser, and the Team screen's BarKode chip was blurred by CSS. No BarKode personal data appears in any screenshot or in this report.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/ (55 PNGs: pages-list, about-*, home-*, landing-*, donate-section-options, gallery-section-options, stories-/teams-/people-/partners-/campaigns-/events-{list,details}, barkode-list, barkode-record-details, submissions-list, settings-{branding,appearance,contact,destinations,header,footer,blog,forms,analytics,advanced}, redirects-{list,add}, import, menus-{locations,edit}, reading, heartland-overview)",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/capture.mjs (Playwright capture script, scratchpad only)"
+  ],
+  "tests": [
+   {
+    "name": "Screenshots captured read-only (no writes)",
+    "result": "pass",
+    "evidence": "capture.mjs routes abort every POST/PUT/DELETE except admin-ajax heartbeat/query-attachments/hk9_pick; run logs show only 'POST /wp-json/wp/v2/users/me' (editor sidebar preference) was blocked, 0 other write attempts. Block editor was never dirtied (no autosave requests)."
+   },
+   {
+    "name": "Temporary BarKode placeholder record removed",
+    "result": "pass",
+    "evidence": "tools/wp.sh post delete 1822 --force -> 'Success: Deleted post 1822'; 'post get 1822' -> 'Could not find the post'; hk9_barkode count any-status = 16 (same as before creation)."
+   },
+   {
+    "name": "No BarKode personal data in screenshots",
+    "result": "pass",
+    "evidence": "barkode-list.png shows only the placeholder row (other rows removed from DOM); barkode-record-details.png is the placeholder draft; redirects-list.png has all 'BarKode record' destination rows blurred; submissions-list.png tbody blurred; teams-details.png BarKode chip blurred via CSS; media picker shows no 'Registry image' attachments."
+   },
+   {
+    "name": "Every embedded screenshot path exists",
+    "result": "pass",
+    "evidence": "grep of reports/screenshots/admin-guide/*.png references (35 unique) -> 0 MISSING."
+   },
+   {
+    "name": "Field labels verified against plugin definitions",
+    "result": "pass",
+    "evidence": "Script extracted 304 bolded labels from the guide and matched them verbatim against plugin/theme PHP sources + core WP labels; all field labels matched (only composite phrases like 'Pages \u2192 Home', 'Do not change the slugs' did not, as expected)."
+   },
+   {
+    "name": "Word count under ~2500",
+    "result": "pass",
+    "evidence": "wc -w with image markup stripped = 2512 words (2618 including image lines)."
+   },
+   {
+    "name": "Read-only session did not leave errors in debug.log",
+    "result": "pass",
+    "evidence": "debug.log tail shows only '[hk9] Form notification failed ... SMTP' lines from another agent's form tests at 16:53-16:54 UTC; no errors from the editor/screenshot session."
+   }
+  ],
+  "issues": [
+   "Screenshots are git-ignored: .gitignore line 7 'docs/reports/screenshots/**/*.png' matches docs/reports/screenshots/admin-guide/*.png (confirmed with git check-ignore), so the guide's images will not be committed unless a negation rule (e.g. '!docs/reports/screenshots/admin-guide/*.png') is added or the folder is moved. I did not edit .gitignore (project-wide decision; no git operations allowed). 55 PNGs total 9.1 MB.",
+   "'Legacy path' help text on BarKode records says 'Seeds a redirect to this record', but nothing in the plugin creates a redirect on save: redirects for the printed patch paths come from the hard-coded seed list (Redirects/Store::RECORD_SLUGS) and the import payload. The guide therefore instructs staff to add a redirect manually under Heartland \u2192 Redirects (Destination = 'A BarKode record') for any new patch. Consider either wiring a save hook or rewording the help text.",
+   "Settings \u2192 Destinations \u2192 'PayPal hosted button ID' help says 'Leave empty to hide the PayPal option on the Donate page', but no theme/plugin code reads links.paypal_hosted_button_id (only Schema defaults and theme defaults.php). The Donate page 'Ways to give' repeater is what actually shows/hides PayPal; the guide documents the repeater and does not repeat the help-text claim.",
+   "Icon fields render an empty preview box next to the icon select in the block-editor meta box (visible in home-section-features-cards.png) \u2014 cosmetic; the select itself works.",
+   "A persistent admin notice 'Heartland forms: 1 submission in the last 7 days was saved but its email notification could not be sent' appears on every Heartland screen in the screenshots (caused by another agent's form tests against a local stack with no SMTP); it is real UI so it was left in."
+  ],
+  "integration_notes": "Guide path: docs/admin-guide.md; image links are relative (reports/screenshots/admin-guide/<name>.png) so it renders from the docs/ folder. Sections map to the brief: Home hero, feature cards, testimonial, About/Program/Veterans/Get Involved/BarKode/Stories/Contact sections table, Story/Team/Person/Partner/Campaign/Event table, BarKode records (privacy: everything in Details except 'Review notes (never published)' is rendered publicly when filled; noindex/nofollow, no sitemap/search/embed/REST; legacy path + manual redirect), migrated Landing-template pages with optional Feature cards/FAQ/Sponsor tiers/Call to action, Photos gallery, Donate options, Menus (4 locations), Settings tabs, Forms/Submissions/retention, Blog/News (Reading settings), Redirects, importer re-run procedure, What-not-to-do (registry in menus, listing pages, listing slugs). Page/template mapping and CPT URL patterns (/stories/, /teams/, /events/, /campaigns/, /barkode/<slug>/) were confirmed with WP-CLI on the local stack. The capture script (scratchpad capture.mjs) can be re-run per group with a regex argument if screens change; it reads the placeholder record id from scratchpad/tmp-barkode-id (now 0) and expects a fresh Playwright storageState (state.json was deleted after the run). Other agents' concurrent changes were not touched; the only DB writes made were creating and force-deleting the placeholder hk9_barkode draft (ID 1822) via WP-CLI."
+ },
+ "security": {
+  "verdict": "PASS with fixes recommended. No critical or high findings. The plugin's security posture is strong: every privileged REST route, admin-post action and AJAX handler has a capability check plus nonce; ZIP unpacking is contained and de-scripted; SQL is prepared or via native APIs; output is escaped; no secrets, debug tools or PII dumps ship in the distributable (tests/ is excluded by tools/package.mjs). One medium-severity abuse vector exists on the unauthenticated no-JS form path (unbounded transient creation) and four low-severity hardening items.",
+  "findings": [
+   {
+    "severity": "medium",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Handler.php",
+    "issue": "handle_admin_post() writes an error-state transient (hk9_form_res_<random>, 2 wp_options rows, 5-min TTL) for EVERY failed POST, including nonce-less/honeypot/token failures from anonymous visitors, and failures are not rate-limited (record_send only counts successes). Expired rows are only garbage-collected by daily cron (core + Submissions::purge_expired_transients). Confirmed: 3 anonymous POSTs to admin-post.php?action=hk9_form_submit with no nonce created 3 transients (rows 0 -> 3). A bot hammering that URL can bloat wp_options by millions of rows per day (DB DoS).",
+    "fix": "For outcomes in NO_VALUE_CODES (unknown_form, nonce, honeypot, token, expired) skip set_transient and redirect with a stateless `&code=<code>` query arg that render() maps to the canned message; only persist state for validation/duplicate/send_failed results that passed nonce+token. Additionally count failed attempts in the per-IP limiter (e.g. a separate hk9_form_fail_ key, 429 after N/hour)."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Payload.php",
+    "issue": "unpack_upload() extracts first, then purge_scripts() deletes PHP/JS/SVG/dotfiles and rewrites .htaccess. A ZIP carrying its own .htaccess (+ a .php file) overwrites the deny file for the window between unzip_file() and purge. Exposure is small (manage_options only, 32-char random dir, Apache deny restored, nginx unaffected), and .html files are still left under uploads/.",
+    "fix": "Pre-scan the archive with ZipArchive before extracting and refuse any entry whose basename starts with '.' or whose extension is in SCRIPT_EXTENSIONS (add 'html'); or extract into a temp dir outside the web root (get_temp_dir()) and move only the manifest/content/media trees into uploads after purge."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/uninstall.php",
+    "issue": "With advanced.purge_on_uninstall enabled, uploads/hk9-import/*.log, any leftover uploads/hk9-payload-* directory (which can contain the entire site payload including registry records) and the per-user hk9 dismiss user-meta are not removed.",
+    "fix": "In the purge branch, use WP_Filesystem to delete wp_upload_dir()['basedir'].'/hk9-import' and every 'hk9-payload-*' directory, and call delete_metadata('user', 0, '<DISMISS_META key>', '', true)."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Redirects/Resolver.php",
+    "issue": "test() performs the admin-triggered self HEAD request with 'sslverify' => false (line 236). Not exploitable by visitors (admin cap + nonce, target is home_url()), but it silently accepts MITM'd TLS on production.",
+    "fix": "Remove 'sslverify' => false (or make it `apply_filters('hk9/redirects/test_sslverify', true)` so local Docker can opt out)."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/js/fields.js",
+    "issue": "Line 385: the repeater summary does `div.innerHTML = ctl.value` on a detached element to extract text from a richtext field. `<img onerror>` handlers execute even on detached nodes. Stored values are wp_kses_post-filtered so this is self-XSS only, but it is an unnecessary HTML sink.",
+    "fix": "Use `new DOMParser().parseFromString(ctl.value, 'text/html').body.textContent` (DOMParser documents are inert and do not run handlers)."
+   }
+  ],
+  "spot_checks": [
+   "REST permissions (curl, anonymous): GET/POST hk9/v1/import/{status,start,rollback} -> 401 hk9_forbidden; GET hk9/v1/pick?type=hk9_barkode -> 401; wp/v2/hk9_barkode and wp/v2/hk9_submission -> 404 (not in REST; Meta/Registry::in_rest returns false for hk9_barkode; Submissions show_in_rest=false, create_posts=do_not_allow).",
+   "Import REST (src/Import/Rest.php): every route manage_options; start/step additionally require unfiltered_html; rollback requires confirm=ROLLBACK and run id sanitized to [A-Za-z0-9-]; payload path validated by realpath against allow-list (uploads/hk9-payload-* only unless HK9_LOCAL_DEV).",
+   "admin-post handlers: hk9_import_upload / hk9_import_log -> manage_options + check_admin_referer (anonymous request -> 400, no handler for nopriv); hk9_form_submit is intentionally public; POST-only, redirects via wp_safe_redirect, hk9_success override constrained by wp_validate_redirect (no open redirect).",
+   "ZIP handling (Payload::unpack_upload): only .zip via sanitize_file_name + wp_check_filetype_and_ext; core unzip_file() applies validate_file() (blocks ../, absolute paths, no symlinks); random 32-char directory; .htaccess 'Require all denied' + index.html; purge of php/php3-8/phtml/phar/cgi/pl/py/sh/js/mjs/svg/htm/shtml + all dotfiles; earlier uploads removed. Verified http://localhost:8093/wp-content/uploads/hk9-import/ and /.htaccess -> 403 on Apache.",
+   "Log download (Import\\Admin::handle_log): manage_options + nonce, run id sanitized, Payload::resolve_within() containment, X-Content-Type-Options: nosniff, attachment disposition with rawurlencode.",
+   "Forms anti-abuse (Antispam.php): nonce + honeypot + HMAC-signed timestamp (3s..6h) + atomic single-use token (wp_cache_add / add_option) claimed only after validation + per-IP hourly limit; REST failures persist nothing; token endpoint is stateless (no DB growth); IP stored only as daily-salted HMAC; trusted-proxy header parsing right-to-left.",
+   "Mailer: Reply-To is the validated submitter email only; From name stripped of CR/LF/<>; email templates escape every value (esc_html/esc_url/esc_attr).",
+   "Capability model (PostTypes/Capabilities.php + user_has_cap): administrators get all hk9 caps; editor-level users get the 6 editorial types only; hk9_barkode caps for editors only when advanced.editors_manage_registry is on; hk9_view_submissions/hk9_manage_settings/hk9_run_import/hk9_manage_redirects never granted to editors. Pick endpoint filters types by per-type edit_posts and excludes hk9_submission; Fields\\Access drops post references the saving user cannot edit.",
+   "Nonce/cap coverage: Meta/MetaBox::save and Sections/MetaBox::save (per-post nonce + edit_post), wp_ajax_hk9_section_panel (check_ajax_referer + edit_post + template allow-list), wp_ajax_hk9_dismiss_mail_failures (referer + can_view), Redirects admin (check_admin_referer per action/key, hk9_manage_redirects), Settings (Settings API, option_page_capability_hk9_settings, cap re-checked inside sanitize_submission, show_in_rest=false).",
+   "Sanitize/escape: Richtext -> wp_kses_post; Link -> esc_url_raw; settings 'code' (Fathom id) -> [A-Za-z0-9_-]; icon preview sanitize_key + esc_attr; admin/import JS escapes all server-derived strings via esc(); no unprepared $wpdb queries anywhere in src/ (only prepared/LIKE-escaped in Submissions::purge_expired_transients and uninstall.php).",
+   "Import safety: Options step allow-list = hk9_* plus 11 site-info options (no siteurl/home/users_can_register/default_role/admin_email); media via media_handle_sideload + get_allowed_mime_types + wp_check_filetype_and_ext; Manifest::path() uses resolve_within.",
+   "Redirect resolver: GET/HEAD only, skips admin/REST/cron/AJAX; rules are admin-written; targets esc_url_raw(http/https) or wp_sanitize_redirect; internal -> wp_safe_redirect; header value rawurlencoded; no visitor-controlled writes.",
+   "SVG: plugin never filters upload_mimes; SVGs stripped from ZIP payloads; no SVG output path other than the theme sprite <use> with escaped id.",
+   "Distributable hygiene: tools/package.mjs excludes heartland-k9s-core/tests/*; tests/*.php are gated by WP_CLI / PHP_SAPI==='cli' / HK9_LOCAL_DEV; no error_log/var_dump/print_r, no hard-coded secrets; Privacy/Registry blocks anonymous /wp/v2/users, oEmbed/sitemap for sensitive types. Uninstall keeps data by default and removes plugin caps/version options.",
+   "Probe cleanup: the 3 test transients created during the admin-post probe were deleted from wp_options (6 rows) afterwards."
+  ]
+ }
+}
