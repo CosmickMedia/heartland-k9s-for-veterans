@@ -186,15 +186,17 @@
 	}
 }
 
-// Entrance animation (home only). Only when the user allows motion.
+// Entrance animation (home only). Reference: tailwindcss-animate `animate-in
+// slide-in-from-bottom-6 duration-700 delay-150/300/500 fill-mode-both` (badge:
+// slide-in-from-bottom-4) — a pure slide with the default `ease` timing; there is no
+// fade-in, so the copy is readable (and contrast-checkable) from the first frame.
+// Only when the user allows motion.
 @keyframes hk9-enter-up {
 	from {
-		opacity: 0;
 		transform: translateY(var(--hk9-enter-y, 24px));
 	}
 
 	to {
-		opacity: 1;
 		transform: translateY(0);
 	}
 }
@@ -205,7 +207,7 @@
 		.hk9-hero__title,
 		.hk9-hero__text,
 		.hk9-hero__actions {
-			animation: hk9-enter-up .7s var(--hk9-ease) both;
+			animation: hk9-enter-up .7s ease both;
 		}
 
 		.hk9-hero__badge { --hk9-enter-y: 16px; animation-delay: 0s; }

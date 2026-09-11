@@ -34,7 +34,7 @@ hk9_section_open( $hk9_id, 'hk9-section--plain hk9-overlap', '' !== $hk9_heading
 	<?php if ( $hk9_has_image ) : ?>
 		<div class="hk9-overlap__media hk9-legacy__media">
 			<?php // The overlap card starts inside the first viewport: load eagerly (no priority hint). ?>
-			<?php echo hk9_image( $hk9_image_id, 'large', [ 'sizes' => '(max-width: 767px) calc(100vw - 32px), (max-width: 1087px) calc(50vw - 32px), 512px', 'loading' => 'eager' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core image markup. ?>
+			<?php echo hk9_image( $hk9_image_id, 'large', [ 'sizes' => '(max-width: 767px) calc(100vw - 32px), (max-width: 1087px) calc(50vw - 32px), 512px' ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core image markup. ?>
 		</div>
 	<?php endif; ?>
 	<div class="hk9-overlap__body hk9-legacy__body">

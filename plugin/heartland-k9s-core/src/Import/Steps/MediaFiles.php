@@ -8,6 +8,13 @@
  * media_sizes. Dedupes by sha256 (map table, then _hk9_sha256 meta written by
  * validate's prehash pass) so manual uploads with identical bytes are adopted.
  *
+ * Shared attachments: when two payload records carry byte-identical files, the
+ * first record (manifest order) creates the attachment and OWNS its fields; every
+ * later record is bound to the same attachment as a secondary row that never
+ * writes title/alt/caption/description/date (its map row mirrors the owner's
+ * field hashes so both rows hash-match the object, re-runs skip, and rollback
+ * can delete the attachment once).
+ *
  * @package HK9\Core
  */
 
@@ -16,6 +23,7 @@ declare(strict_types=1);
 namespace HK9\Core\Import\Steps;
 
 use HK9\Core\Import\Context;
+use HK9\Core\Import\Hash;
 use HK9\Core\Import\Manifest;
 use HK9\Core\Import\Map;
 use HK9\Core\Import\Reconcile;
@@ -56,12 +64,16 @@ final class MediaFiles extends Step {
 
 		$adopted = false;
 		if ( 0 === $id ) {
-			// Dedupe by content hash.
-			$other = Map::find_by_sha( $sha );
-			if ( $other && 'attachment' === get_post_type( $other['object_id'] ) ) {
-				$id      = $other['object_id'];
-				$adopted = true;
-			} else {
+			// Dedupe by content hash: another payload record's attachment first (oldest row wins) ...
+			foreach ( Map::rows_by_sha( $sha ) as $other ) {
+				if ( $other['source_key'] !== $key && 'attachment' === get_post_type( $other['object_id'] ) ) {
+					$id      = $other['object_id'];
+					$adopted = true;
+					break;
+				}
+			}
+			// ... then a pre-existing upload with identical bytes.
+			if ( 0 === $id ) {
 				$id = Map::find_attachment_by_sha( $sha );
 				if ( 0 === $id && isset( $ctx->state['prehash'][ $sha ] ) ) {
 					$id = (int) $ctx->state['prehash'][ $sha ];
@@ -71,7 +83,23 @@ final class MediaFiles extends Step {
 		}
 
 		if ( 0 === $id ) {
+			// Dry runs write nothing, so a later record with the same bytes cannot find the
+			// attachment this one would create: remember it to report the share accurately.
+			if ( $ctx->dry() && isset( $ctx->state['dry_created'][ $sha ] ) && $ctx->state['dry_created'][ $sha ] !== $key ) {
+				$ctx->result( $key, 'skip', sprintf( 'would share the attachment created for %s (identical file)', $this->owner_label( (string) $ctx->state['dry_created'][ $sha ] ) ), $sens );
+				return;
+			}
+			if ( $ctx->dry() ) {
+				$ctx->state['dry_created'][ $sha ] = $key;
+			}
 			$this->create( $key, $record, $desired, $sha, $sens );
+			return;
+		}
+
+		// Shared attachment? The oldest row bound to it owns its fields.
+		$owner = Map::owner( 'attachment', $id );
+		if ( $owner && $owner['source_key'] !== $key ) {
+			$this->secondary( $key, $record, $desired, $id, $owner, $sha, $sens, $row );
 			return;
 		}
 
@@ -105,6 +133,65 @@ final class MediaFiles extends Step {
 			}
 		}
 		Map::record( $key, $ctx->run_id, Reconcile::readback( $plan, self::current( $id ) ), $plan['before'], $this->manifest()->payload_hash( $record ) );
+	}
+
+	/**
+	 * A record whose bytes already live in an attachment owned by another payload
+	 * record. The object's fields belong to the owner (first record wins), so
+	 * nothing is written to the post: the row is bound to the same attachment and
+	 * its field hashes mirror the owner's `db` hashes (falling back to the live
+	 * values for fields the owner never recorded) with its own `src` hashes, so
+	 * the row hash-matches the object exactly when the owner's does. An editor's
+	 * edit therefore shows up as a conflict on the owner only, and rollback sees
+	 * the same "modified" verdict through every row.
+	 */
+	private function secondary( string $key, array $record, array $desired, int $id, array $owner, string $sha, bool $sens, ?array $row ): void {
+		$ctx     = $this->ctx;
+		$current = self::current( $id );
+		$hashes  = [];
+		foreach ( $desired as $f => $v ) {
+			$hashes[ $f ] = [
+				'db'  => $owner['field_hashes'][ $f ]['db'] ?? Hash::of( $current[ $f ] ?? null ),
+				'src' => Hash::of( $v ),
+			];
+		}
+		$first = ! $row || $row['object_id'] !== $id;
+		$ctx->result( $key, 'skip', sprintf( 'shares attachment #%d with %s%s', $id, $this->owner_label( (string) $owner['source_key'] ), $first ? ' (identical file; the owner keeps its title/alt/caption/date)' : '' ), $sens );
+		if ( $ctx->dry() ) {
+			return;
+		}
+		if ( $first ) {
+			// Fresh binding: any hashes / pre-images the row carried belong to an object that no longer exists.
+			Map::bind(
+				$key,
+				'attachment',
+				$id,
+				$ctx->run_id,
+				[
+					'created_by_run' => null,
+					'sha256'         => $sha,
+					'payload_hash'   => $this->manifest()->payload_hash( $record ),
+					'field_hashes'   => $hashes,
+					'before_data'    => [],
+				]
+			);
+			if ( '' === (string) get_post_meta( $id, '_hk9_sha256', true ) ) {
+				update_post_meta( $id, '_hk9_sha256', $sha );
+			}
+			return;
+		}
+		Map::record( $key, $ctx->run_id, $hashes, [], $this->manifest()->payload_hash( $record ) );
+	}
+
+	/**
+	 * Key of another record for log lines: withheld when that record is sensitive.
+	 */
+	private function owner_label( string $owner_key ): string {
+		$owner_record = $this->record( $owner_key );
+		if ( $owner_record && Context::is_sensitive( $owner_record ) ) {
+			return 'sensitive#' . Hash::short( $owner_key );
+		}
+		return $owner_key;
 	}
 
 	private function create( string $key, array $record, array $desired, string $sha, bool $sens ): void {

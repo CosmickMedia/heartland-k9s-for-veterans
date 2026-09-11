@@ -141,10 +141,13 @@
 	}
 }
 
-// Background patterns (inline SVG data URIs, 10% opacity, currentColor = white on navy).
+// Background patterns (inline SVG data URIs used as masks so the colour follows the
+// tokens): 10% opacity, drawn in currentColor. In the reference both patterns are
+// `fill/stroke: currentColor`; the BarKode band sets text-primary-foreground (white)
+// while the stars hero band inherits the page foreground — dark stars on navy.
 // grid: 40×40 diagonal lines · stars: 60×60 five-point star.
-$hk9-pattern-grid: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40' stroke='%23ffffff' stroke-width='1' fill='none'/%3E%3C/svg%3E";
-$hk9-pattern-stars: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 10l5 15h15l-12 9 5 15-13-10-13 10 5-15-12-9h15z' fill='%23ffffff'/%3E%3C/svg%3E";
+$hk9-pattern-grid: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cpath d='M0 40L40 0H20L0 20M40 40V20L20 40' stroke='%23000' stroke-width='1' fill='none'/%3E%3C/svg%3E";
+$hk9-pattern-stars: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cpath d='M30 10l5 15h15l-12 9 5 15-13-10-13 10 5-15-12-9h15z' fill='%23000'/%3E%3C/svg%3E";
 
 .hk9-pattern {
 	position: relative;
@@ -156,18 +159,26 @@ $hk9-pattern-stars: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
 		inset: 0;
 		opacity: .1;
 		pointer-events: none;
-		background-repeat: repeat;
-		background-position: 0 0;
+		background-color: currentColor;
+		-webkit-mask-repeat: repeat;
+		mask-repeat: repeat;
+		-webkit-mask-position: 0 0;
+		mask-position: 0 0;
 	}
 
 	&--grid::before {
-		background-image: url("#{$hk9-pattern-grid}");
-		background-size: 40px 40px;
+		-webkit-mask-image: url("#{$hk9-pattern-grid}");
+		mask-image: url("#{$hk9-pattern-grid}");
+		-webkit-mask-size: 40px 40px;
+		mask-size: 40px 40px;
 	}
 
 	&--stars::before {
-		background-image: url("#{$hk9-pattern-stars}");
-		background-size: 60px 60px;
+		background-color: var(--hk9-fg);
+		-webkit-mask-image: url("#{$hk9-pattern-stars}");
+		mask-image: url("#{$hk9-pattern-stars}");
+		-webkit-mask-size: 60px 60px;
+		mask-size: 60px 60px;
 	}
 
 	> * {

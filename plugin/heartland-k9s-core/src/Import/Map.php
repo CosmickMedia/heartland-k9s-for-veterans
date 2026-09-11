@@ -3,8 +3,10 @@
  * Import map: the idempotency authority for the payload importer.
  *
  * Custom table `{$wpdb->prefix}hk9_import_map` with a UNIQUE source_key. Every
- * imported (or adopted) object has one row carrying per-field hashes (read back
+ * imported (or adopted) object has a row carrying per-field hashes (read back
  * from the database after each write) and pre-images of updated fields per run.
+ * Byte-identical payload files share one attachment: its oldest row owns the
+ * object, later rows for the same object are secondary (see owner()).
  * Postmeta mirrors (`_hk9_source_key`, `_hk9_import_run`, `_hk9_sha256`) exist
  * for WP_Query/repair only; the table is the source of truth.
  *
@@ -105,15 +107,61 @@ final class Map {
 	public static function get_by_object( string $type, int $id ): ?array {
 		global $wpdb;
 		$table = self::table();
-		$row   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE object_type = %s AND object_id = %d AND object_id > 0 LIMIT 1", $type, $id ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$row   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE object_type = %s AND object_id = %d AND object_id > 0 ORDER BY id ASC LIMIT 1", $type, $id ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return $row ? self::decode( $row ) : null;
 	}
 
-	public static function find_by_sha( string $sha ): ?array {
+	/**
+	 * Every active row bound to one object, oldest first. Several payload records
+	 * may share one attachment (byte-identical files): the first row is its owner.
+	 *
+	 * @return array[] Decoded rows.
+	 */
+	public static function rows_for_object( string $type, int $id ): array {
+		global $wpdb;
+		if ( $id <= 0 ) {
+			return [];
+		}
+		$table = self::table();
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE object_type = %s AND object_id = %d AND status = %s ORDER BY id ASC", $type, $id, self::STATUS_ACTIVE ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return array_map( [ self::class, 'decode' ], $rows ?: [] );
+	}
+
+	/**
+	 * The row that owns an object: the oldest active row bound to it (the creating
+	 * row is always reserved before the object exists, so it is the oldest; for a
+	 * pre-existing object it is the first record that adopted it). Other rows bound
+	 * to the same object are "secondary": they never write the object's fields.
+	 */
+	public static function owner( string $type, int $id ): ?array {
+		$rows = self::rows_for_object( $type, $id );
+		return $rows ? $rows[0] : null;
+	}
+
+	/**
+	 * Drop every row bound to an object (after the object itself was deleted).
+	 *
+	 * @return int Rows removed.
+	 */
+	public static function delete_by_object( string $type, int $id ): int {
+		global $wpdb;
+		if ( $id <= 0 ) {
+			return 0;
+		}
+		return (int) $wpdb->delete( self::table(), [ 'object_type' => $type, 'object_id' => $id ], [ '%s', '%d' ] ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
+	}
+
+	/**
+	 * Active rows carrying a content hash, oldest first (the owner of a shared
+	 * attachment comes first).
+	 *
+	 * @return array[] Decoded rows.
+	 */
+	public static function rows_by_sha( string $sha ): array {
 		global $wpdb;
 		$table = self::table();
-		$row   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE sha256 = %s AND object_id > 0 AND status = %s LIMIT 1", $sha, self::STATUS_ACTIVE ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
-		return $row ? self::decode( $row ) : null;
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE sha256 = %s AND object_id > 0 AND status = %s ORDER BY id ASC", $sha, self::STATUS_ACTIVE ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return array_map( [ self::class, 'decode' ], $rows ?: [] );
 	}
 
 	/**

@@ -30,6 +30,9 @@ $hk9-font-sans-stack: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "He
 	--hk9-border-rgb: #{red($hk9-border)}, #{green($hk9-border)}, #{blue($hk9-border)};
 	--hk9-accent: #{$hk9-accent};
 	--hk9-card: #{$hk9-card};
+	// Secondary colour lightened until it reaches WCAG AA (4.5:1) on the primary colour
+	// (footer tagline). Recomputed by inc/options.php when the palette is customised.
+	--hk9-secondary-on-primary: #dd7788;
 	--hk9-white-rgb: 255, 255, 255;
 	--hk9-ring: var(--hk9-primary);
 	--hk9-radius: #{$hk9-radius};

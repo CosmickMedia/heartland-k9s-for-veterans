@@ -20,12 +20,14 @@ $hk9_phone      = (string) hk9_theme_option( 'contact.phone_main' );
 $hk9_hours      = trim( (string) hk9_theme_option( 'contact.hours_days' ) . ' ' . (string) hk9_theme_option( 'contact.hours' ) );
 $hk9_address    = hk9_contact_address();
 $hk9_service    = (string) hk9_theme_option( 'contact.service_area' );
+// `icon` is looked up in the sprite/brand extras; a missing glyph falls back to the text label
+// (the X logo has no lucide glyph and must not reuse the "x" close icon).
 $hk9_socials    = [
-	'facebook'  => [ 'label' => 'Facebook', 'url' => (string) hk9_theme_option( 'contact.facebook' ) ],
-	'instagram' => [ 'label' => 'Instagram', 'url' => (string) hk9_theme_option( 'contact.instagram' ) ],
-	'youtube'   => [ 'label' => 'YouTube', 'url' => (string) hk9_theme_option( 'contact.youtube' ) ],
-	'linkedin'  => [ 'label' => 'LinkedIn', 'url' => (string) hk9_theme_option( 'contact.linkedin' ) ],
-	'x'         => [ 'label' => 'X', 'url' => (string) hk9_theme_option( 'contact.x' ) ],
+	'facebook'  => [ 'label' => 'Facebook', 'icon' => 'facebook', 'url' => (string) hk9_theme_option( 'contact.facebook' ) ],
+	'instagram' => [ 'label' => 'Instagram', 'icon' => 'instagram', 'url' => (string) hk9_theme_option( 'contact.instagram' ) ],
+	'youtube'   => [ 'label' => 'YouTube', 'icon' => 'youtube', 'url' => (string) hk9_theme_option( 'contact.youtube' ) ],
+	'linkedin'  => [ 'label' => 'LinkedIn', 'icon' => 'linkedin', 'url' => (string) hk9_theme_option( 'contact.linkedin' ) ],
+	'x'         => [ 'label' => 'X', 'icon' => 'brand-x', 'url' => (string) hk9_theme_option( 'contact.x' ) ],
 ];
 $hk9_socials    = array_filter( $hk9_socials, static fn( $s ) => '' !== $s['url'] );
 
@@ -55,7 +57,8 @@ if ( false !== strpos( $hk9_credit, '♥' ) ) {
 				<?php if ( ! empty( $hk9_socials ) ) : ?>
 					<ul class="hk9-footer__social" aria-label="<?php esc_attr_e( 'Social media', 'heartland-k9s' ); ?>">
 						<?php foreach ( $hk9_socials as $hk9_key => $hk9_social ) : ?>
-							<li><a href="<?php echo esc_url( $hk9_social['url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php echo hk9_icon( $hk9_key, [ 'size' => 20 ] ) ?: esc_html( $hk9_social['label'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper. ?><span class="screen-reader-text"><?php echo esc_html( $hk9_social['label'] ); ?></span></a></li>
+							<?php $hk9_social_icon = hk9_icon( $hk9_social['icon'], [ 'size' => 20 ] ); ?>
+							<li><a href="<?php echo esc_url( $hk9_social['url'] ); ?>" target="_blank" rel="noopener noreferrer"<?php echo '' !== $hk9_social_icon ? ' aria-label="' . esc_attr( $hk9_social['label'] ) . '"' : ''; ?>><?php echo '' !== $hk9_social_icon ? $hk9_social_icon : esc_html( $hk9_social['label'] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper. ?></a></li>
 						<?php endforeach; ?>
 					</ul>
 				<?php endif; ?>
@@ -129,7 +132,7 @@ if ( false !== strpos( $hk9_credit, '♥' ) ) {
 						[
 							'theme_location' => 'legal',
 							'container'      => false,
-							'menu_class'     => 'hk9-footer__social',
+							'menu_class'     => 'hk9-footer__legal',
 							'menu_id'        => '',
 							'items_wrap'     => '<ul class="%2$s">%3$s</ul>',
 							'depth'          => 1,

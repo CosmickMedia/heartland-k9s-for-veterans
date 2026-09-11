@@ -40,6 +40,19 @@
       "description": "",
       "date": "2024-03-03T10:00:00Z",
       "sensitive": true
+    },
+    "mini:asset:card-copy": {
+      "file": "media/mini__asset__card-copy/mini-card-copy.png",
+      "sha256": "0d9f2e06cd4520090f48b54a214d45d8924f9d7487e81ea50c12e3ec2b94f64c",
+      "bytes": 6040,
+      "mime": "image/png",
+      "width": 400,
+      "height": 300,
+      "title": "Mini card (duplicate upload)",
+      "alt": "Second copy of the crimson card",
+      "caption": "Duplicate caption",
+      "description": "Byte-identical to mini:asset:card; must share its attachment.",
+      "date": "2024-03-05T10:00:00Z"
     }
   }
 }

@@ -431,7 +431,7 @@ function hk9_pages_story_card( WP_Post $post ): void {
 	<article class="hk9-story-card">
 		<?php if ( has_post_thumbnail( $post ) ) : ?>
 			<a class="hk9-story-card__media" href="<?php echo esc_url( $url ); ?>" tabindex="-1" aria-hidden="true">
-				<?php echo hk9_image( (int) get_post_thumbnail_id( $post ), 'hk9-card', [ 'sizes' => '(max-width: 767px) calc(100vw - 32px), 496px', 'alt' => '' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core image markup. ?>
+				<?php echo hk9_image( (int) get_post_thumbnail_id( $post ), 'hk9-card', [ 'sizes' => '(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) calc(50vw - 48px), 496px', 'alt' => '' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core image markup. ?>
 			</a>
 		<?php endif; ?>
 		<div class="hk9-story-card__body">
@@ -471,8 +471,10 @@ function hk9_pages_team_status_label( string $status ): string {
  *
  * @param WP_Post $post Team.
  */
-function hk9_pages_team_card( WP_Post $post ): void {
+function hk9_pages_team_card( WP_Post $post, array $args = [] ): void {
 	$team_id = (int) $post->ID;
+	// Rendered card width: 1 column below 768px, 2 columns to 1023px, then 3 (320px) or 2 (496px).
+	$sizes   = ! empty( $args['sizes'] ) ? (string) $args['sizes'] : '(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) calc(50vw - 48px), 320px';
 	$url     = get_permalink( $post );
 	$title   = get_the_title( $post );
 	$canine  = hk9_pages_text( $team_id, 'canine_name' );
@@ -497,7 +499,7 @@ function hk9_pages_team_card( WP_Post $post ): void {
 	<article class="hk9-team-card">
 		<?php if ( has_post_thumbnail( $post ) ) : ?>
 			<a class="hk9-team-card__media" href="<?php echo esc_url( $url ); ?>" tabindex="-1" aria-hidden="true">
-				<?php echo hk9_image( (int) get_post_thumbnail_id( $post ), 'hk9-card', [ 'sizes' => '(max-width: 767px) calc(100vw - 32px), 330px', 'alt' => '' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core image markup. ?>
+				<?php echo hk9_image( (int) get_post_thumbnail_id( $post ), 'hk9-card', [ 'sizes' => $sizes, 'alt' => '' ] ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core image markup. ?>
 			</a>
 		<?php endif; ?>
 		<div class="hk9-team-card__body">
@@ -567,8 +569,8 @@ function hk9_pages_partner_logo_item( WP_Post $post ): void {
 
 	$inner = '';
 	if ( $logo_id > 0 ) {
-		$inner .= hk9_image( $logo_id, 'hk9-logo', [ 'alt' => $name, 'sizes' => '(max-width: 767px) 40vw, 160px' ] );
-		$inner .= '<span class="hk9-partners__name screen-reader-text">' . esc_html( $name ) . '</span>';
+		// The logo's alt text is the accessible name (a duplicate sr-only span would be read twice).
+		$inner .= hk9_image( $logo_id, 'hk9-logo', [ 'alt' => $name, 'sizes' => '(max-width: 767px) calc(50vw - 56px), 160px' ] );
 	} else {
 		$inner .= '<span class="hk9-partners__name">' . esc_html( $name ) . '</span>';
 	}

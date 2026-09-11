@@ -49,10 +49,15 @@
 		height: 1rem;
 	}
 
-	// Icon spacing variants (reference: ArrowRight w-4 h-4 ml-2 / w-5 h-5 ml-2).
+	// Icon spacing variants (reference: ArrowRight w-4 h-4 ml-2 / w-5 h-5 ml-2 — the
+	// trailing icon carries ml-2 on top of the button's gap-2).
 	.hk9-icon--20 {
 		width: 1.25rem;
 		height: 1.25rem;
+	}
+
+	&__icon {
+		margin-left: .5rem;
 	}
 
 	// Styles -----------------------------------------------------------------

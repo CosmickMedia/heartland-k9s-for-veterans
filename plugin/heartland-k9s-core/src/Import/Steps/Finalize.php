@@ -67,6 +67,12 @@ final class Finalize extends Step {
 			}
 			return;
 		}
+		// A shared attachment belongs to the record that owns it: a secondary record never re-parents it.
+		$owner = Map::owner( 'attachment', $id );
+		if ( $owner && $owner['source_key'] !== $key ) {
+			$ctx->info( $key, sprintf( 'parent not applied: attachment #%d is owned by %s', $id, (string) $owner['source_key'] ), $sens || $this->is_sensitive_key( (string) $owner['source_key'] ) );
+			return;
+		}
 		$desired = [ 'parent' => (int) $pid ];
 		$current = [ 'parent' => (int) ( get_post( $id )->post_parent ?? 0 ) ];
 		$plan    = Reconcile::plan( $row, $desired, $current, $ctx->overwrite() );
@@ -83,6 +89,11 @@ final class Finalize extends Step {
 			]
 		);
 		Map::record( $key, $ctx->run_id, Reconcile::readback( $plan, [ 'parent' => (int) ( get_post( $id )->post_parent ?? 0 ) ] ), $plan['before'] );
+	}
+
+	private function is_sensitive_key( string $key ): bool {
+		$record = $this->record( $key );
+		return $record ? Context::is_sensitive( $record ) : false;
 	}
 
 	private function orphans(): void {
@@ -130,6 +141,9 @@ final class Finalize extends Step {
 			}
 		} elseif ( $errors > 0 ) {
 			$ctx->info( '', sprintf( 'Run finished with %d record error(s); payload kept so you can fix and resume.', $errors ) );
+		} else {
+			// A server path (CLI, or a bind-mounted dev directory that may be read-only) is never deleted.
+			$ctx->info( '', sprintf( 'Payload directory %s was supplied as a server path and is left in place; remove it yourself if it sits inside the web root.', $dir ) );
 		}
 	}
 }

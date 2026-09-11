@@ -48,10 +48,16 @@ hk9_section_open( $hk9_id, $hk9_section_classes );
 			if ( 'navy' !== $hk9_tone && 'outline-light' === $hk9_style ) {
 				$hk9_style = 'outline';
 			}
-			$hk9_rendered[] = hk9_button( $hk9_link, $hk9_style, [ 'size' => 'lg', 'icon' => 'primary' === $hk9_style ? 'arrow-right' : '', 'icon_size' => 20 ] );
+			// Reference: only the navy band's primary button (program "Review 5 Questions & Apply")
+			// carries a trailing arrow, rendered at 16px because the shadcn button's [&_svg]:size-4
+			// rule beats its w-5 h-5 classes; tint/plain/muted bands render plain buttons.
+			$hk9_icon       = ( 'navy' === $hk9_tone && 'primary' === $hk9_style ) ? 'arrow-right' : '';
+			$hk9_rendered[] = hk9_button( $hk9_link, $hk9_style, [ 'size' => 'lg', 'icon' => $hk9_icon ] );
 		}
 		if ( ! empty( $hk9_rendered ) ) {
-			echo '<div class="hk9-cta-band__actions">' . implode( '', $hk9_rendered ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper.
+			// Two buttons stretch full-width below 640px (flex-col sm:flex-row); one stays inline.
+			$hk9_actions_class = 'hk9-cta-band__actions' . ( count( $hk9_rendered ) > 1 ? ' hk9-cta-band__actions--multi' : '' );
+			echo '<div class="' . esc_attr( $hk9_actions_class ) . '">' . implode( '', $hk9_rendered ) . '</div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper.
 		}
 		?>
 	</div>

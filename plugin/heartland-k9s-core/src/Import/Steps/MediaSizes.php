@@ -34,6 +34,13 @@ final class MediaSizes extends Step {
 		$id   = $row && Map::STATUS_ACTIVE === $row['status'] ? $row['object_id'] : 0;
 		if ( 0 === $id ) {
 			if ( $ctx->dry() ) {
+				// A record whose bytes another record would create first shares that attachment.
+				$sha   = strtolower( (string) ( $record['sha256'] ?? '' ) );
+				$owner = (string) ( $ctx->state['dry_created'][ $sha ] ?? '' );
+				if ( '' !== $owner && $owner !== $key ) {
+					$ctx->result( $key, 'skip', 'shares its attachment (dry run)', $sens );
+					return;
+				}
 				$ctx->result( $key, 'create', 'sizes (dry run)', $sens );
 				return;
 			}
@@ -44,15 +51,17 @@ final class MediaSizes extends Step {
 			$ctx->result( $key, 'skip', 'not an image', $sens );
 			return;
 		}
+		require_once ABSPATH . 'wp-admin/includes/image.php';
+
 		$before = wp_get_attachment_metadata( $id );
 		$have   = is_array( $before ) ? count( $before['sizes'] ?? [] ) : 0;
-		$need   = count( get_intermediate_image_sizes() );
 		if ( $ctx->dry() ) {
-			$ctx->result( $key, $have >= $need ? 'skip' : 'update', sprintf( '%d/%d sizes', $have, $need ), $sens );
+			// Only sizes the image is large enough for count as missing (small images never get every registered size).
+			$missing = wp_get_missing_image_subsizes( $id );
+			$ctx->result( $key, $missing ? 'update' : 'skip', sprintf( '%d sizes, %d missing', $have, count( $missing ) ), $sens );
 			return;
 		}
 
-		require_once ABSPATH . 'wp-admin/includes/image.php';
 		$meta = wp_update_image_subsizes( $id );
 		if ( is_wp_error( $meta ) ) {
 			$ctx->fail( $key, 'Sub-size generation failed: ' . $meta->get_error_message(), $sens );

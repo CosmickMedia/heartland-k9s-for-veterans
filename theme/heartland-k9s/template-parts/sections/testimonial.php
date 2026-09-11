@@ -21,16 +21,18 @@ $hk9_button   = is_array( $hk9_data['button'] ?? null ) ? $hk9_data['button'] : 
 $hk9_story_id = (int) ( $hk9_data['story'] ?? 0 );
 
 if ( 'story' === $hk9_source && $hk9_story_id > 0 && 'hk9_story' === get_post_type( $hk9_story_id ) && 'publish' === get_post_status( $hk9_story_id ) ) {
-	$hk9_story_quote = trim( (string) get_post_meta( $hk9_story_id, 'quote', true ) );
+	// Story fields live under the hk9_ meta prefix (ARCHITECTURE §6); hk9_pages_text()
+	// resolves them through the plugin accessor when it is active.
+	$hk9_story_quote = hk9_pages_text( $hk9_story_id, 'quote' );
 	if ( '' !== $hk9_story_quote ) {
 		$hk9_quote = $hk9_story_quote;
 	}
 	if ( '' === $hk9_name ) {
-		$hk9_name = trim( (string) get_post_meta( $hk9_story_id, 'veteran_name', true ) ) ?: get_the_title( $hk9_story_id );
+		$hk9_name = hk9_pages_text( $hk9_story_id, 'veteran_name' ) ?: get_the_title( $hk9_story_id );
 	}
 	if ( '' === $hk9_meta ) {
-		$hk9_branch = trim( (string) get_post_meta( $hk9_story_id, 'branch', true ) );
-		$hk9_canine = trim( (string) get_post_meta( $hk9_story_id, 'canine_name', true ) );
+		$hk9_branch = hk9_pages_text( $hk9_story_id, 'branch' );
+		$hk9_canine = hk9_pages_text( $hk9_story_id, 'canine_name' );
 		$hk9_meta   = implode( ' · ', array_filter( [ $hk9_branch, '' !== $hk9_canine ? sprintf( /* translators: %s: dog name */ __( 'Paired with %s', 'heartland-k9s' ), $hk9_canine ) : '' ] ) );
 	}
 	if ( $hk9_image_id <= 0 && has_post_thumbnail( $hk9_story_id ) ) {

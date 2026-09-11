@@ -41,9 +41,11 @@ Compiled files in assets/dist/ are committed so the theme installs without Node.
 
 == screenshot.png ==
 
-TODO (packaging phase): capture the real Home page at 1200×900 with the reference
-logo and imported content (`node tools/screenshot.mjs --theme-screenshot`) and save it
-as screenshot.png in the theme root. Do not ship a placeholder image.
+1200×900 PNG of the imported Home page (top of the viewport, no admin bar), captured
+with Playwright/Chromium at a 1200×900 viewport and palette-compressed (~230 kB).
+Re-capture after a visual change: load http://localhost:8093/ logged out at 1200×900,
+wait for fonts + images, `page.screenshot({ fullPage: false })`, then save it as
+screenshot.png in the theme root. Do not ship a placeholder image.
 
 == Third-party licences ==
 

@@ -124,6 +124,7 @@ final class Runner {
 			$state['warnings']    = [];
 			$state['failed_keys'] = [];
 			$state['prehash']     = [];
+			$state['dry_created'] = [];
 			$state['finished_at'] = '';
 			$state['passes']      = (int) $state['passes'] + 1;
 			$log->info( 'run', '', sprintf( 'Resuming with a new pass (#%d).', $state['passes'] ) );
@@ -330,7 +331,7 @@ final class Runner {
 		if ( ! $full ) {
 			$state['errors']   = array_slice( $state['errors'], -100 );
 			$state['warnings'] = array_slice( $state['warnings'], -100 );
-			unset( $state['prehash'] );
+			unset( $state['prehash'], $state['dry_created'] );
 		}
 		$state['errors_total']   = count( State::load()['errors'] );
 		$state['warnings_total'] = count( State::load()['warnings'] );

@@ -69,8 +69,11 @@ hk9_section_open( $hk9_id, 'hk9-section--plain hk9-gutter hk9-teams-block', '' !
 
 	<div class="hk9-team-grid<?php echo count( $hk9_teams ) < 3 ? ' hk9-team-grid--' . count( $hk9_teams ) : ''; ?>">
 		<?php
+		$hk9_card_sizes = count( $hk9_teams ) < 3
+			? '(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) calc(50vw - 48px), 496px'
+			: '(max-width: 767px) calc(100vw - 32px), (max-width: 1023px) calc(50vw - 48px), 320px';
 		foreach ( $hk9_teams as $hk9_team ) {
-			hk9_pages_team_card( $hk9_team );
+			hk9_pages_team_card( $hk9_team, [ 'sizes' => $hk9_card_sizes ] );
 		}
 		?>
 	</div>

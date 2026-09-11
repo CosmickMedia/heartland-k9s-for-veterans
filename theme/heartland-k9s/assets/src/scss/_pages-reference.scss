@@ -111,9 +111,10 @@
 		line-height: 1.5556;
 	}
 
-	// "flex flex-col sm:flex-row": stacked buttons stretch to the full width below 640px.
+	// Two buttons sit in a "flex flex-col sm:flex-row" wrapper and stretch to the full
+	// width below 640px; a single button is inline (shrink-to-fit, centred) at every width.
 	@include media-breakpoint-down(sm) {
-		.hk9-cta-band__actions {
+		.hk9-cta-band__actions--multi {
 			align-items: stretch;
 		}
 	}

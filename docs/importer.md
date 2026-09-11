@@ -39,8 +39,8 @@ Records marked `sensitive: true` (BarKode registry) are logged as `sensitive#<ha
 |---|---|
 | `validate` | manifest shape, unique keys, token graph (dangling → fatal), ISO dates, permalinks not "Plain", active theme = `requires.theme` (default `heartland-k9s`), uploads writable, post types/taxonomies registered (per record), templates present (warning); per attachment: containment inside the payload dir, existence, size cap (64 MB, filter `hk9/import/max_file_bytes`), declared + real MIME in the allow-list (jpeg/png/gif/webp/avif/pdf — HEIC/SVG excluded; filter `hk9/import/allowed_mimes`), sha256; finally hashes pre-existing attachments lacking `_hk9_sha256` so manual uploads with identical bytes are adopted. File problems fail only that record. |
 | `terms` | `term_exists` adopt or `wp_insert_term`. |
-| `media_files` | dedupe by sha256 (map table → `_hk9_sha256` meta → dry-run cache); copy to `wp_tempnam()` and `media_handle_sideload()` with pre-slashed `post_data` + `meta_input`; only the `-scaled`/rotated original is produced here. |
-| `media_sizes` | `wp_update_image_subsizes()` per image (skips sizes that exist). |
+| `media_files` | dedupe by sha256 (map table → `_hk9_sha256` meta → dry-run cache); copy to `wp_tempnam()` and `media_handle_sideload()` with pre-slashed `post_data` + `meta_input`; only the `-scaled`/rotated original is produced here. **Shared attachments:** when several payload records carry byte-identical files (the real payload has 10 such pairs, e.g. `live:media:3028` + `ref:asset:heartland-k9s-logo`), the first record in manifest order creates the attachment and owns its title/alt/caption/description/date; every later record is bound to the same attachment as a *secondary* row that never writes those fields (logged `SKIP shares attachment #id with <owner>`). Its map row mirrors the owner's `db` hashes with its own `src` hashes, so both rows hash-match the object, re-runs skip (no conflict) and `{{media:K}}` / `{{media_url:K}}` resolve for either key. Dry runs remember the would-be creator per sha so the second record is reported as `skip`, not `create`. |
+| `media_sizes` | `wp_update_image_subsizes()` per image (skips sizes that exist). Dry runs use `wp_get_missing_image_subsizes()` for the verdict, so small images that can never receive every registered size are reported as `skip`, not `update`. |
 | `posts_stub` | every post-like record as a **draft** with no parent (`_hk9_import_pending`). |
 | `posts_hierarchy` | parent-first: parent, slug, final status, template, excerpt, date, menu_order, featured, terms and section meta in **one** `wp_update_post()` (meta via `meta_input`, so the revision carries it). Meta containing `{{post_url}}` is deferred to `posts_content`. |
 | `reading` | asserts published pages, sets `page_on_front`, `page_for_posts`, then `show_on_front`, `posts_per_page`. |
@@ -48,7 +48,7 @@ Records marked `sensitive: true` (BarKode registry) are logged as `sensitive#<ha
 | `menus` | create/adopt `nav_menu` by name; items parent-first with `menu-item-status=publish`, object ids for post types; locations merged into `nav_menu_locations`. |
 | `options` | deep-merge (or replace) per top-level key. |
 | `redirects` | merge into `hk9_redirects` (`{version, rules:{<normalized-from>:{to,status,enabled,seed,note,updated,by}}}`); rejects `from == to`, walks the merged table for cycles, warns when `from` matches a published post. |
-| `finalize` | attaches media to `parent` posts, reports orphans (map rows no longer in the payload — never deleted), soft-flushes rewrites, deletes an **uploaded** payload copy after a clean run. |
+| `finalize` | attaches media to `parent` posts (a secondary record never re-parents a shared attachment), reports orphans (map rows no longer in the payload — never deleted), soft-flushes rewrites, deletes an **uploaded** payload copy (`uploads/hk9-payload-*` only) after a clean run; a payload given as a server path — including the read-only bind mount `wp-content/hk9-payload` of the dev stack — is never touched (logged "left in place"). |
 
 ## 3. Idempotency, conflicts, overwrite
 
@@ -63,9 +63,13 @@ Per field the row stores `{db: hash(value re-read from the DB after our write), 
 
 Hashes are canonical (sorted keys, normalised line endings) and always taken from read-back values, so kses/sanitizer normalisation never produces false conflicts.
 
+One object may be bound to several rows (only attachments: byte-identical payload files). The oldest row is the **owner** (`Map::owner()`; the creating row is reserved before the object exists, so it is always the oldest); the others are secondary rows with `created_by_run = NULL` whose `db` hashes are re-mirrored from the owner on every run. An editor's edit therefore surfaces as a conflict on the owner record only; `--overwrite` re-applies the owner's values and the secondaries re-sync.
+
 ## 4. Rollback (`--run=<id>`)
 
 Order: reading/options/redirect pre-images are restored **first**, then menu items → menus → posts (children first) → attachments → terms. Objects *created* by the run are deleted only when every recorded field hash still matches (else reported "skipped: modified") — `--force` deletes them anyway. Objects only *updated* by the run get the changed fields restored under the same rule. Adopted objects (pre-existing pages, manual uploads matched by sha256, menus adopted by name) are never deleted.
+
+An object bound to several map rows (shared attachment) is decided **once**, when its owner row is processed: a field counts as modified only when its current value matches none of the rows' `db` hashes (so a legitimately importer-written value is never mistaken for an edit, while an editor's change that no row recorded still protects the object), the deletion is logged `deleted attachment #id (also bound to <keys>)`, and every row bound to the object is dropped from the map — the secondary records simply recreate/re-adopt on the next import. Later rows for the same object are ignored in that rollback.
 
 ## 5. State, lock, logs
 
@@ -105,6 +109,15 @@ Heartland → **Setup & Import** (`admin.php?page=hk9-import`, `manage_options`)
 
 REST (`manage_options` + `wp_rest` nonce): `GET hk9/v1/import/status`, `POST hk9/v1/import/{start,step,pause,resume,retry,rollback,reset}`. Server paths are accepted only inside `uploads/hk9-payload-*`, `wp-content/hk9-payload` and the plugin `tests/` directory (dev), resolved with `realpath()` containment; filter `hk9/import/allowed_payload_roots`.
 
+### 8.1 Where the payload should live on a production install
+
+The payload carries BarKode registry data and every original image, so it must never be web-readable. Two supported placements:
+
+1. **Upload the ZIP through Heartland → Setup & Import** (recommended). It is unpacked into `uploads/hk9-payload-<32 random chars>/` with `.htaccess` deny rules + `index.html`, dotfiles and script-bearing files are purged, and the whole directory is deleted by `finalize` after a clean run (`Payload::remove_uploaded()` refuses anything outside `uploads/hk9-payload-*`). On nginx hosts the `.htaccess` is ignored, but the random directory name keeps it unguessable until the run finishes; run the import promptly after uploading.
+2. **CLI with a directory outside the web root**, e.g. `wp hk9 import /home/site/hk9-payload --user=admin` after `scp`/`rsync`-ing the payload to a path Apache/nginx never serve. A server-path payload is never deleted by the importer; remove it yourself afterwards.
+
+`wp hk9 import <dir>` prints *"The payload directory is inside the web root without an .htaccess deny rule; do not leave sensitive payloads there."* when `<dir>` sits under `ABSPATH` and has no `.htaccess`. That warning is correct and expected for the dev stack's read-only bind mount `/var/www/html/wp-content/hk9-payload` (Docker mounts `../payload` there `:ro`, so the importer cannot write a deny file and `finalize` never attempts to delete it — verified: no debug.log entries, finalize logs "left in place"); on a real server use placement 1 or 2 instead of copying the payload into `wp-content/`.
+
 ## 9. Where the judge fixes live
 
 1. URL baking after hierarchy + reading — `Steps\PostsHierarchy` → `Steps\Reading` → `Steps\PostsContent`; `Validate` rejects empty `permalink_structure`.
@@ -121,10 +134,15 @@ REST (`manage_options` + `wp_rest` nonce): `GET hk9/v1/import/status`, `POST hk9
 
 ## 10. Verified test plan (local docker stack, mini fixture)
 
-1. Fresh dry run reports the creates; import creates everything (`-scaled` + `original_image` for the 2800×1400 hero, alt set, section meta in the hierarchy revision, `page_on_front` mapped, menu items with object ids, `grep '{{'` = 0).
-2. Re-run: 0 creates, uploads unchanged.
+Automated: `bash plugin/heartland-k9s-core/tests/importer-suite.sh` (81 checks). The suite only ever touches `mini:*` objects and tmp copies under `tests/tmp/`, so it can run on a site that already holds the real import: it never truncates the map, rolls back every run that wrote the shared `option:hk9_settings` / `reading` rows, and restores the one settings leaf it edits by hand (`contact.hours`) to its exact previous value. Afterwards a real-payload `--dry-run` must still report `skip` for everything with `conflict 0`.
+
+1. Fresh dry run reports the creates (a byte-identical duplicate — `mini:asset:card-copy` — is reported as `skip`, not `create`); import creates everything (`-scaled` + `original_image` for the 2800×1400 hero, alt set, section meta in the hierarchy revision, `page_on_front` mapped, `page_for_posts` = the news page and `/mini-news/` renders `home.php` (HTTP 200, `body.blog`), menu items with object ids, `grep '{{'` = 0).
+2. Re-run: 0 creates/updates/conflicts, uploads unchanged — including the shared attachment: `mini:asset:card` (owner) and `mini:asset:card-copy` (secondary row bound to the same attachment id, owner's title/alt kept, the copy's `{{media:…}}` token baked to the shared id) both `skip`.
 3. Edit title + section meta on the site, re-run → `conflict=1`, edits preserved.
 4. `--overwrite` → reverted; re-run → skip.
 5. Manual page + manual uploads before the import (one byte-identical to a payload image → adopted); edit one imported page; rollback → imported objects gone, edited page skipped, manual content intact, reading/settings restored; `--force` removes the edited page.
 6. `timeout -s KILL` mid-run (`tests/interrupt-run.php`) → `status` shows the cursor; `--resume` waits for the stale lock and finishes.
 7. Missing media file → per-item failure chain (attachment → pages → reading → menu items); restoring the file + `--resume` imports only those.
+8. Rollback of the creating run deletes the shared attachment exactly once (`deleted mini:asset:card (#id)`, log line "also bound to mini:asset:card-copy"), drops both map rows, and brings the attachment count back to the baseline.
+
+Real payload (2026-09-11, 363 records / 250 media, 10 byte-identical pairs): after a clean import a second run and the `--dry-run` report `media_files 0 0 250 0 0` and `skip` everywhere else; `wp hk9 rollback --run=<creating run> --dry-run` reports 0 skipped (before the fix the second record of each pair rewrote the owner's title/alt/date, which produced `conflict=10` on re-runs and "skipped … modified: title, alt" in rollback).

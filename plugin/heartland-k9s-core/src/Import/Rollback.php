@@ -8,7 +8,9 @@
  * Objects created by the run are deleted only when every recorded field hash
  * still matches the database (or --force); objects merely updated by the run
  * get their pre-image restored under the same rule; adopted objects are never
- * deleted.
+ * deleted. An object bound to several map rows (byte-identical payload files
+ * share one attachment) is decided once: a field counts as modified only when
+ * it matches none of its rows' hashes, and a deletion drops every row bound to it.
  *
  * @package HK9\Core
  */
@@ -30,6 +32,9 @@ defined( 'ABSPATH' ) || exit;
 final class Rollback {
 
 	private const ORDER = [ 'reading', 'option', 'redirect', 'nav_menu_item', 'nav_menu', 'post', 'attachment', 'term' ];
+
+	/** @var array<string,true> "type:id" of objects already decided in the current rollback (shared attachments). */
+	private static array $handled = [];
 
 	/**
 	 * @return array{run:string,deleted:array,restored:array,skipped:array,errors:array,dry_run:bool}|WP_Error
@@ -60,6 +65,7 @@ final class Rollback {
 		$log    = new Log( $run_id );
 		$log->info( 'rollback', '', sprintf( 'Rollback started (force=%s, dry_run=%s).', $force ? 'yes' : 'no', $dry_run ? 'yes' : 'no' ) );
 
+		self::$handled = [];
 		try {
 			$rows = Map::rows_for_run( $run_id );
 			if ( ! $rows ) {
@@ -117,7 +123,12 @@ final class Rollback {
 			return;
 		}
 
-		$id = (int) $row['object_id'];
+		$id   = (int) $row['object_id'];
+		$slot = $type . ':' . $id;
+		if ( $id > 0 && isset( self::$handled[ $slot ] ) ) {
+			// Another row bound to the same object already decided its fate in this rollback.
+			return;
+		}
 		if ( $created ) {
 			if ( $id <= 0 || ! self::exists( $type, $id ) ) {
 				if ( ! $dry_run ) {
@@ -126,7 +137,10 @@ final class Rollback {
 				$report['deleted'][] = [ 'key' => $key, 'note' => 'already gone' ];
 				return;
 			}
-			$modified = Reconcile::modified_fields( $row, self::current( $type, $id, $row ) );
+			self::$handled[ $slot ] = true;
+			$peers                  = Map::rows_for_object( $type, $id ) ?: [ $row ];
+			$shared                 = array_values( array_diff( array_column( $peers, 'source_key' ), [ $key ] ) );
+			$modified               = self::modified_across( $type, $id, $peers );
 			if ( 'nav_menu' === $type ) {
 				$extra = self::foreign_menu_items( $id, $run_id );
 				if ( $extra ) {
@@ -134,7 +148,7 @@ final class Rollback {
 				}
 			}
 			if ( $modified && ! $force ) {
-				$report['skipped'][] = [ 'key' => $key, 'reason' => 'modified: ' . implode( ', ', $modified ) ];
+				$report['skipped'][] = [ 'key' => $key, 'reason' => 'modified: ' . implode( ', ', $modified ) ] + ( $shared ? [ 'shared' => $shared ] : [] );
 				$log->warn( 'rollback', $key, 'skipped (modified: ' . implode( ', ', $modified ) . ')', $sens );
 				return;
 			}
@@ -146,9 +160,11 @@ final class Rollback {
 					return;
 				}
 				Map::delete( $key );
+				// Rows of other records bound to the same object point at nothing now.
+				Map::delete_by_object( $type, $id );
 			}
-			$report['deleted'][] = [ 'key' => $key, 'id' => $id, 'type' => $type ] + ( $modified ? [ 'forced' => true ] : [] );
-			$log->info( 'rollback', $key, sprintf( 'deleted %s #%d%s', $type, $id, $modified ? ' (forced)' : '' ), $sens );
+			$report['deleted'][] = [ 'key' => $key, 'id' => $id, 'type' => $type ] + ( $modified ? [ 'forced' => true ] : [] ) + ( $shared ? [ 'shared' => $shared ] : [] );
+			$log->info( 'rollback', $key, sprintf( 'deleted %s #%d%s%s', $type, $id, $modified ? ' (forced)' : '', $shared ? ' (also bound to ' . implode( ', ', $shared ) . ')' : '' ), $sens );
 			return;
 		}
 
@@ -321,6 +337,50 @@ final class Rollback {
 		}
 		$report['restored'][] = [ 'key' => $key, 'fields' => array_keys( $before ) ];
 		$log->info( 'rollback', $key, 'restored ' . implode( ', ', array_keys( $before ) ) );
+	}
+
+	/**
+	 * Fields of an object that match none of the map rows bound to it. With a single
+	 * row this is Reconcile::modified_fields(); with several (byte-identical payload
+	 * files sharing one attachment) a field is unmodified when ANY row recorded its
+	 * current hash, so an object is skipped only when it differs from every row.
+	 *
+	 * @param array[] $rows Decoded map rows bound to the object.
+	 * @return string[] Modified field names.
+	 */
+	private static function modified_across( string $type, int $id, array $rows ): array {
+		$fields = [];
+		foreach ( $rows as $r ) {
+			foreach ( (array) ( $r['field_hashes'] ?? [] ) as $f => $h ) {
+				if ( isset( $h['db'] ) ) {
+					$fields[ (string) $f ] = true;
+				}
+			}
+		}
+		$fields = array_keys( $fields );
+		if ( ! $fields ) {
+			return [];
+		}
+		$current  = self::current( $type, $id, [ 'field_hashes' => [] ], $fields );
+		$modified = [];
+		foreach ( $fields as $f ) {
+			if ( ! array_key_exists( $f, $current ) ) {
+				continue;
+			}
+			$now     = Hash::of( $current[ $f ] );
+			$matched = false;
+			foreach ( $rows as $r ) {
+				$h = $r['field_hashes'][ $f ]['db'] ?? null;
+				if ( null !== $h && $h === $now ) {
+					$matched = true;
+					break;
+				}
+			}
+			if ( ! $matched ) {
+				$modified[] = $f;
+			}
+		}
+		return $modified;
 	}
 
 	/**

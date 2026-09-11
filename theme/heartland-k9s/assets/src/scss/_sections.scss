@@ -67,15 +67,18 @@
 		}
 	}
 
+	// Reference: <h3 class="text-2xl font-serif font-bold text-white mb-2"> in a bottom-6 box.
 	&__caption {
 		position: absolute;
 		left: 1.5rem;
 		right: 1.5rem;
 		bottom: 1.5rem;
 		z-index: 1;
+		font-family: var(--hk9-font-serif);
 		font-size: 1.5rem;
 		line-height: 1.3334;
 		font-weight: 700;
+		letter-spacing: -.025em;
 		color: #fff;
 		margin: 0 0 .5rem;
 	}

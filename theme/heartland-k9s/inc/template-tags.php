@@ -152,7 +152,23 @@ function hk9_image( int $id, string $size = 'large', array $attrs = [], bool $ea
 	$attrs = array_merge( $defaults, $attrs );
 
 	// Explicit dimensions come from wp_get_attachment_image (width/height attributes).
-	return wp_get_attachment_image( $id, $size, false, $attrs );
+	$html = wp_get_attachment_image( $id, $size, false, $attrs );
+
+	// The theme passes a hand-measured `sizes` for every image it renders, so the
+	// `auto` keyword core (6.7+) prepends to lazy images adds nothing here — and it
+	// makes full-page capture tooling that flips `loading` re-select a candidate
+	// (the "auto" hint is invalid on eager images and falls back to 100vw).
+	if ( ! empty( $attrs['sizes'] ) && is_string( $html ) ) {
+		$html = preg_replace( '/\ssizes="auto,\s*/', ' sizes="', $html, 1 );
+	}
+
+	// `fetchpriority => 'auto'` opts an eager image out of core's "first eager image gets
+	// fetchpriority=high" heuristic without emitting the (default) attribute.
+	if ( isset( $attrs['fetchpriority'] ) && 'auto' === $attrs['fetchpriority'] && is_string( $html ) ) {
+		$html = str_replace( ' fetchpriority="auto"', '', $html );
+	}
+
+	return $html;
 }
 
 /**
@@ -207,9 +223,11 @@ function hk9_button( array $link, string $style = 'primary', array $attrs = [] )
 		}
 	}
 
+	// Trailing icon (reference: `<ArrowRight className="w-4 h-4 ml-2" />` after the label).
 	$icon = '';
 	if ( ! empty( $attrs['icon'] ) ) {
-		$icon = hk9_icon( (string) $attrs['icon'], [ 'size' => (int) ( $attrs['icon_size'] ?? 16 ), 'class' => ! empty( $attrs['icon_size'] ) && 20 === (int) $attrs['icon_size'] ? 'hk9-icon--20' : '' ] );
+		$icon_class = 'hk9-btn__icon' . ( ! empty( $attrs['icon_size'] ) && 20 === (int) $attrs['icon_size'] ? ' hk9-icon--20' : '' );
+		$icon       = hk9_icon( (string) $attrs['icon'], [ 'size' => (int) ( $attrs['icon_size'] ?? 16 ), 'class' => $icon_class ] );
 	}
 
 	return sprintf(
@@ -471,7 +489,15 @@ function hk9_logo_img( string $context = 'header' ): string {
 		$alt = get_bloginfo( 'name' );
 	}
 
-	return hk9_image( $id, 'hk9-logo', [ 'class' => $class, 'alt' => $alt, 'sizes' => '80px' ], 'header' === $context );
+	// Header logo: eager (above the fold) but without fetchpriority=high — that is reserved
+	// for the hero / LCP image; the footer logo lazy-loads.
+	$attrs = [ 'class' => $class, 'alt' => $alt, 'sizes' => '80px' ];
+	if ( 'header' === $context ) {
+		$attrs['loading']       = 'eager';
+		$attrs['fetchpriority'] = 'auto';
+	}
+
+	return hk9_image( $id, 'hk9-logo', $attrs );
 }
 
 /**

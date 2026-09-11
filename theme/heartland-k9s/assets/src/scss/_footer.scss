@@ -94,13 +94,19 @@
 		margin-bottom: 0;
 	}
 
+	// Reference: <div class="pt-2"><p class="font-serif italic text-secondary text-lg">.
+	// Deliberate accessibility deviation: crimson (#b82e45) on navy is 2.26:1, so the
+	// tagline uses the nearest lighter tint of the secondary colour that reaches
+	// WCAG AA 4.5:1 on the primary colour (hsl(350 60% 67%) = #dd7788 → 4.55:1);
+	// inc/options.php recomputes --hk9-secondary-on-primary when the palette changes.
 	&__tagline {
 		font-family: var(--hk9-font-serif);
 		font-style: italic;
 		font-weight: 400;
 		font-size: 1.125rem;
 		line-height: 1.5556;
-		color: var(--hk9-secondary);
+		color: var(--hk9-secondary-on-primary, #dd7788);
+		padding-top: .5rem;
 		margin-bottom: 0;
 	}
 
@@ -200,14 +206,45 @@
 
 	&__social {
 		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
 		gap: .75rem;
 		margin: 0;
 		padding: 0;
 		list-style: none;
 
+		li { margin: 0; }
+
+		a {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 2rem;
+			min-height: 2rem;
+			font-size: .875rem;
+			line-height: 1.4286;
+		}
+
 		.hk9-icon {
 			width: 1.25rem;
 			height: 1.25rem;
 		}
+	}
+
+	&__brand .hk9-footer__social {
+		padding-top: .25rem;
+	}
+
+	// Legal menu in the bottom bar (Privacy Policy…): inline list, inherits the 12px bar text.
+	&__legal {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: 1rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		li { margin: 0; }
 	}
 }

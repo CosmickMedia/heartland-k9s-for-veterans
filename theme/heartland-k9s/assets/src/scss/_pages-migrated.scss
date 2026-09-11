@@ -756,6 +756,9 @@
 
 		// The caption overlays the bottom of the tile: let clicks reach the image (lightbox)
 		// while links inside a caption stay clickable.
+		// Core makes the overlay `overflow: auto`, which turns a long caption on a narrow
+		// tile into an unfocusable scroll region (axe scrollable-region-focusable); clamp
+		// it instead — the full text stays in the DOM for assistive tech.
 		figcaption {
 			margin: 0;
 			font-size: .8125rem;
@@ -764,6 +767,10 @@
 			color: #fff;
 			background: linear-gradient(to top, rgba(15, 23, 42, .75), rgba(15, 23, 42, 0));
 			pointer-events: none;
+			overflow: hidden;
+			display: -webkit-box;
+			-webkit-box-orient: vertical;
+			-webkit-line-clamp: 4;
 
 			a { pointer-events: auto; color: #fff; text-decoration: underline; }
 		}

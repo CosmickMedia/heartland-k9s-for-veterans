@@ -1,6 +1,6 @@
 {
   "format": "hk9-payload/1",
-  "generated_at": "2026-09-11T15:06:06.726Z",
+  "generated_at": "2026-09-11T15:57:03.868Z",
   "sources": {
     "fixture": "tools/fixtures/payload-mini (synthetic test payload)"
   },
@@ -53,6 +53,21 @@
       "width": 600,
       "height": 400,
       "sensitive": true
+    },
+    {
+      "key": "mini:asset:card-copy",
+      "type": "attachment",
+      "file": "media/mini__asset__card-copy/mini-card-copy.png",
+      "sha256": "0d9f2e06cd4520090f48b54a214d45d8924f9d7487e81ea50c12e3ec2b94f64c",
+      "mime": "image/png",
+      "size": 6040,
+      "title": "Mini card (duplicate upload)",
+      "alt": "Second copy of the crimson card",
+      "caption": "Duplicate caption",
+      "description": "Byte-identical to mini:asset:card; must share its attachment.",
+      "date": "2024-03-05T10:00:00Z",
+      "width": 400,
+      "height": 300
     },
     {
       "key": "term:post_tag:mini-poker-run",
