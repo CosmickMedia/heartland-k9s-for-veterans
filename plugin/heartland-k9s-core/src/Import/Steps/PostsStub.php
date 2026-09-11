@@ -59,6 +59,9 @@ final class PostsStub extends Step {
 
 		$id = Map::find_orphan_post( $key );
 		if ( 0 === $id ) {
+			$id = $this->adopt_core_placeholder( $key, $record, $type );
+		}
+		if ( 0 === $id ) {
 			$args = [
 				'post_type'    => $type,
 				'post_title'   => (string) ( $record['title'] ?? '' ),
@@ -95,5 +98,43 @@ final class PostsStub extends Step {
 				'payload_hash'   => $this->manifest()->payload_hash( $record ),
 			]
 		);
+	}
+
+	/**
+	 * A fresh WordPress install ships an untouched draft "Privacy Policy" page (slug privacy-policy,
+	 * referenced by the wp_page_for_privacy_policy option). Creating a second page would push the
+	 * imported one to privacy-policy-2, so adopt the core placeholder instead when it is still pristine
+	 * (draft, never edited, not owned by another import record).
+	 *
+	 * @return int Adopted post id or 0.
+	 */
+	private function adopt_core_placeholder( string $key, array $record, string $type ): int {
+		if ( 'page' !== $type ) {
+			return 0;
+		}
+		$slug = sanitize_title( (string) ( $record['slug'] ?? '' ) );
+		if ( 'privacy-policy' !== $slug ) {
+			return 0;
+		}
+		$core_id = (int) get_option( 'wp_page_for_privacy_policy' );
+		if ( $core_id <= 0 ) {
+			return 0;
+		}
+		$post = get_post( $core_id );
+		if ( ! $post || 'page' !== $post->post_type || 'draft' !== $post->post_status || $slug !== $post->post_name ) {
+			return 0;
+		}
+		if ( '' !== (string) get_post_meta( $core_id, '_hk9_source_key', true ) ) {
+			return 0;
+		}
+		// Pristine = never edited (created and modified at the same time) — an edited draft is someone's work.
+		if ( $post->post_modified_gmt !== $post->post_date_gmt ) {
+			return 0;
+		}
+		update_post_meta( $core_id, '_hk9_source_key', $key );
+		update_post_meta( $core_id, '_hk9_import_run', $this->ctx->run_id );
+		update_post_meta( $core_id, '_hk9_import_pending', 1 );
+		$this->ctx->info( $key, sprintf( 'Adopted the core placeholder Privacy Policy page #%d instead of creating privacy-policy-2.', $core_id ) );
+		return $core_id;
 	}
 }
