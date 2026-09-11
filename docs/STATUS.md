@@ -12,31 +12,31 @@ Local stack: `docker compose -f docker/docker-compose.yml up -d && docker/setup.
 - [x] docs/ARCHITECTURE.md contract
 
 ## Phase 1 — Baseline & inventories
-- [ ] docs/reports/baseline (reference screenshots + measurements + interaction checklist)
-- [ ] docs/migration-map.md · docs/conflict-log.md · docs/media-manifest.md · docs/unresolved.md
+- [x] docs/reports/baseline.md (reference screenshots + measurements + interaction checklist)
+- [x] docs/migration-map.md · docs/conflict-log.md · docs/media-manifest.md · docs/unresolved.md (written in Wave 1; refreshed after reviews)
 
 ## Phase 2 — Media & fonts
-- [ ] tools/fetch-media.mjs run: 244 live + 7 reference originals downloaded, sha256, failure report
-- [ ] Fonts built (Fraunces/Inter WOFF2 + OFL) · lucide sprite built
+- [x] tools/fetch-media.mjs run: 251/251 ok (663 MB), sha256 sidecars, docs/reports/media-fetch-report.md
+- [x] Fonts built (Fraunces/Inter WOFF2 + OFL) · lucide sprite built (39 icons)
 
 ## Phase 3 — Plugin core
-- [ ] PostTypes/Capabilities/columns/rewrites/privacy
-- [ ] Fields framework + Sections registry + meta (revisions/preview validated design)
-- [ ] Settings page (all tabs)
-- [ ] Forms + submissions · Events helpers · Redirects module + admin
-- [ ] Importer + CLI + admin import screen
+- [x] PostTypes/Capabilities/columns/rewrites/privacy
+- [x] Fields framework + Sections registry + meta (revisions/preview validated design)
+- [x] Settings page (all tabs)
+- [x] Forms + submissions · Events helpers · Redirects module + admin
+- [x] Importer + CLI + admin import screen
 
 ## Phase 4 — Theme
-- [ ] Sass/JS build, tokens, components, fonts/icons, theme.json
-- [ ] Header/footer/menus/mobile menu
-- [ ] Front page + reference page templates (about/program/veterans/get-involved/barkode/stories/contact)
-- [ ] Landing/donate/events/campaigns/partners/people/teams/highlighted/gallery/application templates
-- [ ] CPT singles · blog templates · search/404/comments · block styles
+- [x] Sass/JS build, tokens, components, fonts/icons, theme.json
+- [x] Header/footer/menus/mobile menu
+- [x] Front page + reference page templates (about/program/veterans/get-involved/barkode/stories/contact)
+- [x] Landing/donate/events/campaigns/partners/people/teams/highlighted/gallery/application templates
+- [x] CPT singles · blog templates · search/404/comments · block styles
 - [ ] SEO/robots/OG · performance
 
 ## Phase 5 — Content & import
-- [ ] payload-src authored (8 reference pages, 19 migrated pages, records, menus, settings, redirects, tags, reading)
-- [ ] payload built · imported locally · re-import idempotent · edit-preserve · overwrite · rollback verified
+- [x] payload-src authored (8 reference pages, 19 migrated pages, records, menus, settings, redirects, tags, reading)
+- [x] payload built (363 records) · imported locally (0 errors, 2m23s) · re-import 0 creates (10 duplicate-media conflicts → fix in Wave 3) · rollback on real run verified (3 pages + 10 dup media skipped as modified → fixed slug collision, dedupe fix pending) · edit-preserve/overwrite proven on mini fixture (58 checks)
 
 ## Phase 6 — Visual comparison loop
 - [ ] Screenshots + diffs (8 routes × 390/1440 + representative widths) · fixes · deviations documented
