@@ -18,6 +18,7 @@ return [
 		Shared::hero_band(),
 		[
 			'id'       => 'list',
+			'type'     => 'teams_list',
 			'meta_key' => 'hk9_sec_teams_list',
 			'label'    => __( 'Team list', 'heartland-k9s-core' ),
 			'fields'   => [

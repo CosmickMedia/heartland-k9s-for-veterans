@@ -32,6 +32,24 @@ final class Registry {
 		add_action( 'pre_get_posts', [ self::class, 'block_author_query' ] );
 		add_filter( 'wp_sitemaps_add_provider', [ self::class, 'drop_users_sitemap' ], 10, 2 );
 		add_filter( 'oembed_response_data', [ self::class, 'scrub_oembed_author' ], 10, 2 );
+
+		// Core sitemaps: WP::handle_404() sends a 404 for sitemap routes when the site has no blog posts
+		// (the main query is empty), even though the XML is rendered. Short-circuit 404 handling for them.
+		add_filter( 'pre_handle_404', [ self::class, 'never_404_sitemaps' ], 10, 2 );
+	}
+
+	/**
+	 * Prevent a 404 status on core sitemap / sitemap-stylesheet requests (they render at template_redirect).
+	 *
+	 * @param bool     $preempt Whether to short-circuit default 404 handling.
+	 * @param WP_Query $query   Main query.
+	 */
+	public static function never_404_sitemaps( $preempt, $query ): bool {
+		if ( $preempt ) {
+			return true;
+		}
+		$vars = is_object( $query ) && isset( $query->query_vars ) && is_array( $query->query_vars ) ? $query->query_vars : [];
+		return ! empty( $vars['sitemap'] ) || ! empty( $vars['sitemap-stylesheet'] );
 	}
 
 	private static function enumeration_blocked(): bool {

@@ -29,7 +29,7 @@ return [
 		),
 		[
 			'id'          => 'featured',
-			'type'        => 'testimonial',
+			'type'        => 'featured',
 			'label'       => __( 'Featured story (overlap card)', 'heartland-k9s-core' ),
 			'description' => __( 'Pull the quote from a published Story (leave the story empty to use the latest featured one), or enter a verified quote manually.', 'heartland-k9s-core' ),
 			'fields'      => [

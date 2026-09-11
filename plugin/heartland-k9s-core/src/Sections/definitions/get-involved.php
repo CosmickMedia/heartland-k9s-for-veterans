@@ -26,7 +26,7 @@ return [
 		),
 		[
 			'id'       => 'ways',
-			'type'     => 'feature_cards',
+			'type'     => 'ways',
 			'label'    => __( 'Ways to help (cards with buttons)', 'heartland-k9s-core' ),
 			'fields'   => [
 				[

@@ -18,6 +18,7 @@ return [
 		Shared::hero_band(),
 		[
 			'id'          => 'form',
+			'type'        => 'application_form',
 			'meta_key'    => 'hk9_sec_application_form',
 			'label'       => __( 'Application form', 'heartland-k9s-core' ),
 			'can_hide'    => false,

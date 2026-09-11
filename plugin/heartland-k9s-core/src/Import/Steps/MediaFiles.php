@@ -169,8 +169,13 @@ final class MediaFiles extends Step {
 			'error'    => 0,
 		];
 
+		// Attachment slugs share the root namespace with Pages (wp_unique_post_slug checks post_type IN (page, attachment)
+		// with the same parent), so an attachment named "about.jpg" would force the About page to become "about-2".
+		// Imported attachments therefore get a "media-" prefixed slug; attachment pages are disabled by default anyway.
+		$slug_base = sanitize_title( (string) ( $desired['title'] ?: pathinfo( $basename, PATHINFO_FILENAME ) ) );
 		$post_data = [
 			'post_title'   => $desired['title'],
+			'post_name'    => 'media-' . ( '' !== $slug_base ? $slug_base : substr( $sha, 0, 12 ) ),
 			'post_excerpt' => $desired['caption'],
 			'post_content' => $desired['description'],
 			'meta_input'   => [

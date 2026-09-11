@@ -22,7 +22,7 @@ const defaultRoutes = ['/', '/about/', '/program/', '/veterans/', '/get-involved
 const routes = args.routes ? String(args.routes).split(',') : defaultRoutes;
 const heights = { 390: 844, 360: 800, 768: 1024, 1024: 900, 1440: 900, 1920: 1080 };
 const slug = r => (r === '/' ? 'home' : r.replace(/^\/|\/$/g, '').replace(/[\/?=&]+/g, '-'));
-const settleCss = `*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important}`;
+const settleCss = `*,*::before,*::after{animation:none!important;transition:none!important;caret-color:transparent!important} html,body{scroll-behavior:auto!important}`;
 
 for (const engineName of engines) {
   const engine = { chromium, webkit, firefox }[engineName];
@@ -44,10 +44,10 @@ for (const engineName of engines) {
         await page.evaluate(async () => {
           const imgs = Array.from(document.images);
           imgs.forEach(i => { i.loading = 'eager'; });
-          await Promise.all(imgs.map(i => i.complete ? null : new Promise(r => { i.onload = i.onerror = r; })));
-          window.scrollTo(0, document.body.scrollHeight); await new Promise(r => setTimeout(r, 300)); window.scrollTo(0, 0);
+          await Promise.all(imgs.map(i => i.decode().catch(() => null)));
+          window.scrollTo({ top: document.body.scrollHeight, behavior: 'instant' }); await new Promise(r => setTimeout(r, 300)); window.scrollTo({ top: 0, behavior: 'instant' }); await new Promise(r => requestAnimationFrame(() => requestAnimationFrame(r)));
         });
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
         const height = await page.evaluate(() => document.documentElement.scrollHeight);
         await page.screenshot({ path: path.join(dir, `${slug(route)}-${width}.png`), fullPage: true });
         await page.screenshot({ path: path.join(dir, `${slug(route)}-${width}-viewport.png`), fullPage: false });
