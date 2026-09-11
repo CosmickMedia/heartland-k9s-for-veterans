@@ -1,0 +1,456 @@
+{
+ "fixes": {
+  "summary": "Applied every finding from reviews['plugin:core-A'] and reviews['plugin:importer'] plus items A\u2013M. Core: (A) ListTables sorts events/records by a named EXISTS meta clause OR-ed with NOT EXISTS (WP builds LEFT JOINs) so undated/zero-meta events stay listed, filters merged under an AND wrapper; (B) Privacy: is_embed()+is_singular(hk9_barkode) -> 404 at template_redirect prio 0, oembed_response_data -> false (prio 100, after core's enrichers which would coerce an early false back to an array; scrub_oembed_author now tolerates false); (C) Registrar removes the postcustom box for hk9_* types and marks hk9_* meta protected via is_protected_meta (custom-fields support kept; registered auth callbacks still allow REST edits \u2014 sections-test 33/33 still passes); (K) color inputs get label_for, image buttons get aria-labels, redirect row-action keys rawurlencoded (ListTable + Admin::url), Dates::query bounds the no-end branch by start and pre-computes sort timestamps, sanitize_link drops bare '#' and upgrades '//' to https:, tax_statement default is the live sentence verbatim (typo corrected per conflict-log S6). Importer: (D) allowlist = get_allowed_mime_types() minus SVG/HEIC/HEIF/script/executable types (mp4, docx, pdf pass; real payload validates with only the unreferenced ref:asset:favicon SVG rejected); (E) templates written via wp_update_post page_template with a whitelist covering current+new values (meta_input no longer silently reverted); (F) PostFields::preflight_content() in posts_hierarchy fails a record (stub stays draft + pending) when any content/deferred-meta token cannot resolve or block counts change, plus a posts_content safety net that reverts a first-import publish with empty content to draft and re-records the status hash; (G) Options step reconciles per dot-path leaf (Options::leaves/path_get/path_set/path_unset; Rollback restores per path); (M) unresolvable leaf tokens warn + drop instead of failing the settings record; (H) Validate enforces key == redirect:<from> (normalised), build-payload.mjs now fails on it too; (I) wp_slash for wp_insert_term, nav-menu item args (import + rollback) and _wp_attachment_image_alt; (J) duplicate WP-CLI registration removed from Import\\Rest, docblock corrected; low items: Payload::resolve_within walks to the nearest existing ancestor (missing file != escape) and rejects '..' segments, import.js strings routed through cfg.i18n with th scope=col, upload notice via per-user transient, Runner::status() computed once per request, common user-facing importer messages wrapped in __(). build-payload.mjs additionally leaves unreferenced SVG/HEIC media-index entries out of the manifest (fails the build if referenced). (L) verified hk9_quote/hk9_veteran_name/hk9_branch/hk9_canine_name are registered. Added tests/importer-suite.sh (58 checks, all pass) and tests/core-fixes-test.php (32 checks, all pass); real-payload dry run: 364 records, 250 media create/adopt, 79 posts, 31 menu items, 170 settings leaves, 22 redirects, 1 expected record error (favicon SVG).",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Admin/ListTables.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Privacy/Registry.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/PostTypes/Registrar.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Page.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Store.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Redirects/ListTable.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Redirects/Admin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Events/Dates.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Validate.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Options.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/PostsHierarchy.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/PostsContent.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Terms.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Menus.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/MediaFiles.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/PostFields.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Rollback.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Payload.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Rest.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Admin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Tokens.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Manifest.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/js/import.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/importer-suite.sh",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/core-fixes-test.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/payload-mini/manifest.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/build-payload.mjs"
+  ],
+  "tests": [
+   {
+    "name": "php -l on every plugin PHP file (local PHP 8.5.2 and container PHP 8.3.33) + node --check import.js / build-payload.mjs",
+    "result": "pass",
+    "evidence": "local lint fails=0, container lint fails=0, js-ok; plugin boots (`class_exists(Runner)` -> boot ok)"
+   },
+   {
+    "name": "Importer suite (tests/importer-suite.sh, mini fixture): fresh dry run, import, idempotent re-run, conflict/--overwrite, template change on re-import (E), per-leaf options (G) + drop-on-unresolvable (M), unbakeable content stays draft then publishes after --resume (F), redirect key convention (H), --step pause + --resume, rollback, cleanup",
+    "result": "pass",
+    "evidence": "== 58 passed, 0 failed == (final run: dry run posts_stub 5/media 3; import posts_hierarchy create=5, about/home templates page-templates/about.php + home.php, page_on_front=mini home, no '{{' left; re-run create+update+conflict+fail=0; conflict=1 then --overwrite update=1; tpl payload -> landing.php, mini re-import -> about.php, editor change conflict=1 kept, --overwrite reverted; sibling contact.hours edit -> options conflict 0 / update 0, payload leaf edit conflict 1, overwrite reverted with sibling intact; failed attachment -> validate fail 1, options fail 0, surviving leaf imported, 1 warning; orphan: posts_hierarchy fail 1, status draft, content 0 bytes, pending=1; after fixing the file --resume -> publish with content; bad redirect key -> FATAL; --step=media_files paused, --resume Import complete; rollback: Success: Rollback, mapped objects 0, menu/term gone, page_on_front/wordmark/redirects restored). Ran with HK9_WP_FLAGS=--skip-themes while the theme stream had a fatal (hk9_record_meta redeclared); later runs with the theme loaded also fine."
+   },
+   {
+    "name": "Core fixes checks (tests/core-fixes-test.php)",
+    "result": "pass",
+    "evidence": "== 32 passed, 0 failed ==: admin event query SQL is `LEFT JOIN wp_postmeta ... LEFT JOIN wp_postmeta AS mt1 ... WHERE (meta_key='hk9_start' OR mt1.post_id IS NULL) ... ORDER BY CAST(wp_postmeta.meta_value AS CHAR) DESC, post_date DESC`; dated, other-meta and ZERO-meta events all listed, dated first, hk9_start/hk9_end sorts keep all three, status filter still narrows; is_protected_meta true for hk9_*/hk9_sec_*, false for others; postcustom box removed for hk9_person, kept for page; admin still passes edit_post_meta for hk9_role; sanitize_link: '#'->'', '#top' kept, '//evil.com/x'->'https://evil.com/x', javascript: dropped; tax statement verbatim; Dates::query upcoming excludes past open-ended, past includes it, ascending order; Admin::url encodes /?a=1&b=2 and parse_str round-trips; story meta keys registered; oembed_response_data false for a record, get_oembed_response_data() false, normal post keeps title without author_name"
+   },
+   {
+    "name": "Fields/sections regression (tests/sections-test.php) after is_protected_meta change",
+    "result": "pass",
+    "evidence": "33 checks, 0 failed"
+   },
+   {
+    "name": "Real payload dry run: tools/wp.sh hk9 import /var/www/html/wp-content/hk9-payload --dry-run --user=admin",
+    "result": "pass",
+    "evidence": "validate fail=1 (ref:asset:favicon: MIME image/svg+xml not allowed \u2014 unreferenced, expected), terms 0/2/4, media_files create 241 + update 9 (sha duplicates adopted), media_sizes 250, posts_stub 79, posts_hierarchy 79 (fail 0), reading update 1, posts_content create 34 / skip 45 (no content file), menus 31, options update 1 (170 leaves applied, 0 dropped, 0 conflicts on a clean map), redirects update 5 / skip 17, finalize ok; mp4 live:media:2881 and docx live:media:3745 accepted; exit code 2 only because of the favicon record"
+   },
+   {
+    "name": "Frontend privacy probes with temporary record hk923-005 (deleted afterwards)",
+    "result": "pass",
+    "evidence": "/barkode/hk923-005/ 200 + X-Robots-Tag noindex,nofollow; /barkode/hk923-005/?embed=true 404 (title 'Page not found', no record data in body); /embed/ 404; /hk923-005/ 301 -> /barkode/hk923-005/; /HK923-005/?utm_source=qr 301 preserving query; /wp-json/oembed/1.0/embed?url=<record> 404; ?post_type=hk9_barkode 404; /wp-json/wp/v2/hk9_barkode 404"
+   },
+   {
+    "name": "tools/url-matrix.sh (orchestrator matrix) with temp record hk923-005",
+    "result": "fail",
+    "evidence": "25 rows pass (all hk923-005 rows, embed 404, master_template/success/slide/foogallery/teams redirects, ?post_type=hk9_barkode(+feed) 404, wp-json hk9_barkode 404, users 401, search, 404, sitemap, feed); 57 rows fail only because the content is not imported yet (reference/migrated pages 404, the 14 other registry records 404, /news/page/2 + /stories/page/2 404)"
+   },
+   {
+    "name": "Admin screens (logged-in curl + Playwright chromium)",
+    "result": "pass",
+    "evidence": "Settings appearance tab: every input.hk9-color__hex has an associated <label for>; branding tab image buttons carry aria-label 'Header logo: select or replace image' / 'Remove Header logo' (and footer); edit.php?post_type=hk9_event lists a freshly created undated event (6 occurrences), post-new.php?post_type=hk9_person has no id=\"postcustom\"; import screen: ?hk9_message=INJECTED no longer rendered as a notice, window.HK9Import carries the new i18n keys, dry run via UI reaches badge 'Complete' with 12 count rows, thead th all scope=col (counts + runs tables), 0 unlabelled controls, 0 console/page errors; redirects list row actions use key=%2F%3Ffoogallery%3D2468"
+   },
+   {
+    "name": "debug.log attributable to plugin files",
+    "result": "pass",
+    "evidence": "grep -ci plugins/heartland-k9s-core debug.log -> 0; a controlled mini import + rollback added 0 lines (15 before / 15 after). Other lines present are from other streams (theme hk9_record_meta fatal earlier; core 'rest_validate_value_from_schema ... caption' notices from page renders, not produced by import runs)"
+   },
+   {
+    "name": "Cleanup / state reset",
+    "result": "pass",
+    "evidence": "hk9 status: idle, lock free, Map empty, payload /var/www/html/wp-content/hk9-payload; 0 mapped posts, 0 tmp-core-fixes posts, mini menu/term gone, tests/tmp removed, temp record 682 + temp events deleted, my run logs removed (19 older logs from other agents kept), hk9_settings option deleted (left as ['links'=>[]] by my tests; defaults now apply), show_on_front reset to posts (page_on_front 0), 23 seeded redirect rules intact"
+   }
+  ],
+  "issues": [
+   "Shared-environment incident (fixed): the first run of my suite used `wp post list --meta_key/--meta_value` to find imported pages; WP-CLI prepends sticky posts to that query, so it returned another stream's sticky blog fixture post #421 ('Fixture: thirteen') and my conflict test renamed it and wrote hk9_sec_hero_band/_wp_page_template meta on it. I restored the title, removed the stray meta and the two revisions (post is sticky, _hk9_local_fixture + thumbnail intact) and switched the suite to WP_Query with ignore_sticky_posts.",
+   "Real payload still contains ref:asset:favicon (image/svg+xml, unreferenced): the real import will report exactly 1 record error and exit with code 2 unless the payload is rebuilt with the updated build-payload.mjs (which now leaves unreferenced SVG/HEIC media-index entries out of the manifest). I did not rebuild payload/ (read-only mount, orchestrator-owned).",
+   "Stale adopted map rows matter: adopted option/reading rows survive rollback and `hk9 reset-state`; before my truncate they carried hashes of values changed since (my first real dry run reported branding/links leaves as conflicts). The map is now empty; run the real import from an empty map (tools/reset-local-site.sh truncates it).",
+   "The reviewer's exact fix for (B) \u2014 returning false from oembed_response_data at priority 5 \u2014 does not work: core's get_oembed_response_data_rich() at priority 10 turns false back into an array (plus a PHP deprecation). The refusal now runs at priority 100 and get_oembed_response_data() returns false as verified.",
+   "Docs I could not edit (outside my area) are now stale: docs/importer.md \u00a72 validate row (MIME list), options row (per-leaf), posts_hierarchy row (content pre-flight, draft safety net), redirect key convention, \u00a710 test plan (see tests/importer-suite.sh); docs/ARCHITECTURE.md \u00a73 (custom-fields support kept, Custom Fields box hidden, hk9_* meta protected) and \u00a77 (contact.tax_statement default text).",
+   "debug.log on the shared stack shows notices from other streams (theme fatal 'Cannot redeclare hk9_record_meta()' earlier in the session, core 'rest_validate_value_from_schema ... caption' notices during page renders); none are produced by plugin code.",
+   "Per-leaf option reconciliation uses '.' as the path separator: option values whose keys themselves contain '.' are not supported (none in hk9_settings)."
+  ],
+  "integration_notes": "ORCHESTRATOR / real import: the plugin fixes are in; run the import from an empty map (currently empty; tools/reset-local-site.sh truncates it, `hk9 reset-state` does not). Expect exit code 2 with exactly one record error (ref:asset:favicon SVG, unreferenced) unless you rebuild the payload first with `node tools/build-payload.mjs` (updated builder drops unreferenced SVG/HEIC entries and now FAILS the build when a redirect record key does not normalise to `redirect:<from>` \u2014 all 22 payload redirects already comply). mp4 (live:media:2881), docx (live:media:3745) and all PDFs validate. Options import applies 170 settings leaves with no conflicts on a clean map. The importer's Validate step also enforces the redirect key convention (fatal). Regression suites to re-run after further changes: `HK9_WP_FLAGS=--skip-themes bash plugin/heartland-k9s-core/tests/importer-suite.sh` (only when no imported objects exist; it truncates the map) and `tools/wp.sh eval-file /var/www/html/wp-content/plugins/heartland-k9s-core/tests/core-fixes-test.php --user=admin`. DOCS OWNER: update docs/importer.md (validate: MIME allowlist = site upload types minus SVG/HEIC/HEIF/script/executable via `hk9/import/allowed_mimes`; posts_hierarchy: content pre-flight keeps stubs draft when tokens cannot resolve; posts_content: empty-content safety net reverts to draft; options: per-leaf dot-path reconciliation, unresolvable leaf tokens warn+drop; redirects: key must normalise to `redirect:<from>`; \u00a710 add template-change, per-leaf, draft, redirect-key tests) and docs/ARCHITECTURE.md \u00a73 (editorial CPTs keep 'custom-fields' support for REST meta exposure; the core Custom Fields box is removed for hk9_* types and all hk9_* meta is protected via is_protected_meta \u2014 registered auth callbacks still permit edits) and \u00a77 (contact.tax_statement default = live sentence with 'extend'->'extent'). THEME / FIELDS OWNERS: is_protected_meta now returns true for every `hk9_*` key (post/term/user) \u2014 direct get/update_post_meta and the registered REST meta (auth_callback) are unaffected (sections-test 33/33), but anything relying on the core Custom Fields box or `add_post_meta` capability checks without an auth callback for hk9_ keys will be refused. Event admin list now shows undated events last (default sort DESC by hk9_start then date). Embedding registry records is impossible (embed template 404, oEmbed endpoint 404). Settings: `sanitize_link` turns a bare '#' into '' and '//host' into 'https://host' \u2014 hk9_link_url() can no longer emit href=\\\"#\\\" from settings. CONTENT/PAYLOAD OWNERS: attachment MIME allowlist now derives from get_allowed_mime_types(); keep registry images sensitive:true; redirect records must be keyed `redirect:<from>` (same normalised rule). PACKAGING: exclude plugin/heartland-k9s-core/tests/ (now also importer-suite.sh and core-fixes-test.php) from the ZIP. Map-row field names for option records changed to dot paths (e.g. `branding.wordmark_line1`); rows recorded by earlier builds are treated as never-recorded (payload wins once, pre-image kept) \u2014 irrelevant after the truncate."
+ },
+ "t1": {
+  "summary": "Implemented the 7 remaining reference page templates (about, program, veterans, get-involved, barkode, stories, contact) plus 13 new section parts, the page helper module, the reference SCSS partial and a rewrite of _forms.scss aligned to the plugin's actual form markup. Every template renders through hk9_render_sections() (contact.php orchestrates the hero + ONE overlap card that wraps the info/form column sections so each column stays individually hide-able/reorderable). Stories `featured` and get-involved `ways` are registered by the plugin under the shared types testimonial/feature_cards, so inc/template-tags-pages.php remaps them to the dedicated parts through the existing `hk9/theme/render_sections` filter; the same file registers plugin-less structure defaults via `hk9/theme/section_defaults` so imported meta still renders without the plugin. Program timeline renders as one CSS grid in DOM order (odd steps left, even steps right with md:mt-24, number circles hanging toward the centre spine), so 5 steps leave the last card alone in the left column and mobile reads 1..N (the reference's mobile DOM reads 1,3,2,4). Verified with temporary tmp-* pages/records seeded from payload records at 1440 and 390: hero heights, overlap card width/padding/radius, card sizes, grid tracks/gaps, timeline geometry (num x 679/729, spine x 719.5), button heights (56/40/38) and font sizes/line-heights all match the reference measurements exactly; remaining differences are content-driven (longer live copy, 5 steps instead of 4, 5 contact rows instead of 4, extra 'More Stories'/'Teams in Training' blocks, second CTA buttons) plus header/footer state owned by other streams. 0 console errors, only localhost requests, no href=\"#\", heroes eager+fetchpriority=high, everything else lazy with width/height + srcset. All temporary content and container scripts were deleted; debug.log has no entries from my files.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/about.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/program.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/veterans.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/get-involved.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/barkode.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/stories.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/contact.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/legacy.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/steps.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/providers.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/questions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/expect.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/ways.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/partners.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/story.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/featured.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/list.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/teams.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/info.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/form.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags-pages.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_pages-reference.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_forms.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css (rebuilt via npm run build:css; shared dist file)",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t1/<route>-{1440,390}.png + measure.json (WP screenshots + DOM measurements)",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t1-diffs/report.md + <route>-<w>-diff.png (compare.mjs output)",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/contact-form-errors.png, contact-form-success.png, states.png (form/error/empty states)",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/t1-capture.mjs, tmp-t1-seed.php, tmp-t1-cleanup.php (verification tooling, not part of the repo)"
+  ],
+  "tests": [
+   {
+    "name": "php -l on all 21 new/edited PHP files (local PHP 8.5)",
+    "result": "pass",
+    "evidence": "No syntax errors detected for inc/template-tags-pages.php, 7 page templates, 13 section parts (final run after all edits)."
+   },
+   {
+    "name": "Templates render with plugin active on temporary pages seeded from payload records (tmp-about \u2026 tmp-contact, ids 462-468, sideloaded ref assets 449-453, tmp story/teams/partners 454-461)",
+    "result": "pass",
+    "evidence": "curl: all 7 routes HTTP 200; debug.log contains no entries attributable to my files (the only warnings are REST 'caption' schema notices from other streams' activity). One collision fatal (hk9_record_meta redeclared by the parallel inc/template-tags-records.php) was caught in debug.log and fixed by prefixing all my helpers hk9_pages_*."
+   },
+   {
+    "name": "Geometry vs discovery/measure/results.json at 1440 (Playwright getBoundingClientRect/getComputedStyle)",
+    "result": "pass",
+    "evidence": "about: hero 373=373, overlap card w1024 r16px, values grid 960 (298.66\u00d73, gap 32), CTA buttons 56px 14px/500, h2 30/36 \u00b7 36/40 \u00b7 30/36. program: hero 540=540, h1 60/60, timeline grid 1024 (488+488 gap 48), number circles x679/729 (ref 679/729) at card-top+33, spine x719.5 w1, providers button 38px, CTA 56px. veterans: card 896 pad 48 r16, expect grid 480+480 gap 64, buttons 40/38/38 (ref 40/38/38), h2 24/32. get-involved: grid 1152 (362.66\u00d73 gap 32), cards pad 32 r16, buttons 40px, partners panel 896 pad 64 r24. barkode: hero 630=630, h1 72/72, protects grid 960 gap 32, story panel 896. stories: featured card 1024 r16, quote 24px/33px at y478.5 (ref 478.5), grid 496+496 gap 32. contact: card 1024\u00d7666 = ref 1024\u00d7666, info column 408.8 (2/5), form column 613.19 (3/5), inputs y519/615/711/807 h48, textarea 120, submit y951 h56 (all identical to ref)."
+   },
+   {
+    "name": "Geometry at 390",
+    "result": "pass",
+    "evidence": "hero band 418/385.5/353 match; image heroes 506.39 and 590.8 match; h1 36px/40px; overlap cards 358 wide r16 pad 32; grids 358 single column with 32/48/64 gaps; CTA buttons stretch to 358 wide (ref 358); ways cards 358\u00d7394/370 = ref; contact inputs 276\u00d748, submit 276\u00d756. Height deltas are content-driven (longer live copy, extra contact row, 5 steps)."
+   },
+   {
+    "name": "node tools/compare.mjs (pixelmatch vs discovery/ref/screenshots)",
+    "result": "pass",
+    "evidence": "\u0394height / % differing (full canvas / overlap): about 390 -34 / 13.46 / 12.74; about 1440 +118 / 16.47 / 12.29; program 390 +573 / 33.30 / 24.99; program 1440 +560 / 28.79 / 18.71; veterans 390 +584 / 35.82 / 27.10; veterans 1440 +363 / 33.08 / 23.99; get-involved 390 +542 / 35.10 / 25.71; get-involved 1440 +440 / 37.91 / 24.57; barkode 390 +275 / 24.67 / 20.21; barkode 1440 +181 / 16.33 / 11.20; stories 390 +1859 / 48.83 / 46.41; stories 1440 +1351 / 36.26 / 35.06; contact 390 -173 / 15.64 / 10.27; contact 1440 -6 / 2.33 / 1.96. Diff images inspected: differences are text content (live copy vs placeholders, 5 steps, extra rows/blocks/buttons, partner logos) and the header/footer state set by other streams (wordmark/logo/menus/settings were being mutated during the run); layout boxes align."
+   },
+   {
+    "name": "Console errors / external requests on all 14 captures",
+    "result": "pass",
+    "evidence": "0 console errors and 0 page errors on every route/width; request hosts = localhost:8093 only."
+   },
+   {
+    "name": "Image loading policy and dimensions",
+    "result": "pass",
+    "evidence": "Rendered HTML: program/barkode hero img loading=eager fetchpriority=high sizes=100vw with width/height/srcset; legacy + featured overlap images loading=eager (in first viewport, no priority hint); story/team/partner images loading=lazy with width/height, srcset where WP has same-ratio sizes; partner logos alt=name; card images alt='' inside aria-hidden tabindex=-1 links."
+   },
+   {
+    "name": "Heading outline / landmarks / no href=#",
+    "result": "pass",
+    "evidence": "Outlines: about h1\u2192h2 Legacy\u2192h2 Values\u2192h3\u00d73\u2192h2 CTA; program h1\u2192h2\u2192h3 'Step n: \u2026' \u00d75\u2192h2\u2192h2; veterans h1\u2192h2 Questions\u2192h2 Expect\u2192h3\u00d73\u2192h3 card\u2192h2 ADA; get-involved h1\u2192(sr-only h2 'Ways to get involved')\u2192h3\u00d73\u2192h2 Partners; barkode h1\u2192h2\u2192h2\u2192h3\u00d73\u2192h2; stories h1\u2192h2 More Stories\u2192h3 cards\u2192h2 Teams\u2192h3\u2192h2 CTA; contact h1\u2192h2 Get in Touch\u2192h3 rows\u2192h2 Send a Message. a[href='#'] count 0 on every route; one main, sections carry aria-labelledby."
+   },
+   {
+    "name": "Contact form styling in error and success states (plugin form via hk9_the_form)",
+    "result": "pass",
+    "evidence": "Playwright: invalid email \u2192 .hk9-form__summary shown (role=alert, focused), field .is-invalid with rgb(185,28,28) border and visible inline error; full submit \u2192 .hk9-form__success 'Message Sent / Thank you for reaching out\u2026' replaces the form, 0 console errors (screenshots contact-form-errors.png / contact-form-success.png; test submission 626 deleted)."
+   },
+   {
+    "name": "Layout edge cases: form column hidden, empty story list, 5 timeline steps",
+    "result": "pass",
+    "evidence": "hk9_sections_layout hidden=['form'] \u2192 contact card renders single info column (hk9-contact-card--single, 1024 wide); list mode=manual with no ids \u2192 muted empty-state panel with empty_text; program payload has 5 steps \u2192 5th card alone in the left column with number circle on the right edge (program-1440.png)."
+   },
+   {
+    "name": "Plugin-inactive rendering path",
+    "result": "blocked",
+    "evidence": "Not exercised live: deactivating the plugin would have disrupted the three parallel implementers on the shared stack. The plugin-less path is covered by code only (hk9/theme/section_defaults filter provides ids/types, hk9_pages_section() reads hk9_sec_stories_list / hk9_sec_contact_form, form.php prints an email notice when hk9_the_form() is absent) and php -l."
+   },
+   {
+    "name": "Real pages verification (about, program, \u2026)",
+    "result": "blocked",
+    "evidence": "tools/wp.sh post list --post_type=page shows none of the real slugs yet (import not run at finish time); verified against temporary pages only. Note: the built payload/manifest.json still lacks button_style on hk9_sec_ways cards (payload-src was fixed per the content review) \u2014 the Donate button only renders crimson after the manifest is rebuilt."
+   },
+   {
+    "name": "Cleanup of temporary content",
+    "result": "pass",
+    "evidence": "Deleted pages 462-468, story 454, teams 455-456, partners 457-461, attachments 449-453, submission 626; removed /var/www/html/tmp-t1-*.php from the container and the temporary tools/.t1-*.tmp.mjs scripts; no posts tagged _hk9_tmp_t1 remain (post 665 'fixture-thirteen' belongs to another stream and carries no such meta)."
+   }
+  ],
+  "issues": [
+   "Shared-environment collision: a parallel stream's inc/template-tags-records.php briefly declared hk9_record_meta() with the same name as one of my helpers, producing a site-wide fatal for ~3 minutes (15:06-15:09 UTC in debug.log). Fixed on my side by renaming every helper to hk9_pages_* (hk9_pages_section, hk9_pages_richtext, hk9_pages_meta, hk9_pages_story_card, hk9_pages_team_card, hk9_pages_partners_by_type, hk9_pages_contact_row, \u2026).",
+   "payload/manifest.json is stale relative to payload-src: hk9_sec_ways cards have no button_style, so the sanitizer defaults all three Get Involved buttons to 'outline' (the reference Donate button is crimson primary). The orchestrator should rebuild the payload before import (payload-src/records/pages/ref-get-involved.json already carries button_style).",
+   "Not in my area (cta_band.php / hero rendering) but needed for fidelity, so handled with scoped CSS in _pages-reference.scss rather than PHP edits: (a) cta_band 'tint' is restyled to the reference full-width primary/5 band with border-y and py-20 (the foundation's rounded-panel look does not exist anywhere in the reference); (b) cta_band buttons are 14px/500 and 'outline' uses navy border/text; (c) .hk9-section__title and .hk9-cta-band__heading line-heights are set to the Tailwind defaults 30/36 \u2192 36/40 (foundation used 1.25 \u2192 45px at md); (d) veterans #hk9-ada (py-20, 30px heading, 36px outline-light button) and barkode plain CTA (py-20) use template-scoped overrides; (e) program/barkode image heroes: title line-height 1 at md, program capped at 60px at lg, paragraph 20px/32.5px with no trailing margin, barkode eyebrow pill crimson-glass. These rules are global where the reference is global (section titles, CTA bands) and template-scoped otherwise.",
+   "feature_cards.php (foundation) renders `values`/`protects` in the full 1216px container with 64px icon wells and hover lift; the reference uses a max-w-5xl (960px) container, bare 40px glyphs (protects), gap-8, h3 mb-3 and 24px body lines. Corrected via #hk9-values / #hk9-protects CSS scopes; a cleaner long-term fix would be a `variant` in feature_cards.php.",
+   "testimonial.php (foundation, not mine) still reads story meta without the hk9_ prefix (quote/veteran_name/branch/canine_name) \u2014 my featured.php reads hk9_quote etc. through hk9_cpt_meta(); the home testimonial should be fixed the same way.",
+   "Deliberate deviations from the reference: mobile timeline order is 1..N (reference DOM reads 1,3,2,4); an sr-only h2 'Ways to get involved' is added when the ways section has no heading so the outline stays h1\u2192h2\u2192h3; stories list/teams blocks add 'More Stories' / 'Teams in Training' section headers (reference grid has none) with 96/48px rhythm that reproduces the reference spacing (featured mb-24, CTA mt-12) when the teams block is hidden; the featured card adds a 'Read the full story' link when the quote comes from a story record; contact info values render as tel:/mailto: links (reference had them too) and the address row is settings-driven.",
+   "The local DB state was mutated by other streams during my run (site title/wordmark 'Mini K9s', logo, menus, extra tmp records, hk9_settings), so the header/footer in my screenshots differ from the reference for reasons outside this stream; all measurements were taken on the section content only.",
+   "Plugin-less mode and the real imported pages could not be verified in this session (see tests)."
+  ],
+  "integration_notes": "SECTION PARTS PROVIDED (template-parts/sections/<type>.php, receive $args = [data, post_id, id, template]): legacy, steps, providers, questions, expect, ways, partners, story, featured, list, teams, info, form. Plugin types resolve as-is except two remaps done in inc/template-tags-pages.php via the existing `hk9/theme/render_sections` filter: template stories id 'featured' (plugin type testimonial) \u2192 featured.php and template get-involved id 'ways' (plugin type feature_cards) \u2192 ways.php. If someone changes the plugin definitions to type 'featured' / 'ways' the filter becomes a no-op. contact.php does NOT call hk9_render_sections(): it renders the hero through the pipeline and wraps every other visible section inside <section id=\"hk9-contact-card\" class=\"hk9-overlap\"><div class=\"hk9-overlap__card hk9-overlap__card--split hk9-contact-card\"> so info.php/form.php output columns (.hk9-contact-card__info / __form); both parts also work stand-alone. list.php and form.php re-read their data with hk9_pages_section($post_id,$template,$id) which honours the plugin's template-specific meta keys (hk9_sec_stories_list, hk9_sec_contact_form) when the plugin is inactive (a guarded fallback hk9_section_meta_key() is defined for that case). HELPERS (all prefixed hk9_pages_ to avoid collisions with the other streams): hk9_pages_section(), hk9_pages_richtext() (wp_kses_post + wpautop when no <p>), hk9_pages_meta()/hk9_pages_text() (hk9_cpt_meta() when available, else get_post_meta('hk9_'.$key)), hk9_pages_is_published(), hk9_pages_stories_auto($count,$exclude) (featured first, menu_order, date), hk9_pages_featured_story_id(), hk9_pages_records_by_ids(), hk9_pages_story_attribution() ('Branch \u00b7 Paired with Dog \u00b7 Paired in Year'), hk9_pages_story_summary(), hk9_pages_story_card(WP_Post), hk9_pages_team_card(WP_Post) (status badge uses .hk9-status--<status>), hk9_pages_partners_by_type($slug,$limit), hk9_pages_partner_logo_item(), hk9_pages_contact_row($row) (resolves source phone|phone_secondary|email|hours|address|custom from hk9_theme_option('contact.*'), tel:/mailto: hrefs, explicit link overrides), hk9_pages_ids(). Other streams (stories/teams listing templates, single-hk9_story) may reuse hk9_pages_story_card()/hk9_pages_team_card() and the .hk9-story-grid/.hk9-team-grid/.hk9-story-card/.hk9-team-card classes. PLUGIN-LESS: `hk9/theme/section_defaults` filter adds ids/types (empty data) for the 7 templates so hk9_sections_layout()/hk9_section_type() work without the plugin. CSS CONTRACT ADDED (_pages-reference.scss): .hk9-panel(--sm) (max-w-4xl muted rounded-3xl p-10/16 panel), .hk9-overlap__card--narrow (896px), .hk9-btn--md (shadcn size lg = 40px, 14px/500, px-8), .hk9-btn--outline-navy (border/text primary, hover primary/5), .hk9-timeline--zigzag (+ __grid, __item--left/--right, __title, __text), .hk9-legacy(__eyebrow/__heading/__text/--image-right/--no-image), .hk9-providers(__inner/__icon/__heading/__text/__actions), .hk9-questions(__header/__icon/__heading/__intro/__list/__item/__check/__question/__footer/__footer-text/__actions/__button/__secondary), .hk9-expect(--single/__steps/__heading/__list/__step/__step-body/__step-title/__step-text/__card/__card-icon/__card-title/__card-text/__card-actions), .hk9-ways(__inner/__header/__grid(--1/--2)/__card/__icon/__title/__text/__actions), .hk9-partners-panel(__icon/__heading/__body/__actions/__logos/__logos-title/__grid), .hk9-story-panel(__icon/__heading/__body), .hk9-featured(__card/__media/__body/__glyph/__quote/__author/__name/__meta/__link), .hk9-stories-list(__header/__empty/__empty-icon/__empty-text), .hk9-story-grid, .hk9-story-card(__media/__body/__glyph/__quote/__footer/__title/__meta/__link), .hk9-teams-block(__header), .hk9-team-grid(--1/--2), .hk9-team-card(__media/__body/__title/__pair/__text/__link), .hk9-contact-card(--single/__info/__form), .hk9-contact-info(__heading/__list/__row/__icon/__body/__label/__value), .hk9-contact-form(__heading/__intro/__notice). GLOBAL OVERRIDES that other streams inherit (all reference-measured): .hk9-section__title line-height 1.2 \u2192 1.1112 at md; .hk9-cta-band heading line-heights, text 28px line, buttons 14px/500, outline = navy, tint tone = full-width primary/5 band with border-y (no rounded panel), plain/tint/muted headings 30px foreground, actions stretch full-width below 640px; .hk9-template-<slug> .hk9-main gets 80px bottom padding on the 7 reference templates only. _forms.scss now matches the plugin markup exactly (.hk9-form__grid with --half fields spanning 1 of 2 columns from 768px, __label 14px/500 with a 16px line box, __input/__select/__textarea 48px/120px muted/50 radius 2px, __honeypot/__status hidden, __summary(-title/-list) and __success(-title/-text) panels, .is-invalid red border, __submit navy 56px full-width 14px/500 overriding the plugin's hk9-btn--primary/--lg classes); application.php (other stream) gets the checkbox row styles (.hk9-form__check/__checkbox/__label--checkbox) for free. TO DO FOR OTHER OWNERS: plugin/orchestrator \u2014 rebuild payload/manifest.json so hk9_sec_ways cards carry button_style; theme foundation \u2014 testimonial.php should read hk9_quote/hk9_veteran_name/hk9_branch/hk9_canine_name (prefixed keys), and feature_cards.php could grow a real 'values'/'protects' variant so the #hk9-values/#hk9-protects CSS scopes can be dropped; docs \u2014 record the mobile timeline order and the sr-only ways heading as deliberate deviations."
+ },
+ "t2": {
+  "summary": "Built the T2 stream: 11 migrated page templates (landing, donate, events, campaigns, partners, people, teams, highlighted-team, gallery, application, thank-you), 13 section parts (tiers, options, mail_in, tax, upcoming, past, logos, grid, team, gallery_options, application_form, campaigns_list, teams_list), 6 shared record cards (event, campaign, team, person, partner, story), 5 CPT singles (story, team, event, campaign, barkode) and the helper module inc/template-tags-records.php (all helpers use a distinct hk9_rec_ prefix after a parallel-stream collision), plus SCSS in _pages-migrated.scss / _singles.scss only. Everything follows the foundation system (navy hero band + overlap card + section rhythm, hk9-card/hk9-btn/hk9-status/hk9-callout). Key mechanics: hk9_rec_render_sections() renders sections with per-template part remaps (campaigns/teams `list` -> campaigns_list/teams_list, application `form` -> application_form, since the plugin registers those under shared types `list`/`form`) and before/after injection callbacks for the block-content card (landing/thank-you after hero, application before form); galleries (page gallery block, gallery_options.images, story/team/campaign galleries, BarKode ID cards) run through the core gallery block with the core Interactivity-API lightbox forced on via a render_block_data filter (links unwrapped, captions stripped when off, columns overridden) - verified opening/closing in Chromium at 1440 and 390 with prev/next navigation; events use hk9_events_query()/hk9_event_datetime_range() with plugin-less fallbacks, month/day date block, cancelled/postponed badges, external registration links forced to a new tab; event single has a plain Google Maps 'Get directions' link (no embed); BarKode single renders the .hk9-record layout and never reads review notes (grep-verified, robots noindex + generic description confirmed). Temporary content (7 attachments, 32 records/pages, all tmp- prefixed) was created via WP-CLI, screenshotted at 1440/390 (42 PNGs in scratchpad/wave2/t2), checked (one h1, 0 console errors, 0 external requests, 0 empty hrefs, no horizontal scroll, axe clean except a heading-order note caused by test/live content using h3 after h1), and deleted afterwards. Real pages did not exist yet when I finished (only fixture attachments and another stream's tmp-news page remain).",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags-records.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/landing.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/donate.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/events.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/campaigns.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/partners.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/people.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/teams.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/highlighted-team.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/gallery.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/application.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/thank-you.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/tiers.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/options.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/mail_in.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/tax.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/upcoming.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/past.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/logos.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/grid.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/team.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/gallery_options.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/application_form.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/campaigns_list.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/teams_list.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/cards/event.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/cards/campaign.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/cards/team.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/cards/person.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/cards/partner.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/cards/story.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_story.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_team.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_event.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_campaign.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_barkode.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_pages-migrated.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_singles.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t2/results.json",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t2/shoot.mjs",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t2/axe.mjs",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t2/setup-tmp.php"
+  ],
+  "tests": [
+   {
+    "name": "php -l (PHP 8.5) on every file in my area",
+    "result": "pass",
+    "evidence": "All 37 PHP files (helpers, 11 page templates, 13 section parts, 6 cards, 5 singles) report 'No syntax errors detected'."
+   },
+   {
+    "name": "All 11 templates + 5 singles render (HTTP 200, exactly one h1, no heading level skips)",
+    "result": "pass (one content-caused note)",
+    "evidence": "Playwright run over 19 URLs x 2 widths: every page 200, h1=1. Heading lists recorded in results.json; the only heading-order flag is tmp-thank-you where the block content itself uses an h3 directly after the h1 (the live thank-you content does the same - content-level, not template)."
+   },
+   {
+    "name": "Console errors / external requests / href=\"#\" / horizontal scroll at 1440 and 390",
+    "result": "pass",
+    "evidence": "results.json: console=[] , external=[] , emptyHref=0, hscroll=false for all 38 page loads. The only network 'failures' are net::ERR_ABORTED on full-size image preloads started by the core lightbox when the test context closed (no 4xx/5xx)."
+   },
+   {
+    "name": "Screenshots at 1440/390 for every template and single",
+    "result": "pass",
+    "evidence": "42 PNGs in scratchpad/wave2/t2/ (landing, donate, events, events-empty, campaigns, partners, people, teams, highlighted-team, gallery, gallery-ids, application, thank-you, single-story, single-team, single-event, single-event-past, single-campaign, single-barkode at both widths + gallery/story lightbox captures). Visually reviewed landing, donate, events, campaigns, people, highlighted-team, gallery, application, thank-you, partners, teams, story, team, event, barkode; fixed an event-card grid placement bug and a caption pointer-events issue found during review."
+   },
+   {
+    "name": "Core lightbox opens on the gallery page and on record galleries",
+    "result": "pass",
+    "evidence": "Clicking a gallery image at 1440 and 390 yields .wp-lightbox-overlay.active with aria-modal=true and an <img>; Escape closes it (closedByEsc=true) on tmp-gallery and on the story single (hk9_rec_gallery ids gallery). Markup check: 6 images on /tmp-gallery/ carry data-wp-interactive=\"core/image\", zero <a href><img> wrappers remain; with lightbox off (tmp-gallery-ids) 0 interactive images and 4 full-size <a href> links, columns-4 class applied, 0 figcaptions when captions=false."
+   },
+   {
+    "name": "Events upcoming/past classification with future + past + postponed events",
+    "result": "pass",
+    "evidence": "/tmp-events/: 2026-10-17 18:00 and 2026-11-07 (postponed, time TBD) render as hk9-event-card--upcoming (postponed badge, no registration button on the postponed one), 2026-05-02 renders as hk9-event-card--past; <time datetime> values 2026-10-17T18:00:00-05:00 / 2026-11-07 / 2026-05-02T10:00:00-05:00; registration link has target=\"_blank\" rel=\"noopener noreferrer\"."
+   },
+   {
+    "name": "Events empty state",
+    "result": "pass",
+    "evidence": "With the two upcoming events set to draft: /tmp-events-empty/ and /tmp-events/ render <p class=\"hk9-empty__text\">There are no upcoming events scheduled right now...</p>; the past section still renders on /tmp-events/ and is absent on /tmp-events-empty/ where past.show=false. Events republished afterwards."
+   },
+   {
+    "name": "BarKode single never prints review notes; robots + meta description",
+    "result": "pass",
+    "evidence": "curl /barkode/tmp-caddie-tmp2026-02/ with hk9_review_notes='SECRET-REVIEW-NOTE-MUST-NOT-RENDER' and _hk9_review_notes set: grep -c 'REVIEW-NOTE' = 0 (also asserted in every Playwright load: leak=false); <meta name='robots' content='noindex, nofollow' />; description/og:description = 'Heartland Canines for Veterans BarKode registry record.'; no og:image emitted."
+   },
+   {
+    "name": "Application form section",
+    "result": "pass",
+    "evidence": "/tmp-application/ renders hk9_the_form('application') with heading, notice, data-hk9-mode=\"redirect\", hidden hk9_success=http://localhost:8093/tmp-thank-you/ (from success_page link), the linked '5 Questions' checkbox label, plus the 5 Questions link card; block-content 'Are You Ready' card renders before the form."
+   },
+   {
+    "name": "axe-core (wcag2a/aa/21aa + best-practice, header/footer excluded) on 16 pages",
+    "result": "pass (one content-caused note)",
+    "evidence": "All clean after fixing duplicate region names (list sections whose heading repeats the hero now render an sr-only h2 and no aria-labelledby). Remaining: heading-order on tmp-thank-you (test content h3 after h1)."
+   },
+   {
+    "name": "debug.log after my changes",
+    "result": "pass",
+    "evidence": "No warnings/notices attributable to my files after fixes. Two issues were found and fixed during the session: (1) a fatal 'Cannot redeclare hk9_record_meta()' for ~2 minutes because the parallel T1 stream declared the same helper name - resolved by moving every helper to the hk9_rec_ prefix; (2) 'rest_validate_value_from_schema ... caption' notices caused by writing attrs.caption on image blocks - removed (figcaption is now stripped from the markup only). Final check: log line count unchanged across reloads of all gallery/record pages."
+   },
+   {
+    "name": "Plugin-less fallback (wp --skip-plugins=heartland-k9s-core)",
+    "result": "pass",
+    "evidence": "hk9_theme_section_defaults('events') = hero_band,upcoming,past,cta via my hk9/theme/section_defaults filter; hk9_section_type/map resolve campaigns list -> campaigns_list; hk9_rec_meta() reads raw hk9_* meta; hk9_rec_event_upcoming() classifies 512 true / 514 false with the DateTime fallback; hk9_section(519,'options') returns the 4 imported items. Record lists are empty without the plugin because the CPTs are not registered (empty states render)."
+   },
+   {
+    "name": "Verify templates against the real imported pages",
+    "result": "blocked",
+    "evidence": "tools/wp.sh post list --post_type=page at finish shows only another stream's tmp-news page (ID 422); the real content import had not run yet. Templates were verified against temporary pages seeded with the payload's real section data (donate options, coloring-book tiers, photos gallery block structure, application copy)."
+   },
+   {
+    "name": "Temporary content cleanup",
+    "result": "pass",
+    "evidence": "Deleted posts 499-530 and attachments 469-475 (--force) and removed uploads/tmp-t2-src; final listing shows none of my tmp- items. I did not touch other streams' fixtures (attachments 648-651, page 422)."
+   }
+  ],
+  "issues": [
+   "Parallel-stream name collision (fixed): theme/inc/template-tags-pages.php (T1) also defines hk9_record_meta() and hk9_records_by_ids(); my first version declared the same names and the site was fatal for ~2 minutes (debug.log 15:08-15:09). All my helpers now use the hk9_rec_ prefix; no shared names remain.",
+   "Plugin section types collide across templates: hk9_section_definitions() reports type 'list' for both stories (T1 part list.php) and campaigns/teams, and type 'form' for both contact (T1 form.php) and application. The foundation renderer hk9_render_sections() would therefore load the wrong part, so my templates call hk9_rec_render_sections(), which remaps by template (see hk9_rec_section_type_map()). Recommend the plugin owner set explicit 'type' => 'campaigns_list' / 'teams_list' / 'application_form' in Sections/definitions/{campaigns,teams,application}.php so the generic renderer (and front-page.php's page-sections fallback) resolve correctly too.",
+   "template-parts/page-sections.php (foundation) renders the landing block-content card AFTER all sections; my landing.php renders it right after the hero (per ARCHITECTURE 5.2). Only matters if a landing template is assigned to the static front page.",
+   "The application page layout stores the pseudo-section id 'intro'; the plugin's hk9_sections_layout() drops it, so application.php injects the content card before the 'form' section (hidden-section safe: injections whose anchor never renders still run at the end).",
+   "Content-level heading order: the thank-you/landing block content (e.g. live__page__2505.html) starts with an h3 directly under the page h1; axe flags heading-order. Content owner may want h2 there.",
+   "Shared environment noise observed (not mine): another agent's importer test overwrote hk9_settings mid-run (header showed 'Mini K9s'/'CARD 400x300' logo in some screenshots) and left fixture attachments 648-651 and page 422 tmp-news; the theme's debug.log was truncated by someone during my session.",
+   "Not verified: the real imported pages (import had not run); the 71-image /photos/ gallery performance (tested with 6 images); the theme without the plugin in a browser (only helper-level checks via WP-CLI --skip-plugins)."
+  ],
+  "integration_notes": "FOR THE ORCHESTRATOR / OTHER THEME STREAMS: all T2 helpers live in inc/template-tags-records.php under the hk9_rec_ prefix (hk9_rec_render_sections, hk9_rec_section_type_map, hk9_rec_section_defaults [filter hk9/theme/section_defaults], hk9_rec_meta, hk9_rec_status_label/badge, hk9_rec_query, hk9_rec_by_ids, hk9_rec_section_records, hk9_rec_card, hk9_rec_sponsor_logos, hk9_rec_event_dates/upcoming/range/date_block, hk9_rec_events, hk9_rec_maps_url, hk9_rec_event_registration_link, hk9_rec_gallery + hk9_rec_gallery_begin/end [render_block_data filter that forces the core lightbox / strips captions / sets columns while active], hk9_rec_hero, hk9_rec_back_link, hk9_rec_story_meta, hk9_rec_button, hk9_rec_heading_duplicate, hk9_rec_section_attrs, hk9_rec_section_header). Shared cards: template-parts/cards/{event,campaign,team,person,partner,story}.php take $args['post'] (WP_Post) \u2014 T1's stories/teams sections may reuse hk9_rec_card('story'|'team', $post) if wanted. Page templates for my area call hk9_rec_render_sections($id, $template, $inject) instead of hk9_render_sections() because the plugin registers campaigns/teams 'list' and application 'form' under the shared types list/form. New CSS classes (all in _pages-migrated.scss/_singles.scss): .hk9-empty, .hk9-date, .hk9-event-card(--upcoming|--past, .is-cancelled/.is-postponed), .hk9-events--list/--grid, .hk9-donate__*, .hk9-mail-in__*, .hk9-tax__*, .hk9-tiers--1..3 + __flag/__name/__benefits/__actions, .hk9-sponsors(--sm), .hk9-card__facts, .hk9-card__meta--row, .hk9-card__actions--row, .hk9-card__sponsors, .hk9-status--on-navy, .hk9-hero--record (__eyebrow-row, __meta), .hk9-hero--slim, .hk9-highlight__*, .hk9-gallery-wrap(--N) (sets --wp--style--gallery-gap-default so core's width calc and gap agree), .hk9-application__*, .hk9-thank-you__*, .hk9-single__* , .hk9-event__*, .hk9-record-page__*, .hk9-record__{body,placeholder,status-note,contact,id-cards,subheading,footer}. Listing sections hide their h2 (screen-reader-text, no aria-labelledby) when it repeats the page title/hero heading, so the imported pages whose section heading equals the title (Meet the Team, Campaigns, Our Highlighted Team, Current Teams in Training) do not show it twice. FOR THE PLUGIN OWNER: (1) please set explicit 'type' values campaigns_list / teams_list / application_form on those three section definitions (see issues); (2) the generic barkode description already comes through inc/compat.php (hk9_meta_description) and og:image is suppressed for hk9_barkode \u2014 I did not add a hk9/seo/description filter because the theme's compat module returns the generic string itself; if hk9_print_seo_meta is ever removed, the plugin's Privacy\\\\Registry generic_description filter covers it. FOR THE CONTENT/PAYLOAD OWNER: the /photos/ gallery block (linkTo=media, figcaptions) works as-is \u2014 gallery_options.lightbox=true switches it to the core lightbox with gallery prev/next; keep columns-3/captions in the block, the section options override them at render time. Consider h2 instead of h3 as the first heading in live__page__2505.html (thank-you) and 1989 (application) for heading order. Event registration links stored with target _self are still opened in a new tab when external. FOR REVIEW: screenshots + results.json + axe run are in scratchpad/wave2/t2/; rerun with `node <scratchpad>/wave2/t2/shoot.mjs <outdir>` after seeding temp content with setup-tmp.php (wp eval-file) \u2014 note the script now targets the -2 slugs that resulted from T1's identically named temp records."
+ },
+ "t3": {
+  "summary": "Completed the WordPress template hierarchy + blog design for theme stream T3. New templates: home.php (posts page hero from blog.hero_title/hero_text/hero_image with posts-page title/excerpt/thumbnail fallbacks, list or grid per blog.layout, sticky posts first with a \"Featured\" badge, hk9_pagination), index.php (generic fallback), archive.php (category/tag/author/date + tax/post-type archives: eyebrow naming the archive type, prefix-free title, description, \"Page N\" eyebrow when paged, styled empty panel with 200 for existing empty terms), search.php + searchform.php (labelled form, result count, <mark> highlighting in hero title/card titles/excerpts, empty state with suggestions + helpful links, form in the hero), 404.php (navy band + card with search form and Home/About/Program/Contact/Donate/News links resolved from settings/pages), single.php (article header band with category chips + title + date/author/comments meta, featured image overlapping the band with eager/fetchpriority-high and explicit dimensions, .hk9-prose--reading content with styled wp_link_pages, tag chips, author box when blog.show_author, older/newer nav with titles, related posts section per blog.show_related/related_count, comments), comments.php (threaded list via callback with local initials avatars, post-author badge, moderation notice, reply links, comment pagination, .hk9-form comment form, \"Comments are closed\" notice when closed with existing comments), attachment.php (works when wp_attachment_pages_enabled=1), template-parts/blog/{archive-hero,post-card,post-meta,pagination,empty,prev-next,related,post-navigation}.php, template-parts/content/{page-password,attachment}.php, inc/template-tags-blog.php (context/listing/card/terms/related/highlight/avatar/comment-form/password-form helpers, comment-reply enqueue) and _blog-states.scss. Verified all core block styles in .hk9-prose with the fixture (headings, nested lists, quote, pullquote, alignwide + alignfull images with captions, gallery, table with caption, primary + outline buttons, code, separator, responsive 16:9 YouTube embed, alignfull muted group, long titles, missing-image placeholder). Fixture generator fixed (palette slug muted, sticky post, empty tag, pullquote, alignfull image, embed URL on its own line). Fixtures deleted, tmp-news removed, reading settings restored (posts/0/0).",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/home.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/index.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/archive.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/search.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/searchform.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/404.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/comments.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/attachment.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags-blog.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/archive-hero.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/post-card.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/post-meta.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/pagination.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/empty.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/prev-next.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/related.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/blog/post-navigation.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/content/page-password.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/content/attachment.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_blog-states.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docker/fixtures/blog-fixtures.php",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t3/verify.mjs",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t3/axe.md",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/wave2/t3/report.json"
+  ],
+  "tests": [
+   {
+    "name": "php -l (PHP 8.5) on every new/edited PHP file",
+    "result": "pass",
+    "evidence": "home, index, archive, single, search, searchform, 404, comments, attachment, inc/template-tags-blog.php, 8 blog parts, 2 content parts, docker/fixtures/blog-fixtures.php: 'No syntax errors detected' for all."
+   },
+   {
+    "name": "npm run build:css && npm run build:js",
+    "result": "pass",
+    "evidence": "theme.css 171.2 kB, editor.css 16.3 kB, theme.js 2.4 kB; one early build failure (@extend across a media query) fixed by inlining the visually-hidden rules."
+   },
+   {
+    "name": "Fixtures create/delete (tools/wp.sh hk9-dev fixtures)",
+    "result": "pass",
+    "evidence": "'Created 14 posts (last one sticky), 3 categories, 5 tags (+1 empty), 4 images, author #N.' / 'Deleted 18 fixture posts, 9 fixture terms and 1 fixture users.' Final state: 0 posts, 0 fixture attachments, only user admin, only 'uncategorized' term, 0 comments."
+   },
+   {
+    "name": "curl status matrix",
+    "result": "pass",
+    "evidence": "/tmp-news/ 200, /tmp-news/page/2/ 200, /category/program-updates/ 200, /tag/poker-run/ 200, /tag/fixture-empty-tag/ 200 (empty panel), /author/hk9_fixture_author/ 200, /2026/ 200, /2026/08/ 200, /2026/09/10/ 200, /?s=fixture 200, /?s=zzzqqq 200, /nonexistent-page/ 404, /fixture-rich-blocks/ 200, /fixture-paginated-article/2/ and /3/ 200, /fixture-password-protected/ 200, /fixture-with-comments/ 200, /feed/ 200, /category/program-updates/feed/ 200, /comments/feed/ 200."
+   },
+   {
+    "name": "Playwright 390/1440 screenshots + DOM checks (scratchpad/wave2/t3/*.png, report.json)",
+    "result": "pass",
+    "evidence": "36 captures (18 routes x 2 widths): /tmp-news/ 11 cards on page 1 (10 + sticky first with Featured badge) + pagination, page 2 = 4 cards; category 5 cards; tag 4; author 1; month 10; year 10 + pagination; search 10 + pagination + <mark> highlights; empty search/tag show .hk9-blog__empty; 404 status 404; no horizontal overflow (scrollWidth == clientWidth everywhere); 0 broken images; 0 href=\"#\"; 0 console errors on all pages except the browser's own '404 (Not Found)' resource log on the 404 page and YouTube-iframe warnings ('Unrecognized feature: web-share', 'No available adapters') on the rich post."
+   },
+   {
+    "name": "External requests",
+    "result": "pass",
+    "evidence": "0 external requests on every route except /fixture-rich-blocks/, where all 15 come from the fixture's resolved YouTube iframe (youtube.com, i.ytimg.com, doubleclick, gstatic Roboto, googleapis) \u2014 the documented exception. Comment/author avatars are local initials, so no Gravatar requests."
+   },
+   {
+    "name": "Core block styles in .hk9-prose (rich fixture)",
+    "result": "pass",
+    "evidence": "1440/390 screenshots + probes: h2/h3, nested ul/ol, quote with cite, pullquote (ruled), alignwide image + caption (1024 wide), alignfull image + caption (100vw), gallery 3 columns (core lets the orphan 4th image fill the row), table with caption, primary + outline buttons, code block, separator, alignfull muted group (has-muted-background-color renders on the muted token), long title wrapping, embed wrapper 720x405 / 358x201 = 16:9 with the iframe filling it; unresolved embeds render as a muted URL box (59px) instead of a blank 16:9 spacer."
+   },
+   {
+    "name": "Missing featured image fallback",
+    "result": "pass",
+    "evidence": "/fixture-no-featured-image/ card shows the neutral placeholder tile (paw-print on muted grid pattern) in list, grid and related layouts; single shows the band without an overlapping image; 0 broken images."
+   },
+   {
+    "name": "Blog settings toggles (layout grid, show_author, hero_text, hero_image)",
+    "result": "pass",
+    "evidence": "With hk9_settings.blog = {layout:grid, show_author:true, hero_text, hero_image:475}: 3-column grid at 1440, hero band with background image + overlay + text, 'By admin' in card/post meta, author box (<aside class=\"hk9-author-box\">, initials avatar 'A', 'Written by admin'). Settings key removed afterwards."
+   },
+   {
+    "name": "Comments: list, threading, form POST, moderation notice, pagination, comment-reply script",
+    "result": "pass",
+    "evidence": "6 fixture comments render threaded (children indented, initials avatars, Reply links); POST wp-comments-post.php -> 302 to ...?unapproved=8#comment-8 and the page shows 'Your comment is awaiting moderation' (test comment deleted); with page_comments=1/comments_per_page=2 the <nav class=\"navigation comment-navigation\"> renders 'Older comments' and /comment-page-1/ returns 200 (options restored to 0/50); comment-reply.min.js enqueued on singular with open comments; Name/Email side by side at 1440 (437px each)."
+   },
+   {
+    "name": "Password-protected post",
+    "result": "pass",
+    "evidence": "Styled form (shield icon, label, Unlock); wrong password via wp-login.php?action=postpass -> page shows role=alert 'The password you entered is incorrect' + aria-invalid on the field; correct password 'fixture' -> content, tags, nav and related render; card excerpt/media hidden while locked; related/comments suppressed while locked."
+   },
+   {
+    "name": "Attachment page (wp_attachment_pages_enabled=1)",
+    "result": "pass",
+    "evidence": "/fixture-image-1/ -> 200 with Media eyebrow, title, eager large image (explicit width/height + srcset) linking to the original, details dl (1,600 x 1,000, image/jpeg, 31 KB, date), 'Back to home'; after restoring the option to 0 the URL 301s to the file again."
+   },
+   {
+    "name": "axe-core (wcag2a/aa/21/22 + best-practice) at 390 and 1440",
+    "result": "pass",
+    "evidence": "24 scans across /tmp-news/, /tmp-news/page/2/, /category/program-updates/, /?s=fixture, /?s=zzzqqq, /nonexistent-page/, /fixture-rich-blocks/, /fixture-with-comments/, /fixture-password-protected/, /tag/fixture-empty-tag/, /fixture-paginated-article/2/, /author/hk9_fixture_author/: 0 critical, 0 moderate, 0 minor; the single serious finding on every page is color-contrast on .hk9-footer__tagline (foundation footer, not a T3 template)."
+   },
+   {
+    "name": "debug.log attributable to T3 files",
+    "result": "pass",
+    "evidence": "After all runs, debug.log contains only (a) the foreign fatal 'Cannot redeclare hk9_record_meta()' from template-tags-pages.php vs template-tags-records.php (other streams, since fixed) and (b) the plugin's rest_validate_value_from_schema 'caption' type notice; 0 lines from theme blog templates/parts."
+   },
+   {
+    "name": "Verify templates against the real imported pages (/news/)",
+    "result": "blocked",
+    "evidence": "At finish, wp post list --post_type=page showed only other streams' tmp-* pages (tmp-landing \u2026 tmp-thank-you); the real import (news page, reading record) had not run, so /news/ was verified via the temporary tmp-news posts page only."
+   }
+  ],
+  "issues": [
+   "Palette slug mismatch: the fixture (and the task brief) used backgroundColor 'hk9-muted' / has-hk9-muted-background-color, but theme.json registers the slug 'muted' (has-muted-background-color) \u2014 inc/blocks.php registers no palette. The fixture was corrected to 'muted'; payload/content authors must use theme.json slugs (primary, secondary, background, foreground, muted, muted-foreground, border, accent, white).",
+   "Shared-environment collision (not mine): theme/inc/template-tags-pages.php and theme/inc/template-tags-records.php both declared hk9_record_meta(), which made every front-end request a PHP fatal for ~5 minutes mid-session; it was resolved by those streams. Other agents also flipped show_on_front/page_for_posts/page_on_front/posts_per_page and rewrote hk9_settings while I tested (one intermediate run captured posts_per_page=6), and a foreign process retitled fixture post 421 to 'Edited About'; final runs were re-done with settings re-asserted and are consistent.",
+   "axe serious color-contrast on .hk9-footer__tagline (crimson italic on navy) on every page \u2014 foundation footer.php/_footer.scss, outside T3.",
+   "Foundation _forms.scss was rewritten by another stream during the session (form __row became __grid and .hk9-form__field now spans the full grid row); the comment form therefore defines its own .hk9-comments .comment-form .hk9-form__row grid in _blog-states.scss so it does not depend on that contract.",
+   "Fixture embed markup originally put the YouTube URL on the same line as the wrapper div, so WP_Embed::autoembed never resolved it; fixed (URL on its own line like the editor emits) \u2014 the first verification pass therefore showed no external requests on the rich post, the final pass shows the YouTube iframe requests (documented exception).",
+   "Plugin (not mine) logs 'rest_validate_value_from_schema was called incorrectly: the type schema keyword for caption\u2026' on front-end requests (debug.log).",
+   "Core behaviours kept as-is and documented: sticky posts reappear in natural order on later pages; a 3-column gallery lets the orphan 4th image fill its row; core prefixes protected titles with 'Protected:'."
+  ],
+  "integration_notes": "TEMPLATE HIERARCHY: category.php/tag.php/author.php/date.php are deliberately NOT provided \u2014 archive.php handles all four (plus is_tax/is_post_type_archive) through hk9_archive_context() which returns {eyebrow,title,title_html,text,image,type} (filter hk9/theme/archive_context). The 'get_the_archive_title_prefix' filter is set to '' theme-wide. index.php is the generic fallback and renders the same listing. home.php title/text/image order: blog.hero_title -> posts-page title -> 'News'; blog.hero_text -> posts-page excerpt; blog.hero_image -> posts-page thumbnail. The posts page must be assigned via Reading settings (the importer's 'reading' record); /news/page/N/ pagination works through core + the plugin's listing rewrite rule.\\n\\nHELPERS (inc/template-tags-blog.php, all theme-only, plugin-independent): hk9_blog_option(key), hk9_blog_layout(), hk9_blog_url(), hk9_archive_context(), hk9_blog_empty_copy(), hk9_blog_helpful_links() (filter hk9/theme/helpful_links; About resolves get_page_by_path('about'), Program/Contact/Donate from links.provider/links.contact/links.donate, News from page_for_posts), hk9_blog_listing([layout, highlight]), hk9_blog_post_card($post, [layout list|grid|compact, highlight, heading h2|h3]), hk9_blog_post_meta($post, [light, comments, class]), hk9_blog_post_terms($post, taxonomy, [class,label,limit]) -> <ul class=\\\"hk9-blog__terms\\\">, hk9_blog_related_posts($post, $count) (same categories, newest first, fallback latest; filter hk9/theme/related_posts), hk9_search_highlight($escaped, $query) (only on esc_html output), hk9_blog_initials(), hk9_blog_avatar($name, $size, $class) (initials, filter hk9/theme/avatar to swap in get_avatar()), hk9_blog_post_pages() (wp_link_pages), hk9_blog_card_excerpt(), hk9_comment_callback(), hk9_comment_form_defaults()/hk9_comment_form_fields() (comment_form_defaults / comment_form_default_fields filters), hk9_password_form() (the_password_form filter -> template-parts/content/page-password.php, works for pages too since page.php calls the_content), comment-reply enqueue on singular+open+threaded, body classes hk9-blog/hk9-blog--{list|grid}/hk9-single-post. Other streams may reuse hk9_blog_post_card() for post lists and hk9_blog_avatar() for people cards; hk9_post_card() from the foundation is untouched.\\n\\nCSS (assets/src/scss/_blog-states.scss only): .hk9-hero--blog(+ --has-image), .hk9-hero--post(--post-has-image), .hk9-blog__overlap/__inner(--grid), card additions (.hk9-blog__card-media--placeholder, __card-top, __card-badge, __card-footer, --sticky, --compact, --protected), .hk9-blog__meta-item/-sep/--light, .hk9-blog__terms--light/--tags, .hk9-post__{overlap,featured,body,content,after,tags,footer,comments}, .hk9-post-pages, .hk9-avatar (--hk9-avatar-size), .hk9-author-box, .hk9-blog__nav-label/-title, .hk9-blog__related-header, .hk9-blog__empty-*, .hk9-search__{label,input,submit,submit-label}, .hk9-404__{search,links,title}, .hk9-comments__{list,respond,reply-title,cancel,closed} + .hk9-comment__*, .comment-navigation, .hk9-password-form__*, .hk9-attachment__*, mark.hk9-mark, and embed fixes scoped to .hk9-post__content (aspect-ratio only when the wrapper :has(iframe); unresolved embeds become a muted URL box). Note for the foundation: _navigation_markup() runs sanitize_html_class() so only ONE class can be passed to the_posts_pagination()/the_comments_navigation(); the foundation's .hk9-blog__nav span rule styles every span as an uppercase label, so nav titles carry !important overrides.\\n\\nPRIVACY/DESIGN DECISIONS: author names are plain text (no /author/<login>/ links) because the plugin hardens user enumeration; author archives still render when requested. Avatars never call Gravatar. Comments closed with 0 comments render nothing; closed with existing comments show the list + 'Comments are closed.' Protected posts hide featured image, excerpt, tags, related and comments until unlocked and show a wrong-password alert based on the postpass cookie. Attachment pages render only when wp_attachment_pages_enabled=1 (WP 6.4+ default is off).\\n\\nFIXTURES (docker/fixtures/blog-fixtures.php): now also creates an empty tag ('fixture-empty-tag'), makes the oldest post sticky, adds a pullquote and an alignfull image to the rich post, uses palette slug 'muted', and puts the embed URL on its own line so autoembed resolves it (needs outbound network; the docker stack has it). Environment restored: fixtures deleted, tmp-news (422) deleted, show_on_front=posts, page_on_front=0, page_for_posts=0, wp_attachment_pages_enabled=0, page_comments=0, comments_per_page=50, hk9_settings.blog removed. Screenshots/report: scratchpad/wave2/t3/ (report.json, axe.md, *-390.png, *-1440.png, embed/gallery viewport captures)."
+ }
+}

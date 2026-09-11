@@ -78,7 +78,7 @@ final class Terms extends Step {
 			if ( $parent ) {
 				$args['parent'] = $parent;
 			}
-			$result = wp_insert_term( $desired['name'], $tax, $args );
+			$result = wp_insert_term( wp_slash( $desired['name'] ), $tax, wp_slash( $args ) ); // Core unslashes name/description.
 			if ( is_wp_error( $result ) ) {
 				$existing = term_exists( $slug, $tax );
 				if ( is_array( $existing ) ) {

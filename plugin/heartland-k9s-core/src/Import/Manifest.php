@@ -187,7 +187,7 @@ final class Manifest {
 		}
 		$path = $this->path( $ref );
 		if ( null === $path || ! is_file( $path ) ) {
-			return new WP_Error( 'hk9_content_missing', sprintf( 'Content file "%s" is missing.', $ref ) );
+			return new WP_Error( 'hk9_content_missing', sprintf( /* translators: %s: file path */ __( 'Content file "%s" is missing.', 'heartland-k9s-core' ), $ref ) );
 		}
 		$html = file_get_contents( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( false === $html ) {

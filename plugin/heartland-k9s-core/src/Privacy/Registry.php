@@ -20,7 +20,9 @@ final class Registry {
 		add_filter( 'wp_robots', [ self::class, 'robots' ], 20 );
 		add_filter( 'wp_headers', [ self::class, 'headers' ], 20 );
 		add_filter( 'wp_sitemaps_post_types', [ self::class, 'sitemap_post_types' ] );
+		add_action( 'template_redirect', [ self::class, 'block_embed' ], 0 );
 		add_action( 'template_redirect', [ self::class, 'strip_discovery_links' ], 1 );
+		add_filter( 'oembed_response_data', [ self::class, 'block_oembed_response' ], 100, 2 ); // After core's prio-10 enrichers (they would coerce false back into an array).
 		add_action( 'wp_head', [ self::class, 'meta_description' ], 1 );
 		add_filter( 'hk9/seo/description', [ self::class, 'generic_description' ], 10, 2 );
 		add_filter( 'get_post_metadata', [ self::class, 'hide_review_notes_from_frontend' ], 10, 4 );
@@ -71,6 +73,38 @@ final class Registry {
 	public static function sitemap_post_types( array $post_types ): array {
 		unset( $post_types[ self::TYPE ], $post_types['hk9_person'], $post_types['hk9_partner'], $post_types['hk9_submission'] );
 		return $post_types;
+	}
+
+	/**
+	 * The core embed template (?embed=true, or /embed/ on cores that ignore
+	 * `embeddable`) must never render a registry record: answer 404 instead.
+	 */
+	public static function block_embed(): void {
+		if ( ! is_embed() || ! is_singular( self::TYPE ) ) {
+			return;
+		}
+		global $wp_query;
+		$wp_query->set_404();
+		status_header( 404 );
+		nocache_headers();
+	}
+
+	/**
+	 * No oEmbed payload for registry records (belt and braces for cores < 6.8
+	 * where `embeddable => false` is not honoured by the oEmbed REST endpoint).
+	 *
+	 * @param array|false $data oEmbed data (false when another filter refused).
+	 * @param \WP_Post    $post Post.
+	 * @return array|false
+	 */
+	public static function block_oembed_response( mixed $data, \WP_Post $post ): mixed {
+		// Runs late on purpose: core's get_oembed_response_data_rich() (priority 10) would
+		// turn an early false back into an array.
+
+		if ( self::TYPE === $post->post_type ) {
+			return false;
+		}
+		return $data;
 	}
 
 	/**
@@ -216,12 +250,12 @@ final class Registry {
 	/**
 	 * oEmbed responses carry author_name/author_url; strip them when enumeration is blocked.
 	 *
-	 * @param array    $data oEmbed data.
-	 * @param \WP_Post $post Post.
-	 * @return array
+	 * @param array|false $data oEmbed data (false when an earlier filter refused the embed).
+	 * @param \WP_Post    $post Post.
+	 * @return array|false
 	 */
-	public static function scrub_oembed_author( array $data, \WP_Post $post ): array {
-		if ( self::enumeration_blocked() ) {
+	public static function scrub_oembed_author( mixed $data, \WP_Post $post ): mixed {
+		if ( is_array( $data ) && self::enumeration_blocked() ) {
 			unset( $data['author_name'], $data['author_url'] );
 		}
 		return $data;

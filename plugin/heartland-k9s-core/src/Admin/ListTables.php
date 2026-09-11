@@ -368,21 +368,21 @@ final class ListTables {
 			return;
 		}
 		// phpcs:disable WordPress.Security.NonceVerification.Recommended -- read-only list filters.
-		$orderby = (string) $query->get( 'orderby' );
+		$orderby   = (string) $query->get( 'orderby' );
+		$order     = 'ASC' === strtoupper( (string) $query->get( 'order' ) ) ? 'ASC' : 'DESC';
+		$sort_meta = '';
 		if ( '' === $orderby && in_array( $type, [ 'hk9_person', 'hk9_partner', 'hk9_team', 'hk9_campaign' ], true ) ) {
 			$query->set( 'orderby', [ 'menu_order' => 'ASC', 'title' => 'ASC' ] );
 		} elseif ( 'hk9_order' === $orderby ) {
-			$query->set( 'orderby', [ 'menu_order' => strtoupper( (string) $query->get( 'order' ) ) === 'DESC' ? 'DESC' : 'ASC', 'title' => 'ASC' ] );
+			$query->set( 'orderby', [ 'menu_order' => $order, 'title' => 'ASC' ] );
 		} elseif ( in_array( $orderby, [ 'hk9_start', 'hk9_end', 'hk9_registry_id' ], true ) ) {
-			$query->set( 'meta_key', $orderby );
-			$query->set( 'orderby', 'meta_value' );
+			$sort_meta = $orderby;
 		} elseif ( '' === $orderby && 'hk9_event' === $type ) {
-			$query->set( 'meta_key', 'hk9_start' );
-			$query->set( 'orderby', 'meta_value' );
-			$query->set( 'order', 'DESC' );
+			$sort_meta = 'hk9_start';
 		}
 
-		$meta_query = (array) $query->get( 'meta_query' );
+		// Filter clauses (each narrows the list).
+		$filters = [];
 		foreach ( self::META_FILTERS[ $type ] ?? [] as $arg => $meta_key ) {
 			if ( empty( $_GET[ $arg ] ) ) {
 				continue;
@@ -391,13 +391,38 @@ final class ListTables {
 			if ( ! isset( self::filter_options( $type, $meta_key )[ $value ] ) ) {
 				continue;
 			}
-			$meta_query[] = [
+			$filters[] = [
 				'key'   => $meta_key,
 				'value' => $value,
 			];
 		}
-		if ( $meta_query ) {
+
+		$existing = $query->get( 'meta_query' );
+		$existing = is_array( $existing ) && $existing ? [ $existing ] : []; // Nested so its own relation is kept.
+		if ( '' !== $sort_meta ) {
+			// Sort by a meta value WITHOUT dropping posts that lack the key: a plain
+			// meta_key + orderby=meta_value is an INNER JOIN, so events created via
+			// REST/CLI/import without hk9_start would vanish from the list. A named
+			// EXISTS clause ordered explicitly, OR-ed with a NOT EXISTS branch, keeps
+			// them (sorted after the dated ones).
+			$clause   = $sort_meta . '_clause';
+			$sortable = [
+				'relation' => 'OR',
+				$clause    => [
+					'key'     => $sort_meta,
+					'compare' => 'EXISTS',
+				],
+				[
+					'key'     => $sort_meta,
+					'compare' => 'NOT EXISTS',
+				],
+			];
+			$meta_query = array_merge( [ 'relation' => 'AND', $sortable ], $existing, $filters );
+			$query->set( 'meta_key', '' );
 			$query->set( 'meta_query', $meta_query );
+			$query->set( 'orderby', [ $clause => $order, 'date' => 'DESC' ] );
+		} elseif ( $filters || $existing ) {
+			$query->set( 'meta_query', array_merge( $existing, $filters ) );
 		}
 		if ( 'hk9_partner' === $type && ! empty( $_GET[ PartnerType::TAXONOMY ] ) ) {
 			$slug = sanitize_title( wp_unslash( $_GET[ PartnerType::TAXONOMY ] ) );

@@ -41,7 +41,7 @@ final class PostsHierarchy extends Step {
 			if ( $ctx->dry() ) {
 				$id = 0;
 			} else {
-				$ctx->fail( $key, 'Stub post is missing (posts_stub did not create it).', $sens );
+				$ctx->fail( $key, __( 'Stub post is missing (posts_stub did not create it).', 'heartland-k9s-core' ), $sens );
 				return;
 			}
 		}
@@ -55,6 +55,15 @@ final class PostsHierarchy extends Step {
 			$ctx->warn( $key, $w, $sens );
 		}
 		$fields = $desired['fields'];
+
+		// Never publish a stub whose content cannot be baked afterwards (a token that
+		// depends on a failed attachment, a missing content file...): the record fails
+		// here and the draft stub stays unpublished until the dependency is fixed.
+		$preflight = PostFields::preflight_content( $record, $this->manifest(), $ctx->tokens );
+		if ( is_wp_error( $preflight ) ) {
+			$ctx->fail( $key, __( 'Content cannot be baked (post kept as draft): ', 'heartland-k9s-core' ) . $preflight->get_error_message(), $sens );
+			return;
+		}
 
 		if ( 0 === $id ) {
 			// Dry run for a record that would be created: everything applies.

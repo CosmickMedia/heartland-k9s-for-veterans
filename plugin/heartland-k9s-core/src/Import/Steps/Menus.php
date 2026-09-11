@@ -277,8 +277,12 @@ final class Menus extends Step {
 		return $desired;
 	}
 
+	/**
+	 * wp_update_nav_menu_item() hands these to wp_insert_post()/update_post_meta(),
+	 * which expect slashed data: pre-slash here.
+	 */
 	private function item_args( array $d ): array {
-		return [
+		return wp_slash( [
 			'menu-item-status'    => 'publish',
 			'menu-item-type'      => $d['kind'],
 			'menu-item-object'    => 'post_type' === $d['kind'] ? $d['object'] : 'custom',
@@ -289,7 +293,7 @@ final class Menus extends Step {
 			'menu-item-classes'   => implode( ' ', (array) $d['classes'] ),
 			'menu-item-parent-id' => (int) $d['parent'],
 			'menu-item-position'  => (int) $d['order'],
-		];
+		] );
 	}
 
 	public static function current_item( int $id ): array {

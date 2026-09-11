@@ -1,1 +1,829 @@
-// Partial owned by the pages-migrated template stream (Wave 2). Imported by theme.scss after utilities.
+// ---------------------------------------------------------------------------
+// Migrated page templates (Wave 2, stream T2): landing tiers, donate options /
+// mail-in / tax, events lists + date block, campaigns / teams / people / partner
+// listings, highlighted team panel, photo gallery (core gallery + lightbox),
+// application form section, thank-you card, shared record-card pieces.
+// Uses the foundation tokens/components only (no new colours or fonts).
+// ---------------------------------------------------------------------------
+
+// Shared pieces ----------------------------------------------------------------
+
+// Section header, left-aligned variant (events lists).
+.hk9-section__header--left {
+	text-align: left;
+
+	.hk9-section__intro { margin-left: 0; }
+}
+
+// Empty state used by every listing.
+.hk9-empty {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1rem;
+	max-width: 36rem;
+	margin: 0 auto;
+	padding: 3rem 1.5rem;
+	text-align: center;
+	background: rgba(var(--hk9-muted-rgb), .5);
+	border: 1px dashed var(--hk9-border);
+	border-radius: 1rem;
+
+	&__text {
+		margin: 0;
+		color: var(--hk9-muted-fg);
+		font-size: 1.0625rem;
+		line-height: 1.625;
+	}
+}
+
+// Listing <ul> resets (cards are list items for a11y).
+.hk9-events,
+.hk9-campaigns,
+.hk9-teams,
+.hk9-stories,
+.hk9-donate__grid,
+.hk9-tiers {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	> li { display: flex; min-width: 0; }
+	> li > * { flex: 1 1 auto; min-width: 0; }
+}
+
+.hk9-cards--gap8 { gap: 2rem; }
+
+// Fact rows inside cards / panels ("K9: Caddie · Handler: Billy").
+.hk9-card__facts {
+	list-style: none;
+	margin: 0 0 1rem;
+	padding: 0;
+	display: flex;
+	flex-wrap: wrap;
+	gap: .375rem 1rem;
+	font-size: .875rem;
+	color: var(--hk9-muted-fg);
+
+	li {
+		display: inline-flex;
+		align-items: center;
+		gap: .375rem;
+	}
+
+	.hk9-icon {
+		width: 1rem;
+		height: 1rem;
+		color: var(--hk9-secondary);
+	}
+}
+
+.hk9-card__meta--row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .5rem .75rem;
+	margin-bottom: .75rem;
+}
+
+.hk9-card__goal {
+	font-size: .8125rem;
+	font-weight: 600;
+	color: var(--hk9-primary);
+}
+
+.hk9-card__actions--row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: .75rem 1.25rem;
+	padding-top: 1rem;
+}
+
+.hk9-card__text--quote {
+	font-family: var(--hk9-font-serif);
+	font-style: italic;
+	color: var(--hk9-fg);
+}
+
+// Sponsor logo strip (campaign cards + campaign single).
+.hk9-sponsors {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: center;
+	gap: 1rem 1.5rem;
+	list-style: none;
+	margin: 0;
+	padding: 0;
+
+	&__item {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 4rem;
+		padding: .75rem 1.25rem;
+		background: var(--hk9-card);
+		border: 1px solid var(--hk9-border);
+		border-radius: .5rem;
+
+		img {
+			display: block;
+			max-height: 3.5rem;
+			width: auto;
+			max-width: 10rem;
+			object-fit: contain;
+		}
+	}
+
+	&__link {
+		display: inline-flex;
+		align-items: center;
+		text-decoration: none;
+
+		&:hover { text-decoration: none; }
+	}
+
+	&__name {
+		font-size: .875rem;
+		font-weight: 600;
+		color: var(--hk9-primary);
+	}
+
+	&--sm {
+		justify-content: flex-start;
+		gap: .5rem .75rem;
+
+		.hk9-sponsors__item {
+			min-height: 2.75rem;
+			padding: .375rem .75rem;
+
+			img { max-height: 2rem; max-width: 7rem; }
+		}
+	}
+}
+
+.hk9-card__sponsors {
+	margin: 0 0 .5rem;
+
+	&-label {
+		display: block;
+		margin-bottom: .5rem;
+		font-size: .75rem;
+		font-weight: 700;
+		letter-spacing: .08em;
+		text-transform: uppercase;
+		color: var(--hk9-muted-fg);
+	}
+}
+
+// Status pill on the navy band.
+.hk9-status--on-navy {
+	background: rgba(var(--hk9-white-rgb), .14);
+	color: #fff;
+	border: 1px solid rgba(var(--hk9-white-rgb), .25);
+}
+
+// Record hero (singles): eyebrow row + meta chips under the title.
+.hk9-hero--record {
+	.hk9-hero__eyebrow-row {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+		gap: .75rem;
+		margin-bottom: 1.5rem;
+
+		.hk9-hero__eyebrow { margin-bottom: 0; }
+	}
+
+	.hk9-hero__meta {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: .5rem 1.5rem;
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		font-size: 1rem;
+		color: rgba(var(--hk9-white-rgb), .85);
+
+		li {
+			display: inline-flex;
+			align-items: center;
+			gap: .5rem;
+		}
+
+		.hk9-icon {
+			width: 1rem;
+			height: 1rem;
+			color: var(--hk9-secondary);
+		}
+
+		+ .hk9-hero__text { margin-top: 1.5rem; }
+	}
+}
+
+// Slim band (BarKode record page): badge only, no heading.
+.hk9-hero--slim {
+	padding: 3rem var(--hk9-gutter) 6rem;
+
+	.hk9-hero__badge--static {
+		margin: 0;
+		animation: none;
+	}
+}
+
+// Landing: sponsor tiers ----------------------------------------------------------
+.hk9-tiers {
+	&--1 { @include media-breakpoint-up(md) { grid-template-columns: minmax(0, 28rem); justify-content: center; } }
+	&--2 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+	&--3 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+
+	&__item {
+		position: relative;
+		padding-top: 2.5rem;
+
+		&.is-highlight {
+			border-width: 2px;
+			background: var(--hk9-card);
+		}
+	}
+
+	&__flag {
+		position: absolute;
+		top: -.75rem;
+		left: 50%;
+		transform: translateX(-50%);
+		padding: .25rem .875rem;
+		border-radius: 9999px;
+		background: var(--hk9-secondary);
+		color: #fff;
+		font-size: .75rem;
+		font-weight: 700;
+		letter-spacing: .1em;
+		text-transform: uppercase;
+		white-space: nowrap;
+	}
+
+	&__name {
+		font-size: 1.125rem;
+		line-height: 1.3;
+		color: var(--hk9-muted-fg);
+		font-weight: 600;
+		letter-spacing: .02em;
+		text-transform: uppercase;
+		margin-bottom: .5rem;
+	}
+
+	&__price { margin-bottom: .25rem; }
+
+	&__benefits {
+		width: 100%;
+
+		li {
+			display: flex;
+			align-items: flex-start;
+			gap: .5rem;
+		}
+
+		.hk9-icon {
+			flex-shrink: 0;
+			margin-top: .25rem;
+			width: 1rem;
+			height: 1rem;
+			color: var(--hk9-secondary);
+		}
+	}
+
+	&__actions {
+		width: 100%;
+		margin-top: auto;
+	}
+}
+
+// Donate: ways to give ------------------------------------------------------------
+.hk9-donate {
+	&__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2rem;
+
+		@include media-breakpoint-up(md) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+		@include media-breakpoint-up(lg) {
+			&--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+			&--4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+		}
+	}
+
+	&__item {
+		text-align: center;
+		align-items: center;
+
+		&.is-primary {
+			border: 2px solid var(--hk9-secondary);
+			box-shadow: var(--hk9-shadow-lg);
+		}
+
+		.hk9-card__title { font-size: 1.125rem; }
+		.hk9-card__text { font-size: .9375rem; }
+		.hk9-card__actions { width: 100%; }
+	}
+
+	&__flag {
+		position: absolute;
+		top: -.75rem;
+		left: 50%;
+		transform: translateX(-50%);
+		white-space: nowrap;
+	}
+
+	&__media {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 5rem;
+		margin-bottom: 1.5rem;
+
+		.hk9-card__icon { margin-bottom: 0; }
+	}
+
+	&__logo {
+		display: block;
+		max-height: 4.5rem;
+		width: auto;
+		max-width: 11rem;
+		object-fit: contain;
+	}
+}
+
+// Donate: mail-in panel
+.hk9-mail-in {
+	&__panel {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	&__icon { margin-bottom: .5rem; }
+
+	&__heading {
+		font-size: 1.5rem;
+		color: var(--hk9-primary);
+		margin: 0;
+
+		@include media-breakpoint-up(md) { font-size: 1.875rem; }
+	}
+
+	&__address {
+		font-style: normal;
+		font-size: 1.125rem;
+		line-height: 1.625;
+		color: var(--hk9-fg);
+		margin: 0;
+
+		.hk9-mail-in__line { display: block; }
+		.hk9-mail-in__line--name { font-weight: 700; color: var(--hk9-primary); }
+	}
+
+	&__text {
+		max-width: 36rem;
+		margin: 0;
+		color: var(--hk9-muted-fg);
+		line-height: 1.625;
+
+		+ .hk9-mail-in__text { margin-top: .75rem; }
+	}
+}
+
+// Donate: tax statement
+.hk9-tax {
+	&__box {
+		display: flex;
+		gap: 1rem;
+		align-items: flex-start;
+		padding: 1.25rem 1.5rem;
+		border-left: 4px solid var(--hk9-secondary);
+		background: rgba(var(--hk9-muted-rgb), .6);
+		border-radius: 0 .5rem .5rem 0;
+	}
+
+	&__icon {
+		flex-shrink: 0;
+		width: 1.5rem;
+		height: 1.5rem;
+		margin-top: .125rem;
+		color: var(--hk9-secondary);
+	}
+
+	&__text {
+		margin: 0;
+		font-size: .9375rem;
+		line-height: 1.625;
+		color: var(--hk9-muted-fg);
+
+		+ .hk9-tax__text { margin-top: .75rem; }
+	}
+}
+
+// Events --------------------------------------------------------------------------
+.hk9-events {
+	&--list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+	}
+
+	&--grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.5rem;
+
+		@include media-breakpoint-up(lg) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+	}
+}
+
+// Month / day block.
+.hk9-date {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+	width: 5rem;
+	min-height: 5rem;
+	padding: .5rem;
+	border-radius: .5rem;
+	background: var(--hk9-primary);
+	color: #fff;
+	text-align: center;
+	line-height: 1;
+
+	&__month {
+		font-size: .75rem;
+		font-weight: 700;
+		letter-spacing: .12em;
+		text-transform: uppercase;
+		color: rgba(var(--hk9-white-rgb), .8);
+	}
+
+	&__day {
+		font-family: var(--hk9-font-serif);
+		font-size: 2rem;
+		font-weight: 700;
+		margin: .25rem 0;
+	}
+
+	&__year {
+		font-size: .6875rem;
+		font-weight: 600;
+		color: rgba(var(--hk9-white-rgb), .7);
+	}
+}
+
+// Event card: date block · body · optional image.
+.hk9-event-card {
+	@extend .hk9-card;
+	@extend .hk9-card--hover;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: 1.25rem 1.5rem;
+	padding: 1.5rem;
+	align-items: start;
+
+	@include media-breakpoint-up(md) {
+		padding: 1.75rem 2rem;
+	}
+
+	&--upcoming.hk9-event-card {
+		@include media-breakpoint-up(lg) {
+			grid-template-columns: auto minmax(0, 1fr) 16rem;
+		}
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		min-width: 0;
+	}
+
+	&__status { align-self: flex-start; margin-bottom: .5rem; }
+
+	&__title {
+		font-size: 1.25rem;
+		line-height: 1.3;
+		margin-bottom: .5rem;
+
+		a {
+			color: var(--hk9-fg);
+			text-decoration: none;
+
+			&:hover { color: var(--hk9-secondary); }
+		}
+
+		@include media-breakpoint-up(md) { font-size: 1.375rem; }
+	}
+
+	&__meta {
+		list-style: none;
+		margin: 0 0 .75rem;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: .375rem 1.25rem;
+		font-size: .9375rem;
+		color: var(--hk9-muted-fg);
+
+		li { display: inline-flex; align-items: center; gap: .5rem; }
+
+		.hk9-icon { width: 1rem; height: 1rem; color: var(--hk9-secondary); }
+	}
+
+	&__excerpt {
+		color: var(--hk9-muted-fg);
+		line-height: 1.625;
+		margin-bottom: 1rem;
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: .75rem 1.25rem;
+		margin-top: auto;
+	}
+
+	&__media {
+		grid-column: 1 / -1;
+		display: block;
+		overflow: hidden;
+		border-radius: .5rem;
+		background: var(--hk9-muted);
+		aspect-ratio: 4 / 3;
+
+		img { width: 100%; height: 100%; object-fit: cover; }
+
+		@include media-breakpoint-up(lg) {
+			// Third column on upcoming rows (explicit column: a definite row + auto column would be placed first).
+			.hk9-event-card--upcoming & { grid-column: 3; grid-row: 1; align-self: stretch; aspect-ratio: auto; min-height: 9rem; }
+		}
+
+		.hk9-event-card--past & { aspect-ratio: 16 / 9; }
+	}
+
+	&--past {
+		.hk9-date { background: var(--hk9-muted); color: var(--hk9-primary); }
+		.hk9-date__month, .hk9-date__year { color: var(--hk9-muted-fg); }
+	}
+
+	&.is-cancelled .hk9-event-card__title,
+	&.is-postponed .hk9-event-card__title {
+		color: var(--hk9-muted-fg);
+	}
+}
+
+// Campaigns / teams / stories listings (cards are <article> inside <li>).
+.hk9-campaigns__card,
+.hk9-teams__card,
+.hk9-stories__card {
+	.hk9-card__body { display: flex; flex-direction: column; flex: 1 1 auto; padding: 1.5rem 2rem 2rem; }
+	.hk9-card__media { margin: 0; border-radius: 0; }
+	.hk9-card__title { font-size: 1.25rem; margin-bottom: .5rem; }
+	.hk9-card__text { flex: 1 1 auto; }
+	.hk9-card__link { margin-top: auto; }
+}
+
+// Partners: text tile (no logo) + logo cap.
+.hk9-partners {
+	&__logo {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 5rem;
+		width: 100%;
+
+		img { max-height: 5rem; width: auto; max-width: 100%; object-fit: contain; }
+	}
+
+	&__item--text {
+		min-height: 8rem;
+
+		.hk9-partners__name { font-family: var(--hk9-font-serif); font-size: 1.125rem; color: var(--hk9-primary); }
+	}
+}
+
+// People: initials placeholder + quote.
+.hk9-people {
+	&__initials {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 100%;
+		height: 100%;
+		font-family: var(--hk9-font-serif);
+		font-size: 3rem;
+		font-weight: 700;
+		color: var(--hk9-primary);
+		background: rgba(var(--hk9-primary-rgb), .08);
+	}
+
+	&__quote {
+		margin: 0 0 1rem;
+		font-family: var(--hk9-font-serif);
+		font-style: italic;
+		color: var(--hk9-fg);
+
+		p { margin: 0; }
+	}
+
+	&__bio {
+		&.hk9-prose { font-size: .9375rem; }
+		p:last-child { margin-bottom: 0; }
+	}
+
+	&__links {
+		list-style: none;
+		margin: auto 0 0;
+		padding: 1rem 0 0;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		gap: .5rem 1rem;
+		font-size: .875rem;
+
+		.hk9-link { gap: .375rem; }
+	}
+}
+
+// Highlighted team panel ---------------------------------------------------------
+.hk9-highlight {
+	&__panel {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		padding: 0;
+		max-width: var(--hk9-wide);
+		margin: 0 auto;
+
+		@include media-breakpoint-up(lg) {
+			grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+		}
+	}
+
+	&__media {
+		position: relative;
+		min-height: 20rem;
+		background: var(--hk9-muted);
+
+		img {
+			position: absolute;
+			inset: 0;
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&__placeholder {
+		position: absolute;
+		inset: 0;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		color: var(--hk9-muted-fg);
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 2rem;
+
+		@include media-breakpoint-up(md) { padding: 3rem; }
+
+		> * { margin-bottom: 0; }
+	}
+
+	&__title {
+		font-size: 1.875rem;
+		line-height: 1.2;
+		color: var(--hk9-primary);
+
+		@include media-breakpoint-up(md) { font-size: 2.25rem; }
+	}
+
+	&__summary {
+		@extend .hk9-lead;
+	}
+
+	&__story {
+		&.hk9-prose { font-size: 1rem; }
+		> :last-child { margin-bottom: 0; }
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+		padding-top: .5rem;
+	}
+}
+
+// Photo gallery (core gallery block, cropped tiles, core lightbox) ----------------------
+.hk9-gallery-wrap {
+	--wp--style--gallery-gap-default: 1rem;
+
+	.wp-block-gallery {
+		margin: 0;
+		gap: var(--wp--style--gallery-gap-default);
+	}
+
+	.wp-block-gallery.has-nested-images figure.wp-block-image {
+		margin: 0;
+		border-radius: .5rem;
+		overflow: hidden;
+		background: var(--hk9-muted);
+
+		img {
+			border-radius: 0;
+			transition: transform .3s var(--hk9-ease);
+		}
+
+		@media (hover: hover) {
+			&:hover img { transform: scale(1.03); }
+		}
+
+		// The caption overlays the bottom of the tile: let clicks reach the image (lightbox)
+		// while links inside a caption stay clickable.
+		figcaption {
+			margin: 0;
+			font-size: .8125rem;
+			line-height: 1.4;
+			text-align: left;
+			color: #fff;
+			background: linear-gradient(to top, rgba(15, 23, 42, .75), rgba(15, 23, 42, 0));
+			pointer-events: none;
+
+			a { pointer-events: auto; color: #fff; text-decoration: underline; }
+		}
+	}
+
+	// Core's cropped tiles are square-ish by aspect; keep a consistent 4:3.
+	.wp-block-gallery.has-nested-images.is-cropped figure.wp-block-image img {
+		aspect-ratio: 4 / 3;
+	}
+
+	.lightbox-trigger {
+		border-radius: .25rem;
+	}
+}
+
+.hk9-gallery-page {
+	&__card { padding: 1.5rem; @include media-breakpoint-up(md) { padding: 2rem; } }
+	&__intro { margin-bottom: 2rem; }
+}
+
+// Application ---------------------------------------------------------------------
+.hk9-application {
+	&__aside {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem 1.5rem;
+		text-align: left;
+		margin-bottom: 2rem;
+
+		&-body { flex: 1 1 16rem; min-width: 0; }
+		&-title { margin: 0 0 .25rem; font-weight: 700; color: var(--hk9-primary); }
+		&-text { margin: 0; font-size: .9375rem; color: var(--hk9-muted-fg); }
+	}
+
+	&__form {
+		padding: 1.5rem;
+
+		@include media-breakpoint-up(md) { padding: 2.5rem 3rem; }
+	}
+}
+
+// Thank-you card ------------------------------------------------------------------
+.hk9-thank-you {
+	&__card {
+		text-align: center;
+		max-width: var(--hk9-narrow);
+	}
+
+	&__icon { margin-bottom: 1.5rem; }
+
+	&__content {
+		text-align: left;
+
+		> :last-child { margin-bottom: 0; }
+	}
+}
+
+// Back link.
+.hk9-back-link {
+	.hk9-icon { transition: transform .15s ease-in-out; }
+	&:hover .hk9-icon { transform: scaleX(-1) translateX(2px); }
+}

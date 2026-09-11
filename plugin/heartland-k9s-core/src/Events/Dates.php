@@ -217,6 +217,7 @@ final class Dates {
 		$now      = new \DateTimeImmutable( 'now', wp_timezone() );
 		$boundary = $upcoming ? $now->modify( '-1 day' )->format( 'Y-m-d 00:00' ) : $now->modify( '+1 day' )->format( 'Y-m-d 23:59' );
 
+		$compare    = $upcoming ? '>=' : '<=';
 		$meta_query = [
 			'relation' => 'AND',
 			[
@@ -225,25 +226,41 @@ final class Dates {
 			],
 			[
 				'relation' => 'OR',
+				// Dated end on the right side of the boundary.
 				[
 					'key'     => 'hk9_end',
 					'value'   => $boundary,
-					'compare' => $upcoming ? '>=' : '<=',
+					'compare' => $compare,
 					'type'    => 'CHAR',
 				],
+				// No end: the start must be on the right side (bounded, so past open-ended
+				// events are not loaded and discarded in PHP).
 				[
-					'key'     => 'hk9_end',
-					'compare' => 'NOT EXISTS',
+					'relation' => 'AND',
+					[
+						'relation' => 'OR',
+						[
+							'key'     => 'hk9_end',
+							'compare' => 'NOT EXISTS',
+						],
+						[
+							'key'     => 'hk9_end',
+							'value'   => '',
+							'compare' => '=',
+						],
+					],
+					[
+						'key'     => 'hk9_start',
+						'value'   => $boundary,
+						'compare' => $compare,
+						'type'    => 'CHAR',
+					],
 				],
-				[
-					'key'     => 'hk9_end',
-					'value'   => '',
-					'compare' => '=',
-				],
+				// Malformed data (end before start): classification clamps end = start.
 				[
 					'key'     => 'hk9_start',
 					'value'   => $boundary,
-					'compare' => $upcoming ? '>=' : '<=',
+					'compare' => $compare,
 					'type'    => 'CHAR',
 				],
 			],
@@ -278,28 +295,28 @@ final class Dates {
 			]
 		);
 
-		$posts = [];
+		// Precise classification per event timezone; start instants are computed once
+		// here so the sort below does not re-read meta per comparison.
+		$rows = [];
 		foreach ( $query->posts as $post ) {
 			if ( ! $post instanceof \WP_Post ) {
 				continue;
 			}
 			$data = self::get( $post );
-			if ( ! $data['start'] ) {
+			if ( ! $data['start'] instanceof \DateTimeImmutable ) {
 				continue;
 			}
-			if ( self::is_upcoming( $post ) === $upcoming ) {
-				$posts[] = $post;
+			$ref = $data['end'] ?? $data['start'];
+			$now = new \DateTimeImmutable( 'now', $data['timezone'] );
+			if ( ( $ref->getTimestamp() >= $now->getTimestamp() ) === $upcoming ) {
+				$rows[] = [ $data['start']->getTimestamp(), (int) $post->ID, $post ];
 			}
 		}
-		// Precise ordering by absolute start instant.
 		usort(
-			$posts,
-			static function ( \WP_Post $a, \WP_Post $b ) use ( $upcoming ): int {
-				$ta = self::get( $a )['start']?->getTimestamp() ?? 0;
-				$tb = self::get( $b )['start']?->getTimestamp() ?? 0;
-				return $upcoming ? $ta <=> $tb : $tb <=> $ta;
-			}
+			$rows,
+			static fn( array $a, array $b ): int => $upcoming ? [ $a[0], $a[1] ] <=> [ $b[0], $b[1] ] : [ $b[0], $a[1] ] <=> [ $a[0], $b[1] ]
 		);
+		$posts = array_map( static fn( array $r ): \WP_Post => $r[2], $rows );
 		if ( $offset > 0 ) {
 			$posts = array_slice( $posts, $offset );
 		}

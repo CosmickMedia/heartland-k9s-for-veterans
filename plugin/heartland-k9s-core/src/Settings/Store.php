@@ -367,10 +367,14 @@ final class Store {
 		}
 		$url = trim( $link['url'] );
 		if ( '' !== $url ) {
-			if ( str_starts_with( $url, '/' ) && ! str_starts_with( $url, '//' ) ) {
+			if ( str_starts_with( $url, '//' ) ) {
+				$url = 'https:' . $url; // Protocol-relative URLs become explicit https (never scheme-less).
+			}
+			if ( str_starts_with( $url, '/' ) ) {
 				$url = '/' . ltrim( wp_sanitize_redirect( $url ), '/' );
 			} elseif ( str_starts_with( $url, '#' ) ) {
-				$url = '#' . sanitize_title( substr( $url, 1 ) );
+				$fragment = sanitize_title( substr( $url, 1 ) );
+				$url      = '' !== $fragment ? '#' . $fragment : ''; // A bare '#' is not a destination (no href="#").
 			} else {
 				$url = esc_url_raw( $url, [ 'http', 'https', 'mailto', 'tel' ] ) ?: '';
 			}

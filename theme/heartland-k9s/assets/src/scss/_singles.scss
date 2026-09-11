@@ -1,1 +1,396 @@
-// Partial owned by the singles template stream (Wave 2). Imported by theme.scss after utilities.
+// ---------------------------------------------------------------------------
+// Record singles (Wave 2, stream T2): story, team, event, campaign and the
+// BarKode registry record. Built on the overlap card + prose from the foundation.
+// ---------------------------------------------------------------------------
+
+.hk9-single {
+	&__card {
+		> :last-child { margin-bottom: 0; }
+	}
+
+	&__figure {
+		margin: -2rem -2rem 2rem;
+		overflow: hidden;
+		border-radius: 1rem 1rem 0 0;
+		background: var(--hk9-muted);
+		max-height: 34rem;
+
+		@include media-breakpoint-up(md) { margin: -3rem -3rem 2.5rem; }
+
+		img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			max-height: 34rem;
+			object-fit: cover;
+		}
+	}
+
+	&__quote {
+		position: relative;
+		max-width: 44rem;
+		margin: 0 auto 2.5rem;
+		padding: 1.5rem 1.5rem 1.5rem 2rem;
+		border-left: 4px solid var(--hk9-secondary);
+		background: rgba(var(--hk9-muted-rgb), .6);
+		border-radius: 0 .75rem .75rem 0;
+		font-family: var(--hk9-font-serif);
+		font-size: 1.25rem;
+		line-height: 1.5;
+		color: var(--hk9-fg);
+
+		@include media-breakpoint-up(md) { font-size: 1.5rem; padding: 2rem 2.5rem; }
+
+		p { margin: 0; }
+
+		&-glyph {
+			display: block;
+			width: 2rem;
+			height: 2rem;
+			margin-bottom: .75rem;
+			fill: currentColor;
+			color: var(--hk9-secondary);
+			opacity: .5;
+		}
+
+		&-author {
+			margin-top: 1rem;
+			font-family: var(--hk9-font-sans);
+			font-size: .9375rem;
+			font-weight: 600;
+			color: var(--hk9-primary);
+
+			&::before { content: "— "; }
+		}
+	}
+
+	&__lead { margin-bottom: 2rem; }
+
+	&__content {
+		max-width: var(--hk9-narrow);
+		margin: 0 auto;
+
+		> :last-child { margin-bottom: 0; }
+	}
+
+	&__subheading {
+		font-size: 1.5rem;
+		line-height: 1.3;
+		color: var(--hk9-primary);
+		margin-bottom: 1rem;
+
+		@include media-breakpoint-up(md) { font-size: 1.75rem; }
+	}
+
+	&__gallery {
+		margin-top: 2.5rem;
+
+		.hk9-single__subheading { margin-bottom: 1.25rem; }
+	}
+
+	&__footer {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		gap: .75rem 1.5rem;
+		margin-top: 2.5rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--hk9-border);
+	}
+
+	// Split card (team / campaign): media column + body.
+	&__media {
+		.hk9-single__placeholder {
+			position: absolute;
+			inset: 0;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: var(--hk9-muted-fg);
+		}
+	}
+
+	&__body {
+		.hk9-lead { margin-bottom: 0; }
+		.hk9-single__subheading { margin-bottom: 0; }
+	}
+
+	&__facts {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: .5rem;
+		margin: 0;
+
+		> div {
+			display: grid;
+			grid-template-columns: 7rem minmax(0, 1fr);
+			gap: .5rem 1rem;
+			align-items: center;
+			padding: .5rem 0;
+			border-top: 1px solid var(--hk9-border);
+		}
+
+		dt {
+			font-size: .75rem;
+			font-weight: 700;
+			letter-spacing: .08em;
+			text-transform: uppercase;
+			color: var(--hk9-muted-fg);
+		}
+
+		dd { margin: 0; color: var(--hk9-fg); }
+	}
+
+	&__actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: .75rem 1rem;
+		padding-top: .5rem;
+	}
+
+	// Sections below the card.
+	&__more {
+		padding-top: 5rem;
+
+		.hk9-single__content { margin: 0; max-width: none; }
+		.hk9-single__gallery { margin-top: 2rem; }
+	}
+
+	&__footer-bar {
+		.hk9-single__footer { margin-top: 0; padding-top: 2rem; }
+	}
+
+	// Story: the card is a reading column.
+	&--story .hk9-single__card { max-width: var(--hk9-narrow); }
+	&--story .hk9-single__figure { max-height: 32rem; }
+}
+
+// Event single ---------------------------------------------------------------------
+.hk9-event {
+	&__layout {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2rem;
+
+		@include media-breakpoint-up(lg) {
+			grid-template-columns: minmax(0, 1fr) 20rem;
+			gap: 3rem;
+		}
+	}
+
+	&__main { min-width: 0; }
+
+	&__alert {
+		display: flex;
+		align-items: center;
+		gap: .75rem;
+		margin: 0 0 1.5rem;
+		padding: .875rem 1.25rem;
+		border-radius: .5rem;
+		background: rgba(var(--hk9-secondary-rgb), .08);
+		border: 1px solid rgba(var(--hk9-secondary-rgb), .3);
+		color: var(--hk9-secondary);
+		font-weight: 600;
+
+		.hk9-icon { flex-shrink: 0; width: 1.25rem; height: 1.25rem; }
+	}
+
+	&__when {
+		display: flex;
+		gap: 1.5rem;
+		align-items: flex-start;
+		margin-bottom: 2rem;
+	}
+
+	&__details {
+		flex: 1 1 auto;
+		min-width: 0;
+		margin: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+
+		> div { display: flex; flex-direction: column; gap: .25rem; }
+
+		dt {
+			display: inline-flex;
+			align-items: center;
+			gap: .375rem;
+			font-size: .75rem;
+			font-weight: 700;
+			letter-spacing: .08em;
+			text-transform: uppercase;
+			color: var(--hk9-muted-fg);
+
+			.hk9-icon { width: 1rem; height: 1rem; color: var(--hk9-secondary); }
+		}
+
+		dd {
+			margin: 0;
+			color: var(--hk9-fg);
+			font-size: 1.0625rem;
+			line-height: 1.5;
+			display: flex;
+			flex-direction: column;
+			gap: .125rem;
+			align-items: flex-start;
+		}
+	}
+
+	&__venue { font-weight: 600; }
+
+	&__address {
+		font-style: normal;
+		color: var(--hk9-muted-fg);
+		margin: 0;
+	}
+
+	&__directions { margin-top: .25rem; font-size: .9375rem; }
+
+	&__lead { margin-bottom: 1.5rem; }
+
+	&__tickets {
+		text-align: left;
+		margin-top: 2rem;
+
+		&-title {
+			display: inline-flex;
+			align-items: center;
+			gap: .5rem;
+			font-size: 1.125rem;
+			margin-bottom: .75rem;
+			color: var(--hk9-primary);
+
+			.hk9-icon { color: var(--hk9-secondary); width: 1.25rem; height: 1.25rem; }
+		}
+
+		p { color: var(--hk9-muted-fg); margin-bottom: .75rem; line-height: 1.625; }
+	}
+
+	&__aside {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25rem;
+		min-width: 0;
+	}
+
+	&__flyer {
+		overflow: hidden;
+		border-radius: .5rem;
+		border: 1px solid var(--hk9-border);
+		background: var(--hk9-muted);
+
+		img { display: block; width: 100%; height: auto; }
+	}
+
+	&__register-note,
+	&__past-note {
+		margin: 0;
+		font-size: .875rem;
+		color: var(--hk9-muted-fg);
+		text-align: center;
+	}
+
+	&__register .hk9-btn { margin-bottom: .5rem; }
+
+	&__past-note {
+		padding: 1rem 1.25rem;
+		border-radius: .5rem;
+		background: rgba(var(--hk9-muted-rgb), .6);
+		border: 1px solid var(--hk9-border);
+	}
+}
+
+// Campaign single: sponsors band.
+.hk9-single__sponsors .hk9-sponsors { max-width: var(--hk9-wide); margin: 0 auto; }
+
+// BarKode registry record ----------------------------------------------------------
+.hk9-record-page {
+	&__card {
+		padding: 1.5rem;
+
+		@include media-breakpoint-up(md) { padding: 2.5rem 3rem; }
+	}
+}
+
+.hk9-record {
+	max-width: none;
+
+	&__photo {
+		position: relative;
+
+		img { aspect-ratio: 3 / 4; object-fit: cover; }
+	}
+
+	&__placeholder {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		aspect-ratio: 3 / 4;
+		border-radius: 1rem;
+		border: 1px solid var(--hk9-border);
+		background: var(--hk9-muted);
+		color: var(--hk9-muted-fg);
+	}
+
+	&__body { min-width: 0; }
+
+	&__title { line-height: 1.1; }
+
+	&__status-note {
+		margin: -1rem 0 1.5rem;
+		font-size: .9375rem;
+		font-weight: 600;
+		color: var(--hk9-secondary);
+	}
+
+	&__alert {
+		font-size: 1rem;
+		letter-spacing: .06em;
+		text-transform: uppercase;
+		margin-bottom: 0;
+
+		span { line-height: 1.4; }
+	}
+
+	&__notice {
+		p { margin: 0; }
+		p + p { margin-top: .5rem; }
+	}
+
+	&__contact {
+		display: flex;
+		align-items: flex-start;
+		gap: .5rem;
+		margin: 1.5rem 0 0;
+		font-size: .9375rem;
+		color: var(--hk9-muted-fg);
+
+		.hk9-icon { flex-shrink: 0; margin-top: .2rem; width: 1rem; height: 1rem; color: var(--hk9-secondary); }
+	}
+
+	&__id-cards { margin-top: 2rem; }
+
+	&__subheading {
+		font-size: 1rem;
+		font-weight: 700;
+		letter-spacing: .05em;
+		text-transform: uppercase;
+		color: var(--hk9-muted-fg);
+		margin-bottom: .75rem;
+	}
+
+	&__cards {
+		margin-top: 0;
+		display: block;
+
+		.wp-block-gallery.has-nested-images.is-cropped figure.wp-block-image img { aspect-ratio: 16 / 10; }
+	}
+
+	&__footer {
+		margin-top: 2rem;
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--hk9-border);
+	}
+}

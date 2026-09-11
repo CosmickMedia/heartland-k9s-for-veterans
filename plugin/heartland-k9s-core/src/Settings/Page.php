@@ -113,7 +113,7 @@ final class Page {
 						$page,
 						$section,
 						[
-							'label_for' => in_array( $field['type'], [ 'link', 'image', 'repeater', 'note', 'color', 'toggle' ], true ) ? '' : $id,
+							'label_for' => in_array( $field['type'], [ 'link', 'image', 'repeater', 'note', 'toggle' ], true ) ? '' : $id,
 							'group'     => $group,
 							'key'       => $key,
 							'field'     => $field,
@@ -284,11 +284,13 @@ final class Page {
 				<?php endif; ?>
 			</div>
 			<div class="hk9-image-field__actions">
-				<button type="button" class="button" data-hk9-image-select aria-describedby="<?php echo esc_attr( $id . '-help' ); ?>">
+				<?php /* translators: %s: setting label (e.g. "Header logo") */ ?>
+				<button type="button" class="button" data-hk9-image-select aria-label="<?php echo esc_attr( sprintf( __( '%s: select or replace image', 'heartland-k9s-core' ), $field['label'] ) ); ?>"<?php echo '' !== (string) ( $field['help'] ?? '' ) ? ' aria-describedby="' . esc_attr( $id . '-help' ) . '"' : ''; ?>>
 					<span class="hk9-when-empty"><?php esc_html_e( 'Select image', 'heartland-k9s-core' ); ?></span>
 					<span class="hk9-when-set"><?php esc_html_e( 'Replace', 'heartland-k9s-core' ); ?></span>
 				</button>
-				<button type="button" class="button-link button-link-delete hk9-when-set" data-hk9-image-remove><?php esc_html_e( 'Remove', 'heartland-k9s-core' ); ?></button>
+				<?php /* translators: %s: setting label (e.g. "Header logo") */ ?>
+				<button type="button" class="button-link button-link-delete hk9-when-set" data-hk9-image-remove aria-label="<?php echo esc_attr( sprintf( __( 'Remove %s', 'heartland-k9s-core' ), $field['label'] ) ); ?>"><?php esc_html_e( 'Remove', 'heartland-k9s-core' ); ?></button>
 			</div>
 		</div>
 		<?php

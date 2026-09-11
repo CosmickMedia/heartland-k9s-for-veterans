@@ -142,11 +142,11 @@ final class PostFields {
 				return $baked;
 			}
 			if ( Tokens::has_unbaked( (string) $baked ) ) {
-				return new WP_Error( 'hk9_unbaked', 'Content still contains unresolved {{tokens}} after baking.' );
+				return new WP_Error( 'hk9_unbaked', __( 'Content still contains unresolved {{tokens}} after baking.', 'heartland-k9s-core' ) );
 			}
 			$blocks = [ count( parse_blocks( $raw ) ), count( parse_blocks( (string) $baked ) ) ];
 			if ( $blocks[0] !== $blocks[1] ) {
-				return new WP_Error( 'hk9_block_count', sprintf( 'Block count changed while baking tokens (%d -> %d).', $blocks[0], $blocks[1] ) );
+				return new WP_Error( 'hk9_block_count', sprintf( /* translators: 1: blocks before, 2: blocks after */ __( 'Block count changed while baking tokens (%1$d -> %2$d).', 'heartland-k9s-core' ), $blocks[0], $blocks[1] ) );
 			}
 			$fields['content'] = (string) $baked;
 		}
@@ -170,6 +170,53 @@ final class PostFields {
 			'fields' => $fields,
 			'blocks' => $blocks,
 		];
+	}
+
+	/**
+	 * Pre-flight for the hierarchy pass: will the content pass be able to bake this
+	 * record? Every token in the content file and in deferred (`{{post_url}}`) meta
+	 * must resolve now — media/term ids directly, post URLs as post ids (the stub
+	 * exists and its record has not failed) — and the block structure must survive
+	 * baking. Failing here keeps the stub an unpublished draft instead of publishing
+	 * a page with empty content and fixing it up later.
+	 */
+	public static function preflight_content( array $record, Manifest $manifest, Tokens $tokens ): true|WP_Error {
+		$raw = $manifest->content( $record );
+		if ( is_wp_error( $raw ) ) {
+			return $raw;
+		}
+		$post_url_keys = [];
+		if ( is_string( $raw ) ) {
+			$partial = $tokens->bake( $raw, [ 'post_url' ] );
+			if ( is_wp_error( $partial ) ) {
+				return $partial;
+			}
+			if ( count( parse_blocks( $raw ) ) !== count( parse_blocks( (string) $partial ) ) ) {
+				return new WP_Error( 'hk9_block_count', __( 'Block count changes while baking tokens.', 'heartland-k9s-core' ) );
+			}
+			foreach ( Tokens::extract( $raw ) as [ $kind, $tkey ] ) {
+				if ( 'post_url' === $kind ) {
+					$post_url_keys[ $tkey ] = true;
+				}
+			}
+		}
+		foreach ( (array) ( $record['meta'] ?? [] ) as $entry ) {
+			if ( ! is_array( $entry ) ) {
+				continue;
+			}
+			foreach ( Tokens::extract( Manifest::cast_meta( $entry ) ) as [ $kind, $tkey ] ) {
+				if ( 'post_url' === $kind ) {
+					$post_url_keys[ $tkey ] = true;
+				}
+			}
+		}
+		foreach ( array_keys( $post_url_keys ) as $tkey ) {
+			$id = $tokens->resolve( 'post', (string) $tkey );
+			if ( is_wp_error( $id ) ) {
+				return $id;
+			}
+		}
+		return true;
 	}
 
 	/**
@@ -259,7 +306,10 @@ final class PostFields {
 					}
 					break;
 				case 'template':
-					$meta['_wp_page_template'] = $v;
+					// NOT via meta_input: wp_update_post() merges the post's current page_template
+					// (WP_Post::__get reads the meta) and wp_insert_post() re-writes
+					// _wp_page_template from it AFTER meta_input, silently reverting the change.
+					$args['page_template'] = '' !== (string) $v ? (string) $v : 'default';
 					break;
 				case 'featured':
 					if ( (int) $v > 0 ) {
@@ -275,15 +325,29 @@ final class PostFields {
 			$args['meta_input'] = $meta;
 		}
 		if ( count( $args ) > 1 ) {
-			// wp_update_post() re-validates the page template stored on the post against the active
-			// theme and returns WP_Error (after writing the row) when the file is absent. A template
-			// the theme does not ship yet is a warning, not a failure: whitelist it for this write.
-			$template = (string) ( $meta['_wp_page_template'] ?? get_post_meta( $id, '_wp_page_template', true ) );
-			$allow    = static function ( $templates ) use ( $template ) {
-				if ( '' !== $template && 'default' !== $template && is_array( $templates ) && ! isset( $templates[ $template ] ) ) {
-					$templates[ $template ] = 'Heartland (template file not in theme yet)';
+			// wp_update_post() re-validates the page template (the one being written, or the one
+			// already stored) against the active theme and returns WP_Error (after writing the
+			// row) when the file is absent. A template the theme does not ship yet is a warning,
+			// not a failure: whitelist both the current and the new value for this write.
+			$templates = array_filter(
+				array_unique(
+					[
+						(string) ( $args['page_template'] ?? '' ),
+						(string) get_post_meta( $id, '_wp_page_template', true ),
+					]
+				),
+				static fn( string $t ): bool => '' !== $t && 'default' !== $t
+			);
+			$allow     = static function ( $list ) use ( $templates ) {
+				if ( ! is_array( $list ) ) {
+					return $list;
 				}
-				return $templates;
+				foreach ( $templates as $t ) {
+					if ( ! isset( $list[ $t ] ) ) {
+						$list[ $t ] = 'Heartland (template file not in theme yet)';
+					}
+				}
+				return $list;
 			};
 			add_filter( 'theme_page_templates', $allow, 999 );
 			$r = wp_update_post( wp_slash( $args ), true );

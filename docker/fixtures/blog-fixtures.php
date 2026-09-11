@@ -30,6 +30,10 @@ function hk9_dev_create_blog_fixtures( string $marker ): string {
 		$id = is_wp_error( $t ) ? (int) ( $t->error_data['term_exists'] ?? 0 ) : (int) $t['term_id'];
 		if ( $id ) { add_term_meta( $id, $marker, 1, true ); $tags[] = $id; }
 	}
+	// An existing tag with no posts (empty archive state; the live site has such tags, e.g. poker-run).
+	$empty_tag = wp_insert_term( 'fixture empty tag', 'post_tag' );
+	$empty_tag = is_wp_error( $empty_tag ) ? (int) ( $empty_tag->error_data['term_exists'] ?? 0 ) : (int) $empty_tag['term_id'];
+	if ( $empty_tag ) { add_term_meta( $empty_tag, $marker, 1, true ); }
 
 	// Second author for author archives.
 	$author2 = username_exists( 'hk9_fixture_author' ) ?: wp_insert_user( [ 'user_login' => 'hk9_fixture_author', 'user_pass' => wp_generate_password( 24 ), 'display_name' => 'Fixture Author', 'role' => 'author', 'user_email' => 'fixture-author@hk9.test' ] );
@@ -64,14 +68,16 @@ function hk9_dev_create_blog_fixtures( string $marker ): string {
 		. '<!-- wp:list {"ordered":true} --><ol class="wp-block-list"><!-- wp:list-item --><li>Ordered one</li><!-- /wp:list-item --><!-- wp:list-item --><li>Ordered two</li><!-- /wp:list-item --></ol><!-- /wp:list -->'
 		. '<!-- wp:quote --><blockquote class="wp-block-quote"><!-- wp:paragraph --><p>A pull quote inside the article, styled in Fraunces like the reference testimonials.</p><!-- /wp:paragraph --><cite>Fixture citation</cite></blockquote><!-- /wp:quote -->'
 		. '<!-- wp:image {"id":' . $img( 1 ) . ',"sizeSlug":"large","align":"wide"} --><figure class="wp-block-image alignwide size-large"><img src="' . esc_url( wp_get_attachment_image_url( $img( 1 ), 'large' ) ) . '" alt="Synthetic fixture image" class="wp-image-' . $img( 1 ) . '"/><figcaption class="wp-element-caption">A wide-aligned image with a caption.</figcaption></figure><!-- /wp:image -->'
+		. '<!-- wp:pullquote --><figure class="wp-block-pullquote"><blockquote><p>A pullquote block: short, centred, ruled above and below.</p><cite>Pullquote citation</cite></blockquote></figure><!-- /wp:pullquote -->'
+		. '<!-- wp:image {"id":' . $img( 2 ) . ',"sizeSlug":"full","align":"full"} --><figure class="wp-block-image alignfull size-full"><img src="' . esc_url( wp_get_attachment_image_url( $img( 2 ), 'full' ) ) . '" alt="Synthetic fixture image" class="wp-image-' . $img( 2 ) . '"/><figcaption class="wp-element-caption">A full-width image with a caption.</figcaption></figure><!-- /wp:image -->'
 		. '<!-- wp:table --><figure class="wp-block-table"><table class="has-fixed-layout"><thead><tr><th>Column A</th><th>Column B</th><th>Column C</th></tr></thead><tbody><tr><td>Row 1</td><td>Value</td><td>Value</td></tr><tr><td>Row 2</td><td>Value</td><td>Value</td></tr></tbody></table><figcaption class="wp-element-caption">A table caption.</figcaption></figure><!-- /wp:table -->'
 		. '<!-- wp:buttons --><div class="wp-block-buttons"><!-- wp:button --><div class="wp-block-button"><a class="wp-block-button__link wp-element-button" href="/donate/">Primary button</a></div><!-- /wp:button --><!-- wp:button {"className":"is-style-outline"} --><div class="wp-block-button is-style-outline"><a class="wp-block-button__link wp-element-button" href="/contact/">Outline button</a></div><!-- /wp:button --></div><!-- /wp:buttons -->'
 		. '<!-- wp:code --><pre class="wp-block-code"><code>echo "code block";</code></pre><!-- /wp:code -->'
 		. '<!-- wp:gallery {"columns":3,"linkTo":"none"} --><figure class="wp-block-gallery has-nested-images columns-3 is-cropped">'
 		. implode( '', array_map( fn( $a ) => '<!-- wp:image {"id":' . $a . ',"sizeSlug":"large"} --><figure class="wp-block-image size-large"><img src="' . esc_url( wp_get_attachment_image_url( $a, 'large' ) ) . '" alt="Synthetic fixture image" class="wp-image-' . $a . '"/></figure><!-- /wp:image -->', $images ) )
 		. '</figure><!-- /wp:gallery -->'
-		. '<!-- wp:embed {"url":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","type":"video","providerNameSlug":"youtube","responsive":true,"className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} --><figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">https://www.youtube.com/watch?v=dQw4w9WgXcQ</div><figcaption class="wp-element-caption">An embed (local fixture only).</figcaption></figure><!-- /wp:embed -->'
-		. '<!-- wp:group {"align":"full","backgroundColor":"hk9-muted","layout":{"type":"constrained"}} --><div class="wp-block-group alignfull has-hk9-muted-background-color has-background"><!-- wp:paragraph --><p>A full-width group block with a muted background.</p><!-- /wp:paragraph --></div><!-- /wp:group -->'
+		. '<!-- wp:embed {"url":"https://www.youtube.com/watch?v=dQw4w9WgXcQ","type":"video","providerNameSlug":"youtube","responsive":true,"className":"wp-embed-aspect-16-9 wp-has-aspect-ratio"} --><figure class="wp-block-embed is-type-video is-provider-youtube wp-block-embed-youtube wp-embed-aspect-16-9 wp-has-aspect-ratio"><div class="wp-block-embed__wrapper">' . "\n" . 'https://www.youtube.com/watch?v=dQw4w9WgXcQ' . "\n" . '</div><figcaption class="wp-element-caption">An embed (local fixture only).</figcaption></figure><!-- /wp:embed -->'
+		. '<!-- wp:group {"align":"full","backgroundColor":"muted","layout":{"type":"constrained"}} --><div class="wp-block-group alignfull has-muted-background-color has-background"><!-- wp:paragraph --><p>A full-width group block with a muted background.</p><!-- /wp:paragraph --></div><!-- /wp:group -->'
 		. '<!-- wp:separator --><hr class="wp-block-separator has-alpha-channel-opacity"/><!-- /wp:separator -->'
 		. '<!-- wp:paragraph --><p>Closing paragraph.</p><!-- /wp:paragraph -->';
 
@@ -97,6 +103,7 @@ function hk9_dev_create_blog_fixtures( string $marker ): string {
 		$ids[] = $id;
 		wp_set_object_terms( $id, 9 === $i ? $tags : [ $tags[ $i % count( $tags ) ] ], 'post_tag' );
 		if ( 2 !== $i ) { set_post_thumbnail( $id, $img( $i ) ); }
+		if ( 13 === $i ) { stick_post( $id ); }
 		if ( 6 === $i ) {
 			for ( $c = 1; $c <= 3; $c++ ) {
 				$cid = wp_insert_comment( [ 'comment_post_ID' => $id, 'comment_author' => "Fixture commenter $c", 'comment_author_email' => "c$c@hk9.test", 'comment_content' => "Fixture comment number $c with a thoughtful remark.", 'comment_approved' => 1 ] );
@@ -104,5 +111,5 @@ function hk9_dev_create_blog_fixtures( string $marker ): string {
 			}
 		}
 	}
-	return sprintf( 'Created %d posts, %d categories, %d tags, %d images, author #%d.', count( $ids ), count( $cats ), count( $tags ), count( $images ), $author2 );
+	return sprintf( 'Created %d posts (last one sticky), %d categories, %d tags (+1 empty), %d images, author #%d.', count( $ids ), count( $cats ), count( $tags ), count( $images ), $author2 );
 }

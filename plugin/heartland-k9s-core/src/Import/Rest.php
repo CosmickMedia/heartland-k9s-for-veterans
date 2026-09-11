@@ -2,10 +2,9 @@
 /**
  * REST endpoints for the admin import screen: hk9/v1/import/{status,start,step,pause,resume,retry,rollback,reset}.
  *
- * Every route requires manage_options + hk9_run_import (granted to admins) and
- * the wp_rest nonce (cookie auth). Also registers the WP-CLI commands when
- * running under WP-CLI so the importer is usable even if no central CLI
- * bootstrap exists (registration is idempotent).
+ * Every route requires manage_options (administrators) and the wp_rest nonce
+ * (cookie auth); write routes additionally require unfiltered_html so block
+ * markup is stored verbatim. WP-CLI commands are registered by CLI\Commands.
  *
  * @package HK9\Core
  */
@@ -27,15 +26,6 @@ final class Rest {
 
 	public static function register(): void {
 		add_action( 'rest_api_init', [ self::class, 'routes' ] );
-
-		if ( defined( 'WP_CLI' ) && WP_CLI ) {
-			if ( class_exists( '\HK9\Core\CLI\ImportCommand' ) ) {
-				\HK9\Core\CLI\ImportCommand::register();
-			}
-			if ( class_exists( '\HK9\Core\CLI\StatusCommand' ) ) {
-				\HK9\Core\CLI\StatusCommand::register();
-			}
-		}
 	}
 
 	public static function can(): bool|WP_Error {

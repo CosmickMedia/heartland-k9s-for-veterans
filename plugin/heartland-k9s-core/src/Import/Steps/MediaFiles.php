@@ -132,7 +132,7 @@ final class MediaFiles extends Step {
 			$ctx->add_bytes( (int) filesize( $path ) );
 		}
 
-		update_post_meta( $id, '_wp_attachment_image_alt', $desired['alt'] );
+		update_post_meta( $id, '_wp_attachment_image_alt', wp_slash( $desired['alt'] ) );
 
 		Map::bind(
 			$key,
@@ -271,7 +271,7 @@ final class MediaFiles extends Step {
 			}
 		}
 		if ( array_key_exists( 'alt', $apply ) ) {
-			update_post_meta( $id, '_wp_attachment_image_alt', $apply['alt'] );
+			update_post_meta( $id, '_wp_attachment_image_alt', wp_slash( (string) $apply['alt'] ) );
 		}
 		return true;
 	}

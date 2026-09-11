@@ -149,7 +149,7 @@ final class Tokens {
 
 	private function do_resolve( string $kind, string $mkey, string $modifier ): int|string|WP_Error {
 		if ( isset( $this->failed[ $mkey ] ) ) {
-			return new WP_Error( 'hk9_token_failed_dep', sprintf( 'Depends on failed record %s (%s).', $mkey, $this->failed[ $mkey ] ) );
+			return new WP_Error( 'hk9_token_failed_dep', sprintf( /* translators: 1: record key, 2: its error */ __( 'Depends on failed record %1$s (%2$s).', 'heartland-k9s-core' ), $mkey, $this->failed[ $mkey ] ) );
 		}
 
 		$row = Map::get( $mkey );
@@ -173,7 +173,7 @@ final class Tokens {
 					default     => 0,
 				};
 			}
-			return new WP_Error( 'hk9_token_unresolved', sprintf( 'Unresolvable token {{%s:%s}}.', $kind, $mkey ) );
+			return new WP_Error( 'hk9_token_unresolved', sprintf( /* translators: 1: token kind, 2: record key */ __( 'Unresolvable token {{%1$s:%2$s}}.', 'heartland-k9s-core' ), $kind, $mkey ) );
 		}
 
 		switch ( $kind ) {

@@ -264,6 +264,9 @@ final class Validate extends Step {
 			case 'redirect':
 				if ( ! $str( $r['from'] ?? null ) || '' === $r['from'] ) {
 					$e[] = 'redirect needs "from".';
+				} elseif ( ! str_starts_with( $key, 'redirect:' ) || Redirects::normalize( substr( $key, strlen( 'redirect:' ) ) ) !== Redirects::normalize( (string) $r['from'] ) ) {
+					// Rollback derives the rule key from the record key, so both must name the same rule.
+					$e[] = sprintf( 'redirect key must be "redirect:%s" (it must normalise to the same rule as "from").', (string) $r['from'] );
 				}
 				$to = $r['to'] ?? null;
 				if ( is_array( $to ) ) {
@@ -412,8 +415,33 @@ final class Validate extends Step {
 
 	/* -------------------------------------------------------------- files */
 
+	/** MIME types never imported even when the site allows them (SVG/HEIC by design; script-bearing/executable for safety). */
+	public const DENIED_MIMES = [
+		'image/svg+xml',
+		'image/heic',
+		'image/heif',
+		'image/heic-sequence',
+		'image/heif-sequence',
+		'text/html',
+		'application/javascript',
+		'application/x-javascript',
+		'text/javascript',
+		'application/x-msdownload',
+		'application/x-msi',
+		'application/x-shockwave-flash',
+		'application/java',
+	];
+
+	/**
+	 * Everything the site itself accepts for uploads (images, PDF, Office documents,
+	 * video/audio...) minus SVG/HEIC and script-bearing types. The real payload
+	 * carries mp4 and docx documents, so a hand-rolled image/pdf list is too narrow.
+	 *
+	 * @return string[]
+	 */
 	public static function allowed_mimes(): array {
-		$mimes = [ 'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/avif', 'application/pdf' ];
+		$site  = array_values( array_unique( array_map( 'strtolower', array_values( get_allowed_mime_types() ) ) ) );
+		$mimes = array_values( array_diff( $site, self::DENIED_MIMES ) );
 		/**
 		 * Filters MIME types the importer accepts for attachments (HEIC/SVG are deliberately absent).
 		 *
@@ -436,30 +464,30 @@ final class Validate extends Step {
 		$sens = Context::is_sensitive( $record );
 		$path = $this->manifest()->path( (string) $record['file'] );
 		if ( null === $path ) {
-			$ctx->fail( $key, sprintf( 'File reference "%s" escapes the payload directory.', (string) $record['file'] ), $sens );
+			$ctx->fail( $key, sprintf( /* translators: %s: file path */ __( 'File reference "%s" escapes the payload directory.', 'heartland-k9s-core' ), (string) $record['file'] ), $sens );
 			return;
 		}
 		if ( ! is_file( $path ) ) {
-			$ctx->fail( $key, sprintf( 'File "%s" is missing from the payload.', (string) $record['file'] ), $sens );
+			$ctx->fail( $key, sprintf( /* translators: %s: file path */ __( 'File "%s" is missing from the payload.', 'heartland-k9s-core' ), (string) $record['file'] ), $sens );
 			return;
 		}
 		$size = (int) filesize( $path );
 		if ( $size <= 0 ) {
-			$ctx->fail( $key, sprintf( 'File "%s" is empty.', (string) $record['file'] ), $sens );
+			$ctx->fail( $key, sprintf( /* translators: %s: file path */ __( 'File "%s" is empty.', 'heartland-k9s-core' ), (string) $record['file'] ), $sens );
 			return;
 		}
 		if ( $size > self::max_file_bytes() ) {
-			$ctx->fail( $key, sprintf( 'File "%s" is %s, above the %s cap.', (string) $record['file'], size_format( $size ), size_format( self::max_file_bytes() ) ), $sens );
+			$ctx->fail( $key, sprintf( /* translators: 1: file path, 2: file size, 3: size cap */ __( 'File "%1$s" is %2$s, above the %3$s cap.', 'heartland-k9s-core' ), (string) $record['file'], size_format( $size ), size_format( self::max_file_bytes() ) ), $sens );
 			return;
 		}
 		$declared = strtolower( (string) $record['mime'] );
 		if ( ! in_array( $declared, self::allowed_mimes(), true ) ) {
-			$ctx->fail( $key, sprintf( 'MIME type "%s" is not allowed.', $declared ), $sens );
+			$ctx->fail( $key, sprintf( /* translators: %s: MIME type */ __( 'MIME type "%s" is not allowed.', 'heartland-k9s-core' ), $declared ), $sens );
 			return;
 		}
 		$check = wp_check_filetype_and_ext( $path, basename( $path ) );
 		if ( empty( $check['type'] ) || ! in_array( (string) $check['type'], self::allowed_mimes(), true ) ) {
-			$ctx->fail( $key, sprintf( 'File "%s" does not look like an allowed type (detected: %s).', (string) $record['file'], (string) ( $check['type'] ?: 'unknown' ) ), $sens );
+			$ctx->fail( $key, sprintf( /* translators: 1: file path, 2: detected MIME type */ __( 'File "%1$s" does not look like an allowed type (detected: %2$s).', 'heartland-k9s-core' ), (string) $record['file'], (string) ( $check['type'] ?: 'unknown' ) ), $sens );
 			return;
 		}
 		if ( ! empty( $check['proper_filename'] ) ) {
@@ -467,7 +495,7 @@ final class Validate extends Step {
 		}
 		$sha = Hash::file( $path );
 		if ( $sha !== strtolower( (string) $record['sha256'] ) ) {
-			$ctx->fail( $key, sprintf( 'sha256 mismatch for "%s".', (string) $record['file'] ), $sens );
+			$ctx->fail( $key, sprintf( /* translators: %s: file path */ __( 'sha256 mismatch for "%s".', 'heartland-k9s-core' ), (string) $record['file'] ), $sens );
 			return;
 		}
 		if ( isset( $record['size'] ) && (int) $record['size'] !== $size ) {

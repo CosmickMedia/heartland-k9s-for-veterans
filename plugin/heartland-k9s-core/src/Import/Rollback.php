@@ -19,6 +19,7 @@ namespace HK9\Core\Import;
 
 use HK9\Core\Import\Steps\Menus;
 use HK9\Core\Import\Steps\MediaFiles;
+use HK9\Core\Import\Steps\Options;
 use HK9\Core\Import\Steps\Reading;
 use HK9\Core\Import\Steps\Redirects;
 use HK9\Core\Import\Steps\Terms;
@@ -268,11 +269,23 @@ final class Rollback {
 			return;
 		}
 
-		// option:<name>
+		// option:<name> — fields are dot paths (leaves) for deep-merged options, top-level
+		// keys for merge:replace, or the single 'value' field for scalar options.
 		$name    = substr( $key, strlen( 'option:' ) );
 		$raw     = get_option( $name, null );
 		$grouped = ! ( 1 === count( $before ) && array_key_exists( 'value', $before ) && ! ( is_array( $raw ) && ! array_is_list( $raw ) && array_key_exists( 'value', $raw ) ) );
-		$current = $grouped ? ( is_array( $raw ) ? $raw : [] ) : [ 'value' => $raw ];
+		$project = static function ( mixed $data, array $fields ) use ( $grouped ): array {
+			if ( ! $grouped ) {
+				return [ 'value' => $data ];
+			}
+			$arr = is_array( $data ) ? $data : [];
+			$out = [];
+			foreach ( $fields as $f ) {
+				$out[ $f ] = Options::path_get( $arr, (string) $f );
+			}
+			return $out;
+		};
+		$current  = $project( $raw, array_keys( $before ) );
 		$modified = [];
 		foreach ( $before as $f => $v ) {
 			$h = $row['field_hashes'][ $f ]['db'] ?? null;
@@ -287,11 +300,11 @@ final class Rollback {
 		if ( ! $dry_run ) {
 			if ( $grouped ) {
 				$new = is_array( $raw ) ? $raw : [];
-				foreach ( $before as $group => $v ) {
+				foreach ( $before as $path => $v ) {
 					if ( null === $v ) {
-						unset( $new[ $group ] );
+						Options::path_unset( $new, (string) $path );
 					} else {
-						$new[ $group ] = $v;
+						Options::path_set( $new, (string) $path, $v );
 					}
 				}
 				if ( [] === $new && ! is_array( $raw ) ) {
@@ -304,8 +317,7 @@ final class Rollback {
 			} else {
 				update_option( $name, $before['value'] );
 			}
-			$after_raw = get_option( $name, null );
-			self::forget_run( $row, $run_id, array_keys( $before ), $grouped ? ( is_array( $after_raw ) ? $after_raw : [] ) : [ 'value' => $after_raw ] );
+			self::forget_run( $row, $run_id, array_keys( $before ), $project( get_option( $name, null ), array_keys( $before ) ) );
 		}
 		$report['restored'][] = [ 'key' => $key, 'fields' => array_keys( $before ) ];
 		$log->info( 'rollback', $key, 'restored ' . implode( ', ', array_keys( $before ) ) );
@@ -409,7 +421,7 @@ final class Rollback {
 				$r      = wp_update_nav_menu_item(
 					$menu,
 					$id,
-					[
+					wp_slash( [
 						'menu-item-status'    => 'publish',
 						'menu-item-type'      => $merged['kind'],
 						'menu-item-object'    => 'post_type' === $merged['kind'] ? $merged['object'] : 'custom',
@@ -420,7 +432,7 @@ final class Rollback {
 						'menu-item-classes'   => implode( ' ', (array) $merged['classes'] ),
 						'menu-item-parent-id' => (int) $merged['parent'],
 						'menu-item-position'  => (int) $merged['order'],
-					]
+					] )
 				);
 				return is_wp_error( $r ) ? $r : true;
 			case 'attachment':

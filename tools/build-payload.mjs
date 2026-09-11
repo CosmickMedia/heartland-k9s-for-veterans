@@ -47,6 +47,9 @@ const TOKEN_RE = /\{\{(media_url|media|post_url|post|term):([^{}|]+?)(?:\|([a-z_
 const STRUCTURAL = new Set(['attachment', 'term', 'menu', 'option', 'reading', 'redirect']);
 const POST_STATUSES = new Set(['publish', 'draft', 'private', 'pending', 'future']);
 const META_TYPES = new Set(['string', 'integer', 'number', 'boolean', 'array', 'object']);
+// The importer never accepts these (SVG/HEIC by design): unreferenced media-index entries with such a MIME
+// are dropped from the manifest with a warning; a token pointing at one fails the build.
+const DENIED_MIMES = new Set(['image/svg+xml', 'image/heic', 'image/heif', 'image/heic-sequence', 'image/heif-sequence']);
 const OPTION_ALLOW = new Set([
   'blogname', 'blogdescription', 'timezone_string', 'date_format', 'time_format', 'start_of_week',
   'posts_per_page', 'posts_per_rss', 'site_icon', 'default_comment_status', 'default_ping_status',
@@ -163,9 +166,15 @@ if (mediaIndexPath && fs.existsSync(mediaIndexPath)) {
     if (item.height) rec.height = Number(item.height);
     if (item.parent) rec.parent = item.parent;
     if (item.sensitive) rec.sensitive = true;
+    if (DENIED_MIMES.has(rec.mime.toLowerCase())) {
+      rec.__denied = true;
+      warn(`${key}: MIME ${rec.mime} is rejected by the importer; the record is left out of the manifest`);
+    }
     records.push({ ...rec, __file: path.relative(ROOT, mediaIndexPath) });
-    mediaCount++;
-    mediaBytes += rec.size;
+    if (!rec.__denied) {
+      mediaCount++;
+      mediaBytes += rec.size;
+    }
   }
 } else {
   warn(`media-index.json not found (${mediaIndexPath ? path.relative(ROOT, mediaIndexPath) : 'payload/media-index.json'}); building with zero media.`);
@@ -183,20 +192,41 @@ for (const r of records) {
 
 const typeOf = (r) => (STRUCTURAL.has(r.type) ? r.type : 'post_like');
 
-function tokenTargetOk(kind, key) {
+// Mirror of the importer's redirect key normalisation (path lower-cased, decoded, leading + trailing slash,
+// query kept after '?').
+function normalizeRedirect(source) {
+  let src = String(source).trim();
+  if (!src) return '';
+  if (/^https?:\/\//i.test(src)) {
+    try { const u = new URL(src); src = u.pathname + u.search; } catch { /* keep as is */ }
+  }
+  let query = '';
+  const q = src.indexOf('?');
+  if (q !== -1) { query = src.slice(q + 1); src = src.slice(0, q); }
+  let p = '/' + decodeURIComponent(src).toLowerCase().replace(/^\/+|\/+$/g, '');
+  if (p !== '/') p += '/';
+  p = p.replace(/\/+/g, '/');
+  if (query) p += '?' + decodeURIComponent(query).toLowerCase();
+  return p;
+}
+
+// null when the token resolves, otherwise the reason it cannot.
+function tokenProblem(kind, key) {
   const mkey = kind === 'term' && !key.startsWith('term:') ? 'term:' + key : key;
   const rec = byKey.get(mkey);
-  if (!rec) return kind === 'term' && knownTerms.has(mkey);
+  if (!rec) return kind === 'term' && knownTerms.has(mkey) ? null : 'dangling token';
+  if (rec.__denied) return `references ${mkey}, whose MIME ${rec.mime} the importer rejects`;
   const t = typeOf(rec);
-  if (kind === 'media' || kind === 'media_url') return t === 'attachment';
-  if (kind === 'post' || kind === 'post_url') return t === 'post_like';
-  if (kind === 'term') return t === 'term';
-  return false;
+  if (kind === 'media' || kind === 'media_url') return t === 'attachment' ? null : 'token does not point at an attachment';
+  if (kind === 'post' || kind === 'post_url') return t === 'post_like' ? null : 'token does not point at a post-like record';
+  if (kind === 'term') return t === 'term' ? null : 'token does not point at a term';
+  return 'unknown token kind';
 }
 
 function checkTokens(where, value) {
   for (const { kind, key, mod } of tokensIn(value)) {
-    if (!tokenTargetOk(kind, key)) fail(`${where}: dangling token {{${kind}:${key}}}`);
+    const problem = tokenProblem(kind, key);
+    if (problem) fail(`${where}: ${problem} {{${kind}:${key}}}`);
     if (mod && !(kind === 'media_url' && mod === 'original')) fail(`${where}: unsupported modifier |${mod} on {{${kind}:${key}}}`);
   }
 }
@@ -255,7 +285,10 @@ function checkShape(r) {
         if (r.to.type !== 'record' || !isStr(r.to.slug)) fail(`${k}: object "to" must be {type:"record", slug}`);
       } else if ((!isStr(r.to) || !r.to) && Number(r.status ?? 301) !== 410) fail(`${k}: redirect needs "to"`);
       if (r.status !== undefined && ![301, 302, 410].includes(Number(r.status))) fail(`${k}: "status" must be 301, 302 or 410`);
-      if (isStr(r.from) && k !== `redirect:${r.from}`) warn(`${k}: conventional key would be "redirect:${r.from}"`);
+      // Rollback derives the rule key from the record key: both must normalise to the same rule.
+      if (isStr(r.from) && (!k.startsWith('redirect:') || normalizeRedirect(k.slice('redirect:'.length)) !== normalizeRedirect(r.from))) {
+        fail(`${k}: redirect key must be "redirect:${r.from}" (same rule as "from")`);
+      }
       break;
     default:
       if (!isStr(r.title)) fail(`${k}: post needs "title"`);
@@ -316,7 +349,7 @@ for (const r of byKey.values()) {
 }
 
 for (const r of byKey.values()) {
-  if (r.type !== 'attachment') continue;
+  if (r.type !== 'attachment' || r.__denied) continue;
   const srcCandidate = path.join(SRC, r.file);
   const outFile = path.join(OUT, r.file);
   if (COPY_MEDIA && fs.existsSync(srcCandidate)) {
@@ -345,6 +378,7 @@ if (errors.length) {
 const order = ['attachment', 'term', 'post_like', 'menu', 'option', 'reading', 'redirect'];
 const grouped = Object.fromEntries(order.map((t) => [t, []]));
 for (const r of byKey.values()) {
+  if (r.__denied) continue; // Unreferenced SVG/HEIC media: kept out of the manifest (warned above).
   const clean = { ...r };
   delete clean.__file;
   grouped[typeOf(r)].push(clean);

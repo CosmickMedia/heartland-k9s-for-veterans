@@ -40,10 +40,35 @@ final class Registrar {
 		add_filter( 'quick_edit_dropdown_pages_args', [ self::class, 'exclude_listing_parents' ] );
 		add_filter( 'wp_insert_post_data', [ self::class, 'reject_listing_parent' ], 10, 2 );
 		add_action( 'save_post_page', [ self::class, 'flush_on_listing_page_change' ], 10, 2 );
+		add_action( 'add_meta_boxes', [ self::class, 'remove_custom_fields_box' ] );
+		add_filter( 'is_protected_meta', [ self::class, 'protect_plugin_meta' ], 10, 2 );
 
 		if ( class_exists( PartnerType::class ) ) {
 			PartnerType::register();
 		}
+	}
+
+	/**
+	 * 'custom-fields' support is kept so Meta\Registry's show_in_rest meta is exposed
+	 * (block-editor mirroring/preview), but the raw core "Custom Fields" box must not
+	 * offer editors an unsanitised path into hk9_* meta: remove it for our types.
+	 */
+	public static function remove_custom_fields_box( string $post_type ): void {
+		if ( in_array( $post_type, self::TYPES, true ) ) {
+			remove_meta_box( 'postcustom', $post_type, 'normal' );
+		}
+	}
+
+	/**
+	 * Plugin meta (hk9_*) is protected: hidden from the Custom Fields UI and
+	 * editable only through the registered auth callbacks (Details/Sections UIs, REST).
+	 *
+	 * @param bool   $protected Current verdict.
+	 * @param string $meta_key  Meta key.
+	 * @return bool
+	 */
+	public static function protect_plugin_meta( bool $protected, string $meta_key ): bool {
+		return str_starts_with( $meta_key, 'hk9_' ) ? true : $protected;
 	}
 
 	/**

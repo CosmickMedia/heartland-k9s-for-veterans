@@ -28,6 +28,9 @@ final class Admin {
 
 	private static string $hook = '';
 
+	/** Status snapshot for this request (the manifest is parsed once, not per hook). */
+	private static ?array $status = null;
+
 	public static function register(): void {
 		add_action( 'admin_menu', [ self::class, 'menu' ], 20 );
 		add_action( 'admin_enqueue_scripts', [ self::class, 'assets' ] );
@@ -56,6 +59,18 @@ final class Admin {
 		Log::ensure_dir();
 	}
 
+	private static function status(): array {
+		if ( null === self::$status ) {
+			self::$status = Runner::status();
+		}
+		return self::$status;
+	}
+
+	/** Per-user transient carrying the last upload result (never trusted from the URL). */
+	private static function notice_key(): string {
+		return 'hk9_import_notice_' . get_current_user_id();
+	}
+
 	public static function assets( string $hook_suffix ): void {
 		if ( '' === self::$hook || $hook_suffix !== self::$hook ) {
 			return;
@@ -68,7 +83,7 @@ final class Admin {
 		$config = [
 			'root'    => esc_url_raw( rest_url( Rest::NS . '/import/' ) ),
 			'nonce'   => wp_create_nonce( 'wp_rest' ),
-			'status'  => Runner::status(),
+			'status'  => self::status(),
 			'logBase' => esc_url_raw( self::log_url() ),
 			'steps'   => State::STEPS,
 			'i18n'    => [
@@ -93,6 +108,36 @@ final class Admin {
 				'conflicts'    => __( 'conflicts', 'heartland-k9s-core' ),
 				'warnings'     => __( 'Warnings', 'heartland-k9s-core' ),
 				'retry'        => __( 'Retry failed', 'heartland-k9s-core' ),
+				'overwrite'    => __( 'overwrite', 'heartland-k9s-core' ),
+				'run'          => __( 'run', 'heartland-k9s-core' ),
+				'errorsSuffix' => /* translators: %d: number of record errors */ __( '%d error(s)', 'heartland-k9s-core' ),
+				'colKey'       => __( 'Key', 'heartland-k9s-core' ),
+				'colStep'      => __( 'Step', 'heartland-k9s-core' ),
+				'colMessage'   => __( 'Message', 'heartland-k9s-core' ),
+				'colRun'       => __( 'Run', 'heartland-k9s-core' ),
+				'colStarted'   => __( 'Started', 'heartland-k9s-core' ),
+				'colMode'      => __( 'Mode', 'heartland-k9s-core' ),
+				'colStatus'    => __( 'Status', 'heartland-k9s-core' ),
+				'colErrors'    => __( 'Errors', 'heartland-k9s-core' ),
+				'colActions'   => __( 'Actions', 'heartland-k9s-core' ),
+				'log'          => __( 'Log', 'heartland-k9s-core' ),
+				'directory'    => __( 'Directory', 'heartland-k9s-core' ),
+				'source'       => __( 'Source', 'heartland-k9s-core' ),
+				'uploadedZip'  => __( 'Uploaded ZIP', 'heartland-k9s-core' ),
+				'serverPath'   => __( 'Server path', 'heartland-k9s-core' ),
+				'generated'    => __( 'Generated', 'heartland-k9s-core' ),
+				'recordsLabel' => __( 'Records', 'heartland-k9s-core' ),
+				'postsPages'   => __( 'posts/pages', 'heartland-k9s-core' ),
+				'media'        => __( 'media', 'heartland-k9s-core' ),
+				'noPayload'    => __( 'No payload selected yet. Upload a ZIP below or use a server path.', 'heartland-k9s-core' ),
+				'confirmation' => __( 'Confirmation', 'heartland-k9s-core' ),
+				'force'        => __( 'Force (also remove records edited since the import)', 'heartland-k9s-core' ),
+				'rollBackRun'  => /* translators: %s: run id */ __( 'Roll back %s', 'heartland-k9s-core' ),
+				'cancel'       => __( 'Cancel', 'heartland-k9s-core' ),
+				'deleted'      => __( 'deleted', 'heartland-k9s-core' ),
+				'restored'     => __( 'restored', 'heartland-k9s-core' ),
+				'skipped'      => __( 'skipped', 'heartland-k9s-core' ),
+				'errorWord'    => __( 'error', 'heartland-k9s-core' ),
 			],
 		];
 		wp_add_inline_script( 'hk9-import', 'window.HK9Import = ' . wp_json_encode( $config ) . ';', 'before' );
@@ -104,9 +149,17 @@ final class Admin {
 		if ( ! current_user_can( self::CAP ) ) {
 			wp_die( esc_html__( 'You do not have permission to access this page.', 'heartland-k9s-core' ) );
 		}
-		$notice  = isset( $_GET['hk9_notice'] ) ? sanitize_key( wp_unslash( $_GET['hk9_notice'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$message = isset( $_GET['hk9_message'] ) ? sanitize_text_field( wp_unslash( $_GET['hk9_message'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$status  = Runner::status();
+		// The upload result travels in a per-user transient (not the URL, so a crafted
+		// link cannot place arbitrary text in a notice) and is shown once.
+		$notice  = '';
+		$message = '';
+		$stored  = get_transient( self::notice_key() );
+		if ( is_array( $stored ) ) {
+			delete_transient( self::notice_key() );
+			$notice  = 'error' === ( $stored['kind'] ?? '' ) ? 'error' : 'success';
+			$message = (string) ( $stored['message'] ?? '' );
+		}
+		$status  = self::status();
 		$payload = $status['payload'];
 		$dev     = $status['dev_paths'];
 		$kses_ok = current_user_can( 'unfiltered_html' );
@@ -265,15 +318,15 @@ final class Admin {
 	}
 
 	private static function back( string $kind, string $message ): never {
-		$url = add_query_arg(
+		set_transient(
+			self::notice_key(),
 			[
-				'page'        => self::SLUG,
-				'hk9_notice'  => $kind,
-				'hk9_message' => rawurlencode( $message ),
+				'kind'    => $kind,
+				'message' => $message,
 			],
-			admin_url( 'admin.php' )
+			2 * MINUTE_IN_SECONDS
 		);
-		wp_safe_redirect( $url );
+		wp_safe_redirect( add_query_arg( [ 'page' => self::SLUG ], admin_url( 'admin.php' ) ) );
 		exit;
 	}
 

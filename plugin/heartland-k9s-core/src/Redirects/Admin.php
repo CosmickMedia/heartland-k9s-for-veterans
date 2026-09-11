@@ -26,6 +26,9 @@ final class Admin {
 	}
 
 	public static function url( array $args = [] ): string {
+		if ( isset( $args['key'] ) ) {
+			$args['key'] = rawurlencode( (string) $args['key'] ); // add_query_arg() does not encode values ('&' in query rules).
+		}
 		return add_query_arg( array_merge( [ 'page' => self::SLUG ], $args ), admin_url( 'admin.php' ) );
 	}
 

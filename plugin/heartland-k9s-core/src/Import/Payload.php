@@ -33,6 +33,9 @@ final class Payload {
 		if ( str_starts_with( $relative, '/' ) || str_starts_with( $relative, '\\' ) ) {
 			return null;
 		}
+		if ( preg_match( '#(^|[/\\\\])\.\.([/\\\\]|$)#', $relative ) ) {
+			return null; // Payload-relative references never climb.
+		}
 		$real_root = realpath( $root );
 		if ( false === $real_root ) {
 			return null;
@@ -40,11 +43,20 @@ final class Payload {
 		$target = $root . DIRECTORY_SEPARATOR . $relative;
 		$real   = realpath( $target );
 		if ( false === $real ) {
-			$parent = realpath( dirname( $target ) );
-			if ( false === $parent ) {
+			// Missing file (or missing directories): resolve the nearest existing ancestor
+			// and re-append the remainder, so a merely absent file is still contained
+			// (only real traversal escapes the root).
+			$tail   = [];
+			$parent = $target;
+			do {
+				$tail[]   = basename( $parent );
+				$parent   = dirname( $parent );
+				$ancestor = realpath( $parent );
+			} while ( false === $ancestor && '' !== $parent && dirname( $parent ) !== $parent );
+			if ( false === $ancestor ) {
 				return null;
 			}
-			$real = $parent . DIRECTORY_SEPARATOR . basename( $target );
+			$real = $ancestor . DIRECTORY_SEPARATOR . implode( DIRECTORY_SEPARATOR, array_reverse( $tail ) );
 		}
 		if ( $real !== $real_root && ! str_starts_with( $real, $real_root . DIRECTORY_SEPARATOR ) ) {
 			return null;

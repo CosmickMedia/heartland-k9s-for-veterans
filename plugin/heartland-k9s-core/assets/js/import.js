@@ -121,7 +121,7 @@
 		} else {
 			el.stepline.textContent = sprintf( cfg.i18n.stepOf, stepIdx, total, s.step ) + ' · ' + sprintf( cfg.i18n.records, s.cursor || 0, s.step_total || 0 );
 			const mb = ( ( s.bytes_copied || 0 ) / 1048576 ).toFixed( 1 );
-			el.meta.textContent = ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( s.mode && s.mode.overwrite ? ' + overwrite' : '' ) + ' · run ' + s.run_id + ' · ' + mb + ' MB' + ( snapshot.lock ? ' · ' + cfg.i18n.locked : '' );
+			el.meta.textContent = ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( s.mode && s.mode.overwrite ? ' + ' + cfg.i18n.overwrite : '' ) + ' · ' + cfg.i18n.run + ' ' + s.run_id + ' · ' + mb + ' MB' + ( snapshot.lock ? ' · ' + cfg.i18n.locked : '' );
 		}
 
 		// Progress: steps completed + fraction of the current step.
@@ -163,7 +163,7 @@
 		if ( ! errors.length ) {
 			el.errors.innerHTML = '<p class="hk9-import__empty">' + esc( cfg.i18n.noErrors ) + '</p>';
 		} else {
-			el.errors.innerHTML = '<table class="widefat striped"><thead><tr><th>Key</th><th>Step</th><th>Message</th></tr></thead><tbody>' +
+			el.errors.innerHTML = '<table class="widefat striped"><thead><tr><th scope="col">' + esc( cfg.i18n.colKey ) + '</th><th scope="col">' + esc( cfg.i18n.colStep ) + '</th><th scope="col">' + esc( cfg.i18n.colMessage ) + '</th></tr></thead><tbody>' +
 				errors.map( ( e ) => '<tr class="' + ( e.fatal ? 'is-fatal' : '' ) + '"><td><code>' + esc( e.key || '—' ) + '</code></td><td>' + esc( e.step ) + '</td><td>' + esc( e.message ) + '</td></tr>' ).join( '' ) +
 				'</tbody></table>';
 		}
@@ -188,13 +188,13 @@
 		if ( snapshot.payload ) {
 			const p = snapshot.payload;
 			el.payload.innerHTML = p.ok
-				? '<dl class="hk9-import__dl"><dt>Directory</dt><dd><code>' + esc( p.dir ) + '</code></dd><dt>Source</dt><dd>' + ( p.uploaded ? 'Uploaded ZIP' : 'Server path' ) + '</dd><dt>Generated</dt><dd>' + esc( p.generated_at ) + '</dd><dt>Records</dt><dd>' + p.records + ' (' + p.posts + ' posts/pages, ' + p.attachments + ' media, ' + ( p.bytes / 1048576 ).toFixed( 1 ) + ' MB)</dd></dl>'
+				? '<dl class="hk9-import__dl"><dt>' + esc( cfg.i18n.directory ) + '</dt><dd><code>' + esc( p.dir ) + '</code></dd><dt>' + esc( cfg.i18n.source ) + '</dt><dd>' + esc( p.uploaded ? cfg.i18n.uploadedZip : cfg.i18n.serverPath ) + '</dd><dt>' + esc( cfg.i18n.generated ) + '</dt><dd>' + esc( p.generated_at ) + '</dd><dt>' + esc( cfg.i18n.recordsLabel ) + '</dt><dd>' + p.records + ' (' + p.posts + ' ' + esc( cfg.i18n.postsPages ) + ', ' + p.attachments + ' ' + esc( cfg.i18n.media ) + ', ' + ( p.bytes / 1048576 ).toFixed( 1 ) + ' MB)</dd></dl>'
 				: '<p class="hk9-import__empty">' + esc( p.error ) + '</p>';
 			if ( el.path && ! el.path.value ) {
 				el.path.value = p.dir;
 			}
 		} else {
-			el.payload.innerHTML = '<p class="hk9-import__empty">No payload selected yet. Upload a ZIP below or use a server path.</p>';
+			el.payload.innerHTML = '<p class="hk9-import__empty">' + esc( cfg.i18n.noPayload ) + '</p>';
 		}
 		document.querySelectorAll( '.hk9-import__dev li' ).forEach( ( li ) => {
 			const btn = li.querySelector( 'button' );
@@ -206,13 +206,13 @@
 		if ( ! runs.length ) {
 			el.runs.innerHTML = '<p class="hk9-import__empty">' + esc( cfg.i18n.noRuns ) + '</p>';
 		} else {
-			el.runs.innerHTML = '<div class="hk9-import__runs"><table class="widefat striped"><thead><tr><th>Run</th><th>Started</th><th>Mode</th><th>Status</th><th>Errors</th><th></th></tr></thead><tbody>' +
+			el.runs.innerHTML = '<div class="hk9-import__runs"><table class="widefat striped"><thead><tr><th scope="col">' + esc( cfg.i18n.colRun ) + '</th><th scope="col">' + esc( cfg.i18n.colStarted ) + '</th><th scope="col">' + esc( cfg.i18n.colMode ) + '</th><th scope="col">' + esc( cfg.i18n.colStatus ) + '</th><th scope="col">' + esc( cfg.i18n.colErrors ) + '</th><th scope="col"><span class="screen-reader-text">' + esc( cfg.i18n.colActions ) + '</span></th></tr></thead><tbody>' +
 				runs.map( ( r ) => {
-					const mode = ( r.mode && r.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( r.mode && r.mode.overwrite ? ' + overwrite' : '' );
+					const mode = ( r.mode && r.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( r.mode && r.mode.overwrite ? ' + ' + cfg.i18n.overwrite : '' );
 					const canRollback = ! ( r.mode && r.mode.dry_run ) && ! r.rolled_back && ! running;
 					return '<tr data-run="' + esc( r.run_id ) + '"><td><code>' + esc( r.run_id ) + '</code></td><td>' + esc( ( r.started_at || '' ).replace( 'T', ' ' ).slice( 0, 19 ) ) + '</td><td>' + esc( mode ) + '</td><td>' + esc( r.status ) + ( r.rolled_back ? ' (' + esc( cfg.i18n.rolledBack ) + ')' : '' ) + '</td><td>' + ( r.errors || 0 ) + '</td>' +
 						'<td>' + ( canRollback ? '<button type="button" class="button button-small hk9-import__rollback-btn" data-run="' + esc( r.run_id ) + '">' + esc( cfg.i18n.rollback ) + '</button>' : '' ) +
-						( r.log_file ? ' <a class="button button-small" href="' + esc( cfg.logBase + '&run=' + encodeURIComponent( r.run_id ) ) + '">Log</a>' : '' ) + '</td></tr>';
+						( r.log_file ? ' <a class="button button-small" href="' + esc( cfg.logBase + '&run=' + encodeURIComponent( r.run_id ) ) + '">' + esc( cfg.i18n.log ) + '</a>' : '' ) + '</td></tr>';
 				} ).join( '' ) + '</tbody></table></div>' +
 				( lastReport ? '<div class="hk9-import__report" role="status">' + esc( lastReport ) + '</div>' : '' );
 		}
@@ -280,7 +280,7 @@
 		const s = snapshot.state;
 		const errs = ( s.errors || [] ).length;
 		if ( s.status === 'done' ) {
-			notice( errs ? 'warning' : 'success', ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ': ' + cfg.i18n.done + ( errs ? ' — ' + errs + ' ' + cfg.i18n.error.toLowerCase() + '(s)' : '' ) );
+			notice( errs ? 'warning' : 'success', ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ': ' + cfg.i18n.done + ( errs ? ' — ' + sprintf( cfg.i18n.errorsSuffix, errs ) : '' ) );
 		} else if ( s.status === 'failed' ) {
 			notice( 'error', cfg.i18n.failed + ': ' + ( ( s.errors || [] ).filter( ( e ) => e.fatal ).map( ( e ) => e.message ).join( ' ' ) || '' ) );
 		} else if ( s.status === 'paused' ) {
@@ -370,10 +370,10 @@
 		document.querySelectorAll( '.hk9-import__rollback' ).forEach( ( n ) => n.remove() );
 		const box = document.createElement( 'div' );
 		box.className = 'hk9-import__rollback';
-		box.innerHTML = '<label>' + esc( cfg.i18n.typeRollback ) + ' <input type="text" autocomplete="off" aria-label="Confirmation"></label>' +
-			'<label><input type="checkbox" class="hk9-import__force"> Force (also remove records edited since the import)</label>' +
-			'<button type="button" class="button button-primary hk9-import__rollback-go">Roll back ' + esc( run ) + '</button>' +
-			'<button type="button" class="button hk9-import__rollback-cancel">Cancel</button>';
+		box.innerHTML = '<label>' + esc( cfg.i18n.typeRollback ) + ' <input type="text" autocomplete="off" aria-label="' + esc( cfg.i18n.confirmation ) + '"></label>' +
+			'<label><input type="checkbox" class="hk9-import__force"> ' + esc( cfg.i18n.force ) + '</label>' +
+			'<button type="button" class="button button-primary hk9-import__rollback-go">' + esc( sprintf( cfg.i18n.rollBackRun, run ) ) + '</button>' +
+			'<button type="button" class="button hk9-import__rollback-cancel">' + esc( cfg.i18n.cancel ) + '</button>';
 		const cell = document.createElement( 'td' );
 		cell.colSpan = 6;
 		cell.appendChild( box );
@@ -393,10 +393,10 @@
 			if ( data && data.report ) {
 				const r = data.report;
 				lastReport = [
-					...r.deleted.map( ( d ) => 'deleted   ' + d.key + ( d.id ? ' (#' + d.id + ')' : '' ) ),
-					...r.restored.map( ( d ) => 'restored  ' + d.key + ' [' + ( d.fields || [] ).join( ', ' ) + ']' ),
-					...r.skipped.map( ( d ) => 'skipped   ' + d.key + ' — ' + d.reason ),
-					...r.errors.map( ( d ) => 'error     ' + d ),
+					...r.deleted.map( ( d ) => cfg.i18n.deleted + '  ' + d.key + ( d.id ? ' (#' + d.id + ')' : '' ) ),
+					...r.restored.map( ( d ) => cfg.i18n.restored + '  ' + d.key + ' [' + ( d.fields || [] ).join( ', ' ) + ']' ),
+					...r.skipped.map( ( d ) => cfg.i18n.skipped + '  ' + d.key + ' — ' + d.reason ),
+					...r.errors.map( ( d ) => cfg.i18n.errorWord + '  ' + d ),
 				].join( '\n' );
 				render();
 				notice( r.skipped.length ? 'warning' : 'success', sprintf( cfg.i18n.rollbackDone, r.deleted.length, r.restored.length, r.skipped.length ) );

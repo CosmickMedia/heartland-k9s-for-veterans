@@ -137,7 +137,8 @@ final class Schema {
 				'show_guidestar_seal'   => true,
 				'ein'                   => '47-4991572',
 				'legal_name'            => 'Heartland Canines for Veterans Inc',
-				'tax_statement'         => 'Heartland Canines for Veterans Inc is an IRS-recognized 501(c)(3) nonprofit organization (EIN 47-4991572). Donations are tax-deductible to the extent allowed by law.',
+				// Verbatim from the live /donate/ page (typo "extend" -> "extent" corrected; conflict-log S6).
+				'tax_statement'         => 'Heartland Canines For Veterans is an IRS recognized 501(c)(3) non-profit organization. IRS EIN 47-4991572. All donations are tax deductible to the extent allowed by law. Consult your CPA if you have questions.',
 			],
 			'links'     => [
 				'donate'                 => self::link( '/donate/' ),

@@ -1,1 +1,1198 @@
-// Partial owned by the pages-reference template stream (Wave 2). Imported by theme.scss after utilities.
+// ---------------------------------------------------------------------------
+// Reference page templates (Wave 2, stream T1): about, program, veterans,
+// get-involved, barkode, stories, contact. Measured against
+// discovery/measure/results.json + the reference JSX (discovery/ref/index.js).
+//
+// Contents
+//   1. Page-level rhythm (reference wrapper pb-20) + shared building blocks
+//      (.hk9-panel, button sizes/variants the reference uses on these routes)
+//   2. Overrides of shared parts where the reference deviates from the generic
+//      look (cta_band tones, feature_cards `values`/`protects`, image heroes)
+//   3. Section parts: legacy, timeline (steps), providers, questions, expect,
+//      ways, partners panel, story panel, featured, story/team cards, contact card
+// ---------------------------------------------------------------------------
+
+// 1. Page rhythm + shared blocks --------------------------------------------
+
+// Every reference route wraps its sections in "flex flex-col pb-20": 80px of
+// page background between the last section and the footer.
+.hk9-template-about,
+.hk9-template-program,
+.hk9-template-veterans,
+.hk9-template-get-involved,
+.hk9-template-barkode,
+.hk9-template-stories,
+.hk9-template-contact {
+	.hk9-main {
+		padding-bottom: 5rem;
+	}
+}
+
+// Narrow overlap card (veterans "5 Questions": container max-w-4xl).
+.hk9-overlap__card--narrow {
+	max-width: var(--hk9-narrow);
+}
+
+// Rounded muted panel ("max-w-4xl bg-muted rounded-3xl p-10 md:p-16 border shadow-sm").
+.hk9-panel {
+	width: 100%;
+	max-width: var(--hk9-narrow);
+	margin: 0 auto;
+	padding: 2.5rem;
+	background: var(--hk9-muted);
+	border: 1px solid var(--hk9-border);
+	border-radius: 1.5rem;
+	box-shadow: var(--hk9-shadow-sm);
+	text-align: center;
+
+	@include media-breakpoint-up(md) {
+		padding: 4rem;
+	}
+
+	> :last-child { margin-bottom: 0; }
+
+	&--sm {
+		padding: 2rem;
+		border-radius: 1rem;
+
+		@include media-breakpoint-up(md) {
+			padding: 2.5rem;
+		}
+	}
+}
+
+// Button variants used by these routes:
+//  --md: shadcn size="lg" without the h-14 override → min-h-10 (40px), px-8, 14px/500.
+//  --outline-navy: variant="outline" + "border-primary text-primary hover:bg-primary/5".
+.hk9-btn--md {
+	min-height: 2.5rem;
+	padding: .5rem 2rem;
+	font-size: .875rem;
+	line-height: 1.4286;
+	font-weight: 500;
+}
+
+.hk9-btn--outline-navy {
+	border-color: var(--hk9-primary);
+	color: var(--hk9-primary);
+
+	&:hover,
+	&:focus-visible {
+		background-color: rgba(var(--hk9-primary-rgb), .05);
+		border-color: var(--hk9-primary);
+		color: var(--hk9-primary);
+	}
+}
+
+// 2. Shared-part overrides ---------------------------------------------------
+
+// Section headers on these routes: "text-3xl md:text-4xl" without a leading
+// utility → 30/36 and 36/40 (the generic title uses 1.25).
+.hk9-section__title {
+	line-height: 1.2;
+
+	@include media-breakpoint-up(md) {
+		line-height: 1.1112;
+	}
+}
+
+// CTA bands (cta_band.php) as measured on these routes: buttons h-14 text-sm
+// font-medium, paragraph text-lg (28px line), outline = navy border/text.
+.hk9-cta-band {
+	.hk9-cta-band__heading {
+		line-height: 1.2;
+
+		@include media-breakpoint-up(md) {
+			line-height: 1.1112;
+		}
+	}
+
+	.hk9-cta-band__text {
+		line-height: 1.5556;
+	}
+
+	// "flex flex-col sm:flex-row": stacked buttons stretch to the full width below 640px.
+	@include media-breakpoint-down(sm) {
+		.hk9-cta-band__actions {
+			align-items: stretch;
+		}
+	}
+
+	.hk9-btn--lg {
+		font-size: .875rem;
+		line-height: 1.4286;
+		font-weight: 500;
+	}
+
+	.hk9-btn--outline {
+		@extend .hk9-btn--outline-navy;
+	}
+
+	// `tint` (about "Join Us in Our Mission"): full-width primary/5 band, py-20,
+	// border-y, container max-w-3xl with the gutter inside; h2 30px foreground.
+	&--tint {
+		padding-top: 5rem;
+		padding-bottom: 5rem;
+		background-color: rgba(var(--hk9-primary-rgb), .05);
+		border-top: 1px solid var(--hk9-border);
+		border-bottom: 1px solid var(--hk9-border);
+
+		.hk9-cta-band__inner {
+			max-width: 768px;
+			padding: 0;
+			background: none;
+			border: 0;
+			border-radius: 0;
+			box-shadow: none;
+
+			@include media-breakpoint-up(md) {
+				padding: 0 2rem;
+			}
+		}
+	}
+
+	// tint / plain / muted headings: text-3xl text-foreground (no md step).
+	&--tint,
+	&--plain,
+	&--muted {
+		.hk9-cta-band__heading {
+			font-size: 1.875rem;
+			line-height: 1.2;
+			color: var(--hk9-fg);
+		}
+	}
+}
+
+// barkode "Support the BarKode Initiative": py-20.
+.hk9-template-barkode .hk9-cta-band--plain {
+	padding-top: 5rem;
+	padding-bottom: 5rem;
+}
+
+// stories "Help Us Write the Next Chapter": py-24 mt-12 (the list grid above has no padding).
+.hk9-template-stories .hk9-cta-band {
+	margin-top: 3rem;
+}
+
+// veterans "ADA Rights & FAQs": py-20, h2 text-3xl only, default-size outline button.
+.hk9-template-veterans #hk9-ada {
+	padding-top: 5rem;
+	padding-bottom: 5rem;
+
+	.hk9-cta-band__heading {
+		font-size: 1.875rem;
+		line-height: 1.2;
+	}
+
+	.hk9-btn--lg {
+		min-height: 2.25rem;
+		height: auto;
+		padding: .5rem 1rem;
+	}
+}
+
+// feature_cards `values` (about) and `protects` (barkode) sit in a
+// "container px-4 md:px-8 max-w-5xl" (960px content), not the full container.
+#hk9-values,
+#hk9-protects {
+	> .container {
+		max-width: var(--hk9-wide);
+	}
+}
+
+// feature_cards `values` (about): p-8 bg-muted rounded-xl, h3 mb-3, 24px body lines, no border.
+#hk9-values {
+	.hk9-card--muted {
+		border: 0;
+	}
+
+	.hk9-card__title {
+		margin-bottom: .75rem;
+	}
+
+	.hk9-card__text {
+		line-height: 1.5;
+	}
+}
+
+// feature_cards `protects` (barkode): py-24 bg-muted/30 band; bare 40px navy
+// icons (mb-6), gap-8, shadow-sm cards without hover lift, h3 mb-3, 24px lines.
+#hk9-protects {
+	padding-top: 6rem;
+	padding-bottom: 6rem;
+	background-color: rgba(var(--hk9-muted-rgb), .3);
+
+	.hk9-cards {
+		gap: 2rem;
+	}
+
+	.hk9-card {
+		transition: none;
+	}
+
+	@media (hover: hover) {
+		.hk9-card--hover:hover {
+			transform: none;
+			box-shadow: var(--hk9-shadow-sm);
+		}
+	}
+
+	.hk9-card__icon {
+		width: 2.5rem;
+		height: 2.5rem;
+		margin-bottom: 1.5rem;
+		background: none;
+		border-radius: 0;
+
+		.hk9-icon {
+			width: 2.5rem;
+			height: 2.5rem;
+		}
+	}
+
+	.hk9-card__title {
+		margin-bottom: .75rem;
+	}
+
+	.hk9-card__text {
+		line-height: 1.5;
+	}
+}
+
+// Image heroes on program/barkode: p "text-xl font-medium leading-relaxed"
+// (20px/32.5px at every width); program h1 stops at md:text-6xl.
+.hk9-template-program,
+.hk9-template-barkode {
+	.hk9-hero--image .hk9-hero__title {
+		line-height: 1.1112;
+
+		@include media-breakpoint-up(md) {
+			line-height: 1;
+		}
+	}
+
+	.hk9-hero--image .hk9-hero__text {
+		font-size: 1.25rem;
+		line-height: 1.625;
+
+		// No CTA row on these heroes: the paragraph is the last block (mb-0).
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+}
+
+.hk9-template-program .hk9-hero--image .hk9-hero__title {
+	@include media-breakpoint-up(lg) {
+		font-size: 3.75rem;
+	}
+}
+
+// barkode eyebrow pill: bg-secondary/20 border-secondary/30 text-sm font-bold
+// tracking-widest uppercase (no blur).
+.hk9-template-barkode .hk9-hero__badge {
+	background: rgba(var(--hk9-secondary-rgb), .2);
+	border-color: rgba(var(--hk9-secondary-rgb), .3);
+	font-weight: 700;
+	letter-spacing: .1em;
+	text-transform: uppercase;
+	-webkit-backdrop-filter: none;
+	backdrop-filter: none;
+
+	.hk9-icon {
+		color: #fff;
+	}
+}
+
+// 3. Section parts -----------------------------------------------------------
+
+// Legacy (about): split overlap card, image left (or right), p-10 md:p-12 body.
+.hk9-legacy {
+	&--image-right {
+		@include media-breakpoint-up(md) {
+			flex-direction: row-reverse;
+		}
+	}
+
+	&--no-image .hk9-overlap__body {
+		@include media-breakpoint-up(md) {
+			width: 100%;
+		}
+	}
+
+	&__eyebrow {
+		display: flex;
+	}
+
+	&__heading {
+		font-size: 1.875rem;
+		line-height: 1.2;
+		color: var(--hk9-fg);
+	}
+
+	&__text {
+		p {
+			color: var(--hk9-muted-fg);
+			line-height: 1.625;
+			margin: 0 0 1.5rem;
+
+			&:last-child { margin-bottom: 0; }
+		}
+
+		a { color: var(--hk9-secondary); }
+	}
+}
+
+// Timeline (program "How It Works"): one grid in DOM order, zig-zag from 768px.
+// Even cards sit md:mt-24 lower; the number circle hangs toward the centre spine.
+.hk9-timeline--zigzag {
+	display: block;
+	position: relative;
+
+	.hk9-timeline__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 3rem;
+		align-items: start;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		@include media-breakpoint-up(md) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+
+	.hk9-timeline__item {
+		position: relative;
+		z-index: 1;
+		margin: 0;
+	}
+
+	.hk9-timeline__title {
+		font-size: 1.25rem;
+		line-height: 1.4;
+		margin-bottom: .75rem;
+	}
+
+	.hk9-timeline__text {
+		color: var(--hk9-muted-fg);
+		margin-bottom: 0;
+	}
+
+	@include media-breakpoint-up(md) {
+		.hk9-timeline__item--right {
+			margin-top: 6rem;
+		}
+
+		.hk9-timeline__item--right .hk9-timeline__num {
+			right: auto;
+			left: -1rem;
+		}
+	}
+}
+
+.hk9-steps__intro {
+	max-width: 768px;
+	line-height: 1.5556;
+}
+
+// Providers (program): muted band, 48px crimson icon, h2 30px foreground, text-lg.
+.hk9-providers {
+	&__inner {
+		text-align: center;
+	}
+
+	&__icon {
+		display: block;
+		width: 3rem;
+		height: 3rem;
+		margin: 0 auto 1.5rem;
+		color: var(--hk9-secondary);
+	}
+
+	&__heading {
+		font-size: 1.875rem;
+		line-height: 1.2;
+		color: var(--hk9-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__text {
+		font-size: 1.125rem;
+		line-height: 1.625;
+		color: var(--hk9-muted-fg);
+		margin-bottom: 2rem;
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: center;
+	}
+}
+
+// Questions (veterans): checklist card.
+.hk9-questions {
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 2rem;
+
+		> div { min-width: 0; }
+	}
+
+	&__icon {
+		width: 3rem;
+		height: 3rem;
+
+		.hk9-icon {
+			width: 1.5rem;
+			height: 1.5rem;
+		}
+	}
+
+	&__heading {
+		font-size: 1.5rem;
+		line-height: 1.3334;
+		color: var(--hk9-fg);
+		margin-bottom: 0;
+	}
+
+	&__intro {
+		color: var(--hk9-muted-fg);
+		margin: 0;
+	}
+
+	&__list {
+		gap: 1.5rem;
+	}
+
+	&__item {
+		align-items: flex-start;
+	}
+
+	&__check {
+		flex-shrink: 0;
+		width: 1.25rem;
+		height: 1.25rem;
+		margin-top: .25rem;
+		color: var(--hk9-primary);
+	}
+
+	&__question {
+		font-size: 1.125rem;
+		line-height: 1.375;
+		font-weight: 500;
+		color: var(--hk9-fg);
+	}
+
+	&__footer {
+		margin-top: 2.5rem;
+	}
+
+	&__footer-text {
+		color: var(--hk9-muted-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__actions {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	&__button {
+		width: 100%;
+
+		@include media-breakpoint-up(sm) {
+			width: auto;
+		}
+	}
+}
+
+// Expect (veterans): numbered steps + muted feature card, 2 columns from 768px.
+.hk9-expect {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 4rem;
+
+	@include media-breakpoint-up(md) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	&--single {
+		@include media-breakpoint-up(md) {
+			grid-template-columns: minmax(0, 1fr);
+		}
+	}
+
+	&__heading {
+		font-size: 1.5rem;
+		line-height: 1.3334;
+		color: var(--hk9-primary);
+		margin-bottom: 1.5rem;
+	}
+
+	&__list {
+		display: flex;
+		flex-direction: column;
+		gap: 2rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	&__step {
+		display: flex;
+		gap: 1rem;
+	}
+
+	&__step-body {
+		min-width: 0;
+	}
+
+	&__step-title {
+		font-size: 1.125rem;
+		line-height: 1.5556;
+		margin-bottom: .25rem;
+	}
+
+	&__step-text {
+		color: var(--hk9-muted-fg);
+		margin-bottom: 0;
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		padding: 2rem;
+		background: var(--hk9-muted);
+		border: 1px solid var(--hk9-border);
+		border-radius: 1rem;
+	}
+
+	&__card-icon {
+		display: block;
+		width: 3rem;
+		height: 3rem;
+		margin-bottom: 1.5rem;
+		color: var(--hk9-primary);
+	}
+
+	&__card-title {
+		font-size: 1.5rem;
+		line-height: 1.3334;
+		color: var(--hk9-fg);
+		margin-bottom: 1rem;
+	}
+
+	&__card-text {
+		color: var(--hk9-muted-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__card-actions {
+		display: flex;
+	}
+}
+
+// Ways (get-involved): overlapping card grid, max-w-6xl.
+.hk9-ways {
+	&__inner {
+		width: 100%;
+		max-width: 1152px;
+		margin: 0 auto;
+	}
+
+	&__header {
+		margin-bottom: 2rem;
+
+		.hk9-section__title,
+		.hk9-section__intro {
+			color: #fff;
+		}
+	}
+
+	&__grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: 2rem;
+
+		@include media-breakpoint-up(md) {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+
+		&--1 {
+			@include media-breakpoint-up(md) {
+				grid-template-columns: minmax(0, 1fr);
+				max-width: 24rem;
+				margin: 0 auto;
+			}
+		}
+
+		&--2 {
+			@include media-breakpoint-up(md) {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+		}
+	}
+
+	&__card {
+		display: flex;
+		flex-direction: column;
+		padding: 2rem;
+		background: var(--hk9-card);
+		border: 1px solid var(--hk9-border);
+		border-radius: 1rem;
+		box-shadow: var(--hk9-shadow-xl);
+		text-align: center;
+		transition: transform .3s var(--hk9-ease);
+
+		@media (hover: hover) {
+			&:hover {
+				transform: translateY(-4px);
+			}
+		}
+	}
+
+	&__icon {
+		margin: 0 auto 1.5rem;
+	}
+
+	&__title {
+		font-size: 1.5rem;
+		line-height: 1.3334;
+		color: var(--hk9-fg);
+		margin-bottom: 1rem;
+	}
+
+	&__text {
+		flex: 1 1 auto;
+		color: var(--hk9-muted-fg);
+		margin-bottom: 2rem;
+	}
+
+	&__actions {
+		margin-top: auto;
+	}
+}
+
+// Partners panel (get-involved).
+.hk9-partners-panel {
+	&__icon {
+		display: block;
+		width: 3rem;
+		height: 3rem;
+		margin: 0 auto 1.5rem;
+		color: var(--hk9-secondary);
+	}
+
+	&__heading {
+		font-size: 1.875rem;
+		line-height: 1.2;
+		color: var(--hk9-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__body {
+		p {
+			max-width: 672px;
+			margin: 0 auto 2rem;
+			color: var(--hk9-muted-fg);
+
+			&:first-child {
+				font-size: 1.125rem;
+				line-height: 1.5556;
+			}
+
+			&:last-child {
+				margin-bottom: 2.5rem;
+			}
+		}
+
+		a { color: var(--hk9-secondary); }
+	}
+
+	&__actions {
+		display: flex;
+		justify-content: center;
+	}
+
+	&__logos {
+		margin-top: 3rem;
+		padding-top: 2.5rem;
+		border-top: 1px solid var(--hk9-border);
+	}
+
+	&__logos-title {
+		font-size: .875rem;
+		font-weight: 600;
+		letter-spacing: .1em;
+		text-transform: uppercase;
+		color: var(--hk9-muted-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__grid {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+
+		.hk9-partners__item {
+			height: 100%;
+			min-height: 7rem;
+		}
+	}
+}
+
+// Story panel (barkode "Dedicated to Derron & Rosie").
+.hk9-story-panel {
+	&__icon {
+		display: block;
+		width: 3rem;
+		height: 3rem;
+		margin: 0 auto 1.5rem;
+		color: var(--hk9-secondary);
+	}
+
+	&__heading {
+		font-size: 1.875rem;
+		line-height: 1.2;
+		color: var(--hk9-primary);
+		margin-bottom: 1.5rem;
+	}
+
+	&__body {
+		text-align: left;
+
+		p {
+			font-size: 1.125rem;
+			line-height: 1.625;
+			color: var(--hk9-muted-fg);
+			margin: 0 0 1.5rem;
+
+			&:last-child { margin-bottom: 0; }
+		}
+
+		a { color: var(--hk9-secondary); }
+	}
+}
+
+// Featured story (stories): split overlap card with quote on muted/30.
+.hk9-featured {
+	&__body {
+		background: rgba(var(--hk9-muted-rgb), .3);
+		gap: 0;
+	}
+
+	&__card--no-image .hk9-overlap__body {
+		@include media-breakpoint-up(md) {
+			width: 100%;
+		}
+	}
+
+	&__glyph {
+		display: block;
+		width: 3rem;
+		height: 3rem;
+		margin-bottom: 1.5rem;
+		color: var(--hk9-secondary);
+		opacity: .4;
+	}
+
+	&__quote {
+		font-family: var(--hk9-font-serif);
+		font-size: 1.5rem;
+		line-height: 1.375;
+		font-weight: 400;
+		letter-spacing: normal;
+		color: var(--hk9-fg);
+		margin: 0 0 2rem;
+
+		p { margin: 0; }
+	}
+
+	&__author {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+	}
+
+	&__name {
+		font-size: 1.125rem;
+		line-height: 1.5556;
+		font-weight: 700;
+		color: var(--hk9-primary);
+	}
+
+	&__meta {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+	}
+
+	&__link {
+		margin-top: 1rem;
+		font-size: .875rem;
+	}
+}
+
+// Story list (stories): the reference grid sits right below the featured card
+// (mb-24) and the CTA follows with mt-12; the section paddings reproduce that
+// rhythm (96px above, 48px below) and keep it when the teams block is present.
+.hk9-stories-list {
+	padding-top: 6rem;
+	padding-bottom: 3rem;
+
+	&__header {
+		margin-bottom: 3rem;
+	}
+
+	&__empty {
+		color: var(--hk9-muted-fg);
+	}
+
+	&__empty-icon {
+		display: block;
+		width: 2rem;
+		height: 2rem;
+		margin: 0 auto 1rem;
+		color: var(--hk9-secondary);
+	}
+
+	&__empty-text {
+		max-width: 672px;
+		margin: 0 auto;
+		font-size: 1.125rem;
+		line-height: 1.625;
+
+		+ .hk9-stories-list__empty-text { margin-top: 1rem; }
+	}
+}
+
+.hk9-story-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2rem;
+
+	@include media-breakpoint-up(md) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+// Story card: bg-card p-8 rounded-xl border shadow-sm flex-col; quote glyph 32px
+// crimson @40%; italic text-lg; attribution behind a top border.
+.hk9-story-card {
+	display: flex;
+	flex-direction: column;
+	background: var(--hk9-card);
+	border: 1px solid var(--hk9-border);
+	border-radius: .5rem;
+	box-shadow: var(--hk9-shadow-sm);
+	overflow: hidden;
+
+	&__media {
+		display: block;
+		aspect-ratio: 16 / 9;
+		background: var(--hk9-muted);
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		padding: 2rem;
+	}
+
+	&__glyph {
+		display: block;
+		width: 2rem;
+		height: 2rem;
+		margin-bottom: 1rem;
+		color: var(--hk9-secondary);
+		opacity: .4;
+	}
+
+	&__quote {
+		flex: 1 1 auto;
+		font-size: 1.125rem;
+		line-height: 1.625;
+		font-style: italic;
+		color: var(--hk9-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__footer {
+		padding-top: 1.5rem;
+		border-top: 1px solid var(--hk9-border);
+	}
+
+	&__title {
+		font-family: var(--hk9-font-sans);
+		font-size: 1rem;
+		line-height: 1.5;
+		font-weight: 700;
+		letter-spacing: normal;
+		color: var(--hk9-primary);
+		margin: 0;
+
+		a {
+			color: inherit;
+			text-decoration: none;
+
+			&:hover,
+			&:focus-visible { color: var(--hk9-secondary); }
+		}
+	}
+
+	&__meta {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+		margin: 0;
+	}
+
+	&__link {
+		margin-top: .75rem;
+		font-size: .875rem;
+	}
+}
+
+// Teams block (stories): 1 → 2 → 3 columns of team cards.
+.hk9-teams-block {
+	padding-top: 3rem;
+	padding-bottom: 3rem;
+
+	&__header {
+		margin-bottom: 3rem;
+	}
+}
+
+.hk9-team-grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr);
+	gap: 2rem;
+
+	@include media-breakpoint-up(md) {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	@include media-breakpoint-up(lg) {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	&--1 {
+		@include media-breakpoint-up(md) {
+			grid-template-columns: minmax(0, 1fr);
+			max-width: 32rem;
+			margin: 0 auto;
+		}
+	}
+
+	&--2 {
+		@include media-breakpoint-up(lg) {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+}
+
+.hk9-team-card {
+	display: flex;
+	flex-direction: column;
+	background: var(--hk9-card);
+	border: 1px solid var(--hk9-border);
+	border-radius: .5rem;
+	box-shadow: var(--hk9-shadow-sm);
+	overflow: hidden;
+	transition: transform .3s var(--hk9-ease), box-shadow .3s var(--hk9-ease);
+
+	@media (hover: hover) {
+		&:hover {
+			transform: translateY(-4px);
+			box-shadow: var(--hk9-shadow-lg);
+		}
+	}
+
+	&__media {
+		display: block;
+		aspect-ratio: 4 / 3;
+		background: var(--hk9-muted);
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
+	}
+
+	&__body {
+		display: flex;
+		flex-direction: column;
+		flex: 1 1 auto;
+		gap: .5rem;
+		padding: 1.5rem 2rem 2rem;
+
+		.hk9-status {
+			align-self: flex-start;
+			margin-bottom: .25rem;
+		}
+	}
+
+	&__title {
+		font-size: 1.25rem;
+		line-height: 1.4;
+		margin: 0;
+
+		a {
+			color: var(--hk9-fg);
+			text-decoration: none;
+
+			&:hover,
+			&:focus-visible { color: var(--hk9-secondary); }
+		}
+	}
+
+	&__pair {
+		font-size: .875rem;
+		line-height: 1.4286;
+		font-weight: 500;
+		color: var(--hk9-primary);
+		margin: 0;
+	}
+
+	&__text {
+		color: var(--hk9-muted-fg);
+		margin: 0;
+	}
+
+	&__link {
+		margin-top: auto;
+		padding-top: .75rem;
+	}
+}
+
+// Contact card (contact): info column 2/5 (muted) + form column 3/5 from 1024px.
+.hk9-contact-card {
+	@include media-breakpoint-up(md) {
+		flex-direction: column;
+	}
+
+	@include media-breakpoint-up(lg) {
+		flex-direction: row;
+	}
+
+	&__info,
+	&__form {
+		width: 100%;
+		min-width: 0;
+		padding: 2.5rem;
+
+		@include media-breakpoint-up(md) {
+			padding: 3rem;
+		}
+	}
+
+	&__info {
+		background: var(--hk9-muted);
+		border-bottom: 1px solid var(--hk9-border);
+
+		@include media-breakpoint-up(lg) {
+			width: 40%;
+			flex: 0 0 40%;
+			border-bottom: 0;
+			border-right: 1px solid var(--hk9-border);
+		}
+	}
+
+	&__form {
+		background: var(--hk9-card);
+
+		@include media-breakpoint-up(lg) {
+			width: 60%;
+			flex: 0 0 60%;
+		}
+	}
+
+	&--single {
+		.hk9-contact-card__info,
+		.hk9-contact-card__form {
+			@include media-breakpoint-up(lg) {
+				width: 100%;
+				flex-basis: 100%;
+				border-right: 0;
+			}
+		}
+	}
+}
+
+.hk9-contact-info {
+	&__heading {
+		font-size: 1.5rem;
+		line-height: 1.3334;
+		color: var(--hk9-fg);
+		margin-bottom: 2rem;
+	}
+
+	&__list {
+		gap: 2rem;
+	}
+
+	&__body {
+		min-width: 0;
+	}
+
+	&__label {
+		font-size: 1rem;
+		line-height: 1.5;
+		font-weight: 700;
+		color: var(--hk9-fg);
+		margin: 0 0 .25rem;
+	}
+
+	&__value {
+		display: block;
+		font-size: 1.125rem;
+		line-height: 1.5556;
+		color: var(--hk9-muted-fg);
+		margin: 0;
+		white-space: normal;
+		overflow-wrap: anywhere;
+		text-decoration: none;
+		transition: color .15s ease-in-out;
+	}
+
+	a.hk9-contact-info__value {
+		&:hover,
+		&:focus-visible {
+			color: var(--hk9-secondary);
+			text-decoration: none;
+		}
+	}
+}
+
+.hk9-contact-form {
+	&__heading {
+		font-size: 1.5rem;
+		line-height: 1.3334;
+		color: var(--hk9-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__intro {
+		color: var(--hk9-muted-fg);
+		margin-bottom: 1.5rem;
+	}
+
+	&__notice {
+		margin: 0;
+	}
+}

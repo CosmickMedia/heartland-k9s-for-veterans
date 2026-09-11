@@ -136,20 +136,23 @@ final class ListTable extends \WP_List_Table {
 	}
 
 	protected function column_source( array $item ): string {
+		// add_query_arg() does not encode values: a multi-parameter query rule such as
+		// /?a=1&b=2 would otherwise be split into separate GET parameters.
+		$key     = rawurlencode( $item['key'] );
 		$base    = Admin::url();
 		$actions = [
-			'edit' => sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( [ 'action' => 'edit', 'key' => $item['key'] ], $base ) ), esc_html__( 'Edit', 'heartland-k9s-core' ) ),
-			'test' => sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'test', 'key' => $item['key'] ], $base ), 'hk9_redirect_test_' . $item['key'] ) ), esc_html__( 'Test', 'heartland-k9s-core' ) ),
+			'edit' => sprintf( '<a href="%s">%s</a>', esc_url( add_query_arg( [ 'action' => 'edit', 'key' => $key ], $base ) ), esc_html__( 'Edit', 'heartland-k9s-core' ) ),
+			'test' => sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'test', 'key' => $key ], $base ), 'hk9_redirect_test_' . $item['key'] ) ), esc_html__( 'Test', 'heartland-k9s-core' ) ),
 		];
 		if ( $item['enabled'] ) {
-			$actions['disable'] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'disable', 'key' => $item['key'] ], $base ), 'hk9_redirect_disable_' . $item['key'] ) ), esc_html__( 'Disable', 'heartland-k9s-core' ) );
+			$actions['disable'] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'disable', 'key' => $key ], $base ), 'hk9_redirect_disable_' . $item['key'] ) ), esc_html__( 'Disable', 'heartland-k9s-core' ) );
 		} else {
-			$actions['enable'] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'enable', 'key' => $item['key'] ], $base ), 'hk9_redirect_enable_' . $item['key'] ) ), esc_html__( 'Enable', 'heartland-k9s-core' ) );
+			$actions['enable'] = sprintf( '<a href="%s">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'enable', 'key' => $key ], $base ), 'hk9_redirect_enable_' . $item['key'] ) ), esc_html__( 'Enable', 'heartland-k9s-core' ) );
 		}
 		if ( ! $item['seed'] ) {
-			$actions['delete'] = sprintf( '<a href="%s" class="submitdelete">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'delete', 'key' => $item['key'] ], $base ), 'hk9_redirect_delete_' . $item['key'] ) ), esc_html__( 'Delete', 'heartland-k9s-core' ) );
+			$actions['delete'] = sprintf( '<a href="%s" class="submitdelete">%s</a>', esc_url( wp_nonce_url( add_query_arg( [ 'action' => 'delete', 'key' => $key ], $base ), 'hk9_redirect_delete_' . $item['key'] ) ), esc_html__( 'Delete', 'heartland-k9s-core' ) );
 		}
-		$label = '<strong><a href="' . esc_url( add_query_arg( [ 'action' => 'edit', 'key' => $item['key'] ], $base ) ) . '"><code>' . esc_html( $item['key'] ) . '</code></a></strong>';
+		$label = '<strong><a href="' . esc_url( add_query_arg( [ 'action' => 'edit', 'key' => $key ], $base ) ) . '"><code>' . esc_html( $item['key'] ) . '</code></a></strong>';
 		if ( $item['seed'] ) {
 			$label .= ' <span class="hk9-pill hk9-pill--info">' . esc_html__( 'seed', 'heartland-k9s-core' ) . '</span>';
 		}
