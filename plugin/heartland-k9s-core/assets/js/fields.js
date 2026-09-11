@@ -381,9 +381,9 @@
 			return ctl.selectedIndex >= 0 ? ctl.options[ ctl.selectedIndex ].text : '';
 		}
 		if ( type === 'richtext' ) {
-			var div = document.createElement( 'div' );
-			div.innerHTML = ctl.value;
-			return ( div.textContent || '' ).slice( 0, 60 );
+			// DOMParser documents are inert (no scripts, no event handlers run), unlike innerHTML on a detached node.
+			var doc = new DOMParser().parseFromString( ctl.value || '', 'text/html' );
+			return ( ( doc.body && doc.body.textContent ) || '' ).slice( 0, 60 );
 		}
 		return ctl.value || '';
 	}

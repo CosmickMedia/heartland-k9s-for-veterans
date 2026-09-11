@@ -147,12 +147,13 @@
 			opacity: 1;
 		}
 
+		// 2px ring (reference: 1px) — deliberate accessibility deviation, see _buttons.scss.
 		&:focus,
 		&:focus-visible {
 			outline: none;
 			border-color: var(--hk9-border);
 			background-color: rgba(var(--hk9-muted-rgb), .5);
-			box-shadow: 0 0 0 1px var(--hk9-ring);
+			box-shadow: 0 0 0 2px var(--hk9-focus-ring);
 		}
 
 		&:disabled {
@@ -177,7 +178,7 @@
 		&:focus,
 		&:focus-visible {
 			border-color: transparent;
-			box-shadow: 0 0 0 2px var(--hk9-ring);
+			box-shadow: 0 0 0 2px var(--hk9-focus-ring);
 		}
 	}
 
@@ -212,7 +213,7 @@
 			accent-color: var(--hk9-primary);
 
 			&:focus-visible {
-				outline: 2px solid var(--hk9-ring);
+				outline: 2px solid var(--hk9-focus-ring);
 				outline-offset: 2px;
 				box-shadow: none;
 			}

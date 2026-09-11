@@ -21,8 +21,8 @@
 	}
 
 	&__card {
-		@extend .hk9-card;
-		@extend .hk9-card--hover;
+		@include hk9-card;
+		@include hk9-card-hover;
 		padding: 0;
 		overflow: hidden;
 
@@ -178,8 +178,8 @@
 	}
 
 	&__empty {
-		@extend .hk9-callout;
-		@extend .hk9-callout--lg;
+		@include hk9-callout;
+		@include hk9-callout-lg;
 		max-width: var(--hk9-narrow);
 		margin: 0 auto;
 

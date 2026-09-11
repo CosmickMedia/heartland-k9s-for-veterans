@@ -463,7 +463,7 @@ final class Schema {
 				'fields'      => [
 					'donate'                  => $def( 'links', 'donate', __( 'Donate page', 'heartland-k9s-core' ), __( 'Used by "Donate" buttons that stay on the site.', 'heartland-k9s-core' ) ),
 					'donate_external'         => $def( 'links', 'donate_external', __( 'Online donation form (external)', 'heartland-k9s-core' ), __( 'The Zeffy donation form used by "Support a Service Dog" buttons.', 'heartland-k9s-core' ) ),
-					'paypal_hosted_button_id' => $def( 'links', 'paypal_hosted_button_id', __( 'PayPal hosted button ID', 'heartland-k9s-core' ), __( 'Leave empty to hide the PayPal option on the Donate page.', 'heartland-k9s-core' ) ),
+					'paypal_hosted_button_id' => $def( 'links', 'paypal_hosted_button_id', __( 'PayPal hosted button ID', 'heartland-k9s-core' ), __( 'Used by the Donate page\'s PayPal option: the PayPal button links to the hosted button checkout for this ID; leave empty to hide the PayPal option.', 'heartland-k9s-core' ) ),
 					'amazon_wishlist'         => $def( 'links', 'amazon_wishlist', __( 'Amazon wishlist', 'heartland-k9s-core' ) ),
 					'application'             => $def( 'links', 'application', __( 'Veteran application', 'heartland-k9s-core' ) ),
 					'five_questions'          => $def( 'links', 'five_questions', __( '5 Questions page', 'heartland-k9s-core' ) ),

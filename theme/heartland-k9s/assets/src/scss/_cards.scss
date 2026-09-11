@@ -36,21 +36,12 @@
 	&--gap6 { gap: 1.5rem; }
 }
 
+// The base look is @mixin hk9-card (_mixins.scss); bundles reuse it.
 .hk9-card {
-	position: relative;
-	display: flex;
-	flex-direction: column;
-	background: var(--hk9-card);
-	border: 1px solid var(--hk9-border);
-	border-radius: .5rem;
-	box-shadow: var(--hk9-shadow-sm);
-	padding: 2rem;
-	color: var(--hk9-fg);
-	transition: transform .3s var(--hk9-ease), box-shadow .3s var(--hk9-ease);
+	@include hk9-card;
 
 	&--center {
-		align-items: center;
-		text-align: center;
+		@include hk9-card-center;
 	}
 
 	&--muted {
@@ -74,12 +65,11 @@
 		overflow: hidden;
 	}
 
-	@media (hover: hover) {
-		&--hover:hover {
-			transform: translateY(-4px);
-			box-shadow: var(--hk9-shadow-lg);
-		}
+	&--hover {
+		@include hk9-card-hover;
+	}
 
+	@media (hover: hover) {
 		&--lift:hover {
 			transform: translateY(-4px);
 		}
@@ -207,22 +197,11 @@
 
 // Info callout: "mt-10 p-6 bg-primary/5 rounded-xl border border-primary/10 text-center".
 .hk9-callout {
-	padding: 1.5rem;
-	border-radius: .5rem;
-	background: rgba(var(--hk9-primary-rgb), .05);
-	border: 1px solid rgba(var(--hk9-primary-rgb), .1);
-	text-align: center;
+	@include hk9-callout;
 
 	&--lg {
-		padding: 2rem;
-		border-radius: 1rem;
-
-		@include media-breakpoint-up(md) {
-			padding: 3rem;
-		}
+		@include hk9-callout-lg;
 	}
-
-	> :last-child { margin-bottom: 0; }
 }
 
 // List rows: "flex gap-4 p-4 bg-muted/50 rounded-lg border border-border/50".

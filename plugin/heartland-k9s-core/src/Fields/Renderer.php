@@ -143,9 +143,20 @@ final class Renderer {
 		return $url;
 	}
 
-	/** Prefix of the symbol ids inside the sprite (filterable, default none). */
+	/** Default symbol-id prefix: the theme sprite (tools/build-icons.mjs) emits `<symbol id="hk9-icon-<name>">`. */
+	public const SYMBOL_PREFIX = 'hk9-icon-';
+
+	/**
+	 * Prefix of the symbol ids inside the sprite (filterable, default 'hk9-icon-' so
+	 * `<use href="…icons.svg#hk9-icon-heart">` matches the theme sprite without any hook).
+	 */
 	public static function sprite_symbol_prefix(): string {
-		return (string) apply_filters( 'hk9/fields/icon_symbol_prefix', '' );
+		/**
+		 * Filters the symbol-id prefix used for admin icon previews.
+		 *
+		 * @param string $prefix Prefix (default 'hk9-icon-').
+		 */
+		return (string) apply_filters( 'hk9/fields/icon_symbol_prefix', self::SYMBOL_PREFIX );
 	}
 
 	/** Inline `<svg><use>` preview for an icon name ('' when no sprite or no name). */

@@ -102,7 +102,7 @@ Heights are `document.documentElement.scrollHeight`. "Matched" lists values meas
 
 ### Hover / focus / interaction (vs `interact.json`)
 
-Card hover translate −4 px + shadow-lg; card link gap 4→8; nav link → crimson, active crimson; Donate → secondary/90; hero outline → white/20; footer link → white; input focus 1 px navy ring, select focus 2 px ring; menu toggle swaps menu/x icons and does not lock body scroll; hero entrance animation (slide 16/24 px, 700 ms `ease`, delays 0/150/300/500 ms, `both`) only with `prefers-reduced-motion: no-preference`.
+Card hover translate −4 px + shadow-lg; card link gap 4→8; nav link → crimson, active crimson; Donate → secondary/90; hero outline → white/20; footer link → white; menu toggle swaps menu/x icons and does not lock body scroll; hero entrance animation (slide 16/24 px, 700 ms `ease`, delays 0/150/300/500 ms, `both`) only with `prefers-reduced-motion: no-preference`. Keyboard focus is a **deliberate deviation** since 1.0.2 (section 7, item 10): the reference's 1 px navy ring (`focus-visible:ring-1`, buttons `box-shadow 0 0 0 1px`, inputs 1 px) is replaced by a 2 px ring; hover states are unchanged.
 
 ## 5. Images
 
@@ -128,6 +128,7 @@ Card hover translate −4 px + shadow-lg; card link gap 4→8; nav link → crim
 7. **`sizes="auto"` stripped** for theme-rendered images with explicit `sizes` (section 5).
 8. **Gallery captions clamped to 4 lines** instead of core's scrollable overlay (axe serious → none); full caption text remains in the DOM and in the lightbox.
 9. **Reference placeholder testimonials/quotes are not reproduced** — only verified live content is imported (stories list shows the empty state until more stories are published).
+10. **Keyboard focus ring (1.0.2, accessibility).** The reference's 1 px navy ring (`focus-visible:ring-1` on links/inputs, `box-shadow: 0 0 0 1px` on buttons) is imperceptible on the navy/crimson surfaces (`docs/reports/screenshots/keyboard/zoom-hero-cta.png`: a focused hero CTA looked identical to its resting state) and fails WCAG 2.4.7 / 2.4.13 in practice. The theme now uses a `--hk9-focus-ring` token: **2 px solid outline, 2 px offset**, navy (`--hk9-ring`) on the page and flipped to **white** inside `.hk9-hero`, `.hk9-section--navy`, `.hk9-cta-band--navy`, `.hk9-testimonial--navy` and `.hk9-footer`. Buttons (`.hk9-btn`, every variant) draw a 2 px `currentColor` outline over a 4 px halo in the token colour, so a white-text crimson button on the light page shows a navy ring and the same button on a navy band a white one; the mobile toggle, nav/footer/card links get the plain 2 px outline; form inputs keep the border colour and show a 2 px ring (`box-shadow 0 0 0 2px`, was 1 px), selects 2 px, checkboxes a 2 px outline. Hover colours, the 1 px input rest border and every other measured value are untouched. Verified with forced `:focus-visible` captures on light and navy surfaces (header CTA, hero primary/glass, BarKode band outline-light, tint CTA band, donate outline/primary, 404 outline, footer links/social, mobile toggle, contact input/select/submit, application checkbox, search fields on light and navy).
 
 ## 8. Content-driven differences (documented, not "fixed")
 

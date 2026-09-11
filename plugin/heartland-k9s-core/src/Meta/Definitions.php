@@ -161,7 +161,7 @@ final class Definitions {
 
 		return [
 			'hk9_story'    => [
-				self::text( 'veteran_name', __( 'Veteran display name', 'heartland-k9s-core' ), [ 'help' => __( 'Only the name the veteran approved for publication.', 'heartland-k9s-core' ) ] ),
+				self::text( 'veteran_name', __( 'Veteran display name', 'heartland-k9s-core' ), [ 'help' => __( 'Only the name the veteran approved for publication. Story cards on the Stories listing use this name as their heading (the story title is shown instead when it is empty).', 'heartland-k9s-core' ) ] ),
 				self::text( 'branch', __( 'Branch of service', 'heartland-k9s-core' ) ),
 				self::text( 'canine_name', __( 'Canine name', 'heartland-k9s-core' ) ),
 				self::select(
@@ -346,7 +346,7 @@ final class Definitions {
 					'service'
 				),
 				self::text( 'registry_id', __( 'Registry ID', 'heartland-k9s-core' ), [ 'help' => __( 'The team number printed on the BarKode patch.', 'heartland-k9s-core' ) ] ),
-				self::text( 'legacy_path', __( 'Legacy path', 'heartland-k9s-core' ), [ 'help' => __( 'The original root-level path, e.g. /hk923-005/. Seeds a redirect to this record.', 'heartland-k9s-core' ) ] ),
+				self::text( 'legacy_path', __( 'Legacy path', 'heartland-k9s-core' ), [ 'help' => __( 'The original root-level path printed on the patch, e.g. /hk923-005/. When this record is published with a path here, a 301 redirect from that path to this record is added automatically if none exists for it yet (an existing rule for the same path is never changed, and the record\'s own address is never redirected). Rules are managed under Heartland → Redirects.', 'heartland-k9s-core' ) ] ),
 				self::text( 'breed', __( 'Breed', 'heartland-k9s-core' ) ),
 				self::text( 'task_description', __( 'Task description', 'heartland-k9s-core' ) ),
 				self::textarea( 'tasks', __( 'Tasks', 'heartland-k9s-core' ), [ 'rows' => 4 ] ),

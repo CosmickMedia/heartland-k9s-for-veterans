@@ -3,6 +3,11 @@
  * Section: options — "Ways to give" grid: logo or icon, title, text, button.
  * The primary option gets the crimson button and a "Recommended" badge.
  *
+ * PayPal: an item whose button points at paypal.com/cgi-bin/webscr is driven by
+ * Settings → Destinations → "PayPal hosted button ID" (links.paypal_hosted_button_id):
+ * the href becomes the hosted-button checkout URL for that id, and the item is
+ * skipped entirely while the id is empty ("Leave empty to hide the PayPal option").
+ *
  * @package heartland-k9s
  *
  * @var array $args { data: array, post_id: int, id: string }
@@ -22,6 +27,26 @@ $hk9_items = array_values(
 		static fn( array $item ): bool => '' !== trim( (string) ( $item['title'] ?? '' ) ) || '' !== trim( (string) ( $item['text'] ?? '' ) )
 	)
 );
+
+// PayPal hosted button: hide the item without an id, otherwise rebuild the href from it.
+$hk9_paypal_id = trim( (string) hk9_theme_option( 'links.paypal_hosted_button_id' ) );
+$hk9_is_paypal = static function ( array $item ): bool {
+	$url = is_array( $item['button'] ?? null ) ? strtolower( trim( (string) ( $item['button']['url'] ?? '' ) ) ) : '';
+	return '' !== $url && (bool) preg_match( '#^https?://(www\.)?paypal\.com/cgi-bin/webscr#', $url );
+};
+foreach ( $hk9_items as $hk9_i => $hk9_item ) {
+	if ( ! $hk9_is_paypal( $hk9_item ) ) {
+		continue;
+	}
+	if ( '' === $hk9_paypal_id ) {
+		unset( $hk9_items[ $hk9_i ] );
+		continue;
+	}
+	$hk9_items[ $hk9_i ]['button']['url']     = 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=' . rawurlencode( $hk9_paypal_id );
+	$hk9_items[ $hk9_i ]['button']['post_id'] = 0;
+}
+$hk9_items = array_values( $hk9_items );
+unset( $hk9_i, $hk9_item, $hk9_is_paypal );
 
 if ( empty( $hk9_items ) ) {
 	return;

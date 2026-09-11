@@ -1,48 +1,23 @@
 // ---------------------------------------------------------------------------
-// Buttons — Bootstrap .btn extended.
+// Buttons (.hk9-btn) — self-contained, no Bootstrap `.btn` layer.
 // Measured base: inline-flex, gap 8px, 14px/20px Inter 500, padding 8px 16px,
 // min-height 36px (38px rendered), radius 2px, transition-colors .15s.
 // --primary: crimson bg, white text, 1px WHITE border (reference quirk:
 //   --primary-border is undefined → currentColor). Hover = bg at 90% alpha only.
 // --lg: 56px tall, padding 0 32px, 16px/24px Inter 600.
-// Focus: 1px ring in --hk9-ring. Disabled: opacity .5, no pointer events.
+// Disabled: opacity .5, no pointer events.
+//
+// Focus (deliberate accessibility deviation from the reference's 1px navy ring,
+// which is invisible on navy/crimson surfaces): a 2px outline in the button's own
+// text colour, offset 2px, over a 4px halo in --hk9-focus-ring — navy on light
+// surfaces, white inside dark ones (see _tokens.scss). White-on-crimson buttons on
+// a light page therefore show a navy ring; on a navy band the ring is white.
+// The base declarations live in @mixin hk9-btn (_mixins.scss) so the content and
+// blog bundles can reuse them.
 // ---------------------------------------------------------------------------
 
 .hk9-btn {
-	@extend .btn;
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	gap: .5rem;
-	min-height: 2.25rem;
-	padding: .5rem 1rem;
-	font-family: var(--hk9-font-sans);
-	font-size: .875rem;
-	line-height: 1.4286;
-	font-weight: 500;
-	white-space: nowrap;
-	border: 1px solid transparent;
-	border-radius: 2px;
-	text-decoration: none;
-	cursor: pointer;
-	transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out;
-
-	&:hover,
-	&:focus-visible {
-		text-decoration: none;
-	}
-
-	&:focus-visible {
-		outline: none;
-		box-shadow: 0 0 0 1px var(--hk9-ring);
-	}
-
-	&:disabled,
-	&.is-disabled,
-	&[aria-disabled="true"] {
-		opacity: .5;
-		pointer-events: none;
-	}
+	@include hk9-btn;
 
 	.hk9-icon {
 		width: 1rem;
@@ -62,16 +37,7 @@
 
 	// Styles -----------------------------------------------------------------
 	&--primary {
-		background-color: var(--hk9-secondary);
-		border-color: #fff;
-		color: #fff;
-
-		&:hover,
-		&:focus-visible {
-			background-color: rgba(var(--hk9-secondary-rgb), .9);
-			border-color: #fff;
-			color: #fff;
-		}
+		@include hk9-btn-primary;
 	}
 
 	&--navy {
@@ -88,21 +54,7 @@
 	}
 
 	&--outline {
-		background-color: transparent;
-		border-color: rgba(0, 0, 0, .1);
-		color: var(--hk9-fg);
-		box-shadow: var(--hk9-shadow-xs);
-
-		&:hover,
-		&:focus-visible {
-			background-color: rgba(var(--hk9-fg-rgb), .05);
-			border-color: rgba(0, 0, 0, .1);
-			color: var(--hk9-fg);
-		}
-
-		&:active {
-			box-shadow: none;
-		}
+		@include hk9-btn-outline;
 	}
 
 	&--outline-light {
@@ -189,25 +141,7 @@
 
 // Inline arrow text link ("Learn more →"): crimson 16px/500, gap 4px → 8px on hover.
 .hk9-link {
-	display: inline-flex;
-	align-items: center;
-	gap: .25rem;
-	font-weight: 500;
-	color: var(--hk9-secondary);
-	text-decoration: none;
-	transition: gap .15s ease-in-out, color .15s ease-in-out;
-
-	.hk9-icon {
-		width: 1rem;
-		height: 1rem;
-	}
-
-	&:hover,
-	&:focus-visible {
-		gap: .5rem;
-		color: var(--hk9-secondary);
-		text-decoration: none;
-	}
+	@include hk9-link;
 
 	&--light {
 		color: #fff;

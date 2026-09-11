@@ -1,0 +1,14 @@
+// ---------------------------------------------------------------------------
+// Bootstrap 5.3.8 configuration layer WITHOUT CSS output: functions, the theme's
+// variable overrides, variables, maps and mixins (media-breakpoint-up etc.).
+// Every stylesheet entry (theme.scss and the per-template bundles) starts here so
+// breakpoints, colours and the theme mixins resolve identically everywhere.
+// ---------------------------------------------------------------------------
+
+@import "bootstrap/scss/functions";
+@import "bootstrap-config";
+@import "bootstrap/scss/variables";
+@import "bootstrap/scss/variables-dark";
+@import "bootstrap/scss/maps";
+@import "bootstrap/scss/mixins";
+@import "mixins";

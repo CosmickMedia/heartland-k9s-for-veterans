@@ -8,6 +8,9 @@
  * - single-use token (`hk9_token` = random + HMAC over form|random|ts; claimed atomically once
  *   validation passed and released again when the submission is neither stored nor mailed)
  * - per-IP-hash rate limit (successful sends per hour; keyed hash, never stored)
+ * - per-IP-hash failure counter (failed attempts per hour; once the limit is reached the
+ *   no-JS path stops persisting result state, so a bot hammering admin-post.php cannot
+ *   grow wp_options)
  *
  * No IP addresses or submitted data are persisted or logged by this class.
  *
@@ -27,6 +30,8 @@ final class Antispam {
 
 	private const TOKEN_TTL  = 6 * HOUR_IN_SECONDS;
 	private const RATE_WINDOW = HOUR_IN_SECONDS;
+	/** Failed attempts per IP hash and hour after which no-JS result state is no longer persisted. */
+	public const FAILURE_LIMIT = 10;
 
 	/** Nonce action for a form id. */
 	public static function nonce_action( string $form ): string {
@@ -52,6 +57,81 @@ final class Antispam {
 	}
 
 	/**
+	 * Canned outcomes for every failure that carries no field errors:
+	 * code => [HTTP status, message, refresh tokens for a JS retry].
+	 * The messages are also what the no-JS path shows after a stateless
+	 * `?status=error&code=<code>` redirect (see Handler), so they must never
+	 * depend on submitted data.
+	 *
+	 * @return array<string, array{status:int,message:string,refresh:bool}>
+	 */
+	public static function outcomes(): array {
+		return [
+			'unknown_form' => [
+				'status'  => 404,
+				'message' => __( 'This form is not available.', 'heartland-k9s-core' ),
+				'refresh' => false,
+			],
+			'nonce'        => [
+				'status'  => 403,
+				'message' => __( 'Your session has expired. Please reload the page and try again.', 'heartland-k9s-core' ),
+				'refresh' => false,
+			],
+			'honeypot'     => [
+				'status'  => 400,
+				'message' => __( 'We could not verify your submission. Please try again.', 'heartland-k9s-core' ),
+				'refresh' => false,
+			],
+			'token'        => [
+				'status'  => 400,
+				'message' => __( 'Your form session was not recognised. Please reload the page and try again.', 'heartland-k9s-core' ),
+				'refresh' => true,
+			],
+			'too_fast'     => [
+				'status'  => 400,
+				'message' => __( 'That was quick! Please review your message and send it again.', 'heartland-k9s-core' ),
+				'refresh' => false,
+			],
+			'expired'      => [
+				'status'  => 400,
+				'message' => __( 'This form has been open for a while. Please try sending again.', 'heartland-k9s-core' ),
+				'refresh' => true,
+			],
+			'duplicate'    => [
+				'status'  => 409,
+				'message' => __( 'This form was already submitted from this page. Please reload the page and try again.', 'heartland-k9s-core' ),
+				'refresh' => false,
+			],
+			'rate_limited' => [
+				'status'  => 429,
+				'message' => __( 'Too many messages have been sent from your connection recently. Please try again later.', 'heartland-k9s-core' ),
+				'refresh' => false,
+			],
+			'validation'   => [
+				'status'  => 422,
+				'message' => __( 'Please correct the highlighted fields and try again.', 'heartland-k9s-core' ),
+				'refresh' => false,
+			],
+			'send_failed'  => [
+				'status'  => 500,
+				'message' => __( 'We could not send your message right now. Please try again in a few minutes.', 'heartland-k9s-core' ),
+				'refresh' => true,
+			],
+		];
+	}
+
+	/** One canned outcome as the `check()` shape (`code`, `status`, `message`, `refresh`). */
+	public static function outcome( string $code ): array {
+		$o = self::outcomes()[ $code ] ?? self::outcomes()['honeypot'];
+		return [ 'code' => $code ] + $o;
+	}
+
+	/** Canned message for a code ('' when unknown). */
+	public static function message( string $code ): string {
+		return (string) ( self::outcomes()[ $code ]['message'] ?? '' );
+	}
+
+	/**
 	 * Run the pre-validation checks. Returns null when everything passes, otherwise
 	 * `['code' => ..., 'status' => int, 'message' => ..., 'refresh' => bool]`.
 	 *
@@ -60,51 +140,26 @@ final class Antispam {
 	public static function check( string $form, array $input, string $ip ): ?array {
 		$nonce = is_string( $input['hk9_nonce'] ?? null ) ? $input['hk9_nonce'] : '';
 		if ( '' === $nonce || ! wp_verify_nonce( $nonce, self::nonce_action( $form ) ) ) {
-			return [
-				'code'    => 'nonce',
-				'status'  => 403,
-				'message' => __( 'Your session has expired. Please reload the page and try again.', 'heartland-k9s-core' ),
-				'refresh' => false,
-			];
+			return self::outcome( 'nonce' );
 		}
 
 		$honeypot = $input['hk9_website'] ?? '';
 		if ( is_array( $honeypot ) || '' !== trim( (string) $honeypot ) ) {
-			return [
-				'code'    => 'honeypot',
-				'status'  => 400,
-				'message' => __( 'We could not verify your submission. Please try again.', 'heartland-k9s-core' ),
-				'refresh' => false,
-			];
+			return self::outcome( 'honeypot' );
 		}
 
 		$ts    = is_string( $input['hk9_ts'] ?? null ) ? $input['hk9_ts'] : '';
 		$token = is_string( $input['hk9_token'] ?? null ) ? $input['hk9_token'] : '';
 		if ( ! self::token_is_valid( $form, $token, $ts ) ) {
-			return [
-				'code'    => 'token',
-				'status'  => 400,
-				'message' => __( 'Your form session was not recognised. Please reload the page and try again.', 'heartland-k9s-core' ),
-				'refresh' => true,
-			];
+			return self::outcome( 'token' );
 		}
 
 		$age = time() - (int) $ts;
 		if ( $age < self::MIN_AGE ) {
-			return [
-				'code'    => 'too_fast',
-				'status'  => 400,
-				'message' => __( 'That was quick! Please review your message and send it again.', 'heartland-k9s-core' ),
-				'refresh' => false,
-			];
+			return self::outcome( 'too_fast' );
 		}
 		if ( $age > self::MAX_AGE ) {
-			return [
-				'code'    => 'expired',
-				'status'  => 400,
-				'message' => __( 'This form has been open for a while. Please try sending again.', 'heartland-k9s-core' ),
-				'refresh' => true,
-			];
+			return self::outcome( 'expired' );
 		}
 
 		if ( self::is_used( $token ) ) {
@@ -112,12 +167,7 @@ final class Antispam {
 		}
 
 		if ( self::is_rate_limited( $ip ) ) {
-			return [
-				'code'    => 'rate_limited',
-				'status'  => 429,
-				'message' => __( 'Too many messages have been sent from your connection recently. Please try again later.', 'heartland-k9s-core' ),
-				'refresh' => false,
-			];
+			return self::outcome( 'rate_limited' );
 		}
 
 		return null;
@@ -138,12 +188,7 @@ final class Antispam {
 
 	/** The neutral duplicate response (the token was already claimed by another request from the same page). */
 	public static function duplicate(): array {
-		return [
-			'code'    => 'duplicate',
-			'status'  => 409,
-			'message' => __( 'This form was already submitted from this page. Please reload the page and try again.', 'heartland-k9s-core' ),
-			'refresh' => false,
-		];
+		return self::outcome( 'duplicate' );
 	}
 
 	public static function is_used( string $token ): bool {
@@ -325,6 +370,59 @@ final class Antispam {
 			return;
 		}
 		// Keep the original window: read the stored timeout when available (object cache aware fallback = full window).
+		$timeout   = (int) get_option( '_transient_timeout_' . $key );
+		$remaining = $timeout > 0 ? max( 1, $timeout - time() ) : self::RATE_WINDOW;
+		set_transient( $key, $count + 1, $remaining );
+	}
+
+	/* -----------------------------------------------------------------
+	 * Failure counter
+	 * -------------------------------------------------------------- */
+
+	/** Failures per hour after which no-JS result state stops being persisted (0 = never). */
+	public static function failure_limit(): int {
+		/**
+		 * Filters the number of failed attempts per IP hash and hour after which the
+		 * no-JS path stops writing result-state transients (0 disables the counter).
+		 *
+		 * @param int $limit Default 10.
+		 */
+		return max( 0, (int) apply_filters( 'hk9/forms/failure_limit', self::FAILURE_LIMIT ) );
+	}
+
+	/** Failure-counter transient key (same keyed hash scheme as the rate limit; never stored on a submission). */
+	private static function failure_key( string $ip ): string {
+		return 'hk9_form_fail_' . substr( hash_hmac( 'sha256', $ip, wp_salt( 'nonce' ) . '|fail' ), 0, 32 );
+	}
+
+	/** Whether the IP hash has reached the hourly failure limit. */
+	public static function too_many_failures( string $ip ): bool {
+		$limit = self::failure_limit();
+		if ( 0 === $limit || '' === $ip ) {
+			return false;
+		}
+		return (int) get_transient( self::failure_key( $ip ) ) >= $limit;
+	}
+
+	/**
+	 * Count a failed attempt against the IP hash. One transient per IP hash and hour
+	 * (bounded by distinct clients, not by requests); once the limit is reached the
+	 * row is left alone so a flood causes no further writes at all.
+	 */
+	public static function record_failure( string $ip ): void {
+		$limit = self::failure_limit();
+		if ( 0 === $limit || '' === $ip ) {
+			return;
+		}
+		$key   = self::failure_key( $ip );
+		$count = (int) get_transient( $key );
+		if ( $count >= $limit ) {
+			return;
+		}
+		if ( 0 === $count ) {
+			set_transient( $key, 1, self::RATE_WINDOW );
+			return;
+		}
 		$timeout   = (int) get_option( '_transient_timeout_' . $key );
 		$remaining = $timeout > 0 ? max( 1, $timeout - time() ) : self::RATE_WINDOW;
 		set_transient( $key, $count + 1, $remaining );

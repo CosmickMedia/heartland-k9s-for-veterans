@@ -1,0 +1,160 @@
+// ---------------------------------------------------------------------------
+// Site-wide overrides that originated in the reference page-template stream
+// (about … contact) but apply wherever the shared parts render: page rhythm,
+// the rounded panel, extra button sizes/variants, section-title and CTA-band
+// measurements. They ship in the CORE stylesheet because cta_band / section
+// headers appear on every template (donate, landing pages, listings…).
+// Template-specific parts stay in _pages-reference.scss (pages.css).
+// ---------------------------------------------------------------------------
+
+// 1. Page rhythm + shared blocks --------------------------------------------
+
+// Every reference route wraps its sections in "flex flex-col pb-20": 80px of
+// page background between the last section and the footer.
+.hk9-template-about,
+.hk9-template-program,
+.hk9-template-veterans,
+.hk9-template-get-involved,
+.hk9-template-barkode,
+.hk9-template-stories,
+.hk9-template-contact {
+	.hk9-main {
+		padding-bottom: 5rem;
+	}
+}
+
+// Narrow overlap card (veterans "5 Questions": container max-w-4xl).
+.hk9-overlap__card--narrow {
+	max-width: var(--hk9-narrow);
+}
+
+// Rounded muted panel ("max-w-4xl bg-muted rounded-3xl p-10 md:p-16 border shadow-sm").
+.hk9-panel {
+	width: 100%;
+	max-width: var(--hk9-narrow);
+	margin: 0 auto;
+	padding: 2.5rem;
+	background: var(--hk9-muted);
+	border: 1px solid var(--hk9-border);
+	border-radius: 1.5rem;
+	box-shadow: var(--hk9-shadow-sm);
+	text-align: center;
+
+	@include media-breakpoint-up(md) {
+		padding: 4rem;
+	}
+
+	> :last-child { margin-bottom: 0; }
+
+	&--sm {
+		padding: 2rem;
+		border-radius: 1rem;
+
+		@include media-breakpoint-up(md) {
+			padding: 2.5rem;
+		}
+	}
+}
+
+// Button variants used by these routes:
+//  --md: shadcn size="lg" without the h-14 override → min-h-10 (40px), px-8, 14px/500.
+//  --outline-navy: variant="outline" + "border-primary text-primary hover:bg-primary/5".
+.hk9-btn--md {
+	min-height: 2.5rem;
+	padding: .5rem 2rem;
+	font-size: .875rem;
+	line-height: 1.4286;
+	font-weight: 500;
+}
+
+.hk9-btn--outline-navy {
+	border-color: var(--hk9-primary);
+	color: var(--hk9-primary);
+
+	&:hover,
+	&:focus-visible {
+		background-color: rgba(var(--hk9-primary-rgb), .05);
+		border-color: var(--hk9-primary);
+		color: var(--hk9-primary);
+	}
+}
+
+// 2. Shared-part overrides ---------------------------------------------------
+
+// Section headers on these routes: "text-3xl md:text-4xl" without a leading
+// utility → 30/36 and 36/40 (the generic title uses 1.25).
+.hk9-section__title {
+	line-height: 1.2;
+
+	@include media-breakpoint-up(md) {
+		line-height: 1.1112;
+	}
+}
+
+// CTA bands (cta_band.php) as measured on these routes: buttons h-14 text-sm
+// font-medium, paragraph text-lg (28px line), outline = navy border/text.
+.hk9-cta-band {
+	.hk9-cta-band__heading {
+		line-height: 1.2;
+
+		@include media-breakpoint-up(md) {
+			line-height: 1.1112;
+		}
+	}
+
+	.hk9-cta-band__text {
+		line-height: 1.5556;
+	}
+
+	// Two buttons sit in a "flex flex-col sm:flex-row" wrapper and stretch to the full
+	// width below 640px; a single button is inline (shrink-to-fit, centred) at every width.
+	@include media-breakpoint-down(sm) {
+		.hk9-cta-band__actions--multi {
+			align-items: stretch;
+		}
+	}
+
+	.hk9-btn--lg {
+		font-size: .875rem;
+		line-height: 1.4286;
+		font-weight: 500;
+	}
+
+	.hk9-btn--outline {
+		@extend .hk9-btn--outline-navy;
+	}
+
+	// `tint` (about "Join Us in Our Mission"): full-width primary/5 band, py-20,
+	// border-y, container max-w-3xl with the gutter inside; h2 30px foreground.
+	&--tint {
+		padding-top: 5rem;
+		padding-bottom: 5rem;
+		background-color: rgba(var(--hk9-primary-rgb), .05);
+		border-top: 1px solid var(--hk9-border);
+		border-bottom: 1px solid var(--hk9-border);
+
+		.hk9-cta-band__inner {
+			max-width: 768px;
+			padding: 0;
+			background: none;
+			border: 0;
+			border-radius: 0;
+			box-shadow: none;
+
+			@include media-breakpoint-up(md) {
+				padding: 0 2rem;
+			}
+		}
+	}
+
+	// tint / plain / muted headings: text-3xl text-foreground (no md step).
+	&--tint,
+	&--plain,
+	&--muted {
+		.hk9-cta-band__heading {
+			font-size: 1.875rem;
+			line-height: 1.2;
+			color: var(--hk9-fg);
+		}
+	}
+}

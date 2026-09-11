@@ -1,57 +1,43 @@
 // ---------------------------------------------------------------------------
-// Selective Bootstrap 5.3.8 import. Only the layers the theme actually uses:
-// functions/variables/maps/mixins, root, reboot, type, containers, grid,
-// buttons, form-control/select/check/validation, transitions, pagination and a
-// pruned utilities API. No navbar/offcanvas/modal/carousel/accordion CSS.
+// Selective Bootstrap 5.3.8 for the core stylesheet: reboot + containers only,
+// on top of a hand-written :root that carries just the --bs-* custom properties
+// those two partials (and the forms bundle) reference.
+//
+// Dropped since 1.0.2 (measured unused with Playwright CSS coverage across every
+// template): root palette/theme-colour variables, type, grid (:root breakpoints),
+// buttons (.hk9-btn is self-contained), transitions, labels/form-text, validation
+// (`.is-invalid` sits on the field wrapper, never on `.form-control`), pagination
+// (the theme styles core's `.page-numbers`) and the utilities API (no `d-*`,
+// `text-*`, `gap-*`… classes in any template). The form-control / form-select /
+// form-check partials moved to forms.scss (contact, application, search, comments).
 // ---------------------------------------------------------------------------
 
-@import "bootstrap/scss/functions";
-@import "bootstrap-config";
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
-@import "bootstrap/scss/utilities";
+@import "bootstrap-vars";
 
-// Keep only the utilities the templates use (the full map is ~70 kB compressed);
-// only `display` keeps its responsive variants.
-$utilities: map-get-multiple(
-	$utilities,
-	(
-		"display",
-		"flex-direction",
-		"flex-wrap",
-		"justify-content",
-		"align-items",
-		"gap",
-		"text-align",
-		"width"
-	)
-);
-$utilities: map-merge(
-	$utilities,
-	(
-		"flex-direction": map-merge(map-get($utilities, "flex-direction"), (responsive: false)),
-		"flex-wrap": map-merge(map-get($utilities, "flex-wrap"), (responsive: false)),
-		"justify-content": map-merge(map-get($utilities, "justify-content"), (responsive: false)),
-		"align-items": map-merge(map-get($utilities, "align-items"), (responsive: false)),
-		"gap": map-merge(map-get($utilities, "gap"), (responsive: false)),
-		"text-align": map-merge(map-get($utilities, "text-align"), (responsive: false)),
-	)
-);
+// Minimal replacement for bootstrap/scss/_root.scss.
+:root {
+	--#{$prefix}body-font-family: #{inspect($font-family-base)};
+	--#{$prefix}body-font-size: #{$font-size-base};
+	--#{$prefix}body-font-weight: #{$font-weight-base};
+	--#{$prefix}body-line-height: #{$line-height-base};
+	--#{$prefix}body-color: #{$body-color};
+	--#{$prefix}body-bg: #{$body-bg};
+	--#{$prefix}secondary-color: #{$body-secondary-color};
+	--#{$prefix}secondary-bg: #{$body-secondary-bg};
+	--#{$prefix}tertiary-bg: #{$body-tertiary-bg};
+	--#{$prefix}heading-color: #{$headings-color};
+	--#{$prefix}link-color: #{$link-color};
+	--#{$prefix}link-color-rgb: #{to-rgb($link-color)};
+	--#{$prefix}link-hover-color: #{$link-hover-color};
+	--#{$prefix}link-hover-color-rgb: #{to-rgb($link-hover-color)};
+	--#{$prefix}code-color: #{$code-color};
+	--#{$prefix}highlight-color: #{$mark-color};
+	--#{$prefix}highlight-bg: #{$mark-bg};
+	--#{$prefix}font-monospace: #{inspect($font-family-monospace)};
+	--#{$prefix}border-width: #{$border-width};
+	--#{$prefix}border-color: #{$border-color};
+	--#{$prefix}border-radius: #{$border-radius};
+}
 
-@import "bootstrap/scss/root";
 @import "bootstrap/scss/reboot";
-@import "bootstrap/scss/type";
 @import "bootstrap/scss/containers";
-@import "bootstrap/scss/grid";
-@import "bootstrap/scss/buttons";
-@import "bootstrap/scss/transitions";
-@import "bootstrap/scss/forms/labels";
-@import "bootstrap/scss/forms/form-text";
-@import "bootstrap/scss/forms/form-control";
-@import "bootstrap/scss/forms/form-select";
-@import "bootstrap/scss/forms/form-check";
-@import "bootstrap/scss/forms/validation";
-@import "bootstrap/scss/pagination";
-@import "bootstrap/scss/utilities/api";

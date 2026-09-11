@@ -30,8 +30,8 @@
 	}
 
 	&__badge {
-		@extend .hk9-badge;
-		@extend .hk9-badge--solid;
+		@include hk9-badge;
+		@include hk9-badge-solid;
 		margin-bottom: 1rem;
 	}
 
@@ -91,7 +91,7 @@
 	}
 
 	&__notice {
-		@extend .hk9-callout;
+		@include hk9-callout;
 		text-align: left;
 		margin-top: 1.5rem;
 		font-weight: 500;
@@ -185,8 +185,8 @@
 	&--2 { @include media-breakpoint-up(lg) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
 	&__card {
-		@extend .hk9-card;
-		@extend .hk9-card--center;
+		@include hk9-card;
+		@include hk9-card-center;
 
 		.hk9-people__portrait {
 			width: 8rem;
@@ -258,8 +258,8 @@
 	@extend %hk9-content-grid;
 
 	&__card {
-		@extend .hk9-card;
-		@extend .hk9-card--hover;
+		@include hk9-card;
+		@include hk9-card-hover;
 		padding: 0;
 		overflow: hidden;
 
@@ -281,26 +281,8 @@
 	.hk9-icon { width: 1rem; height: 1rem; }
 }
 
-// Status pills (teams / campaigns / events).
-.hk9-status {
-	display: inline-block;
-	padding: .125rem .625rem;
-	border-radius: 9999px;
-	font-size: .75rem;
-	font-weight: 700;
-	letter-spacing: .08em;
-	text-transform: uppercase;
-	background: rgba(var(--hk9-primary-rgb), .1);
-	color: var(--hk9-primary);
-
-	&--active,
-	&--in-training { background: rgba(var(--hk9-secondary-rgb), .1); color: var(--hk9-secondary); }
-	&--completed,
-	&--graduated { background: rgba(47, 125, 79, .12); color: #1f6b41; }
-	&--cancelled,
-	&--postponed,
-	&--paused { background: rgba(var(--hk9-muted-fg-rgb), .15); color: var(--hk9-muted-fg); }
-}
+// Status pills (.hk9-status) and contact info rows (.hk9-info) live in _base.scss
+// (core) — they are shared with the reference page templates.
 
 // Sponsor tiers (coloring book landing).
 .hk9-tiers {
@@ -312,8 +294,8 @@
 	@include media-breakpoint-up(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 
 	&__item {
-		@extend .hk9-card;
-		@extend .hk9-card--center;
+		@include hk9-card;
+		@include hk9-card-center;
 
 		&.is-highlight { border-color: var(--hk9-secondary); box-shadow: var(--hk9-shadow-lg); }
 
@@ -323,18 +305,4 @@
 		li { padding: .375rem 0; border-top: 1px solid var(--hk9-border); }
 		li:first-child { border-top: 0; }
 	}
-}
-
-// Contact info rows (contact page card + donate mail-in).
-.hk9-info {
-	display: flex;
-	flex-direction: column;
-	gap: 1.5rem;
-	margin: 0;
-	padding: 0;
-	list-style: none;
-
-	&__row { display: flex; gap: 1rem; align-items: flex-start; }
-	&__label { font-weight: 700; font-size: 1rem; color: var(--hk9-fg); margin-bottom: .125rem; }
-	&__value { color: var(--hk9-muted-fg); white-space: pre-line; }
 }

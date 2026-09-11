@@ -7,12 +7,7 @@
 
 @use "fonts";
 
-@import "bootstrap/scss/functions";
-@import "bootstrap-config";
-@import "bootstrap/scss/variables";
-@import "bootstrap/scss/variables-dark";
-@import "bootstrap/scss/maps";
-@import "bootstrap/scss/mixins";
+@import "bootstrap-vars";
 @import "tokens";
 
 body {

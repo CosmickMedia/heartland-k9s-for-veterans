@@ -1,0 +1,5 @@
+// pages.scss → assets/dist/pages.css — the reference page templates (about,
+// program, veterans, get-involved, barkode, stories, contact). Site-wide
+// overrides that used to live in this stream are in _pages-shared.scss (core).
+@import "bootstrap-vars";
+@import "pages-reference";

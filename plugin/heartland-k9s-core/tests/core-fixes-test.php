@@ -130,6 +130,176 @@ $normal = apply_filters( 'oembed_response_data', [ 'title' => 'x', 'author_name'
 $check( 'oembed data for a normal post survives (author scrubbed)', is_array( $normal ) && 'x' === $normal['title'] && ! isset( $normal['author_name'] ), true );
 $check( 'get_oembed_response_data() refuses records', get_oembed_response_data( get_post( $rec ), 600 ), false );
 
+/* ---------------------------------------------------------------- (W4b) icon preview sprite ids */
+WP_CLI::log( '-- (W4b) icon preview' );
+$check( 'symbol prefix defaults to hk9-icon-', HK9\Core\Fields\Renderer::sprite_symbol_prefix(), 'hk9-icon-' );
+$svg = HK9\Core\Fields\Renderer::icon_svg( 'heart' );
+$check( 'icon_svg references #hk9-icon-heart', '' !== $svg && str_contains( $svg, 'icons.svg' ) && str_contains( $svg, '#hk9-icon-heart"' ), true );
+$sprite = get_template_directory() . '/assets/dist/icons.svg';
+$check( 'theme sprite defines that symbol', file_exists( $sprite ) && str_contains( (string) file_get_contents( $sprite ), 'id="hk9-icon-heart"' ), true );
+
+/* ---------------------------------------------------------------- (W4b) settings link label survives a tab save */
+WP_CLI::log( '-- (W4b) settings link label' );
+$saved_settings = get_option( 'hk9_settings' );
+$raw            = HK9\Core\Settings\Store::raw();
+$posted         = [ '__groups' => 'header', 'header' => $raw['header'] ?? [] ];
+$posted['header']['cta_link'] = [ 'mode' => 'post', 'post_id' => (string) ( $raw['header']['cta_link']['post_id'] ?? 0 ), 'url' => '', 'label' => 'tmp-core-fixes Label', 'target' => '_self' ];
+$clean = HK9\Core\Settings\Store::sanitize_submission( $posted );
+$check( 'sanitize_submission keeps header.cta_link.label', $clean['header']['cta_link']['label'] ?? null, 'tmp-core-fixes Label' );
+$check( 'other groups untouched by a header-only post', $clean['links']['donate'] ?? null, HK9\Core\Settings\Store::sanitize( $raw )['links']['donate'] );
+$check( 'option itself unchanged by the pure sanitiser', get_option( 'hk9_settings' ) === $saved_settings, true );
+ob_start();
+HK9\Core\Settings\Page::render_field( [ 'group' => 'header', 'key' => 'cta_link', 'field' => HK9\Core\Settings\Schema::fields()['header']['fields']['cta_link'], 'id' => 'hk9_header_cta_link' ] );
+$link_html = (string) ob_get_clean();
+$check( 'settings link field renders a [label] input', str_contains( $link_html, 'name="hk9_settings[header][cta_link][label]"' ), true );
+$check( 'label input carries the saved value', str_contains( $link_html, 'value="' . esc_attr( (string) ( $raw['header']['cta_link']['label'] ?? '' ) ) . '" class="regular-text" data-hk9-link-label' ), true );
+
+/* ---------------------------------------------------------------- (W4b) BarKode legacy path → redirect rule */
+WP_CLI::log( '-- (W4b) legacy path redirect' );
+$redirects_before = HK9\Core\Redirects\Store::all(); // normalized view (save_rules() always stores the normalized form)
+$legacy_src       = '/tmp-core-fixes-legacy/';
+$legacy_key       = HK9\Core\Redirects\Store::normalize_key( $legacy_src );
+HK9\Core\Redirects\Store::delete( $legacy_src );
+$rec2 = wp_insert_post( [ 'post_type' => 'hk9_barkode', 'post_status' => 'draft', 'post_title' => 'tmp-core-fixes legacy', 'post_name' => 'tmp-core-fixes-legacy-rec', 'meta_input' => [ 'hk9_legacy_path' => $legacy_src ] ] );
+$cleanup[] = $rec2;
+$check( 'draft record adds no rule', isset( HK9\Core\Redirects\Store::all()[ $legacy_key ] ), false );
+wp_update_post( [ 'ID' => $rec2, 'post_status' => 'publish' ] );
+$rule = HK9\Core\Redirects\Store::all()[ $legacy_key ] ?? null;
+$check( 'publishing adds the rule', is_array( $rule ), true );
+$check( 'rule targets the record slug', $rule['to'] ?? null, [ 'type' => 'record', 'slug' => 'tmp-core-fixes-legacy-rec' ] );
+$check( 'rule is a 301, enabled, not a seed', [ $rule['status'] ?? 0, $rule['enabled'] ?? null, $rule['seed'] ?? null ], [ 301, true, false ] );
+$resolved = HK9\Core\Redirects\Resolver::resolve( $legacy_src );
+$check( 'resolver sends the legacy path to the record', $resolved['url'] ?? null, get_permalink( $rec2 ) );
+// Never overwrite: point the rule elsewhere, re-save the record, the rule stays.
+$rules = HK9\Core\Redirects\Store::all();
+$rules[ $legacy_key ]['to'] = [ 'type' => 'path', 'path' => '/stories/' ];
+HK9\Core\Redirects\Store::save_rules( $rules );
+wp_update_post( [ 'ID' => $rec2, 'post_title' => 'tmp-core-fixes legacy 2' ] );
+$check( 'existing rule is never overwritten', HK9\Core\Redirects\Store::all()[ $legacy_key ]['to'] ?? null, [ 'type' => 'path', 'path' => '/stories/' ] );
+$check( 'ensure_rule reports "exists"', HK9\Core\Redirects\LegacyPaths::ensure_rule( get_post( $rec2 ) )['reason'], 'exists' );
+// Own permalink path is never redirected.
+update_post_meta( $rec2, 'hk9_legacy_path', wp_parse_url( get_permalink( $rec2 ), PHP_URL_PATH ) );
+$own = HK9\Core\Redirects\LegacyPaths::ensure_rule( get_post( $rec2 ) );
+$check( 'record permalink path is refused (own_permalink)', $own['reason'], 'own_permalink' );
+$check( 'no rule for the permalink path', isset( HK9\Core\Redirects\Store::all()[ $own['key'] ] ), false );
+$check( 'empty legacy path adds nothing', ( update_post_meta( $rec2, 'hk9_legacy_path', '' ) || true ) && 'empty' === HK9\Core\Redirects\LegacyPaths::ensure_rule( get_post( $rec2 ) )['reason'], true );
+$help = HK9\Core\Meta\Definitions::field( 'hk9_barkode', 'legacy_path' )['help'] ?? '';
+$check( 'legacy path help names the behaviour and the Redirects screen', str_contains( $help, 'added automatically' ) && str_contains( $help, 'Heartland → Redirects' ) && str_contains( $help, 'never changed' ), true );
+HK9\Core\Redirects\Store::delete( $legacy_src );
+$check( 'redirect rules restored', HK9\Core\Redirects\Store::all(), $redirects_before );
+
+/* ---------------------------------------------------------------- (W4b) new records append at the end (menu_order) */
+WP_CLI::log( '-- (W4b) default menu_order' );
+foreach ( [ 'hk9_person', 'hk9_partner', 'hk9_team', 'hk9_campaign', 'hk9_story' ] as $mo_type ) {
+	$max = (int) $GLOBALS['wpdb']->get_var( $GLOBALS['wpdb']->prepare( "SELECT MAX(menu_order) FROM {$GLOBALS['wpdb']->posts} WHERE post_type = %s AND post_status <> 'auto-draft'", $mo_type ) );
+	$auto = wp_insert_post( [ 'post_type' => $mo_type, 'post_status' => 'auto-draft', 'post_title' => 'tmp-core-fixes auto ' . $mo_type ] );
+	$cleanup[] = $auto;
+	$check( $mo_type . ' auto-draft gets max+1 (' . ( $max + 1 ) . ')', (int) get_post( $auto )->menu_order, $max + 1 );
+}
+$explicit = wp_insert_post( [ 'post_type' => 'hk9_person', 'post_status' => 'auto-draft', 'post_title' => 'tmp-core-fixes explicit', 'menu_order' => 3 ] );
+$cleanup[] = $explicit;
+$check( 'explicit menu_order is kept', (int) get_post( $explicit )->menu_order, 3 );
+$draft = wp_insert_post( [ 'post_type' => 'hk9_person', 'post_status' => 'draft', 'post_title' => 'tmp-core-fixes draft' ] );
+$cleanup[] = $draft;
+$check( 'non-auto-draft inserts (importer/CLI) untouched', (int) get_post( $draft )->menu_order, 0 );
+$check( 'event type not affected', in_array( 'hk9_event', HK9\Core\PostTypes\MenuOrder::types(), true ), false );
+// Classic editor: the Post Attributes box is wrapped so the help sits under the Order input.
+add_meta_box( 'pageparentdiv', 'Post Attributes', 'page_attributes_meta_box', 'hk9_person', 'side', 'core' ); // as core does before add_meta_boxes
+do_action( 'add_meta_boxes', 'hk9_person', get_post( $draft ) );
+$pbox = $GLOBALS['wp_meta_boxes']['hk9_person']['side']['core']['pageparentdiv'] ?? null;
+ob_start();
+if ( is_array( $pbox ) ) {
+	call_user_func( $pbox['callback'], get_post( $draft ), $pbox );
+}
+$pbox_html = (string) ob_get_clean();
+$check( 'classic Post Attributes box keeps the Order input', str_contains( $pbox_html, 'name="menu_order"' ), true );
+$check( 'classic Post Attributes box shows the Order help', str_contains( $pbox_html, 'id="hk9-order-help"' ) && str_contains( $pbox_html, 'highest existing Order + 1' ), true );
+add_meta_box( 'pageparentdiv', 'Post Attributes', 'page_attributes_meta_box', 'hk9_barkode', 'side', 'core' );
+do_action( 'add_meta_boxes', 'hk9_barkode', get_post( $rec2 ) );
+$check( 'BarKode Post Attributes box untouched', $GLOBALS['wp_meta_boxes']['hk9_barkode']['side']['core']['pageparentdiv']['callback'] ?? null, 'page_attributes_meta_box' );
+$story_help = HK9\Core\Meta\Definitions::field( 'hk9_story', 'veteran_name' )['help'] ?? '';
+$check( 'story help mentions the listing card heading', str_contains( $story_help, 'Stories listing' ) && str_contains( $story_help, 'heading' ), true );
+$check( 'PayPal help text updated', HK9\Core\Settings\Schema::fields()['links']['fields']['paypal_hosted_button_id']['help'] ?? '', "Used by the Donate page's PayPal option: the PayPal button links to the hosted button checkout for this ID; leave empty to hide the PayPal option." );
+
+/* ---------------------------------------------------------------- (W4b) payload archive pre-scan */
+WP_CLI::log( '-- (W4b) payload pre-scan' );
+$refused = [ HK9\Core\Import\Payload::class, 'refused_entry' ];
+$check( 'manifest allowed', $refused( 'manifest.json' ), '' );
+$check( 'content html allowed at root', $refused( 'content/mini__page__home.html' ), '' );
+$check( 'content html allowed in one top folder', $refused( 'payload/content/page.html' ), '' );
+$check( 'media allowed', $refused( 'media/x/photo.jpg' ), '' );
+$check( 'directory entries allowed', $refused( 'media/x/' ), '' );
+$check( 'html outside content refused', $refused( 'index.html' ), 'script' );
+$check( 'html in nested folder refused', $refused( 'a/b/content/x.html' ), 'script' );
+$check( 'php refused', $refused( 'media/shell.php' ), 'script' );
+$check( 'double extension refused', $refused( 'media/x.php.jpg' ), 'script' );
+$check( 'svg refused', $refused( 'media/logo.svg' ), 'script' );
+$check( '.htaccess refused', $refused( '.htaccess' ), 'dotfile' );
+$check( 'nested dotfile refused', $refused( 'content/.user.ini' ), 'dotfile' );
+$check( 'hidden dir refused', $refused( '.git/config' ), 'dotfile' );
+$check( 'traversal refused', $refused( '../x.json' ), 'traversal' );
+$check( 'absolute refused', $refused( '/etc/passwd' ), 'traversal' );
+$tmpzip = wp_tempnam( 'hk9-scan' );
+$za = new ZipArchive();
+$za->open( $tmpzip, ZipArchive::OVERWRITE );
+$za->addFromString( 'manifest.json', '{}' );
+$za->addFromString( 'content/a.html', '<p>x</p>' );
+$za->addFromString( '__MACOSX/._manifest.json', 'x' );
+$za->close();
+$check( 'clean archive passes (__MACOSX ignored)', HK9\Core\Import\Payload::scan_archive( $tmpzip ), true );
+$za->open( $tmpzip );
+$za->addFromString( 'media/.htaccess', 'AddHandler' );
+$za->close();
+$scan = HK9\Core\Import\Payload::scan_archive( $tmpzip );
+$check( 'archive with .htaccess refused before extraction', is_wp_error( $scan ) ? $scan->get_error_code() : 'ok', 'hk9_upload_refused' );
+$check( 'refusal names the entry', is_wp_error( $scan ) && str_contains( $scan->get_error_message(), 'media/.htaccess' ), true );
+wp_delete_file( $tmpzip );
+$tmpdir = get_temp_dir() . 'tmp-core-fixes-purge-' . wp_generate_password( 8, false );
+wp_mkdir_p( $tmpdir . '/content' );
+file_put_contents( $tmpdir . '/content/ok.html', 'x' );
+file_put_contents( $tmpdir . '/stray.html', 'x' );
+file_put_contents( $tmpdir . '/content/.user.ini', 'x' );
+$check( 'purge_scripts removes stray html + dotfile, keeps content html', [ HK9\Core\Import\Payload::purge_scripts( $tmpdir ), file_exists( $tmpdir . '/content/ok.html' ), file_exists( $tmpdir . '/stray.html' ) ], [ 2, true, false ] );
+wp_delete_file( $tmpdir . '/content/ok.html' );
+rmdir( $tmpdir . '/content' );
+rmdir( $tmpdir );
+
+/* ---------------------------------------------------------------- (W4b) forms: stateless failures + failure counter */
+WP_CLI::log( '-- (W4b) forms failures' );
+$count_res = static fn(): int => (int) $GLOBALS['wpdb']->get_var( "SELECT COUNT(*) FROM {$GLOBALS['wpdb']->options} WHERE option_name LIKE '\\_transient\\_hk9\\_form\\_res\\_%'" );
+$_SERVER['REMOTE_ADDR'] = '203.0.113.77';
+delete_transient( 'hk9_form_fail_' . substr( hash_hmac( 'sha256', '203.0.113.77', wp_salt( 'nonce' ) . '|fail' ), 0, 32 ) );
+$before = $count_res();
+$r = HK9\Core\Forms\Handler::process( 'contact', [ 'hk9_nonce' => 'bad' ] );
+$check( 'bad nonce → code nonce, no values', [ $r->ok, $r->code, $r->values ], [ false, 'nonce', [] ] );
+$check( 'process() itself writes no result transient', $count_res(), $before );
+$check( 'failure counted for the IP hash', HK9\Core\Forms\Antispam::too_many_failures( '203.0.113.77' ), false );
+for ( $i = 0; $i < HK9\Core\Forms\Antispam::failure_limit(); $i++ ) {
+	HK9\Core\Forms\Antispam::record_failure( '203.0.113.77' );
+}
+$check( 'failure limit reached after N failures', HK9\Core\Forms\Antispam::too_many_failures( '203.0.113.77' ), true );
+$check( 'canned message for a stateless code', HK9\Core\Forms\Handler::canned_message( 'nonce' ), HK9\Core\Forms\Antispam::outcome( 'nonce' )['message'] );
+$check( 'unknown code → empty message', HK9\Core\Forms\Handler::canned_message( 'nope' ), '' );
+$check( 'every outcome has a non-empty message', count( array_filter( HK9\Core\Forms\Antispam::outcomes(), static fn( $o ) => '' === $o['message'] ) ), 0 );
+delete_transient( 'hk9_form_fail_' . substr( hash_hmac( 'sha256', '203.0.113.77', wp_salt( 'nonce' ) . '|fail' ), 0, 32 ) );
+unset( $_SERVER['REMOTE_ADDR'] );
+
+/* ---------------------------------------------------------------- (W4b) redirect test verifies TLS by default */
+WP_CLI::log( '-- (W4b) redirect test sslverify' );
+$seen_args = null;
+$capture   = static function ( $pre, $args ) use ( &$seen_args ) {
+	$seen_args = $args;
+	return new WP_Error( 'tmp', 'captured' );
+};
+add_filter( 'pre_http_request', $capture, 10, 2 );
+HK9\Core\Redirects\Resolver::test( '/hk923-005/', true );
+$check( 'sslverify defaults to true', $seen_args['sslverify'] ?? null, true );
+add_filter( 'hk9/redirects/test_sslverify', '__return_false' );
+HK9\Core\Redirects\Resolver::test( '/hk923-005/', true );
+$check( 'filter can opt out', $seen_args['sslverify'] ?? null, false );
+remove_filter( 'hk9/redirects/test_sslverify', '__return_false' );
+remove_filter( 'pre_http_request', $capture, 10 );
+
 /* ---------------------------------------------------------------- cleanup */
 foreach ( $cleanup as $id ) {
 	wp_delete_post( (int) $id, true );

@@ -103,5 +103,37 @@ foreach ( $hk9_option_names as $hk9_option_name ) {
 // 5. Importer map table.
 $wpdb->query( "DROP TABLE IF EXISTS {$wpdb->prefix}hk9_import_map" ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery
 
-// 6. Rewrite rules referencing the removed types.
+// 6. Import logs (uploads/hk9-import) and any leftover uploaded payload copy (uploads/hk9-payload-*),
+//    which can hold the whole site payload including registry records. Only directories directly
+//    under the uploads base dir with those exact names are touched.
+require_once ABSPATH . 'wp-admin/includes/file.php';
+$hk9_uploads = wp_upload_dir( null, false );
+if ( empty( $hk9_uploads['error'] ) && WP_Filesystem() ) {
+	global $wp_filesystem;
+	$hk9_base = realpath( (string) $hk9_uploads['basedir'] );
+	if ( false !== $hk9_base && $wp_filesystem instanceof WP_Filesystem_Base ) {
+		$hk9_dirs = array_merge(
+			[ $hk9_base . DIRECTORY_SEPARATOR . 'hk9-import' ],
+			glob( $hk9_base . DIRECTORY_SEPARATOR . 'hk9-payload-*', GLOB_ONLYDIR ) ?: []
+		);
+		foreach ( $hk9_dirs as $hk9_dir ) {
+			$hk9_real = realpath( $hk9_dir );
+			if ( false === $hk9_real || dirname( $hk9_real ) !== $hk9_base ) {
+				continue; // Not a direct child of uploads (symlink elsewhere, or missing).
+			}
+			$hk9_name = basename( $hk9_real );
+			if ( 'hk9-import' !== $hk9_name && ! str_starts_with( $hk9_name, 'hk9-payload-' ) ) {
+				continue;
+			}
+			if ( $wp_filesystem->is_dir( $hk9_real ) ) {
+				$wp_filesystem->delete( $hk9_real, true );
+			}
+		}
+	}
+}
+
+// 7. Per-user dismissal marker of the "notification could not be sent" admin notice.
+delete_metadata( 'user', 0, 'hk9_forms_mail_failed_dismissed', '', true );
+
+// 8. Rewrite rules referencing the removed types.
 flush_rewrite_rules();

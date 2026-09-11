@@ -335,6 +335,11 @@ final class Page {
 				<label class="screen-reader-text" for="<?php echo esc_attr( $id ); ?>-url"><?php esc_html_e( 'Web address', 'heartland-k9s-core' ); ?></label>
 				<input type="text" id="<?php echo esc_attr( $id ); ?>-url" name="<?php echo esc_attr( $name ); ?>[url]" value="<?php echo esc_attr( $link['url'] ); ?>" class="regular-text code" placeholder="https://" inputmode="url">
 			</div>
+			<div class="hk9-link-field__label">
+				<label for="<?php echo esc_attr( $id ); ?>-label"><?php esc_html_e( 'Label', 'heartland-k9s-core' ); ?></label>
+				<input type="text" id="<?php echo esc_attr( $id ); ?>-label" name="<?php echo esc_attr( $name ); ?>[label]" value="<?php echo esc_attr( $link['label'] ); ?>" class="regular-text" data-hk9-link-label>
+				<span class="description"><?php esc_html_e( 'Optional link text where the site prints this destination as a button or shortcut.', 'heartland-k9s-core' ); ?></span>
+			</div>
 			<label class="hk9-link-field__target"><input type="checkbox" name="<?php echo esc_attr( $name ); ?>[target]" value="_blank"<?php checked( $link['target'], '_blank' ); ?>> <?php esc_html_e( 'Open in a new tab', 'heartland-k9s-core' ); ?></label>
 		</fieldset>
 		<?php

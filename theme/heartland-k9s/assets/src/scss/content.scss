@@ -1,0 +1,5 @@
+// content.scss → assets/dist/content.css — block content (.hk9-prose): every core
+// block, alignments, colour presets. Enqueued on singular views that print
+// the_content() or a richtext field (see hk9_style_bundles() in inc/assets.php).
+@import "bootstrap-vars";
+@import "prose";

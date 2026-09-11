@@ -489,15 +489,28 @@ function hk9_logo_img( string $context = 'header' ): string {
 		$alt = get_bloginfo( 'name' );
 	}
 
+	// The logo renders at a fixed CSS height (branding.*_logo_height, same clamps as
+	// hk9_root_css()); `sizes` is its rendered WIDTH so the browser picks the
+	// smallest srcset candidate that covers it (the 140×160 `hk9-logo-sm` on 1×–2×
+	// screens instead of the 263×300 medium file).
+	$height = 'footer' === $context
+		? max( 24, min( 160, (int) hk9_theme_option( 'branding.footer_logo_height' ) ?: 80 ) )
+		: max( 24, min( 80, (int) hk9_theme_option( 'branding.header_logo_height' ) ?: 64 ) );
+	$meta   = wp_get_attachment_metadata( $id );
+	$ratio  = is_array( $meta ) && ! empty( $meta['width'] ) && ! empty( $meta['height'] ) ? (int) $meta['width'] / (int) $meta['height'] : 1;
+	$width  = max( 1, (int) round( $height * $ratio ) );
+
+	$size = hk9_ensure_image_size( $id, 'hk9-logo-sm' ) ? 'hk9-logo-sm' : 'hk9-logo';
+
 	// Header logo: eager (above the fold) but without fetchpriority=high — that is reserved
 	// for the hero / LCP image; the footer logo lazy-loads.
-	$attrs = [ 'class' => $class, 'alt' => $alt, 'sizes' => '80px' ];
+	$attrs = [ 'class' => $class, 'alt' => $alt, 'sizes' => $width . 'px' ];
 	if ( 'header' === $context ) {
 		$attrs['loading']       = 'eager';
 		$attrs['fetchpriority'] = 'auto';
 	}
 
-	return hk9_image( $id, 'hk9-logo', $attrs );
+	return hk9_image( $id, $size, $attrs );
 }
 
 /**

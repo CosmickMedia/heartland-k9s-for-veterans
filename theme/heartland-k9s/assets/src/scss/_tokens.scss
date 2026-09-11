@@ -35,6 +35,10 @@ $hk9-font-sans-stack: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "He
 	--hk9-secondary-on-primary: #dd7788;
 	--hk9-white-rgb: 255, 255, 255;
 	--hk9-ring: var(--hk9-primary);
+	// Keyboard focus ring colour: navy on the page, flipped to white inside dark
+	// surfaces (hero, navy sections, footer — see _base.scss). Buttons draw a
+	// currentColor outline over a halo in this colour.
+	--hk9-focus-ring: var(--hk9-ring);
 	--hk9-radius: #{$hk9-radius};
 
 	--hk9-font-serif: #{$hk9-font-serif-stack};

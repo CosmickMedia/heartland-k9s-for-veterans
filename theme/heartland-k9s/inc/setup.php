@@ -51,8 +51,63 @@ function hk9_theme_setup(): void {
 	add_image_size( 'hk9-square', 800, 800, true );
 	add_image_size( 'hk9-portrait', 600, 800, true );
 	add_image_size( 'hk9-logo', 400, 300, false );
+	// Header/footer crest at 64–80px tall on 1×–2× screens (created on demand for
+	// logos uploaded before 1.0.2, see hk9_ensure_image_size()).
+	add_image_size( 'hk9-logo-sm', 140, 160, false );
 }
 add_action( 'after_setup_theme', 'hk9_theme_setup' );
+
+/**
+ * Make sure an attachment has a given registered intermediate size, creating it
+ * from the original when it is missing (media uploaded before the size existed).
+ *
+ * Runs at most once per attachment/size: success stores the size in the
+ * attachment metadata, failure is remembered for a day in a transient so a
+ * read-only uploads directory never costs more than one attempt.
+ *
+ * @param int    $attachment_id Attachment id.
+ * @param string $size          Registered size name.
+ * @return bool Whether the size is available.
+ */
+function hk9_ensure_image_size( int $attachment_id, string $size ): bool {
+	$meta = wp_get_attachment_metadata( $attachment_id );
+	if ( ! is_array( $meta ) ) {
+		return false;
+	}
+	if ( isset( $meta['sizes'][ $size ] ) ) {
+		return true;
+	}
+
+	$registered = wp_get_registered_image_subsizes();
+	if ( ! isset( $registered[ $size ] ) ) {
+		return false;
+	}
+
+	// WordPress does not create sizes the original cannot fill; neither do we.
+	$dims = image_resize_dimensions( (int) ( $meta['width'] ?? 0 ), (int) ( $meta['height'] ?? 0 ), (int) $registered[ $size ]['width'], (int) $registered[ $size ]['height'], (bool) $registered[ $size ]['crop'] );
+	if ( ! $dims ) {
+		return false;
+	}
+
+	$lock = 'hk9_subsize_' . $attachment_id . '_' . sanitize_key( $size );
+	if ( get_transient( $lock ) ) {
+		return false;
+	}
+
+	$file   = get_attached_file( $attachment_id );
+	$editor = is_string( $file ) && '' !== $file ? wp_get_image_editor( $file ) : null;
+	$made   = $editor instanceof WP_Image_Editor ? $editor->make_subsize( $registered[ $size ] ) : null;
+
+	if ( ! is_array( $made ) || empty( $made['file'] ) ) {
+		set_transient( $lock, 1, DAY_IN_SECONDS );
+		return false;
+	}
+
+	$meta['sizes'][ $size ] = $made;
+	wp_update_attachment_metadata( $attachment_id, $meta );
+
+	return true;
+}
 
 /**
  * Expose the custom sizes in the media modal.
@@ -69,6 +124,7 @@ function hk9_image_size_names( array $sizes ): array {
 			'hk9-square'   => __( 'Square (800×800)', 'heartland-k9s' ),
 			'hk9-portrait' => __( 'Portrait 3:4 (600×800)', 'heartland-k9s' ),
 			'hk9-logo'     => __( 'Logo (400×300 max)', 'heartland-k9s' ),
+			'hk9-logo-sm'  => __( 'Logo small (140×160 max)', 'heartland-k9s' ),
 		]
 	);
 }

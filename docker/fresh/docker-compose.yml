@@ -1,0 +1,42 @@
+# Throw-away stack to prove a FRESH install from the built ZIPs (no bind-mounted theme/plugin sources).
+#   docker compose -f docker/fresh/docker-compose.yml up -d && docker/fresh/test.sh
+name: hk9fresh
+services:
+  db:
+    image: mariadb:11
+    environment: { MYSQL_ROOT_PASSWORD: root, MYSQL_DATABASE: wordpress, MYSQL_USER: wordpress, MYSQL_PASSWORD: wordpress }
+    healthcheck: { test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"], interval: 5s, timeout: 5s, retries: 30 }
+  wordpress:
+    image: wordpress:php8.3-apache
+    depends_on: { db: { condition: service_healthy } }
+    ports: ["8095:80"]
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: wordpress
+      WORDPRESS_DB_PASSWORD: wordpress
+      WORDPRESS_DB_NAME: wordpress
+      WORDPRESS_DEBUG: "1"
+      WORDPRESS_CONFIG_EXTRA: |
+        define( 'WP_DEBUG_LOG', true );
+        define( 'WP_DEBUG_DISPLAY', false );
+        define( 'WP_MEMORY_LIMIT', '512M' );
+        define( 'FS_METHOD', 'direct' );
+    volumes:
+      - wp_fresh:/var/www/html
+      - ../../dist:/dist:ro
+      - ../../payload:/payload:ro
+      - ../php-uploads.ini:/usr/local/etc/php/conf.d/hk9-uploads.ini:ro
+  wpcli:
+    image: wordpress:cli-php8.3
+    user: "33:33"
+    depends_on: { db: { condition: service_healthy } }
+    environment: { WORDPRESS_DB_HOST: db, WORDPRESS_DB_USER: wordpress, WORDPRESS_DB_PASSWORD: wordpress, WORDPRESS_DB_NAME: wordpress }
+    volumes:
+      - wp_fresh:/var/www/html
+      - ../../dist:/dist:ro
+      - ../../payload:/payload:ro
+      - ../php-uploads.ini:/usr/local/etc/php/conf.d/hk9-uploads.ini:ro
+    entrypoint: ["wp"]
+    command: ["--info"]
+volumes:
+  wp_fresh:

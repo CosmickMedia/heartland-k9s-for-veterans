@@ -21,6 +21,9 @@ add_action(
 	}
 );
 
+// 1b. Local stack is plain HTTP; allow self-signed certs if it is ever switched to https.
+add_filter( 'hk9/redirects/test_sslverify', '__return_false' );
+
 // 2. Mark the environment so templates/importer can guard dev-only behaviour.
 if ( ! defined( 'HK9_LOCAL_DEV' ) ) {
 	define( 'HK9_LOCAL_DEV', true );

@@ -1,0 +1,9 @@
+// forms.scss → assets/dist/forms.css — the plugin's forms (contact, application),
+// the search form and the comment form. The plugin's renderer also prints
+// Bootstrap's form-control / form-select / form-check classes, so those partials
+// ship here (their variables are set in _bootstrap-config.scss).
+@import "bootstrap-vars";
+@import "bootstrap/scss/forms/form-control";
+@import "bootstrap/scss/forms/form-select";
+@import "bootstrap/scss/forms/form-check";
+@import "_forms"; // underscore: the partial, not this entry

@@ -1,0 +1,5 @@
+// blog.scss → assets/dist/blog.css — posts index, single post, archives, search,
+// 404, attachment, comments, password form.
+@import "bootstrap-vars";
+@import "_blog"; // underscore: the partial, not this entry
+@import "blog-states";

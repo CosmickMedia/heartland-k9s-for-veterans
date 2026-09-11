@@ -3,7 +3,7 @@ Contributors: heartlandk9s
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,7 +18,7 @@ self-hosted Fraunces + Inter and an inline lucide icon sprite. Pairs with the
 * inc/options.php        – hk9_theme_option(), :root token overrides from settings
 * inc/section-defaults.php – reference Home defaults used when the plugin is absent
 * inc/setup.php          – supports, menus, image sizes
-* inc/assets.php         – compiled CSS/JS, font preloads, head trimming
+* inc/assets.php         – compiled CSS (core + template bundles)/JS, font + LCP preloads, head trimming
 * inc/icons.php          – hk9_icon() inline SVG from assets/dist/icons.svg
 * inc/template-tags.php  – hk9_image(), hk9_button(), hk9_the_hero(), hk9_pagination()…
 * inc/menus.php          – primary/footer menu rendering + reference fallbacks
@@ -32,7 +32,7 @@ self-hosted Fraunces + Inter and an inline lucide icon sprite. Pairs with the
 == Build ==
 
     npm install
-    npm run build:css   # tools/build-css.mjs → assets/dist/theme.css + editor.css
+    npm run build:css   # tools/build-css.mjs → assets/dist/theme.css (core), forms/content/blog/pages/records.css, editor.css
     npm run build:js    # tools/build-js.mjs  → assets/dist/theme.js
     npm run build:icons # lucide + brand sprite → assets/dist/icons.svg + icons.json
     npm run build:fonts # Fraunces/Inter woff2 → assets/fonts/ + assets/src/scss/_fonts.scss
@@ -56,6 +56,21 @@ screenshot.png in the theme root. Do not ship a placeholder image.
   (docs/licenses/LICENSE-simple-icons.txt); embedded in tools/build-icons.mjs
 
 == Changelog ==
+
+= 1.0.2 =
+* Performance: the frontend CSS is a 47 kB core (theme.css) plus per-template bundles
+  (forms, content, blog, pages, records) enqueued from a template map in inc/assets.php
+  (filter `hk9/theme/style_bundles`); unused Bootstrap layers (buttons, type, grid,
+  transitions, validation, pagination, utilities API, palette root variables) dropped.
+* Font preloads use the exact @font-face URL (no `?v=` query), so each woff2 downloads once.
+* The LCP image (image hero, About split-card photo, blog hero) is preloaded with the
+  same srcset/sizes as its <img> (filter `hk9/theme/lcp_image`).
+* Header/footer logo: new `hk9-logo-sm` (140×160) size, created on demand for existing
+  logos, with `sizes` derived from the configured logo height.
+* Accessibility: 2 px keyboard focus ring — `--hk9-focus-ring` token (navy on light
+  surfaces, white inside hero/navy/footer); buttons use a currentColor outline + halo.
+* Donate "Ways to give": a PayPal item follows Settings → Destinations → PayPal hosted
+  button ID (hidden when empty, href rebuilt from the id).
 
 = 1.0.1 =
 * Record listings prime featured images / meta (no per-card queries); auto listings are

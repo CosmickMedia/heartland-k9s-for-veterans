@@ -1,15 +1,25 @@
 // ===========================================================================
-// Heartland Canines for Veterans — theme.scss (frontend entry)
+// Heartland Canines for Veterans — theme.scss (frontend CORE entry)
 // Build: node tools/build-css.mjs → assets/dist/theme.css (compressed)
 //
-// Layers, in order:
+// The frontend CSS is split into a small core (this file, every page) and
+// per-template bundles that inc/assets.php enqueues from a template map:
+//   forms.scss    → forms.css    plugin forms, search form, comments
+//   content.scss  → content.css  block content (.hk9-prose)
+//   blog.scss     → blog.css     posts index / single post / archives / search / 404
+//   pages.scss    → pages.css    reference page templates (about … contact)
+//   records.scss  → records.css  record listings + singles, migrated templates
+// Bundles are loaded after the core in the order above, which matches the order
+// the partials had in the single stylesheet of 1.0.1 (cascade unchanged).
+//
+// Core layers, in order:
 //   fonts      self-hosted @font-face (generated partial; optional at build time)
-//   bootstrap  configured, selective Bootstrap 5.3.8
+//   bootstrap  variables + mixins, minimal :root, reboot, containers
 //   tokens     :root custom properties (§11 of docs/ARCHITECTURE.md)
-//   base       element defaults, icons, badges
+//   base       element defaults, icons, badges, status pills, visually-hidden
 //   layout     containers, sections, dividers, patterns, overlap card
-//   components header, hero, buttons, cards, sections, forms, footer
-//   content    prose (block content), blog, grids/records
+//   components header, hero, buttons, cards, sections, footer
+//   shared     page-template overrides that apply site-wide (pages-shared)
 //   utilities  skip link, reduced motion, print
 // ===========================================================================
 
@@ -24,15 +34,6 @@
 @import "buttons";
 @import "cards";
 @import "sections";
-@import "forms";
 @import "footer";
-@import "prose";
-@import "blog";
-@import "grids";
+@import "pages-shared";
 @import "utilities";
-
-// Wave 2 template streams (each partial is owned by one stream; keep them independent)
-@import "pages-reference";
-@import "pages-migrated";
-@import "singles";
-@import "blog-states";

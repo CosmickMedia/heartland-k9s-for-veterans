@@ -52,8 +52,6 @@
 	> li > * { flex: 1 1 auto; min-width: 0; }
 }
 
-.hk9-cards--gap8 { gap: 2rem; }
-
 // Fact rows inside cards / panels ("K9: Caddie · Handler: Billy").
 .hk9-card__facts {
 	list-style: none;
@@ -484,8 +482,8 @@
 
 // Event card: date block · body · optional image.
 .hk9-event-card {
-	@extend .hk9-card;
-	@extend .hk9-card--hover;
+	@include hk9-card;
+	@include hk9-card-hover;
 	display: grid;
 	grid-template-columns: auto minmax(0, 1fr);
 	gap: 1.25rem 1.5rem;
@@ -713,7 +711,7 @@
 	}
 
 	&__summary {
-		@extend .hk9-lead;
+		@include hk9-lead;
 	}
 
 	&__story {

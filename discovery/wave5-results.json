@@ -1,0 +1,218 @@
+{
+ "plugin": {
+  "summary": "Implemented all eight wave-4b plugin fixes in plugin/heartland-k9s-core and bumped it to 1.0.2. (1) Icon previews: Fields\\Renderer::sprite_symbol_prefix() now defaults to 'hk9-icon-' (filter kept), so icon_svg() emits <use href=\"\u2026icons.svg#hk9-icon-<name>\">; Playwright confirms the Home \u2192 Features repeater icon preview paints (13\u00d717 px, shield-check) and follows the select. (2) Settings link fields render a Label input ([label]); Store::sanitize_link already kept it; saving the Header tab in the browser keeps header.cta_link.label = \"Donate Now\" with the whole option value-identical. (3) Forms no-JS path: only validation/duplicate/send_failed persist a result transient; every other failure redirects with a stateless ?hk9_form=\u2026&status=error&code=<code> that render() maps to a canned message (Antispam::outcomes() is now the single code\u2192status/message/refresh map); a per-IP-hash failure counter (hk9_form_fail_*, default 10/hour, filter hk9/forms/failure_limit) counts every failed process() and, once reached, stops persisting any error state. Curl: bad nonce \u2192 303 \u2026&code=nonce, honeypot \u2192 \u2026&code=honeypot, wp_options result rows unchanged (7\u21927); validation error \u2192 \u2026&t=<key> (7\u21928), rendered with field errors, consumed back to 7; a bogus code renders no summary. (4) Import\\Payload::scan_archive() pre-scans the ZIP with ZipArchive (PclZip fallback) and refuses the whole upload (before any extraction, before the directory exists) on dotfiles, traversal/absolute paths and script extensions \u2014 HTML now included, except the payload format's own block-markup files content/<name>.html (root or single top-level folder); purge_scripts() reuses the same predicate. Verified through the admin upload screen: a ZIP with media/.htaccess + media/x.php is refused with a message naming the entry; the clean payload-mini ZIP unpacks with its content/*.html intact. uninstall.php purge branch now deletes uploads/hk9-import and uploads/hk9-payload-* (direct children only, WP_Filesystem) and the hk9_forms_mail_failed_dismissed user meta. Redirects\\Resolver::test() uses apply_filters('hk9/redirects/test_sslverify', true, $key) instead of sslverify=false. fields.js repeater summary uses DOMParser. (5) New Redirects\\LegacyPaths module: on save_post_hk9_barkode (priority 20, after the Details box save) a published record with a non-empty hk9_legacy_path gets a 301 rule legacy path \u2192 {type:'record', slug} added only when no rule exists for that source; existing rules are never touched, the record's own permalink path is refused, validation refusals (live-content collision, loop, chain) are left to staff, and it stays idle while an import step holds the import lock. Help text rewritten to say exactly that and that rules live under Heartland \u2192 Redirects. (6) New PostTypes\\MenuOrder module: auto-drafts of hk9_person/partner/story/team/campaign get menu_order = max(menu_order)+1 (explicit values and non-auto-draft inserts untouched); help text sits directly under the Order input \u2014 classic editor (Person/Partner: core Post Attributes callback wrapped in place) and block editor (Team/Campaign: WP 7.1 no longer renders any Order control, so a NumberControl bound to menu_order plus the help is added to the Summary panel via PluginPostStatusInfo; verified it edits the editor store). (7) Story veteran_name help notes the listing card heading. (8) PayPal hosted button ID help text replaced verbatim. tests/core-fixes-test.php extended with 61 new checks (93/93 PASS), tests/sections-test.php 39/39 PASS, new tests/wave4b-editor.mjs 15/15 PASS with screenshots.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/heartland-k9s-core.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Fields/Renderer.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Page.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/css/admin.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/js/fields.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Handler.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Antispam.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Payload.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/uninstall.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Redirects/Resolver.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Redirects/LegacyPaths.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/PostTypes/MenuOrder.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Plugin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Meta/Definitions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/core-fixes-test.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/wave4b-editor.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/wave4b/home-features-icon-field.png",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/wave4b/home-features-icon-field-swapped.png",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/wave4b/settings-header-destination.png",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/wave4b/person-post-attributes-order.png",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/wave4b/team-summary-order-help.png"
+  ],
+  "tests": [
+   {
+    "name": "php -l on every touched PHP file (14 files incl. uninstall.php, both new modules, the test file)",
+    "result": "PASS",
+    "evidence": "No syntax errors detected for each; node --check fields.js and wave4b-editor.mjs OK"
+   },
+   {
+    "name": "tests/core-fixes-test.php (existing 32 + 61 new W4b checks)",
+    "result": "PASS",
+    "evidence": "tools/wp.sh eval-file \u2026 core-fixes-test.php --user=admin \u2192 '== 93 passed, 0 failed ==' (icon prefix/sprite symbol; sanitize_submission keeps header.cta_link.label + rendered [label] input; legacy-path rule created on publish, not on draft, resolver \u2192 record permalink, never overwrites, own permalink refused, empty path no-op, help text; menu_order max+1 for all 5 types (person 12, partner 14, team 3, campaign 6, story 2), explicit/non-auto-draft untouched, classic Post Attributes box shows Order help, BarKode box untouched; refused_entry matrix (15 cases), scan_archive passes a clean zip with __MACOSX and refuses one with media/.htaccess naming the entry, purge_scripts keeps content/*.html; process() bad nonce \u2192 code nonce with no transient, failure counter reaches limit, canned messages; sslverify defaults true and filter opts out)"
+   },
+   {
+    "name": "tests/sections-test.php",
+    "result": "PASS",
+    "evidence": "'39 checks, 0 failed' before and after the changes"
+   },
+   {
+    "name": "No-JS curl: bad nonce (with and without referer) and honeypot with valid nonce/token",
+    "result": "PASS",
+    "evidence": "303 \u2192 http://localhost:8093/contact/?hk9_form=contact&status=error&code=nonce#hk9-form-contact (home URL fallback without referer), \u2026&code=honeypot; _transient_hk9_form_res_ rows 7 before \u2192 7 after"
+   },
+   {
+    "name": "No-JS curl: validation error with valid nonce/token",
+    "result": "PASS",
+    "evidence": "303 \u2192 \u2026/contact/?hk9_form=contact&status=error&t=48122ef1\u2026#hk9-form-contact; rows 7 \u2192 8; GET of that URL renders the summary with 5 field errors; rows back to 7 after render (consumed on shutdown); GET \u2026&code=nonce renders the canned 'Your session has expired\u2026' summary; \u2026&code=bogus renders the summary hidden"
+   },
+   {
+    "name": "tests/wave4b-editor.mjs (Playwright chromium, admin/admin)",
+    "result": "PASS",
+    "evidence": "15 checks, 0 failed: icon preview href \u2026#hk9-icon-shield-check painted 13\u00d717px and swaps to #hk9-icon-alert-triangle (reverted, not saved); Header tab label input shows 'Donate Now', Save keeps header.cta_link.label='Donate Now', header group byte-identical and every hk9_settings value identical (key order ignored); new Person auto-draft opens with Order 12 (max 11) + help under the Order input; new Team auto-draft menu_order 3 (max 2), Summary panel Order field shows 3 and typing 8 sets editor-store menu_order 8; both auto-drafts deleted; no uncaught JS errors. Screenshots in docs/reports/screenshots/wave4b/"
+   },
+   {
+    "name": "Admin ZIP upload through Heartland \u2192 Setup & Import",
+    "result": "PASS",
+    "evidence": "mini-bad.zip (media/.htaccess + media/x.php): notice 'The archive was refused: entry \"media/x.php\" \u2014 script or HTML files are not allowed (block markup belongs in content/*.html)\u2026', no hk9-payload-* dir created; mini-clean.zip: unpacked into uploads/hk9-payload-<rand>/ with content/*.html, media/**, .htaccess + index.html; uploaded copy removed afterwards and hk9_import_payload restored to the bind-mount path"
+   },
+   {
+    "name": "uninstall.php step-6 directory purge block (exercised in isolation via wp eval against tmp dirs)",
+    "result": "PASS",
+    "evidence": "uploads/hk9-import and uploads/hk9-payload-tmptest deleted, uploads/other-dir kept \u2014 see issue #1 for the side effect on real logs"
+   },
+   {
+    "name": "debug.log after all runs",
+    "result": "PASS",
+    "evidence": "docker exec \u2026 debug.log has only the 2 pre-existing SMTP 'Form notification failed' lines; no warnings/notices from the new code"
+   }
+  ],
+  "issues": [
+   "SIDE EFFECT (my mistake, not recoverable): while exercising the new uninstall purge block against tmp directories I ran it on the live stack, and it deleted the real uploads/hk9-import/ directory \u2014 the run logs (<run>.log) of the 20 recorded import runs are gone. Media, posts, options and the runs table are untouched; the Setup & Import 'log download' for those runs now answers 'Log not found' (404) and the directory is recreated on the next run. Nothing else in uploads was touched.",
+   "hk9_redirects option normalized: the first core-fixes test run's Store::upsert() re-saved all 23 rules through save_rules(), which stores the normalized form (e.g. 'by' string user_login written by the importer \u2192 int 0). Values that matter (to/status/enabled/note/seed) are unchanged and the admin list already read the normalized form (by was shown as '\u2014' either way); the importer's reconcile compares only to/status/enabled, so no conflicts. Every admin save has always done this normalization.",
+   "HTML in payload ZIPs cannot be refused blanket: the payload format itself stores block markup as content/<key>.html (tools/build-payload.mjs, docs/importer.md \u00a7payload). scan_archive()/refused_entry() therefore allow .html only as content/<name>.html at the root or inside the single top-level folder and refuse every other .html/.htm/.xhtml (index.html at root included \u2014 Log::protect_dir re-creates the plugin's own). Archives with any dotfile (.DS_Store, __MACOSX is ignored) are refused outright with a message naming the entry.",
+   "no-JS UX trade-off per the brief: too_fast and rate_limited are now stateless (only validation/duplicate/send_failed keep a transient), so a human who trips the 3-second time-trap on the no-JS path gets the canned message with an empty form (typed values are not carried). JS submissions are unaffected.",
+   "Failure counter scope: Antispam::record_failure() counts every failed process() (REST and admin-post) per IP hash for an hour, but only the no-JS persistence is affected once the limit (10, filter hk9/forms/failure_limit) is hit \u2014 REST never persisted state. Clients behind a shared NAT share the counter; after the limit the no-JS path still works but shows generic canned messages without field highlighting. The counters I created during curl/test runs were deleted.",
+   "First browser run reported hk9_settings 'changed' by the Header re-save when compared as a raw JSON string; the value-level comparison added afterwards (and every later run) shows every value identical, so the difference was key order / normalization of the whole option that Settings-API saves always rewrite (or a concurrent write by another agent) \u2014 I could not capture the raw before-state.",
+   "Editor-matrix / other tooling that expects the bad-nonce no-JS redirect to carry t=<key> and a transient must be updated to the new code=<code> contract.",
+   "docs/importer.md (lines 108 and 116) and the admin guide still say archives are 'purged' of dotfiles/scripts after extraction; both are outside my area and should say the upload is refused up-front (see integration notes)."
+  ],
+  "integration_notes": "DEV MU-PLUGIN: add to /Users/carleykuehner/www/heartland-k9s-for-veterans/docker/mu-plugins/hk9-dev.php \u2014 `add_filter( 'hk9/redirects/test_sslverify', '__return_false' );` (filter signature: (bool $verify, string $key); default true). The local stack is plain http://localhost:8093, so it is only needed if the dev stack ever serves https with a self-signed certificate; production keeps certificate verification. NEW FILTERS: hk9/forms/failure_limit (int, default 10 failures per IP hash per hour; 0 disables the counter), hk9/menu_order/types (post types that get menu_order = max+1 on auto-draft; default hk9_person, hk9_partner, hk9_story, hk9_team, hk9_campaign), hk9/redirects/test_sslverify; hk9/fields/icon_symbol_prefix now defaults to 'hk9-icon-' (the theme needs no hook). NO-JS FORMS CONTRACT CHANGE: failures unknown_form/nonce/honeypot/token/too_fast/expired/rate_limited redirect to `<page>?hk9_form=<id>&status=error&code=<code>#<anchor>` with no database write; validation/duplicate/send_failed keep `\u2026&status=error&t=<key>` + transient (unless the client passed the failure limit, then they also fall back to code=). Handler::canned_message()/Antispam::outcomes() are public for tooling. THEME: nothing required for icons; Settings link values now persist `label` for header.cta_link and every links.* destination (Store::sanitize_link) \u2014 the theme may start using them (it still prints header.cta_label today); per the new help text the theme should implement links.paypal_hosted_button_id on the Donate page (PayPal button \u2192 hosted button checkout for that ID; hide the PayPal option when empty). REDIRECTS: Redirects\\\\LegacyPaths adds `legacy path \u2192 {type:'record', slug}` (301, note 'Legacy path of BarKode record \"<title>\"', seed=false) only when the source has no rule; it is skipped while Import\\\\Map::lock_info() reports an import lock, so payload redirects stay the importer's (rollback-tracked) job. ORDER FIELD: WP 7.1's block editor renders no Order control at all for page-attributes CPTs; PostTypes\\\\MenuOrder now adds one (with the help text) to the Summary panel for hk9_team/hk9_campaign via PluginPostStatusInfo, and wraps the classic 'Post Attributes' box callback for hk9_person/hk9_partner. hk9_story has no page-attributes support, so it only gets the menu_order default. DOCS TO UPDATE (outside my area): docs/importer.md lines 108/116 \u2192 'archives carrying hidden files, script files or HTML outside content/ are refused before extraction (Payload::scan_archive); purge_scripts() remains as defence in depth'; admin guide \u2192 BarKode 'Legacy path' now seeds the redirect automatically on publish (no manual rule needed unless one already exists), PayPal help wording, and the Order field/help for Team/Campaign in the block editor. UNINSTALL: purge branch now removes uploads/hk9-import, uploads/hk9-payload-* and hk9_forms_mail_failed_dismissed user meta (only with advanced.purge_on_uninstall). RE-RUN COMMANDS: tools/wp.sh eval-file /var/www/html/wp-content/plugins/heartland-k9s-core/tests/core-fixes-test.php --user=admin; tools/wp.sh eval-file \u2026/tests/sections-test.php; node plugin/heartland-k9s-core/tests/wave4b-editor.mjs (writes screenshots to docs/reports/screenshots/wave4b/ by default; saves the Header tab with its current values, creates and deletes one Person and one Team auto-draft). No git operations were performed; the live uploads/hk9-import log directory was deleted by my uninstall-block test (see issues)."
+ },
+ "theme": {
+  "summary": "Theme 1.0.2: (1) font preloads now use the exact @font-face URL (no ?v=) \u2014 Playwright request log shows every woff2 exactly once on 7 pages, mobile + desktop (was 5 font requests with 2 duplicates). (2) Mobile Lighthouse (tools/lighthouse.mjs, 3 runs, medians): / 84\u219294, /about/ 87\u219297, /program/ 87\u219296, /contact/ 91\u219298, /news/ 90\u219299 (extra single runs: /barkode/hk923-005/ 87\u219294, /donate/ 98, story single 96). Levers: render-blocking theme.css 172.6 KB/27.4 KB gz \u2192 47.0 KB/9.2 KB gz core plus per-template bundles (forms 16.4/3.1, content 12.2/2.5, blog 26.2/4.4, pages 14.0/2.5, records 30.1/4.8 KB raw/gz) enqueued from a template map (hk9_style_bundles(), filter hk9/theme/style_bundles) \u2014 split driven by Playwright CSS coverage across 29 URLs \u00d7 2 widths (docs/reports/css-coverage.md); unused Bootstrap layers dropped (buttons, type, grid :root, transitions, labels/form-text, validation, pagination, utilities API, palette :root; form-control/select/check moved to forms.css); cross-bundle @extends became mixins (_mixins.scss); LCP image preload with identical srcset/sizes for image heroes, the About split-card photo and the blog hero (filter hk9/theme/lcp_image); new hk9-logo-sm 140\u00d7160 size generated on demand (hk9_ensure_image_size) with sizes derived from the configured logo height \u2192 crest 67.8 KB \u2192 35.3 KB, one file for header+footer. (3) Focus: --hk9-focus-ring token (navy on page, white in hero/navy sections/footer); .hk9-btn gets a 2px currentColor outline + 4px halo, links/toggle 2px outline, inputs 2px ring; verified with forced :focus-visible captures on light and navy surfaces; documented as deviation 10 in docs/visual-comparison.md. (4) Donate options: PayPal item hidden when links.paypal_hosted_button_id is empty, href rebuilt as https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=<id> otherwise (tested live/empty/custom without DB writes). (5) Rebuilt CSS/JS, regenerated docs/reports/screenshots/wp + compare.mjs (reference numbers unchanged), before/after pixel diff vs the 1.0.1 CSS = 0.00% on 29 routes \u00d7 2 widths (photos page differs only by image-paint flakiness, identical layout), computed-style diff shows no rest-state changes besides the logo's 0.1 px width; network-audit PASS (16 URLs), axe 0 violations (16 URLs \u00d7 2 widths). Version bumped to 1.0.2 with changelog.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/assets.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/setup.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/options.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/legacy.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/functions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/style.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/readme.txt",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/theme.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/forms.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/content.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/blog.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/pages.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/records.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/editor.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_mixins.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_bootstrap-vars.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_bootstrap.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_pages-shared.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_pages-reference.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_pages-migrated.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_base.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_tokens.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_buttons.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_cards.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_sections.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_forms.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_prose.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_blog.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_blog-states.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_grids.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/forms.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/content.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/blog.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/pages.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/records.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/editor.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/build-css.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/visual-comparison.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/report.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/summary.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/css-coverage.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/network-audit.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/axe.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/diffs/report.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/wp/chromium/",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/keyboard/focus-ring-1.0.2.png"
+  ],
+  "tests": [
+   {
+    "name": "Font double-download (Playwright request log, 7 URLs \u00d7 mobile 412@1.75 + desktop 1440)",
+    "result": "PASS",
+    "evidence": "Every page: 3 woff2 requests, 3 unique URLs (fraunces-var, inter-var, fraunces-italic-var for the footer tagline), no URL requested twice; preload href == @font-face src (assets/fonts/<file>.woff2, no query). Before: 5 requests incl. fraunces-var/inter-var twice (?v= vs plain)."
+   },
+   {
+    "name": "Mobile Lighthouse, node tools/lighthouse.mjs --urls=/,/about/,/program/,/contact/,/news/ --runs=3 --out=docs/reports/lighthouse (final run after all changes)",
+    "result": "PASS (all \u2265 90)",
+    "evidence": "/ 94 (94/94/94, FCP 1.36 s, LCP 3.08 s, CLS 0.000) \u00b7 /about/ 97 (97/96/97, LCP 2.63 s) \u00b7 /program/ 96 (96/96/96, LCP 2.78 s) \u00b7 /contact/ 98 (98/98/98, LCP 2.26 s) \u00b7 /news/ 99 (99/99/98, LCP 2.18 s); A11y/BP/SEO 100 everywhere. Before: 84/87/87/91/90. Extra --runs=1: /barkode/hk923-005/ 94 (SEO 69 = intentional noindex), /donate/ 98, /stories/madison-and-gunther/ 96."
+   },
+   {
+    "name": "CSS budget: node tools/build-css.mjs --check",
+    "result": "PASS",
+    "evidence": "theme.css 47.0 kB raw / 9.2 kB gzip (budget 90/16) \u00b7 forms.css 16.4/3.1 \u00b7 content.css 12.2/2.5 \u00b7 blog.css 26.2/4.4 \u00b7 pages.css 14.0/2.5 \u00b7 records.css 30.1/4.8 \u00b7 editor.css 18.2/3.6. Before: theme.css 172.6 kB / 27.4 kB gzip. Lighthouse unused-css-rules passes on every audited page; per-page bundles verified via request log (/ core only; about/program core+pages; contact core+forms+pages; news core+blog; donate core+records; record single core+content+records)."
+   },
+   {
+    "name": "Playwright CSS coverage (page.coverage.startCSSCoverage, expanded CSS + source map \u2192 partial attribution, 29 URLs \u00d7 390/1440)",
+    "result": "PASS (measured, drove the split)",
+    "evidence": "docs/reports/css-coverage.md: 1.0.1 stylesheet 206 335 B expanded / 1635 rules, 26\u201338 KB used per page; 0 used rules in bootstrap utilities API, type, transitions, labels, form-text, validation, pagination, grid; bootstrap buttons 3/24 rules used (the .btn base only). 1.0.2 core: 57 212 B expanded, 486 rules; / uses 231 rules."
+   },
+   {
+    "name": "Visual regression, before (1.0.1 CSS served via request interception from git HEAD) vs after \u2014 tools/screenshot.mjs + tools/compare.mjs on 29 routes \u00d7 390/1440 + mobile menu open",
+    "result": "PASS",
+    "evidence": "0.00% differing pixels on 56 of 58 captures (home, about, program, veterans, get-involved@1440, barkode, stories, contact, news, donate, events, campaigns, meet-the-team, teams, highlighted-team, application, 5-questions, privacy, back-the-pack, thank-you, gear, story/team/event/campaign singles, barkode record, search, 404, tag archive, empty search, menu-open). get-involved@390 0.02% (a partner logo image resample, visually identical). /photos/ 4\u201317% from gallery tiles not yet painted at capture time \u2014 an after-vs-after capture with the same CSS also differs (2.3% @390) and tile frames/positions align exactly; layout confirmed identical by the computed-style dump."
+   },
+   {
+    "name": "Computed-style regression dump (every element, 100+ properties + bounding rects, plus forced :hover/:focus-visible on ~1 500 interactive elements; 30 URLs \u00d7 2 widths)",
+    "result": "PASS",
+    "evidence": "Rest state: only the logo (aspect-ratio 263/300 \u2192 140/160, width 56.09 \u2192 56 px / 70.13 \u2192 70 px); the 6 'auto margin' readings on home were verified as capture noise (rects identical, both variants read 0px on re-check). Hover: unchanged except .wp-block-file__button (thank-you page) no longer underlines on hover (button behaviour, mixin inlined after the prose link rule). Focus-visible: intentional changes only (ring 1px\u21922px/4px halo, navy\u2192white on dark surfaces)."
+   },
+   {
+    "name": "Focus ring visual check (forced :focus-visible captures, 24 targets on light and navy surfaces)",
+    "result": "PASS",
+    "evidence": "docs/reports/screenshots/keyboard/focus-ring-1.0.2.png: header CTA, hero primary/glass on photo, BarKode band outline-light, tint CTA band, donate outline/primary, 404 outline, footer link/social, mobile toggle, nav link, card link, team-card title link, contact input/select/submit, application checkbox, search fields on light and navy \u2014 every one shows a visible 2 px ring (navy on light, white on navy)."
+   },
+   {
+    "name": "PayPal option (options.php) \u2014 live / empty / custom id via hk9/settings/all filter, no DB writes",
+    "result": "PASS",
+    "evidence": "live id METNHXQ9EBUMQ \u2192 4 items, href https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=METNHXQ9EBUMQ; empty \u2192 PayPal item skipped (3 items, 3-column grid); custom TESTID123 \u2192 href rebuilt with TESTID123. payload-src/records/settings.json:58 and the live hk9_settings option both carry links.paypal_hosted_button_id = METNHXQ9EBUMQ."
+   },
+   {
+    "name": "Logo delivery",
+    "result": "PASS",
+    "evidence": "Header/footer now request Concept-1-rocker-outlined-2-140x160.png (35 276 B) instead of -263x300.png (67 758 B) on mobile (1.75\u00d7) and desktop (1\u00d7); one file shared; sizes=56px (header) / 70px (footer) computed from the configured heights and the attachment aspect ratio; size generated on demand (hk9_ensure_image_size) and stored in the attachment metadata."
+   },
+   {
+    "name": "node tools/network-audit.mjs (16 default URLs, incl. /, /about/, /program/, /contact/, /donate/)",
+    "result": "PASS",
+    "evidence": "docs/reports/network-audit.md: all 16 URLs clean \u2014 only localhost:8093, no failed requests, no console errors/warnings."
+   },
+   {
+    "name": "node tools/axe.mjs (16 default URLs \u00d7 390/1440, incl. /, /about/, /program/, /contact/, /donate/)",
+    "result": "PASS",
+    "evidence": "docs/reports/axe.md: 0 critical / 0 serious / 0 moderate / 0 minor on all 32 page\u00d7width combinations."
+   },
+   {
+    "name": "php -l on every touched PHP file; debug.log",
+    "result": "PASS",
+    "evidence": "inc/assets.php, inc/setup.php, inc/template-tags.php, template-parts/sections/legacy.php, template-parts/sections/options.php, functions.php: no syntax errors. debug.log contains only two pre-existing SMTP lines from other agents' form tests (16:53/16:54 UTC), nothing from the theme."
+   },
+   {
+    "name": "node tools/compare.mjs (reference vs docs/reports/screenshots/wp)",
+    "result": "PASS (unchanged)",
+    "evidence": "docs/reports/diffs/report.md numbers match the previous run within capture noise (e.g. home 390 42.24% \u2192 42.23%, about 1440 20.32% \u2192 20.32%); committed-vs-new captures differ only by the header/footer logo resample (~300 px) and the BarKode tile that was unpainted in the old home-1440 capture."
+   }
+  ],
+  "issues": [
+   "/photos/ before/after screenshot diffs (4\u201317%) are gallery tiles not yet painted when Chromium takes the full-page capture (75 images); after-vs-after captures with identical CSS differ the same way and the computed-style/rect dump shows no change \u2014 not a regression, but tools/screenshot.mjs cannot produce a stable capture of that page.",
+   "On the local stack the on-demand hk9-logo-sm size was generated for the live logo attachment (ID 1287): new file uploads/2023/05/Concept-1-rocker-outlined-2-140x160.png (35 KB, WP GD output) and a 'hk9-logo-sm' entry in its _wp_attachment_metadata. Additive only (nothing deleted/renamed); production does the same on first render, or `wp media regenerate 1287 --only-missing` pre-generates it.",
+   "Deliberate behaviour changes beyond the brief: dropping Bootstrap's .btn layer also removes its `:first-child:active` / `+ .btn:active` rules, which made every pressed button momentarily transparent (undefined --bs-btn-active-* vars) \u2014 pressed buttons now keep their colour; `.wp-block-file__button` (core File block download button) no longer underlines on hover.",
+   "Remaining Lighthouse opportunities are media/hosting-level, not theme: modern-image-formats (hero/feature JPEGs, crest PNG), uses-responsive-images for barkode-768x768.jpg on / (below the fold) and the About photo, no Cache-Control on /wp-content/uploads/* (local Apache), and the second stylesheet request on the reference templates (pages.css, 2.5 KB gz; inlining it would trade caching for ~1 RTT).",
+   "docs/reports/lighthouse: the three 1.0.1 HTML/JSON diagnostics for home/about/program were deleted (all pages now \u2265 90, the tool writes none); fixture-rich-blocks-* and barkode-hk923-005-run*.json still hold 1.0.1 numbers (the fixture post no longer exists; the record was re-audited once, numbers in summary.md). report-desktop.md was not re-run.",
+   "docs/reports/network-audit.md and axe.md were regenerated with the tools' full default URL lists (16 URLs, superset of the five requested) so the reports stay complete.",
+   "The wave4b editor finding about the blank icon preview (hk9/fields/icon_symbol_prefix) needed no theme change: plugin Fields/Renderer.php already defaults SYMBOL_PREFIX to 'hk9-icon-'. Security findings are all plugin-side and untouched."
+  ],
+  "integration_notes": "Theme 1.0.2 (functions.php, style.css, readme.txt changelog). Build: `npm run build:css` now compiles seven entries (theme, forms, content, blog, pages, records, editor) and prints raw + gzip sizes; `node tools/build-css.mjs --check` fails when the core exceeds 90 kB raw / 16 kB gzip. Bundle entries import `_bootstrap-vars.scss` (Bootstrap functions/config/variables/maps/mixins + theme `_mixins.scss`, no CSS output); `blog.scss`/`forms.scss` import their partials as `@import \\\"_blog\\\"` / `@import \\\"_forms\\\"` because the entry and partial share a name. Cross-bundle looks (card, card-hover, card-center, callout, badge, badge-solid, btn, btn-primary, btn-outline, link, lead, faq-item, faq-question) are mixins \u2014 never `@extend` across bundles. `_pages-shared.scss` (core) holds the site-wide overrides that used to sit in `_pages-reference.scss`; `.hk9-status`, `.hk9-info` and `.screen-reader-text` moved to `_base.scss` (core). Bundle map: `hk9_style_bundles()` in inc/assets.php (order forms \u2192 content \u2192 blog \u2192 pages \u2192 records; filter `hk9/theme/style_bundles($bundles, $template)` for custom templates). LCP preload: `hk9_lcp_image()` / `hk9_preload_lcp_image()` (wp_head priority 1; filter `hk9/theme/lcp_image`); `hk9_legacy_image_sizes()` is shared by the legacy part and the preload \u2014 keep them identical or the preload stops matching. Logo: `hk9-logo-sm` (140\u00d7160, no crop) + `hk9_ensure_image_size()` in inc/setup.php (generates a missing registered size once; failures are locked for a day in transient `hk9_subsize_<id>_<size>`); `hk9_logo_img()` derives `sizes` from branding.header_logo_height / footer_logo_height with the same clamps as hk9_root_css(). Focus token: `--hk9-focus-ring` (tokens) is flipped to #fff by `.hk9-hero, .hk9-section--navy, .hk9-cta-band--navy, .hk9-testimonial--navy, .hk9-footer` in _base.scss \u2014 add any new dark surface there. PayPal: template-parts/sections/options.php treats any item whose button URL matches paypal.com/cgi-bin/webscr as the PayPal option; the payload (payload-src/records/settings.json line 58) and the live hk9_settings option both carry links.paypal_hosted_button_id = METNHXQ9EBUMQ, so nothing to add. Docs: docs/visual-comparison.md (\u00a74 focus note + deviation 10), docs/ARCHITECTURE.md \u00a711 (stylesheets/bundles/tokens), docs/reports/lighthouse/summary.md (1.0.2 section on top), docs/reports/css-coverage.md (new), docs/reports/screenshots/keyboard/focus-ring-1.0.2.png (git-ignored PNG). No git operations were performed; the working tree also contains other agents' concurrent plugin edits (not mine)."
+ }
+}

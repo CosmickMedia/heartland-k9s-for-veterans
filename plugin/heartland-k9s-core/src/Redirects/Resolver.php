@@ -228,12 +228,21 @@ final class Resolver {
 		if ( ! $http ) {
 			return $out;
 		}
-		$response = wp_remote_head(
+		/**
+		 * Filters whether the redirect "Test" self-request verifies the site's TLS
+		 * certificate. Defaults to true; a local stack with a self-signed certificate
+		 * can return false (e.g. from a dev-only mu-plugin).
+		 *
+		 * @param bool   $verify Verify the certificate (default true).
+		 * @param string $key    Redirect source key being tested.
+		 */
+		$sslverify = (bool) apply_filters( 'hk9/redirects/test_sslverify', true, $key );
+		$response  = wp_remote_head(
 			home_url( $key ),
 			[
 				'redirection' => 0,
 				'timeout'     => 10,
-				'sslverify'   => false,
+				'sslverify'   => $sslverify,
 			]
 		);
 		if ( is_wp_error( $response ) ) {

@@ -1,5 +1,32 @@
 # Lighthouse — summary and interpretation
 
+## Theme 1.0.2 re-run (2026-09-11, same tool and settings)
+
+`node tools/lighthouse.mjs --urls=/,/about/,/program/,/contact/,/news/ --runs=3 --out=docs/reports/lighthouse` after the theme performance work (font preload URLs, CSS core + template bundles, LCP image preload, small logo size). `report.md` and the `*-run{1,2,3}.json` files for these five URLs are from this run; the three HTML diagnostics from the 1.0.1 run (home/about/program) were removed because every page now scores ≥ 90 and the tool no longer writes them. The `fixture-rich-blocks-*` and `barkode-hk923-005-run*.json` files are still the 1.0.1 numbers (the fixture post no longer exists; the registry record was re-audited once, see below).
+
+| URL | Perf 1.0.1 → **1.0.2** (runs) | A11y | BP | SEO | FCP | LCP | TBT | CLS |
+|---|---|---|---|---|---|---|---|---|
+| `/` | 84 → **94** (94/94/94) | 100 | 100 | 100 | 2.11 → 1.36 s | 4.21 → 3.08 s | 0 | 0.003 → 0.000 |
+| `/about/` | 87 → **97** (97/96/97) | 100 | 100 | 100 | 2.26 → 1.36 s | 3.76 → 2.63 s | 0 | 0.027 → 0.000 |
+| `/program/` | 87 → **96** (96/96/96) | 100 | 100 | 100 | 2.26 → 1.36 s | 3.76 → 2.78 s | 0 | 0.003 → 0.000 |
+| `/contact/` | 91 → **98** (98/98/98) | 100 | 100 | 100 | 2.26 → 1.66 s | 3.16 → 2.26 s | 0 | 0.002 → 0.000 |
+| `/news/` | 90 → **99** (99/99/98) | 100 | 100 | 100 | 2.26 → 1.36 s | 3.30 → 2.18 s | 0 | 0.003 → 0.000 |
+
+Single extra runs (not in `report.md`, `--runs=1 --no-html`): `/barkode/hk923-005/` 87 → **94** (SEO 69 = intentional noindex), `/donate/` **98**, `/stories/madison-and-gunther/` **96**.
+
+What changed (theme only, `theme/heartland-k9s` 1.0.2):
+
+1. **Fonts download once.** `hk9_preload_fonts()` now preloads `assets/fonts/<file>.woff2` with the exact URL the compiled `@font-face` resolves to (the `?v=` query was dropped). Playwright request logging on `/`, `/about/`, `/program/`, `/contact/`, `/news/`, `/donate/` and a registry record, mobile and desktop: 3 font requests per page (Fraunces roman, Inter, Fraunces italic for the footer tagline), each URL exactly once — was 5 requests / 106 KB of duplicates.
+2. **Render-blocking CSS 173 KB → 47 KB core (28 → 9.2 KB gzip)** plus one or two small per-template bundles: `forms.css` 16 KB / 3.1 KB gz, `content.css` 12 KB / 2.5 KB gz, `blog.css` 26 KB / 4.4 KB gz, `pages.css` 14 KB / 2.5 KB gz, `records.css` 30 KB / 4.8 KB gz (`tools/build-css.mjs` prints raw + gzip sizes; `hk9_style_bundles()` in `inc/assets.php` picks them per template). `/` loads the core only (9.2 KB gz); `/about/` and `/program/` core + pages (11.7 KB gz); `/contact/` core + forms + pages; `/news/` core + blog. Playwright CSS coverage across every template (29 URLs × 2 widths) drove the split; unused Bootstrap layers were dropped outright (buttons, type, grid `:root` breakpoints, transitions, labels/form-text, validation, pagination, the utilities API, the palette `:root` variables). `unused-css-rules` now passes on every page.
+3. **LCP image preload.** `hk9_preload_lcp_image()` prints `<link rel="preload" as="image" imagesrcset imagesizes fetchpriority="high">` for the image hero (home/program/barkode), the About split-card photo and the blog hero, using the same srcset/sizes as the `<img>` (Chrome picks the same candidate — verified one hero request per page). LCP load delay on `/` 2 218 → 1 248 ms.
+4. **Logo 68 KB → 35 KB.** New `hk9-logo-sm` size (140×160, generated on demand for already-uploaded logos by `hk9_ensure_image_size()`), `sizes` = the rendered width derived from the configured logo height (56 px header / 70 px footer) so 1×–2× screens pick the 140 w candidate; header and footer share the one file. Still a PNG (core generates no WebP for PNG uploads).
+
+What remains (all outside the theme's control, and the reason the pages are 94–99 rather than 100): `modern-image-formats` (hero/feature JPEGs and the crest PNG — media conversion), `uses-responsive-images` for the below-the-fold `barkode-768x768.jpg` tile on `/` and the About photo (needs additional intermediate sizes closer to the rendered width), the missing `Cache-Control` on `/wp-content/uploads/*` from the local Apache, and the render-blocking cost of the two remaining stylesheet requests on the reference templates (400–730 ms estimated on Slow 4G; inlining `pages.css` would remove one request at the cost of caching it).
+
+---
+
+## Theme 1.0.1 audit (original)
+
 Generated tables: `report.md` (mobile, 7 URLs × 3 runs) and `report-desktop.md` (desktop preset, `/` and `/about/`, 1 run). Raw JSON for every run (`<slug>-run<N>.json`, `<slug>-desktop-run1.json`) and the HTML diagnostics (`<slug>-diagnostic.report.html`) sit next to this file. Registry privacy: the `/barkode/hk923-005/` run files are scrubbed by the tool (no screenshots, DOM snippets/labels or page text — `hk9Scrubbed` marker in the JSON) and no HTML diagnostic is written for it (an HTML report embeds the page); the tool applies this to any URL matching `--private` (default `/barkode/`). Re-render the tables without re-auditing with `node tools/lighthouse.mjs --reuse …`.
 
 ## Environment

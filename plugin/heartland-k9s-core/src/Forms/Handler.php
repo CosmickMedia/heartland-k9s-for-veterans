@@ -4,13 +4,19 @@
  * the REST route and the `hk9_render_form()` template function; runs the shared
  * submission pipeline (anti-spam → validation → store → mail → redirect/result).
  *
- * Result states after a non-JS POST are carried by a short-lived transient
- * (`?hk9_form=<id>&status=sent|error&t=<key>`): the "sent" state is keyed by the
- * single-use token, error states by a fresh random key. No submitted data ever
- * appears in a URL; error states (which hold the typed values for re-rendering,
- * only for requests that passed the nonce + token checks, capped in size) are
- * deleted at the end of the request that rendered them. Pages rendering a form
- * and result pages are excluded from page caches (tokens are per visitor).
+ * Result states after a non-JS POST: the "sent" state and the error states that
+ * carry field errors / typed values (validation, duplicate, send_failed — all past
+ * the nonce + token checks) are held in a short-lived transient
+ * (`?hk9_form=<id>&status=sent|error&t=<key>`; "sent" keyed by the single-use
+ * token, errors by a fresh random key, values capped in size, deleted at the end
+ * of the request that rendered them). Every other failure (unknown form, nonce,
+ * honeypot, token, too fast, expired, rate limited) is stateless: the redirect
+ * carries `&code=<code>` and render() maps it to the canned message, so a request
+ * that never proved a real form session writes nothing to the database. A per-IP-
+ * hash failure counter (Antispam::record_failure) additionally stops persisting
+ * any error state once a client has failed FAILURE_LIMIT times in an hour. No
+ * submitted data ever appears in a URL. Pages rendering a form and result pages
+ * are excluded from page caches (tokens are per visitor).
  *
  * @package HK9\Core
  */
@@ -32,6 +38,12 @@ namespace HK9\Core\Forms {
 		private const STORED_VALUE_MAX = 2000;
 		/** Outcomes for which typed values are never persisted (the request never proved a real form session). */
 		private const NO_VALUE_CODES = [ 'unknown_form', 'nonce', 'honeypot', 'token', 'expired' ];
+		/**
+		 * The only failure outcomes that persist a result-state transient on the no-JS path
+		 * (they carry field errors and/or the typed values needed to re-render the form).
+		 * Everything else redirects with a stateless `code` query arg.
+		 */
+		private const STATEFUL_CODES = [ 'validation', 'duplicate', 'send_failed' ];
 
 		/** Error-state transient keys consumed during this request (deleted on shutdown, after every render). */
 		private static array $consumed = [];
@@ -206,12 +218,20 @@ namespace HK9\Core\Forms {
 				'code'    => '',
 			];
 
-			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- state lookup keyed by a random single-use token; no data is written.
+			// phpcs:disable WordPress.Security.NonceVerification.Recommended -- state lookup keyed by a random single-use token / a canned code; no data is written.
 			$q_form   = isset( $_GET['hk9_form'] ) ? sanitize_key( wp_unslash( $_GET['hk9_form'] ) ) : '';
 			$q_status = isset( $_GET['status'] ) ? sanitize_key( wp_unslash( $_GET['status'] ) ) : '';
 			$q_token  = isset( $_GET['t'] ) && is_string( $_GET['t'] ) && preg_match( '/^[a-f0-9]{32}$/', $_GET['t'] ) ? $_GET['t'] : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput -- validated by regex.
+			$q_code   = isset( $_GET['code'] ) ? sanitize_key( wp_unslash( $_GET['code'] ) ) : '';
 			// phpcs:enable
-			if ( $q_form === $form->id() && '' !== $q_token ) {
+			if ( $q_form === $form->id() && 'error' === $q_status && '' === $q_token && '' !== $q_code ) {
+				// Stateless failure: the code maps to a canned message, nothing was stored.
+				$message = self::canned_message( $q_code );
+				if ( '' !== $message ) {
+					$state['message'] = $message;
+					$state['code']    = $q_code;
+				}
+			} elseif ( $q_form === $form->id() && '' !== $q_token ) {
 				$stored = get_transient( self::RESULT_PREFIX . $q_token );
 				if ( is_array( $stored ) && ( $stored['form'] ?? '' ) === $form->id() ) {
 					if ( 'sent' === $q_status && 'sent' === ( $stored['status'] ?? '' ) ) {
@@ -240,9 +260,19 @@ namespace HK9\Core\Forms {
 		 * @param array<string,mixed> $input   Unslashed request data.
 		 */
 		public static function process( string $form_id, array $input ): Result {
+			$result = self::run( $form_id, $input );
+			if ( ! $result->ok ) {
+				Antispam::record_failure( Antispam::client_ip() );
+			}
+			return $result;
+		}
+
+		/** The pipeline proper (process() wraps it to count failures). */
+		private static function run( string $form_id, array $input ): Result {
 			$form = self::form( $form_id );
 			if ( null === $form ) {
-				return new Result( false, 404, 'unknown_form', __( 'This form is not available.', 'heartland-k9s-core' ) );
+				$o = Antispam::outcome( 'unknown_form' );
+				return new Result( false, (int) $o['status'], 'unknown_form', (string) $o['message'] );
 			}
 			$form_id = $form->id();
 			$ip      = Antispam::client_ip();
@@ -275,7 +305,8 @@ namespace HK9\Core\Forms {
 
 			[ 'values' => $values, 'errors' => $errors ] = $form->validate( $input );
 			if ( [] !== $errors ) {
-				return new Result( false, 422, 'validation', __( 'Please correct the highlighted fields and try again.', 'heartland-k9s-core' ), $errors, $values, '', $mode, $key );
+				$o = Antispam::outcome( 'validation' );
+				return new Result( false, (int) $o['status'], 'validation', (string) $o['message'], $errors, $values, '', $mode, $key );
 			}
 
 			// Claim the single-use token atomically only now (valid + validated); released below when
@@ -313,7 +344,8 @@ namespace HK9\Core\Forms {
 
 			if ( ! $sent && 0 === $submission_id ) {
 				Antispam::release( $token );
-				return new Result( false, 500, 'send_failed', __( 'We could not send your message right now. Please try again in a few minutes.', 'heartland-k9s-core' ), [], $values, '', $mode, $key, Antispam::issue( $form_id ) );
+				$o = Antispam::outcome( 'send_failed' );
+				return new Result( false, (int) $o['status'], 'send_failed', (string) $o['message'], [], $values, '', $mode, $key, Antispam::issue( $form_id ) );
 			}
 
 			Antispam::record_send( $ip );
@@ -363,6 +395,13 @@ namespace HK9\Core\Forms {
 				exit;
 			}
 
+			// Stateless outcomes (nothing proved a real form session, or nothing to re-render) and every
+			// outcome from a client past the hourly failure limit: no transient, the code rides in the URL.
+			if ( ! in_array( $result->code, self::STATEFUL_CODES, true ) || Antispam::too_many_failures( Antispam::client_ip() ) ) {
+				wp_safe_redirect( self::result_url( $form->id(), self::source_post( $input ), $input, 'error', '', $result->code ), 303 );
+				exit;
+			}
+
 			// Error states get their own random key so they never overwrite a stored "sent" state.
 			// Values are only present for outcomes past the nonce/token checks (see process()) and are capped.
 			$key = bin2hex( random_bytes( 16 ) );
@@ -381,6 +420,15 @@ namespace HK9\Core\Forms {
 
 			wp_safe_redirect( self::result_url( $form->id(), self::source_post( $input ), $input, 'error', $key ), 303 );
 			exit;
+		}
+
+		/**
+		 * Canned message for a failure code carried in the URL ('' when unknown). Stateful codes
+		 * can arrive here too (a client past the failure limit, or a reused URL): they get their
+		 * generic line without field errors or values.
+		 */
+		public static function canned_message( string $code ): string {
+			return Antispam::message( $code );
 		}
 
 		/* -----------------------------------------------------------------
@@ -417,22 +465,27 @@ namespace HK9\Core\Forms {
 			return $form->success_url();
 		}
 
-		/** URL of the originating page with the result state appended (no submitted data). */
-		private static function result_url( string $form_id, int $source_post, array $input, string $status, string $key ): string {
+		/**
+		 * URL of the originating page with the result state appended (no submitted data):
+		 * `t=<key>` for a stored state, or `code=<code>` for a stateless canned outcome.
+		 */
+		private static function result_url( string $form_id, int $source_post, array $input, string $status, string $key, string $code = '' ): string {
 			$base = $source_post > 0 ? (string) get_permalink( $source_post ) : '';
 			if ( '' === $base ) {
 				$referer = wp_get_referer();
 				$base    = is_string( $referer ) && '' !== $referer ? $referer : home_url( '/' );
 			}
-			$base = remove_query_arg( [ 'hk9_form', 'status', 't' ], $base );
-			$url  = add_query_arg(
-				[
-					'hk9_form' => $form_id,
-					'status'   => $status,
-					't'        => $key,
-				],
-				$base
-			);
+			$base = remove_query_arg( [ 'hk9_form', 'status', 't', 'code' ], $base );
+			$args = [
+				'hk9_form' => $form_id,
+				'status'   => $status,
+			];
+			if ( '' !== $key ) {
+				$args['t'] = $key;
+			} else {
+				$args['code'] = sanitize_key( $code );
+			}
+			$url = add_query_arg( $args, $base );
 			$anchor = is_string( $input['hk9_anchor'] ?? null ) ? sanitize_html_class( $input['hk9_anchor'] ) : '';
 			if ( '' === $anchor ) {
 				$anchor = 'hk9-form-' . $form_id;

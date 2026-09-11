@@ -203,6 +203,14 @@ final class Payload {
 			return new WP_Error( 'hk9_upload', __( 'The uploaded file is not a ZIP archive.', 'heartland-k9s-core' ) );
 		}
 
+		// Refuse the archive outright when it carries anything that must never land under
+		// uploads/ (dotfiles such as .htaccess/.user.ini, script-bearing or HTML files outside
+		// content/, traversal) — before a single byte is extracted.
+		$refused = self::scan_archive( $file['tmp_name'] );
+		if ( is_wp_error( $refused ) ) {
+			return $refused;
+		}
+
 		$uploads = wp_upload_dir( null, false );
 		if ( ! empty( $uploads['error'] ) ) {
 			return new WP_Error( 'hk9_upload', (string) $uploads['error'] );
@@ -282,12 +290,145 @@ final class Payload {
 		return self::remove_dir( $uploads . DIRECTORY_SEPARATOR . $top );
 	}
 
-	/** Extensions never needed by a payload and never allowed under uploads/. */
-	private const SCRIPT_EXTENSIONS = [ 'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'pht', 'cgi', 'pl', 'py', 'sh', 'js', 'mjs', 'svg', 'svgz', 'shtml', 'htm' ];
+	/**
+	 * Extensions never needed by a payload and never allowed under uploads/. HTML is
+	 * included: block markup is only accepted as `content/<name>.html` (at the payload
+	 * root or inside the single top-level folder), see refused_entry().
+	 */
+	private const SCRIPT_EXTENSIONS = [ 'php', 'php3', 'php4', 'php5', 'php7', 'php8', 'phtml', 'phps', 'phar', 'pht', 'cgi', 'pl', 'py', 'sh', 'js', 'mjs', 'svg', 'svgz', 'shtml', 'htm', 'html', 'xhtml', 'xht' ];
+
+	/** Directory (relative to the payload root) that may hold `.html` block-markup files. */
+	private const CONTENT_DIR = 'content';
 
 	/**
-	 * A payload is JSON + block HTML + media: delete anything script-bearing that a
-	 * ZIP may have carried, so nothing executable ever sits under uploads/.
+	 * Why a payload entry (path relative to the payload root, `/` separated) is refused:
+	 * 'dotfile' (any hidden file or directory: .htaccess, .user.ini, .git/…), 'script'
+	 * (any extension segment in SCRIPT_EXTENSIONS; `.html` only passes as
+	 * content/<name>.html or <folder>/content/<name>.html), 'traversal' (`..` or an
+	 * absolute path) or 'nul'. '' when the entry is acceptable.
+	 */
+	public static function refused_entry( string $relative ): string {
+		if ( str_contains( $relative, "\0" ) ) {
+			return 'nul';
+		}
+		$relative = str_replace( '\\', '/', $relative );
+		if ( str_starts_with( $relative, '/' ) || preg_match( '#^[A-Za-z]:/#', $relative ) ) {
+			return 'traversal';
+		}
+		$segments = array_values( array_filter( explode( '/', $relative ), static fn( string $s ): bool => '' !== $s ) );
+		if ( [] === $segments ) {
+			return '';
+		}
+		foreach ( $segments as $segment ) {
+			if ( '..' === $segment ) {
+				return 'traversal';
+			}
+			if ( str_starts_with( $segment, '.' ) ) {
+				return 'dotfile';
+			}
+		}
+		if ( str_ends_with( $relative, '/' ) ) {
+			return ''; // Directory entry.
+		}
+		$name  = array_pop( $segments );
+		$parts = explode( '.', strtolower( $name ) );
+		array_shift( $parts ); // Every extension segment counts (x.php.jpg is refused too).
+		if ( [] === $parts ) {
+			return '';
+		}
+		$depth      = count( $segments );
+		$in_content = ( 1 === $depth && self::CONTENT_DIR === $segments[0] ) || ( 2 === $depth && self::CONTENT_DIR === $segments[1] );
+		$last       = array_key_last( $parts );
+		foreach ( $parts as $i => $ext ) {
+			if ( 'html' === $ext && $in_content && $i === $last ) {
+				continue; // Block markup file of the payload format (content/<name>.html).
+			}
+			if ( in_array( $ext, self::SCRIPT_EXTENSIONS, true ) ) {
+				return 'script';
+			}
+		}
+		return '';
+	}
+
+	/**
+	 * Pre-scan an archive's entry list (ZipArchive, PclZip fallback) and refuse the whole
+	 * upload on the first entry refused_entry() rejects. `__MACOSX/` entries are ignored
+	 * (unzip_file() never extracts them).
+	 *
+	 * @return true|WP_Error
+	 */
+	public static function scan_archive( string $zip_path ): true|WP_Error {
+		$names = self::archive_entries( $zip_path );
+		if ( is_wp_error( $names ) ) {
+			return $names;
+		}
+		foreach ( $names as $name ) {
+			if ( str_starts_with( $name, '__MACOSX/' ) ) {
+				continue;
+			}
+			$why = self::refused_entry( $name );
+			if ( '' === $why ) {
+				continue;
+			}
+			$label = 'dotfile' === $why
+				? __( 'hidden files are not allowed', 'heartland-k9s-core' )
+				: ( 'script' === $why
+					? __( 'script or HTML files are not allowed (block markup belongs in content/*.html)', 'heartland-k9s-core' )
+					: __( 'the path is invalid', 'heartland-k9s-core' ) );
+			return new WP_Error(
+				'hk9_upload_refused',
+				sprintf(
+					/* translators: 1: archive entry, 2: reason */
+					__( 'The archive was refused: entry "%1$s" — %2$s. Remove it from the ZIP and upload again.', 'heartland-k9s-core' ),
+					sanitize_text_field( substr( $name, 0, 120 ) ),
+					$label
+				)
+			);
+		}
+		return true;
+	}
+
+	/**
+	 * Entry names of a ZIP without extracting anything.
+	 *
+	 * @return string[]|WP_Error
+	 */
+	private static function archive_entries( string $zip_path ): array|WP_Error {
+		if ( class_exists( 'ZipArchive', false ) ) {
+			$zip    = new \ZipArchive();
+			$opened = $zip->open( $zip_path, \ZipArchive::CHECKCONS );
+			if ( true !== $opened ) {
+				return new WP_Error( 'hk9_upload', __( 'The uploaded file is not a readable ZIP archive.', 'heartland-k9s-core' ) );
+			}
+			$names = [];
+			for ( $i = 0; $i < $zip->numFiles; $i++ ) {
+				$name = $zip->getNameIndex( $i, \ZipArchive::FL_UNCHANGED );
+				if ( is_string( $name ) ) {
+					$names[] = $name;
+				}
+			}
+			$zip->close();
+			return $names;
+		}
+		require_once ABSPATH . 'wp-admin/includes/class-pclzip.php';
+		$archive = new \PclZip( $zip_path );
+		$list    = $archive->listContent();
+		if ( ! is_array( $list ) ) {
+			return new WP_Error( 'hk9_upload', __( 'The uploaded file is not a readable ZIP archive.', 'heartland-k9s-core' ) );
+		}
+		$names = [];
+		foreach ( $list as $entry ) {
+			if ( is_array( $entry ) && isset( $entry['filename'] ) ) {
+				$names[] = (string) $entry['filename'] . ( ! empty( $entry['folder'] ) && ! str_ends_with( (string) $entry['filename'], '/' ) ? '/' : '' );
+			}
+		}
+		return $names;
+	}
+
+	/**
+	 * A payload is JSON + block HTML + media: delete anything the archive scan would
+	 * have refused (defence in depth after extraction — dotfiles, script-bearing or
+	 * stray HTML files), so nothing executable ever sits under uploads/.
 	 */
 	public static function purge_scripts( string $dir ): int {
 		$removed = 0;
@@ -301,10 +442,8 @@ final class Payload {
 			if ( ! $file->isFile() ) {
 				continue;
 			}
-			$name = $file->getFilename();
-			$ext  = strtolower( $file->getExtension() );
-			// Dotfiles (any .htaccess/.user.ini the archive carried) and script-bearing extensions go.
-			if ( str_starts_with( $name, '.' ) || in_array( $ext, self::SCRIPT_EXTENSIONS, true ) ) {
+			$relative = ltrim( str_replace( '\\', '/', substr( $file->getPathname(), strlen( $real ) ) ), '/' );
+			if ( '' !== self::refused_entry( $relative ) ) {
 				wp_delete_file( $file->getPathname() );
 				++$removed;
 			}

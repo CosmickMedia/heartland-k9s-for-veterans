@@ -28,6 +28,8 @@ final class Plugin {
 		'HK9\\Core\\Sections\\Registry'       => 'always',
 		'HK9\\Core\\Sections\\MetaBox'        => 'always',
 		'HK9\\Core\\Redirects\\Resolver'      => 'always',
+		'HK9\\Core\\Redirects\\LegacyPaths'   => 'always',
+		'HK9\\Core\\PostTypes\\MenuOrder'     => 'always',
 		'HK9\\Core\\Privacy\\Registry'        => 'always',
 		'HK9\\Core\\Forms\\Handler'           => 'always',
 		'HK9\\Core\\Forms\\Submissions'       => 'always',
