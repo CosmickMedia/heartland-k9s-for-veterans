@@ -10,3 +10,10 @@ tools/.cache/
 theme/heartland-k9s/assets/dist/*.map
 *.log
 docker/.env
+
+# registry records contain personal contact data — generated locally, never committed
+payload-src/records/barkode/
+payload-src/source/
+payload/manifest.json
+payload/content/
+payload/media-index.json
