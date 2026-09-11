@@ -42,7 +42,12 @@ if ( defined( 'WP_CLI' ) && WP_CLI ) {
 				foreach ( $terms as $t ) {
 					wp_delete_term( $t->term_id, $t->taxonomy );
 				}
-				WP_CLI::success( sprintf( 'Deleted %d fixture posts and %d fixture terms.', count( $ids ), count( $terms ) ) );
+				$users = get_users( [ 'meta_key' => $marker, 'fields' => 'ID' ] );
+				require_once ABSPATH . 'wp-admin/includes/user.php';
+				foreach ( $users as $uid ) {
+					wp_delete_user( (int) $uid, 1 );
+				}
+				WP_CLI::success( sprintf( 'Deleted %d fixture posts, %d fixture terms and %d fixture users.', count( $ids ), count( $terms ), count( $users ) ) );
 				return;
 			}
 			$file = WP_CONTENT_DIR . '/hk9-fixtures/blog-fixtures.php';
