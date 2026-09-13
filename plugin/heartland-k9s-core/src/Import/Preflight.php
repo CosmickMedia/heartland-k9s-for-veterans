@@ -122,6 +122,31 @@ final class Preflight {
 		}
 		$checks[] = $plug;
 
+		// Classic Editor plugin: the migrated content is block markup, so staff need the block editor
+		// (or at least the option to switch) once the new theme is live.
+		if ( function_exists( 'is_plugin_active' ) || ( defined( 'ABSPATH' ) && is_readable( ABSPATH . 'wp-admin/includes/plugin.php' ) ) ) {
+			if ( ! function_exists( 'is_plugin_active' ) ) {
+				require_once ABSPATH . 'wp-admin/includes/plugin.php';
+			}
+			if ( is_plugin_active( 'classic-editor/classic-editor.php' ) ) {
+				$replace = (string) get_option( 'classic-editor-replace', 'classic' );
+				$allow   = (string) get_option( 'classic-editor-allow-users', 'disallow' );
+				$fine    = 'block' === $replace || 'allow' === $allow;
+				$checks[] = [
+					'id'     => 'classic_editor',
+					'label'  => __( 'Classic Editor plugin', 'heartland-k9s-core' ),
+					'status' => $fine ? 'pass' : 'warn',
+					'detail' => $fine
+						? __( 'Active, but the block editor is available (default or per user).', 'heartland-k9s-core' )
+						: __( 'Active with "Classic editor" forced for everyone. The migrated pages are block content and the Heartland section panels work best in the block editor: after the import, set Settings → Writing → "Default editor for all users" to Block editor (or allow users to switch), or deactivate the Classic Editor plugin.', 'heartland-k9s-core' ),
+					'action' => [
+						'label' => __( 'Writing settings', 'heartland-k9s-core' ),
+						'url'   => admin_url( 'options-writing.php' ),
+					],
+				];
+			}
+		}
+
 		$payload  = null;
 		$existing = null;
 		$lite     = null;

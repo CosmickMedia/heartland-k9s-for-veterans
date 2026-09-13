@@ -26,6 +26,26 @@ Tested with **WordPress 7.1** on **PHP 8.3.33** (MariaDB 11, Apache). Minimum: W
 
 This is the path for the **live site** (WordPress 7.1, Avada). The payload was extracted from that site, so it references the pages, registry pages and media files that are already there — by their existing post ids, slugs and upload paths. Plugin 1.1.1 migrates them **in place**: the same pages keep their ids and URLs (`/5-questions/`, `/contact/`, `/privacy-policy/`, …), the 16 legacy BarKode pages become BarKode records with the same slugs (the printed QR paths keep working), and not one image is uploaded — the **content-only payload** (`heartland-k9s-payload-lite.zip`, ≈1.5 MB) reuses the 244 files already in the Media Library and ships only the 6 new design images. Nothing is duplicated as a "-2" page. The whole migration is: upload the plugin ZIP, upload the theme ZIP, activate both, upload one small content ZIP on **Heartland → Setup & Import**, tick *Existing site*, **Dry run**, **Import**.
 
+### B.0 Live-site readiness check (read from heartlandk9s.org wp-admin on 2026-09-13)
+
+| Item | Observed on the live site | Consequence for the migration |
+|---|---|---|
+| WordPress / PHP | 7.1 / **8.3.31** (LiteSpeed, Hostinger) | Meets the requirements (≥ 6.4 / ≥ 8.1); nothing to change. |
+| Permalinks / front page | `/%postname%/`; static front page = page 6 "HOME"; no posts page | Matches the payload: page 6 is adopted as the new Home; the importer creates the News page and sets it as the posts page. |
+| Upload limit | `upload_max_filesize` 2048M, `memory_limit` 2048M | The 1.1 MB content-only ZIP (and even the full payload) uploads through the admin screen. `WP_MEMORY_LIMIT` is 40M — the importer raises it for its own requests. |
+| Active theme | Avada 7.16.1 | Simply replaced when the Heartland theme is activated (Avada stays installed, inactive). |
+| Plugins to deactivate **before** the import | Avada Builder 3.16.1, Avada Core 5.16.1, FooGallery 3.3.3, FooBox 2.8.5 | The pre-flight names any that is still active. |
+| **Classic Editor 1.7.0** (default editor = Classic, users may not switch) | Active | After the import switch **Settings → Writing → Default editor for all users** to *Block editor* (or allow users to switch) — the migrated pages are block content and the Heartland section panels are designed for the block editor. The pre-flight shows this as a warning. |
+| Slim SEO 4.10.1 | Active; **no manual redirects configured** (Redirection tab empty); XML sitemap on | Keep it. The theme prints no duplicate meta tags while it is active. After go-live check `/sitemap.xml` does not list `/barkode/…` records (the plugin marks them non-public; if Slim SEO still lists them, exclude the "BarKode Records" post type in Slim SEO → Features → Sitemap). |
+| Fathom Analytics for WP 3.3.1 | Active | Keep it; leave **Heartland → Settings → Analytics → Fathom site id** empty to avoid double tracking. |
+| Cookie Notice, Disable Comments, Simple History, Yoast Duplicate Post, Better Search Replace, MonsterInsights | Active | Unaffected. Disable Comments keeps comments off (the theme's comment templates simply stay unused). MonsterInsights reports no GA property — the client's choice. |
+| All-in-One WP Migration and Backup 7.110 | Active | Use it for the full backup in B.1 (or the host's backup). |
+| Custom Contact Forms 7.16.1, Meta Box, Meta Box AIO, Simple Banner, The Events Calendar | Installed, inactive | Leave inactive. *Custom Contact Forms* still holds the two original form definitions (`[ccf_form id="2132"]` contact, `2156` application) in the database; they can be read back and rebuilt in Gravity Forms if the client wants the original fields (see docs/unresolved.md U2). |
+| Must-use plugins | WP Engine Cache Plugin, Hostinger Smart Auto Updates, Force Strong Passwords | After the import purge the hosting/LiteSpeed cache (Hostinger hPanel → Cache) so visitors see the new pages immediately. Auto-updates do not affect the custom theme/plugin (not in the wordpress.org repository). |
+| Users | 8 users, all Administrators | Everyone sees the Heartland menu, Settings and Setup & Import. Create Editor accounts for day-to-day staff if desired — editors can manage all content except BarKode records (unless enabled in Settings → Advanced), Settings and the importer. |
+| Pages | 40 published (all in the payload) + 3 drafts (e.g. "FB #3045") | Published pages are adopted in place; drafts are left untouched. |
+| Menus | Avada "Electrician Main Menu" in Avada locations | Left in place; the importer creates the four Heartland menus and assigns the theme's locations. |
+
 ### B.1 Before you start
 
 1. **Backup.** Take a full backup (database + `wp-content/uploads`) — the host's backup tool or a plugin such as UpdraftPlus. The importer can roll itself back (B.6), but a backup is the safety net for everything else.

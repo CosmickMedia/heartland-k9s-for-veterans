@@ -144,6 +144,10 @@ final class Runner {
 	 * Execute one tick. Returns the state snapshot (or WP_Error when locked).
 	 */
 	public static function step( int $budget = 0, ?int $batch = null ): array|WP_Error {
+		// REST requests run with the default WP_MEMORY_LIMIT (40M on some hosts); lift it like wp-admin does.
+		if ( function_exists( 'wp_raise_memory_limit' ) ) {
+			wp_raise_memory_limit( 'admin' );
+		}
 		Map::ensure();
 		$token = strtolower( wp_generate_password( 16, false, false ) );
 		if ( ! Map::acquire_lock( $token, self::LOCK_TTL ) ) {
