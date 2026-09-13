@@ -30,5 +30,14 @@ function hk9_theme_register_updater(): void {
 	if ( defined( 'HK9_GITHUB_TOKEN' ) && HK9_GITHUB_TOKEN ) {
 		$api->setAuthentication( HK9_GITHUB_TOKEN );
 	}
+	$GLOBALS['hk9_theme_updater'] = $checker;
 }
 hk9_theme_register_updater();
+
+/**
+ * The theme's update checker instance (null when the library is missing) — e.g. for a forced check:
+ * hk9_theme_updater()?->checkForUpdates().
+ */
+function hk9_theme_updater(): ?object {
+	return $GLOBALS['hk9_theme_updater'] ?? null;
+}
