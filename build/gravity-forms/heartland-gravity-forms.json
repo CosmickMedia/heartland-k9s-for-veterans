@@ -1,0 +1,838 @@
+{
+    "0": {
+        "title": "Contact",
+        "description": "",
+        "labelPlacement": "top_label",
+        "descriptionPlacement": "below",
+        "validationPlacement": "below",
+        "subLabelPlacement": "above",
+        "validationSummary": true,
+        "requiredIndicator": "asterisk",
+        "cssClass": "hk9-gf-form hk9-gf-form--contact",
+        "theme": "orbital",
+        "button": {
+            "type": "text",
+            "text": "Send Message",
+            "imageUrl": "",
+            "width": "full",
+            "location": "bottom",
+            "layoutGridColumnSpan": 12
+        },
+        "enableHoneypot": true,
+        "honeypotAction": "abort",
+        "enableAnimation": false,
+        "requireLogin": false,
+        "requireLoginMessage": "",
+        "limitEntries": false,
+        "scheduleForm": false,
+        "save": {
+            "enabled": false,
+            "button": {
+                "type": "link",
+                "text": "Save and Continue Later"
+            }
+        },
+        "markupVersion": 2,
+        "version": "3.0.1.1",
+        "is_active": "1",
+        "hk9_provisioned": {
+            "role": "contact",
+            "version": 2,
+            "plugin": "1.2.1",
+            "time": "2026-09-13T13:09:28+00:00"
+        },
+        "fields": [
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "name",
+                "id": 1,
+                "label": "Name",
+                "labelPlacement": "hidden_label",
+                "subLabelPlacement": "above",
+                "nameFormat": "advanced",
+                "isRequired": true,
+                "errorMessage": "First Name and Last Name are required.",
+                "inputs": [
+                    {
+                        "id": "1.2",
+                        "label": "Prefix",
+                        "name": "",
+                        "isHidden": true
+                    },
+                    {
+                        "id": "1.3",
+                        "label": "First",
+                        "name": "",
+                        "customLabel": "First Name",
+                        "placeholder": "John",
+                        "autocompleteAttribute": "given-name"
+                    },
+                    {
+                        "id": "1.4",
+                        "label": "Middle",
+                        "name": "",
+                        "isHidden": true
+                    },
+                    {
+                        "id": "1.6",
+                        "label": "Last",
+                        "name": "",
+                        "customLabel": "Last Name",
+                        "placeholder": "Doe",
+                        "autocompleteAttribute": "family-name"
+                    },
+                    {
+                        "id": "1.8",
+                        "label": "Suffix",
+                        "name": "",
+                        "isHidden": true
+                    }
+                ],
+                "enableAutocomplete": true,
+                "visibility": "visible",
+                "formId": 1,
+                "fields": "",
+                "cssClass": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "email",
+                "id": 2,
+                "label": "Email Address",
+                "placeholder": "john@example.com",
+                "isRequired": true,
+                "errorMessage": "Email Address is required.",
+                "size": "large",
+                "emailConfirmEnabled": false,
+                "cssClass": "",
+                "autocompleteAttribute": "email",
+                "enableAutocomplete": true,
+                "visibility": "visible",
+                "formId": 1,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "select",
+                "id": 3,
+                "label": "Subject",
+                "placeholder": "Select a subject",
+                "isRequired": true,
+                "errorMessage": "Please select an option for Subject.",
+                "enableChoiceValue": true,
+                "choices": [
+                    {
+                        "text": "Veteran Application Inquiry",
+                        "value": "veteran-application",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Donation Inquiry",
+                        "value": "donation",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Volunteer / Campaign",
+                        "value": "volunteer",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "K9 Provider Partnership",
+                        "value": "provider",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Other",
+                        "value": "other",
+                        "isSelected": false
+                    }
+                ],
+                "size": "large",
+                "cssClass": "",
+                "visibility": "visible",
+                "formId": 1,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "textarea",
+                "id": 4,
+                "label": "Message",
+                "placeholder": "How can we help you?",
+                "isRequired": true,
+                "errorMessage": "Message is required.",
+                "size": "medium",
+                "useRichTextEditor": false,
+                "visibility": "visible",
+                "formId": 1,
+                "fields": "",
+                "cssClass": "",
+                "inputType": ""
+            }
+        ],
+        "id": 1,
+        "notifications": [
+            {
+                "id": "hk9_admin",
+                "isActive": true,
+                "name": "Admin notification",
+                "event": "form_submission",
+                "toType": "email",
+                "to": "info@heartlandk9s.org",
+                "fromName": "Heartland Canines for Veterans",
+                "from": "{admin_email}",
+                "replyTo": "{Email Address:2}",
+                "bcc": "",
+                "subject": "[HK9 Contact] {Subject:3} from {Name (First):1.3} {Name (Last):1.6}",
+                "message": "{all_fields}",
+                "disableAutoformat": false,
+                "enableAttachments": false
+            }
+        ],
+        "confirmations": [
+            {
+                "id": "hk9_default",
+                "name": "Default Confirmation",
+                "isDefault": true,
+                "type": "message",
+                "message": "<h2 class=\"hk9-gf-confirmation__title\">Message Sent</h2><p>Thank you for reaching out. We will get back to you shortly.</p>\n",
+                "disableAutoformat": true,
+                "url": "",
+                "pageId": "",
+                "queryString": "",
+                "event": ""
+            }
+        ],
+        "nextFieldId": 5,
+        "date_created": "2026-09-13 13:09:28",
+        "is_trash": "0"
+    },
+    "1": {
+        "title": "Initial Application Inquiry",
+        "description": "",
+        "labelPlacement": "top_label",
+        "descriptionPlacement": "below",
+        "validationPlacement": "below",
+        "subLabelPlacement": "above",
+        "validationSummary": true,
+        "requiredIndicator": "asterisk",
+        "cssClass": "hk9-gf-form hk9-gf-form--application",
+        "theme": "orbital",
+        "button": {
+            "type": "text",
+            "text": "Submit Inquiry",
+            "imageUrl": "",
+            "width": "full",
+            "location": "bottom",
+            "layoutGridColumnSpan": 12
+        },
+        "enableHoneypot": true,
+        "honeypotAction": "abort",
+        "enableAnimation": false,
+        "requireLogin": false,
+        "requireLoginMessage": "",
+        "limitEntries": false,
+        "scheduleForm": false,
+        "save": {
+            "enabled": false,
+            "button": {
+                "type": "link",
+                "text": "Save and Continue Later"
+            }
+        },
+        "markupVersion": 2,
+        "version": "3.0.1.1",
+        "is_active": "1",
+        "hk9_provisioned": {
+            "role": "application",
+            "version": 2,
+            "plugin": "1.2.1",
+            "time": "2026-09-13T13:09:28+00:00"
+        },
+        "fields": [
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "name",
+                "id": 1,
+                "label": "Name",
+                "labelPlacement": "hidden_label",
+                "subLabelPlacement": "above",
+                "nameFormat": "advanced",
+                "isRequired": true,
+                "errorMessage": "First Name and Last Name are required.",
+                "inputs": [
+                    {
+                        "id": "1.2",
+                        "label": "Prefix",
+                        "name": "",
+                        "isHidden": true
+                    },
+                    {
+                        "id": "1.3",
+                        "label": "First",
+                        "name": "",
+                        "customLabel": "First Name",
+                        "placeholder": "John",
+                        "autocompleteAttribute": "given-name"
+                    },
+                    {
+                        "id": "1.4",
+                        "label": "Middle",
+                        "name": "",
+                        "isHidden": true
+                    },
+                    {
+                        "id": "1.6",
+                        "label": "Last",
+                        "name": "",
+                        "customLabel": "Last Name",
+                        "placeholder": "Doe",
+                        "autocompleteAttribute": "family-name"
+                    },
+                    {
+                        "id": "1.8",
+                        "label": "Suffix",
+                        "name": "",
+                        "isHidden": true
+                    }
+                ],
+                "enableAutocomplete": true,
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "cssClass": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "email",
+                "id": 2,
+                "label": "Email Address",
+                "placeholder": "john@example.com",
+                "isRequired": true,
+                "errorMessage": "Email Address is required.",
+                "size": "large",
+                "emailConfirmEnabled": false,
+                "cssClass": "gf_left_half",
+                "autocompleteAttribute": "email",
+                "enableAutocomplete": true,
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "phone",
+                "id": 3,
+                "label": "Phone",
+                "phoneFormat": "international",
+                "placeholder": "(555) 555-5555",
+                "isRequired": false,
+                "size": "large",
+                "cssClass": "gf_right_half",
+                "autocompleteAttribute": "tel",
+                "enableAutocomplete": true,
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "text",
+                "id": 4,
+                "label": "City",
+                "placeholder": "",
+                "isRequired": false,
+                "size": "large",
+                "cssClass": "gf_left_half",
+                "autocompleteAttribute": "address-level2",
+                "enableAutocomplete": true,
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "select",
+                "id": 5,
+                "label": "State",
+                "placeholder": "Select a state",
+                "isRequired": false,
+                "errorMessage": "",
+                "enableChoiceValue": true,
+                "choices": [
+                    {
+                        "text": "Alabama",
+                        "value": "AL",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Alaska",
+                        "value": "AK",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Arizona",
+                        "value": "AZ",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Arkansas",
+                        "value": "AR",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "California",
+                        "value": "CA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Colorado",
+                        "value": "CO",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Connecticut",
+                        "value": "CT",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Delaware",
+                        "value": "DE",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "District of Columbia",
+                        "value": "DC",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Florida",
+                        "value": "FL",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Georgia",
+                        "value": "GA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Hawaii",
+                        "value": "HI",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Idaho",
+                        "value": "ID",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Illinois",
+                        "value": "IL",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Indiana",
+                        "value": "IN",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Iowa",
+                        "value": "IA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Kansas",
+                        "value": "KS",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Kentucky",
+                        "value": "KY",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Louisiana",
+                        "value": "LA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Maine",
+                        "value": "ME",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Maryland",
+                        "value": "MD",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Massachusetts",
+                        "value": "MA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Michigan",
+                        "value": "MI",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Minnesota",
+                        "value": "MN",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Mississippi",
+                        "value": "MS",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Missouri",
+                        "value": "MO",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Montana",
+                        "value": "MT",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Nebraska",
+                        "value": "NE",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Nevada",
+                        "value": "NV",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "New Hampshire",
+                        "value": "NH",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "New Jersey",
+                        "value": "NJ",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "New Mexico",
+                        "value": "NM",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "New York",
+                        "value": "NY",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "North Carolina",
+                        "value": "NC",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "North Dakota",
+                        "value": "ND",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Ohio",
+                        "value": "OH",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Oklahoma",
+                        "value": "OK",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Oregon",
+                        "value": "OR",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Pennsylvania",
+                        "value": "PA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Rhode Island",
+                        "value": "RI",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "South Carolina",
+                        "value": "SC",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "South Dakota",
+                        "value": "SD",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Tennessee",
+                        "value": "TN",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Texas",
+                        "value": "TX",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Utah",
+                        "value": "UT",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Vermont",
+                        "value": "VT",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Virginia",
+                        "value": "VA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Washington",
+                        "value": "WA",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "West Virginia",
+                        "value": "WV",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Wisconsin",
+                        "value": "WI",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Wyoming",
+                        "value": "WY",
+                        "isSelected": false
+                    }
+                ],
+                "size": "large",
+                "cssClass": "gf_right_half",
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "select",
+                "id": 6,
+                "label": "I am a",
+                "placeholder": "Select one",
+                "isRequired": true,
+                "errorMessage": "Please select an option for I am a.",
+                "enableChoiceValue": true,
+                "choices": [
+                    {
+                        "text": "Veteran",
+                        "value": "veteran",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Family member of a veteran",
+                        "value": "family_member",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Other",
+                        "value": "other",
+                        "isSelected": false
+                    }
+                ],
+                "size": "large",
+                "cssClass": "gf_left_half",
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "select",
+                "id": 7,
+                "label": "How did you hear about us?",
+                "placeholder": "Select one (optional)",
+                "isRequired": false,
+                "errorMessage": "",
+                "enableChoiceValue": true,
+                "choices": [
+                    {
+                        "text": "VA or a medical provider",
+                        "value": "va",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Another veteran or a Heartland team",
+                        "value": "veteran",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Friend or family",
+                        "value": "friend",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Event or campaign",
+                        "value": "event",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Social media",
+                        "value": "social",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Internet search",
+                        "value": "search",
+                        "isSelected": false
+                    },
+                    {
+                        "text": "Other",
+                        "value": "other",
+                        "isSelected": false
+                    }
+                ],
+                "size": "large",
+                "cssClass": "gf_right_half",
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": true,
+                "type": "textarea",
+                "id": 8,
+                "label": "Tell us about yourself",
+                "placeholder": "A little about you, your service, and why you are interested in partnering with a service dog.",
+                "isRequired": true,
+                "errorMessage": "Tell us about yourself is required.",
+                "size": "medium",
+                "useRichTextEditor": false,
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "cssClass": "",
+                "inputType": ""
+            },
+            {
+                "is_payment": false,
+                "duplicatable": true,
+                "repeatable": false,
+                "type": "consent",
+                "checked_indicator_url": "https://heartlandk9s.org/wp-content/plugins/gravityforms/images/tick.png",
+                "checked_indicator_markup": "<img src=\"https://heartlandk9s.org/wp-content/plugins/gravityforms/images/tick.png\" alt=\"\" />",
+                "id": 9,
+                "label": "Acknowledgement",
+                "labelPlacement": "hidden_label",
+                "checkboxLabel": "I have read the <a href=\"https://heartlandk9s.org/5-questions/\" target=\"_blank\" rel=\"noopener\">5 Questions to Ask Before Partnering With a Service Dog</a>",
+                "description": "",
+                "isRequired": true,
+                "errorMessage": "Please confirm that you have read the 5 Questions before submitting.",
+                "inputs": [
+                    {
+                        "id": "9.1",
+                        "label": "Consent",
+                        "name": ""
+                    },
+                    {
+                        "id": "9.2",
+                        "label": "Text",
+                        "name": "",
+                        "isHidden": true
+                    },
+                    {
+                        "id": "9.3",
+                        "label": "Description",
+                        "name": "",
+                        "isHidden": true
+                    }
+                ],
+                "visibility": "visible",
+                "formId": 2,
+                "fields": "",
+                "cssClass": "",
+                "validateState": true,
+                "inputType": ""
+            }
+        ],
+        "id": 2,
+        "notifications": [
+            {
+                "id": "hk9_admin",
+                "isActive": true,
+                "name": "Admin notification",
+                "event": "form_submission",
+                "toType": "email",
+                "to": "director@heartlandk9s.org",
+                "fromName": "Heartland Canines for Veterans",
+                "from": "{admin_email}",
+                "replyTo": "{Email Address:2}",
+                "bcc": "",
+                "subject": "[HK9 Application Inquiry] {Name (First):1.3} {Name (Last):1.6}",
+                "message": "{all_fields}",
+                "disableAutoformat": false,
+                "enableAttachments": false
+            }
+        ],
+        "confirmations": [
+            {
+                "id": "hk9_default",
+                "name": "Default Confirmation",
+                "isDefault": true,
+                "type": "redirect",
+                "message": "",
+                "disableAutoformat": false,
+                "url": "https://heartlandk9s.org/thank-you/",
+                "pageId": "",
+                "queryString": "",
+                "event": ""
+            }
+        ],
+        "nextFieldId": 10,
+        "date_created": "2026-09-13 13:09:28",
+        "is_trash": "0"
+    },
+    "version": "3.0.1.1"
+}

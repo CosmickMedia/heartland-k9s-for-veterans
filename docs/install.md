@@ -47,6 +47,10 @@ This is the path for the **live site** (WordPress 7.1, Avada). The payload was e
 | Pages | 40 published (all in the payload) + 3 drafts (e.g. "FB #3045") | Published pages are adopted in place; drafts are left untouched. |
 | Menus | Avada "Electrician Main Menu" in Avada locations | Left in place; the importer creates the four Heartland menus and assigns the theme's locations. |
 
+### B.0.1 Gravity Forms on the live site — done (2026-09-13)
+
+Gravity Forms is installed and active on heartlandk9s.org and the two Heartland forms were imported there from `build/gravity-forms/heartland-gravity-forms.json` (the export of the provisioned forms, with live URLs): **Contact = form 1** (notification `[HK9 Contact] …` → info@heartlandk9s.org, message confirmation) and **Initial Application Inquiry = form 2** (notification → director@heartlandk9s.org, confirmation redirects to https://heartlandk9s.org/thank-you/, consent links to /5-questions/). Both carry the Heartland marker, so when the plugin is activated and you open **Heartland → Setup & Import** (or Settings → Forms) it **adopts them automatically** — no duplicates are created — sets *Default form provider* to Gravity Forms, and the Contact and Application pages render them after the import. Nothing else to do; edit the forms under Forms → Forms as usual (entries under Forms → Entries).
+
 ### B.1 Before you start
 
 1. **Backup.** Take a full backup (database + `wp-content/uploads`) — the host's backup tool or a plugin such as UpdraftPlus. The importer can roll itself back (B.6), but a backup is the safety net for everything else.
