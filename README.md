@@ -28,3 +28,7 @@ npm run package        # dist/*.zip + SHA256SUMS (theme, plugin, full + lite pay
 Local stack: `docker compose -f docker/docker-compose.yml up -d && docker/setup.sh --import` → http://localhost:8093 (admin/admin), Mailpit http://localhost:8094, WP-CLI `tools/wp.sh`.
 
 Tested with WordPress 7.1 / PHP 8.3.33 / MariaDB 11; Bootstrap 5.3.8 pinned in `package-lock.json`.
+
+**Updates:** the theme and plugin check GitHub releases of this repository (plugin-update-checker 5.7). Cut a release with `npm run release -- X.Y.Z --notes="…"` (lockstep version bump, changelog, build, `build/` ZIPs, commit, tag, push, GitHub release with both ZIP assets); WordPress then offers the update under Dashboard → Updates on every site running the packages.
+
+**Security note on dev tooling:** `npm audit` reports advisories only in the Lighthouse → Puppeteer → `extract-zip` chain used by the local verification scripts (browser download extraction); nothing from `node_modules` ships in the theme or plugin ZIPs.

@@ -2,7 +2,7 @@
   "name": "heartland-k9s-for-veterans",
   "version": "1.2.0",
   "private": true,
-  "description": "Heartland Canines for Veterans \u2014 WordPress theme (heartland-k9s) + companion plugin (heartland-k9s-core), migration payload and verification tooling.",
+  "description": "Heartland Canines for Veterans — WordPress theme (heartland-k9s) + companion plugin (heartland-k9s-core), migration payload and verification tooling.",
   "license": "GPL-2.0-or-later",
   "engines": {
     "node": ">=20"
@@ -30,12 +30,12 @@
     "bootstrap": "5.3.8",
     "cheerio": "^1.0.0",
     "esbuild": "^0.25.10",
-    "lighthouse": "^12.8.2",
+    "lighthouse": "^12.6.1",
     "lucide-static": "^1.44.0",
     "pixelmatch": "^7.1.0",
     "playwright": "^1.55.0",
     "pngjs": "^7.0.0",
     "sass": "^1.93.2",
-    "sharp": "^0.34.4"
+    "sharp": "^0.35.4"
   }
 }
