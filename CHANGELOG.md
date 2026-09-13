@@ -2,6 +2,11 @@
 
 Theme and plugin share one version number and are released together; each GitHub release carries `heartland-k9s.zip` and `heartland-k9s-core.zip`, which the sites' update checkers install.
 
+## v1.2.2 — 2026-09-13
+
+- Theme: hk9_theme_updater() helper for forced update checks (Dashboard → Updates picks releases up automatically; this is for WP-CLI/manual checks).
+- Packages rebuilt from the 1.2.1 release state; no functional changes to the site.
+
 ## v1.2.1 — 2026-09-13
 
 - Gravity Forms: the Contact and Initial Application Inquiry forms are created automatically in Gravity Forms (fields, notifications, confirmations) and selected by default; Gravity output styled to match the reference form; Settings → Forms 'Create/Update' button and wp hk9 gravity commands.
