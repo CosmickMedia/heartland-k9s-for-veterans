@@ -288,7 +288,16 @@ $layout = hk9_sections_layout( $page_id, 'about' );
 $landing = hk9_sections_layout( 0, 'landing' );
 [ 'hero_band' ] === $landing ? $hk9_pass( 'layout_hidden_by_default', 'landing with no layout → [hero_band] (cards/faq/tiers/cta hidden by default)' ) : $hk9_fail( 'layout_hidden_by_default', wp_json_encode( $landing ) );
 $form_layout = Layout::sanitize( [ 'order' => [ 'legacy', 'values', 'nope' ], 'shown' => [ 'legacy' ], '__present' => '1' ] );
-[ 'order' => [ 'legacy', 'values' ], 'hidden' => [ 'values' ] ] === $form_layout ? $hk9_pass( 'layout_form_shape_sanitized', 'form shape {order, shown} → {order, hidden}, unknown ids dropped' ) : $hk9_fail( 'layout_form_shape_sanitized', wp_json_encode( $form_layout ) );
+[ 'order' => [ 'legacy', 'values' ], 'hidden' => [ 'values' ], 'content_position' => 'after' ] === $form_layout ? $hk9_pass( 'layout_form_shape_sanitized', 'form shape {order, shown} → {order, hidden, content_position=after}, unknown ids dropped' ) : $hk9_fail( 'layout_form_shape_sanitized', wp_json_encode( $form_layout ) );
+/* 12a. Editor-content position: enum-validated, defaults to 'after', schema-valid, kept through the REST shape. */
+$pos_before = Layout::sanitize( [ 'order' => [ 'legacy' ], 'hidden' => [], 'content_position' => 'before' ] );
+$pos_bogus  = Layout::sanitize( [ 'order' => [ 'legacy' ], 'hidden' => [], 'content_position' => '<script>' ] );
+$pos_hide   = Layout::sanitize( [ 'order' => [], 'hidden' => [], 'content_position' => 'hide' ] );
+$pos_ok     = 'before' === $pos_before['content_position'] && 'after' === $pos_bogus['content_position'] && 'hide' === $pos_hide['content_position']
+	&& ! is_wp_error( rest_validate_value_from_schema( $pos_hide, Layout::schema(), 'hk9_sections_layout' ) )
+	&& is_wp_error( rest_validate_value_from_schema( [ 'order' => [], 'hidden' => [], 'content_position' => 'top' ], Layout::schema(), 'hk9_sections_layout' ) )
+	&& [ 'order' => [], 'hidden' => [], 'content_position' => 'after' ] === Layout::empty_value();
+$pos_ok ? $hk9_pass( 'layout_content_position', "before kept, garbage → after, hide kept; schema enum rejects 'top'; empty value carries content_position=after" ) : $hk9_fail( 'layout_content_position', wp_json_encode( [ $pos_before, $pos_bogus, $pos_hide ] ) );
 
 /* 12b. Reference layout (declaration order + hidden-by-default) is a default write; a switched request template is honoured. */
 delete_post_meta( $page_id, 'hk9_sections_layout' );
@@ -362,6 +371,44 @@ $list_key = hk9_section_meta_key( 'stories', 'list' );
 'hk9_sec_stories_list' === $list_key && 'hk9_sec_campaigns_list' === hk9_section_meta_key( 'campaigns', 'list' ) && 'hk9_sec_contact_form' === hk9_section_meta_key( 'contact', 'form' )
 	? $hk9_pass( 'conflicting_ids_use_distinct_keys', 'list/form ids map to hk9_sec_stories_list, hk9_sec_campaigns_list, hk9_sec_contact_form' )
 	: $hk9_fail( 'conflicting_ids_use_distinct_keys', $list_key );
+
+/* 16b. Form providers: section fields sanitize (provider enum, numeric Gravity id, shortcode-only text) and resolve to the built-in form by default. */
+$form_def = Registry::definition( 'contact', 'form' );
+$form_raw = $form_def->sanitize(
+	[
+		'__present'       => '1',
+		'heading'         => 'Write to us',
+		'provider'        => 'nope',
+		'gravity_form_id' => '12abc',
+		'shortcode'       => '<b>x</b> [gravityform id="3" title="false"] trailing <script>alert(1)</script>',
+		'form'            => 'contact',
+	]
+);
+$form_sc  = $form_def->sanitize( [ '__present' => '1', 'provider' => 'shortcode', 'shortcode' => 'no brackets here' ] );
+$app_def  = Registry::definition( 'application', 'form' );
+$app_keys = array_column( $app_def->fields, 'key' );
+$resolved = hk9_form_provider( $form_def->defaults(), 'contact' );
+$sc_res   = hk9_form_provider( [ 'provider' => 'shortcode', 'shortcode' => '[hk9_not_a_real_shortcode_xyz]' ], 'contact' );
+$gf_res   = hk9_form_provider( [ 'provider' => 'gravity', 'gravity_form_id' => '999999' ], 'application' );
+$prov_ok  = 'inherit' === $form_raw['provider'] && '' === $form_raw['gravity_form_id'] && '[gravityform id="3" title="false"]' === $form_raw['shortcode']
+	&& '' === $form_sc['shortcode'] && 'shortcode' === $form_sc['provider']
+	&& $form_raw === $form_def->sanitize( $form_raw ) && ! is_wp_error( rest_validate_value_from_schema( $form_raw, $form_def->schema(), 'hk9_sec_contact_form' ) )
+	&& in_array( 'provider', $app_keys, true ) && in_array( 'gravity_form_id', $app_keys, true ) && in_array( 'shortcode', $app_keys, true )
+	&& 'builtin' === $resolved['provider'] && true === $resolved['available'] && 'settings' === $resolved['source']
+	&& 'shortcode' === $sc_res['provider'] && false === $sc_res['available'] && '' !== $sc_res['notice']
+	&& 'gravity' === $gf_res['provider'] && false === $gf_res['available'] && '' !== $gf_res['notice']
+	&& '' === hk9_render_form_provider( $sc_res ) && '' === hk9_render_form_provider( $gf_res );
+$prov_ok
+	? $hk9_pass( 'form_provider_fields_and_resolution', 'invalid provider → inherit, non-numeric GF id → "", shortcode keeps only [tag …] (HTML/text dropped), idempotent + schema-valid; both form sections carry provider/gravity_form_id/shortcode; inherit → builtin (settings); unknown shortcode / missing GF form → unavailable with an editor notice and no markup' )
+	: $hk9_fail( 'form_provider_fields_and_resolution', wp_json_encode( [ $form_raw, $form_sc, $resolved, $sc_res, $gf_res ] ) );
+$sc_real  = hk9_form_provider( [ 'provider' => 'shortcode', 'shortcode' => '[hk9_test_form_sc]' ], 'contact' );
+add_shortcode( 'hk9_test_form_sc', static fn(): string => '<div class="hk9-test-sc-form">form</div>' );
+$sc_real2 = hk9_form_provider( [ 'provider' => 'shortcode', 'shortcode' => '[hk9_test_form_sc]' ], 'contact' );
+$sc_html  = hk9_render_form_provider( $sc_real2 );
+remove_shortcode( 'hk9_test_form_sc' );
+( false === $sc_real['available'] && true === $sc_real2['available'] && str_contains( $sc_html, 'hk9-shortcode-form' ) && str_contains( $sc_html, 'hk9-test-sc-form' ) )
+	? $hk9_pass( 'form_provider_shortcode_renders', 'registered shortcode → available, rendered inside .hk9-form-provider.hk9-shortcode-form via do_shortcode' )
+	: $hk9_fail( 'form_provider_shortcode_renders', wp_json_encode( [ $sc_real, $sc_real2, $sc_html ] ) );
 
 /* 14. Subscriber PUT → 403. */
 $sub_id = wp_insert_user( [ 'user_login' => 'hk9_test_subscriber_' . wp_rand( 1000, 9999 ), 'user_pass' => wp_generate_password(), 'role' => 'subscriber' ] );

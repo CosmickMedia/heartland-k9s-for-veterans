@@ -37,6 +37,7 @@ Local stack: `docker compose -f docker/docker-compose.yml up -d && docker/setup.
 ## Phase 5 — Content & import
 - [x] payload-src authored (8 reference pages, 19 migrated pages, records, menus, settings, redirects, tags, reading)
 - [x] payload built (363 records) · imported locally + on a fresh stack (0 errors, ~2m25s) · re-import all skips, 0 conflicts · rollback verified · edit-preserve/overwrite/resume proven (importer suite 81 checks)
+- [x] Existing-site migration mode (plugin 1.1.0): adopt matching pages/registry pages/media by live id + slug, in-place BarKode conversion, pre-flight panel + `wp hk9 preflight`, un-adopting rollback — simulated on the local stack against an Avada-shaped old site (`tests/adopt-existing-suite.sh`, 155 checks); client runbook in `docs/install.md` §B
 
 ## Phase 6 — Visual comparison loop
 - [x] Screenshots + diffs (8 routes × 390/1440 + representative widths) · fixes · deviations documented

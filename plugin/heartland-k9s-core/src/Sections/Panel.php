@@ -101,6 +101,7 @@ final class Panel {
 		}
 
 		$html .= '<p class="description">' . esc_html__( 'Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content.', 'heartland-k9s-core' ) . '</p>';
+		$html .= '<p class="hk9-layout__edit-hint">' . esc_html__( 'Edit each section\'s text and images in the "Sections" panel under the editor.', 'heartland-k9s-core' ) . '</p>';
 		$html .= '<ul class="hk9-layout__list" role="list" data-hk9-layout-list>';
 		$by_id = [];
 		foreach ( $defs as $def ) {
@@ -143,7 +144,42 @@ final class Panel {
 			}
 			$html .= '</span></li>';
 		}
-		$html .= '</ul></div>';
+		$html .= '</ul>';
+
+		// Editor content (block canvas) position — section templates only; landing/application/thank-you/gallery/default place it themselves.
+		if ( ! in_array( $template, self::native_content_templates(), true ) ) {
+			$select_id = 'hk9-layout-content-position';
+			$html     .= '<div class="hk9-layout__content" data-hk9-layout-content>';
+			$html     .= '<label class="hk9-layout__content-label" for="' . esc_attr( $select_id ) . '">' . esc_html__( 'Editor content', 'heartland-k9s-core' ) . '</label>';
+			$html     .= sprintf( '<select id="%s" name="%s[content_position]" class="hk9-select hk9-layout__content-select" data-hk9-content-position aria-describedby="%s-help">', esc_attr( $select_id ), esc_attr( Layout::META_KEY ), esc_attr( $select_id ) );
+			foreach ( Layout::content_labels() as $value => $label ) {
+				$html .= sprintf( '<option value="%s"%s>%s</option>', esc_attr( $value ), selected( $layout['content_position'] ?? Layout::CONTENT_AFTER, $value, false ), esc_html( $label ) );
+			}
+			$html .= '</select>';
+			$html .= '<p class="description" id="' . esc_attr( $select_id ) . '-help">' . esc_html__( 'Where the text and blocks written in the editor above appear on this page. Nothing is shown when the editor is empty.', 'heartland-k9s-core' ) . '</p>';
+			$html .= '</div>';
+		} else {
+			$html .= sprintf( '<input type="hidden" name="%s[content_position]" value="%s" />', esc_attr( Layout::META_KEY ), esc_attr( $layout['content_position'] ?? Layout::CONTENT_AFTER ) );
+			$html .= '<p class="description hk9-layout__content-note">' . esc_html__( 'This template shows the editor content in a fixed place (the card under the hero).', 'heartland-k9s-core' ) . '</p>';
+		}
+
+		$html .= '</div>';
 		return $html;
+	}
+
+	/**
+	 * Templates whose block content has a fixed slot in the theme (the
+	 * "Editor content" position setting does not apply). Mirrors the theme's
+	 * hk9_template_has_native_content(); filterable.
+	 *
+	 * @return string[]
+	 */
+	public static function native_content_templates(): array {
+		/**
+		 * Filters the templates that render block content in a fixed place.
+		 *
+		 * @param string[] $templates Template slugs.
+		 */
+		return (array) apply_filters( 'hk9/sections/native_content_templates', [ 'default', 'landing', 'application', 'thank-you', 'gallery' ] );
 	}
 }

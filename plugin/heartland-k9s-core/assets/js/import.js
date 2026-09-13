@@ -1,7 +1,7 @@
 /**
  * Heartland -> Setup & Import: REST-driven progress client (no jQuery, no build).
  *
- * Reads window.HK9Import = { root, nonce, status, logBase, steps, i18n } and
+ * Reads window.HK9Import = { root, nonce, status, preflight, logBase, steps, i18n } and
  * drives POST hk9/v1/import/{start,step,pause,resume,retry,rollback,reset} +
  * GET hk9/v1/import/status. While a run is "running" the page keeps calling
  * /step; every response is the full status snapshot and re-renders the screen.
@@ -20,6 +20,10 @@
 		payload: $( '#hk9-import-payload' ),
 		path: $( '#hk9-import-path' ),
 		overwrite: $( '#hk9-import-overwrite' ),
+		adopt: $( '#hk9-import-adopt' ),
+		preflight: $( '#hk9-import-preflight' ),
+		next: $( '#hk9-import-next' ),
+		nextPayload: $( '#hk9-import-next-payload' ),
 		dry: $( '#hk9-import-dry' ),
 		start: $( '#hk9-import-start' ),
 		pause: $( '#hk9-import-pause' ),
@@ -42,9 +46,11 @@
 
 	let nonce = cfg.nonce;
 	let snapshot = cfg.status;
+	let preflight = cfg.preflight || null;
 	let busy = false;
 	let stopped = false;
 	let lastReport = '';
+	let adoptTouched = false;
 
 	const speak = ( msg ) => {
 		if ( window.wp && wp.a11y && wp.a11y.speak ) {
@@ -64,8 +70,10 @@
 
 	/* ------------------------------------------------------------ REST */
 
-	async function call( action, body, method ) {
-		const res = await fetch( cfg.root + action, {
+	async function call( action, body, method, query ) {
+		// Works with both pretty (/wp-json/...) and plain (?rest_route=...) REST roots.
+		const url = cfg.root + action + ( query ? ( cfg.root.indexOf( '?' ) === -1 ? '?' : '&' ) + query : '' );
+		const res = await fetch( url, {
 			method: method || 'POST',
 			credentials: 'same-origin',
 			headers: { 'Content-Type': 'application/json', 'X-WP-Nonce': nonce },
@@ -121,7 +129,7 @@
 		} else {
 			el.stepline.textContent = sprintf( cfg.i18n.stepOf, stepIdx, total, s.step ) + ' · ' + sprintf( cfg.i18n.records, s.cursor || 0, s.step_total || 0 );
 			const mb = ( ( s.bytes_copied || 0 ) / 1048576 ).toFixed( 1 );
-			el.meta.textContent = ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( s.mode && s.mode.overwrite ? ' + ' + cfg.i18n.overwrite : '' ) + ' · ' + cfg.i18n.run + ' ' + s.run_id + ' · ' + mb + ' MB' + ( snapshot.lock ? ' · ' + cfg.i18n.locked : '' );
+			el.meta.textContent = ( s.mode && s.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( s.mode && s.mode.adopt ? ' + ' + cfg.i18n.adopt : '' ) + ( s.mode && s.mode.overwrite ? ' + ' + cfg.i18n.overwrite : '' ) + ' · ' + cfg.i18n.run + ' ' + s.run_id + ' · ' + mb + ' MB' + ( snapshot.lock ? ' · ' + cfg.i18n.locked : '' );
 		}
 
 		// Progress: steps completed + fraction of the current step.
@@ -151,7 +159,7 @@
 			const c = ( s.counts && s.counts[ step ] ) || {};
 			const cur = status !== 'idle' && i === ( s.step_index || 0 ) && status !== 'done' ? ' class="is-current"' : '';
 			return '<tr' + cur + '><td>' + esc( step ) + '</td>' +
-				'<td>' + ( c.create || 0 ) + '</td><td>' + ( c.update || 0 ) + '</td><td>' + ( c.skip || 0 ) + '</td>' +
+				'<td>' + ( c.create || 0 ) + '</td><td class="' + ( c.adopt ? 'is-adopt' : '' ) + '">' + ( c.adopt || 0 ) + '</td><td>' + ( c.update || 0 ) + '</td><td>' + ( c.skip || 0 ) + '</td>' +
 				'<td class="' + ( c.conflict ? 'is-conflict' : '' ) + '">' + ( c.conflict || 0 ) + '</td>' +
 				'<td class="' + ( c.fail ? 'is-fail' : '' ) + '">' + ( c.fail || 0 ) + '</td></tr>';
 		} );
@@ -173,6 +181,15 @@
 		el.warnings.querySelector( '.hk9-import__count' ).textContent = warnings.length ? '(' + ( s.warnings_total || warnings.length ) + ')' : '';
 		el.warnings.querySelector( 'ul' ).innerHTML = warnings.map( ( w ) => '<li><code>' + esc( w.key || w.step ) + '</code> ' + esc( w.message ) + '</li>' ).join( '' );
 		el.warnings.hidden = ! warnings.length;
+
+		// Next steps: after a completed real import.
+		if ( el.next ) {
+			const finished = status === 'done' && ! ( s.mode && s.mode.dry_run );
+			el.next.hidden = ! finished;
+			if ( el.nextPayload ) {
+				el.nextPayload.hidden = ! ( s.payload_source === 'path' && ! s.payload_deleted );
+			}
+		}
 
 		// Buttons.
 		const running = status === 'running';
@@ -208,7 +225,7 @@
 		} else {
 			el.runs.innerHTML = '<div class="hk9-import__runs"><table class="widefat striped"><thead><tr><th scope="col">' + esc( cfg.i18n.colRun ) + '</th><th scope="col">' + esc( cfg.i18n.colStarted ) + '</th><th scope="col">' + esc( cfg.i18n.colMode ) + '</th><th scope="col">' + esc( cfg.i18n.colStatus ) + '</th><th scope="col">' + esc( cfg.i18n.colErrors ) + '</th><th scope="col"><span class="screen-reader-text">' + esc( cfg.i18n.colActions ) + '</span></th></tr></thead><tbody>' +
 				runs.map( ( r ) => {
-					const mode = ( r.mode && r.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( r.mode && r.mode.overwrite ? ' + ' + cfg.i18n.overwrite : '' );
+					const mode = ( r.mode && r.mode.dry_run ? cfg.i18n.dryRun : cfg.i18n.import ) + ( r.mode && r.mode.adopt ? ' + ' + cfg.i18n.adopt : '' ) + ( r.mode && r.mode.overwrite ? ' + ' + cfg.i18n.overwrite : '' );
 					const canRollback = ! ( r.mode && r.mode.dry_run ) && ! r.rolled_back && ! running;
 					return '<tr data-run="' + esc( r.run_id ) + '"><td><code>' + esc( r.run_id ) + '</code></td><td>' + esc( ( r.started_at || '' ).replace( 'T', ' ' ).slice( 0, 19 ) ) + '</td><td>' + esc( mode ) + '</td><td>' + esc( r.status ) + ( r.rolled_back ? ' (' + esc( cfg.i18n.rolledBack ) + ')' : '' ) + '</td><td>' + ( r.errors || 0 ) + '</td>' +
 						'<td>' + ( canRollback ? '<button type="button" class="button button-small hk9-import__rollback-btn" data-run="' + esc( r.run_id ) + '">' + esc( cfg.i18n.rollback ) + '</button>' : '' ) +
@@ -221,6 +238,33 @@
 		const map = snapshot.map || {};
 		const parts = Object.keys( map ).map( ( k ) => k + ' = ' + map[ k ] );
 		el.map.textContent = parts.length ? parts.join( ', ' ) : '—';
+	}
+
+	/* ------------------------------------------------------- pre-flight */
+
+	function renderPreflight() {
+		if ( ! el.preflight || ! preflight ) {
+			return;
+		}
+		const label = ( st ) => ( st === 'pass' ? cfg.i18n.pass : ( st === 'warn' ? cfg.i18n.warn : cfg.i18n.failWord ) );
+		el.preflight.innerHTML = '<ul class="hk9-import__checks">' + ( preflight.checks || [] ).map( ( c ) =>
+			'<li class="hk9-import__check is-' + esc( c.status ) + '"><span class="hk9-import__check-status">' + esc( label( c.status ) ) + '</span><span class="hk9-import__check-body"><strong>' + esc( c.label ) + '</strong><span class="hk9-import__check-detail">' + esc( c.detail ) + '</span>' +
+			( c.action && c.action.url ? ' <a class="button button-small" href="' + esc( c.action.url ) + '">' + esc( c.action.label ) + '</a>' : '' ) + '</span></li>'
+		).join( '' ) + '</ul><p class="hk9-import__preflight-summary ' + ( preflight.ok ? 'is-ok' : 'is-bad' ) + '">' + esc( preflight.ok ? cfg.i18n.preflightOk : cfg.i18n.preflightBad ) + '</p>';
+		// Pre-tick adoption when the payload matches content already on the site (unless the admin chose otherwise).
+		if ( el.adopt && ! adoptTouched ) {
+			el.adopt.checked = !! ( preflight.existing && preflight.existing.total > 0 );
+		}
+	}
+
+	async function refreshPreflight() {
+		try {
+			const path = el.path && el.path.value ? 'path=' + encodeURIComponent( el.path.value ) : '';
+			preflight = await call( 'preflight', null, 'GET', path );
+			renderPreflight();
+		} catch ( e ) {
+			// The server-side panel stays.
+		}
 	}
 
 	/* ------------------------------------------------------------ loop */
@@ -253,6 +297,7 @@
 				setTimeout( loop, 50 );
 			} else {
 				announceFinal();
+				refreshPreflight();
 			}
 		} catch ( e ) {
 			busy = false;
@@ -310,6 +355,7 @@
 		const body = {
 			dry_run: !! dryRun,
 			overwrite: !! el.overwrite.checked,
+			adopt: !! ( el.adopt && el.adopt.checked ),
 			path: el.path ? el.path.value : '',
 			budget: 10,
 			batch: 25,
@@ -353,11 +399,18 @@
 		await action( 'reset' );
 	} );
 
+	if ( el.adopt ) {
+		el.adopt.addEventListener( 'change', () => {
+			adoptTouched = true;
+		} );
+	}
+
 	document.addEventListener( 'click', ( ev ) => {
 		const use = ev.target.closest( '.hk9-import__use-path' );
 		if ( use && el.path ) {
 			el.path.value = use.dataset.path;
 			render();
+			refreshPreflight();
 			return;
 		}
 		const manual = ev.target.closest( '.hk9-import__use-manual' );
@@ -365,6 +418,7 @@
 			const input = document.getElementById( 'hk9-import-path-manual' );
 			el.path.value = input ? input.value.trim() : '';
 			render();
+			refreshPreflight();
 			return;
 		}
 		const rb = ev.target.closest( '.hk9-import__rollback-btn' );
@@ -402,6 +456,7 @@
 				lastReport = [
 					...r.deleted.map( ( d ) => cfg.i18n.deleted + '  ' + d.key + ( d.id ? ' (#' + d.id + ')' : '' ) ),
 					...r.restored.map( ( d ) => cfg.i18n.restored + '  ' + d.key + ' [' + ( d.fields || [] ).join( ', ' ) + ']' ),
+					...( r.unadopted || [] ).map( ( d ) => cfg.i18n.unadopted + '  ' + d.key + ( d.id ? ' (#' + d.id + ')' : '' ) ),
 					...r.skipped.map( ( d ) => cfg.i18n.skipped + '  ' + d.key + ' — ' + d.reason ),
 					...r.errors.map( ( d ) => cfg.i18n.errorWord + '  ' + d ),
 				].join( '\n' );
@@ -420,6 +475,7 @@
 		el.start.dataset.locked = '1';
 	}
 	render();
+	renderPreflight();
 	if ( snapshot.state.status === 'running' ) {
 		loop();
 	}

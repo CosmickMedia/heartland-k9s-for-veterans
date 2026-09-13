@@ -1,7 +1,10 @@
 <?php
 /**
- * Section: form (contact) — "Send a Message" column with the plugin form
- * (`hk9_the_form()`), guarded so the theme keeps working without the plugin.
+ * Section: form (contact) — "Send a Message" column. Shows the form of the
+ * section's provider: the plugin's built-in form (`hk9_the_form()`), a Gravity
+ * Forms form or a form shortcode (`hk9_form_provider()` resolves the section
+ * value, falling back to Settings → Forms). Guarded so the theme keeps working
+ * without the plugin.
  *
  * Rendered inside the contact card by page-templates/contact.php (column
  * lg:w-3/5 p-10 md:p-12 bg-card); the part also works stand-alone.
@@ -39,6 +42,10 @@ if ( '' !== $hk9_success_heading ) {
 if ( '' !== $hk9_success_text ) {
 	$hk9_form_args['success_text'] = $hk9_success_text;
 }
+
+// Provider: built-in (default) / Gravity Forms / shortcode. External providers that cannot render fall back to the built-in form.
+$hk9_provider      = hk9_form_provider( $hk9_data, $hk9_form );
+$hk9_provider_html = 'builtin' !== ( $hk9_provider['provider'] ?? 'builtin' ) ? hk9_render_form_provider( $hk9_provider, [ 'id' => 'hk9-' . sanitize_html_class( $hk9_id ) . '-provider' ] ) : '';
 ?>
 <div class="hk9-contact-card__form hk9-contact-form" id="<?php echo esc_attr( 'hk9-' . sanitize_html_class( $hk9_id ) ); ?>">
 	<?php if ( '' !== $hk9_heading ) : ?>
@@ -46,21 +53,26 @@ if ( '' !== $hk9_success_text ) {
 	<?php endif; ?>
 	<?php echo hk9_paragraphs( $hk9_intro, 'hk9-contact-form__intro' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper. ?>
 	<?php
-	if ( function_exists( 'hk9_the_form' ) ) {
-		hk9_the_form( $hk9_form, $hk9_form_args );
+	if ( '' !== $hk9_provider_html ) {
+		echo $hk9_provider_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- provider markup (Gravity Forms / shortcode output).
 	} else {
-		$hk9_email = sanitize_email( (string) hk9_theme_option( 'contact.email' ) );
-		echo '<p class="hk9-notice hk9-contact-form__notice">';
-		if ( '' !== $hk9_email ) {
-			printf(
-				/* translators: %s: email link */
-				esc_html__( 'Our contact form is temporarily unavailable. Please email us at %s and we will get back to you.', 'heartland-k9s' ),
-				'<a href="' . esc_url( 'mailto:' . $hk9_email ) . '">' . esc_html( $hk9_email ) . '</a>'
-			);
+		echo hk9_form_provider_notice( $hk9_provider ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper; '' for visitors.
+		if ( function_exists( 'hk9_the_form' ) ) {
+			hk9_the_form( $hk9_form, $hk9_form_args );
 		} else {
-			esc_html_e( 'Our contact form is temporarily unavailable. Please check back soon.', 'heartland-k9s' );
+			$hk9_email = sanitize_email( (string) hk9_theme_option( 'contact.email' ) );
+			echo '<p class="hk9-notice hk9-contact-form__notice">';
+			if ( '' !== $hk9_email ) {
+				printf(
+					/* translators: %s: email link */
+					esc_html__( 'Our contact form is temporarily unavailable. Please email us at %s and we will get back to you.', 'heartland-k9s' ),
+					'<a href="' . esc_url( 'mailto:' . $hk9_email ) . '">' . esc_html( $hk9_email ) . '</a>'
+				);
+			} else {
+				esc_html_e( 'Our contact form is temporarily unavailable. Please check back soon.', 'heartland-k9s' );
+			}
+			echo '</p>';
 		}
-		echo '</p>';
 	}
 	?>
 </div>

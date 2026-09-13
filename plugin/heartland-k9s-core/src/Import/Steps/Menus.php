@@ -73,12 +73,12 @@ final class Menus extends Step {
 				$menu_id = (int) $created;
 				update_term_meta( $menu_id, '_hk9_source_key', $key );
 			}
-			Map::bind( $key, 'nav_menu', $menu_id, $ctx->run_id, [ 'created_by_run' => $adopted ? null : $ctx->run_id, 'payload_hash' => $this->manifest()->payload_hash( $record ) ] );
+			Map::bind( $key, 'nav_menu', $menu_id, $ctx->run_id, [ 'created_by_run' => $adopted ? null : $ctx->run_id, 'adopted_by_run' => $adopted ? $ctx->run_id : null, 'payload_hash' => $this->manifest()->payload_hash( $record ) ] );
 			$row = Map::get( $key );
 		} elseif ( ! $row ) {
-			$ctx->info( $key, sprintf( 'Adopted existing menu "%s" (#%d).', $name, $menu_id ) );
+			$ctx->adopted( $key, $menu_id, sprintf( 'menu "%s" by name%s', $name, $ctx->dry() ? ' (dry run)' : '' ) );
 			if ( ! $ctx->dry() ) {
-				Map::bind( $key, 'nav_menu', $menu_id, $ctx->run_id, [ 'created_by_run' => null, 'payload_hash' => $this->manifest()->payload_hash( $record ) ] );
+				Map::bind( $key, 'nav_menu', $menu_id, $ctx->run_id, [ 'created_by_run' => null, 'adopted_by_run' => $ctx->run_id, 'payload_hash' => $this->manifest()->payload_hash( $record ) ] );
 				$row = Map::get( $key );
 			}
 		} else {

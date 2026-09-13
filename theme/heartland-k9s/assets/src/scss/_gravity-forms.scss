@@ -1,0 +1,343 @@
+// ---------------------------------------------------------------------------
+// Gravity Forms inside the theme's form panels (.hk9-gf wraps gravity_form()
+// output on the contact card and the application panel). Gravity Forms 2.5+
+// ships its own theme ("Orbital": .gform_wrapper.gform-theme--framework) driven
+// by --gf-* custom properties, with an inline <style> per form that sets the
+// colour variables on the wrapper. We do not fight that stylesheet: the
+// variables are re-declared on the <form> element (a descendant, so it wins
+// over the wrapper's inline values) and only the few measurements that the
+// reference form fixes (48px controls, 2px radius, 1px --hk9-border, muted/50
+// background, 14px/500 labels, navy full-width 56px submit, crimson errors)
+// are set directly with enough specificity to beat GF's `:where()` rules.
+// Field grid: GF's own 12-column grid keeps gf_left_half / gf_right_half.
+// ---------------------------------------------------------------------------
+
+.hk9-form-provider {
+	min-width: 0;
+
+	&__notice {
+		margin-bottom: 1rem;
+	}
+
+	&__who {
+		color: var(--hk9-muted-fg);
+	}
+}
+
+.hk9-gf {
+	.gform_wrapper {
+		margin: 0;
+	}
+
+	// Colour/size variables consumed by the Orbital theme (re-declared below the wrapper).
+	.gform_wrapper.gform-theme form,
+	.gform_wrapper form {
+		--gf-color-primary: var(--hk9-primary);
+		--gf-color-primary-rgb: var(--hk9-primary-rgb);
+		--gf-color-primary-contrast: #fff;
+		--gf-color-primary-darker: var(--hk9-primary);
+		--gf-color-primary-lighter: var(--hk9-primary);
+		--gf-color-in-ctrl-primary: var(--hk9-primary);
+		--gf-color-in-ctrl-primary-rgb: var(--hk9-primary-rgb);
+		--gf-color-danger: #b91c1c;
+		--gf-color-danger-rgb: 185, 28, 28;
+		--gf-radius: 2px;
+		--gf-ctrl-radius: 2px;
+		--gf-ctrl-textarea-radius: 2px;
+		--gf-ctrl-btn-radius: 2px;
+		--gf-ctrl-size: 3rem;
+		--gf-ctrl-size-md: 3rem;
+		--gf-ctrl-btn-size: 3.5rem;
+		--gf-ctrl-btn-size-md: 3.5rem;
+		--gf-ctrl-padding-x: .75rem;
+		--gf-padding-x: .75rem;
+		--gf-ctrl-border-color: var(--hk9-border);
+		--gf-ctrl-border-color-hover: var(--hk9-border);
+		--gf-ctrl-border-color-focus: var(--hk9-border);
+		--gf-ctrl-bg-color: rgba(var(--hk9-muted-rgb), .5);
+		--gf-ctrl-bg-color-hover: rgba(var(--hk9-muted-rgb), .5);
+		--gf-ctrl-bg-color-focus: rgba(var(--hk9-muted-rgb), .5);
+		--gf-ctrl-color: var(--hk9-fg);
+		--gf-ctrl-placeholder-color: var(--hk9-muted-fg);
+		--gf-ctrl-shadow: var(--hk9-shadow-sm);
+		--gf-ctrl-outline-color-focus: var(--hk9-focus-ring);
+		--gf-ctrl-outline-width-focus: 2px;
+		--gf-ctrl-outline-offset: 0;
+		--gf-font-family-base: var(--hk9-font-sans);
+		--gf-font-family-primary: var(--hk9-font-sans);
+		--gf-font-family-secondary: var(--hk9-font-sans);
+		--gf-font-family-tertiary: var(--hk9-font-sans);
+		--gf-font-size-primary: 1rem;
+		--gf-font-size-secondary: .875rem;
+		--gf-font-size-tertiary: .875rem;
+		--gf-font-weight-secondary: 500;
+		--gf-ctrl-label-color-primary: var(--hk9-fg);
+		--gf-ctrl-label-color-secondary: var(--hk9-fg);
+		--gf-ctrl-label-color-req: var(--hk9-secondary);
+		--gf-ctrl-label-font-size-req: .875rem;
+		--gf-ctrl-desc-color: var(--hk9-muted-fg);
+		--gf-ctrl-desc-color-error: #b91c1c;
+		--gf-label-space-primary: .5rem;
+		--gf-form-gap-y: 1.5rem;
+		--gf-form-gap-x: 1.5rem;
+		--gf-field-gap-x: 1.5rem;
+		--gf-form-footer-margin-y-start: 1.5rem;
+		--gf-ctrl-btn-bg-color-primary: var(--hk9-primary);
+		--gf-ctrl-btn-bg-color-hover-primary: rgba(var(--hk9-primary-rgb), .9);
+		--gf-ctrl-btn-bg-color-focus-primary: var(--hk9-primary);
+		--gf-ctrl-btn-border-color-primary: #fff;
+		--gf-ctrl-btn-border-color-hover-primary: #fff;
+		--gf-ctrl-btn-border-color-focus-primary: #fff;
+		--gf-ctrl-btn-color-primary: #fff;
+		--gf-ctrl-btn-font-size: .875rem;
+		--gf-ctrl-btn-font-weight: 500;
+		--gf-ctrl-btn-shadow: none;
+		--gf-ctrl-btn-shadow-hover: none;
+		--gf-ctrl-btn-shadow-focus: none;
+		--gf-ctrl-choice-check-color: var(--hk9-primary);
+
+		@include media-breakpoint-up(md) {
+			--gf-font-size-primary: .875rem;
+		}
+	}
+
+	// Labels: 14px/500, 8px above the control (reference label + space-y-2).
+	.gform_wrapper .gfield_label,
+	.gform_wrapper .gform-field-label,
+	.gform_wrapper legend.gfield_label {
+		display: block;
+		font-family: var(--hk9-font-sans);
+		font-size: .875rem;
+		line-height: 1.1429;
+		font-weight: 500;
+		color: var(--hk9-fg);
+		margin: 0 0 .5rem;
+		padding: 0;
+	}
+
+	// Required marker: crimson, like the built-in form's "*".
+	.gform_wrapper .gfield_required,
+	.gform_wrapper .gfield_required_text {
+		color: var(--hk9-secondary);
+		font-size: .875rem;
+		font-weight: 500;
+	}
+
+	// Controls: 48px min-height, 2px radius, 1px border, muted/50 background, focus ring.
+	.gform_wrapper .gfield input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"]),
+	.gform_wrapper .gfield select,
+	.gform_wrapper .gfield textarea {
+		box-sizing: border-box;
+		display: block;
+		width: 100%;
+		min-height: 3rem;
+		padding: .25rem .75rem;
+		margin: 0;
+		font-family: var(--hk9-font-sans);
+		font-size: 1rem;
+		line-height: 1.5;
+		font-weight: 400;
+		color: var(--hk9-fg);
+		background-color: rgba(var(--hk9-muted-rgb), .5);
+		border: 1px solid var(--hk9-border);
+		border-radius: 2px;
+		box-shadow: var(--hk9-shadow-sm);
+		outline: 0;
+		transition: box-shadow .15s ease-in-out, border-color .15s ease-in-out;
+
+		@include media-breakpoint-up(md) {
+			font-size: .875rem;
+			line-height: 1.4286;
+		}
+
+		&::placeholder {
+			color: var(--hk9-muted-fg);
+			opacity: 1;
+		}
+
+		// 2px ring (reference: 1px) — the same deliberate accessibility deviation as the built-in form.
+		&:focus,
+		&:focus-visible {
+			outline: 0;
+			border-color: var(--hk9-border);
+			background-color: rgba(var(--hk9-muted-rgb), .5);
+			box-shadow: 0 0 0 2px var(--hk9-focus-ring);
+		}
+
+		&:disabled {
+			cursor: not-allowed;
+			opacity: .5;
+		}
+	}
+
+	.gform_wrapper .gfield select {
+		padding: .5rem 2.5rem .5rem .75rem;
+		-webkit-appearance: none;
+		appearance: none;
+		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2352637a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+		background-repeat: no-repeat;
+		background-position: right .75rem center;
+		background-size: 16px 16px;
+
+		&:focus,
+		&:focus-visible {
+			border-color: transparent;
+			box-shadow: 0 0 0 2px var(--hk9-focus-ring);
+		}
+	}
+
+	// GF sizes textareas per field (textarea.small/.medium/.large → min-block-size 6/12/18rem);
+	// the reference form uses one 120px box, resizable.
+	.gform_wrapper .gfield textarea,
+	.gform_wrapper .gfield textarea:is(.textarea, .small, .medium, .large) {
+		height: 7.5rem;
+		min-height: 7.5rem;
+		min-block-size: 7.5rem;
+		padding: .5rem .75rem;
+		resize: vertical;
+	}
+
+	// Validation: crimson borders/messages; the summary box matches .hk9-form__summary.
+	// (The input selector repeats the base rule's :not() chain so this later rule wins on specificity.)
+	.gform_wrapper .gfield_error input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"]),
+	.gform_wrapper .gfield_error select,
+	.gform_wrapper .gfield_error textarea {
+		border-color: #b91c1c;
+	}
+
+	.gform_wrapper .gfield_validation_message,
+	.gform_wrapper .validation_message,
+	.gform_wrapper .gfield_error .gfield_description.validation_message {
+		margin: .5rem 0 0;
+		padding: 0;
+		background: none;
+		border: 0;
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: #b91c1c;
+	}
+
+	.gform_wrapper .gform_validation_errors,
+	.gform_wrapper .validation_error {
+		margin: 0 0 1.5rem;
+		padding: 1rem 1.25rem;
+		border: 1px solid rgba(185, 28, 28, .3);
+		border-radius: .5rem;
+		background: rgba(185, 28, 28, .06);
+		box-shadow: none;
+		color: #7f1d1d;
+		font-size: .9375rem;
+		line-height: 1.5;
+
+		h2,
+		.gform_submission_error {
+			font-family: var(--hk9-font-sans);
+			font-size: .9375rem;
+			font-weight: 600;
+			color: #7f1d1d;
+			margin: 0;
+		}
+
+		a {
+			color: inherit;
+			text-decoration: underline;
+		}
+	}
+
+	// Submit: navy, full width, 56px — .hk9-btn--navy .hk9-btn--lg .hk9-btn--full.
+	.gform_wrapper .gform_footer,
+	.gform_wrapper .gform-footer,
+	.gform_wrapper .gform_page_footer {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		margin: 1.5rem 0 0;
+		padding: 0;
+	}
+
+	.gform_wrapper .gform_button,
+	.gform_wrapper .gform-footer .button,
+	.gform_wrapper .gform_footer input[type="submit"],
+	.gform_wrapper .gform_page_footer .button {
+		@include hk9-btn;
+
+		display: flex;
+		width: 100%;
+		min-height: 3.5rem;
+		height: 3.5rem;
+		padding: 0 2rem;
+		font-size: .875rem;
+		line-height: 1.4286;
+		font-weight: 500;
+		background-color: var(--hk9-primary);
+		border-color: #fff;
+		color: #fff;
+		box-shadow: none;
+
+		&:hover,
+		&:focus-visible {
+			background-color: rgba(var(--hk9-primary-rgb), .9);
+			border-color: #fff;
+			color: #fff;
+		}
+
+		&:disabled,
+		&[disabled] {
+			opacity: .5;
+			pointer-events: none;
+		}
+	}
+
+	// Checkboxes / radios / consent: navy accent, 15px labels like the built-in checkbox row.
+	.gform_wrapper .gfield input[type="checkbox"],
+	.gform_wrapper .gfield input[type="radio"] {
+		accent-color: var(--hk9-primary);
+
+		&:focus-visible {
+			outline: 2px solid var(--hk9-focus-ring);
+			outline-offset: 2px;
+		}
+	}
+
+	.gform_wrapper .gfield .gchoice label,
+	.gform_wrapper .gfield .gfield_consent_label {
+		font-weight: 400;
+		font-size: .9375rem;
+		line-height: 1.5;
+		margin: 0;
+	}
+
+	.gform_wrapper .gfield_description:not(.validation_message) {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+	}
+
+	// Honeypot ("gform_validation_container") and screen-reader helpers stay hidden.
+	.gform_wrapper .gform_validation_container,
+	.gform_wrapper .gfield--type-honeypot {
+		display: none !important;
+		position: absolute !important;
+		left: -9000px !important;
+	}
+
+	// Confirmation message: same panel as .hk9-form__success.
+	.gform_confirmation_wrapper,
+	.gform_confirmation_message {
+		padding: 1rem 1.25rem;
+		border-radius: .5rem;
+		border: 1px solid rgba(47, 125, 79, .3);
+		background: rgba(47, 125, 79, .08);
+		color: #14532d;
+		font-size: .9375rem;
+		line-height: 1.5;
+
+		> :last-child { margin-bottom: 0; }
+	}
+
+	.gform_confirmation_wrapper .gform_confirmation_message {
+		padding: 0;
+		border: 0;
+		background: none;
+	}
+}

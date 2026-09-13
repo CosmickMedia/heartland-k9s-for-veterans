@@ -8,7 +8,7 @@ Log in at `/wp-admin/`. Everything specific to Heartland lives under the **Heart
 
 Every page has two layers: the **block editor canvas** at the top (used on migrated pages, News and Privacy Policy) and a box titled **Sections — <template name>** below it (open the **Meta Boxes** bar if collapsed). Each section is a collapsible panel of fields; which sections exist depends on the page's **Template** (sidebar → **Page** tab → **Template**).
 
-The sidebar panel **Page sections** controls order and visibility: *"Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content."* The hero is always shown. Save with the blue **Save** button.
+The sidebar panel **Page sections** controls order and visibility: *"Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content."* The hero is always shown. The same panel has **Editor content**, which places anything written in the block canvas before or after the sections (or hides it) — see [Adding extra content to section pages](#adding-extra-content-to-section-pages). Save with the blue **Save** button.
 
 ![About editor overview](reports/screenshots/admin-guide/about-editor-overview.png)
 ![Page sections panel](reports/screenshots/admin-guide/about-page-sections-panel.png)
@@ -62,7 +62,7 @@ Open the page under **Pages** and edit the section panels. Sections per page:
 | Get Involved (*Get Involved*) | **Hero (band)**, **Ways to help (cards with buttons)**, **Corporate & community partners** (Icon, Heading, Body, Button, **Show partner logos**) |
 | The BarKode Program (*BarKode Program*) | **Hero (image)**, **Dedication story** (Icon, Heading, Body), **How BarKode protects** (cards), **Call to action** |
 | Success Stories (*Stories (listing)*) | **Hero (band)**, **Featured story (overlap card)**, **Story list** (Heading, **Source**: automatic or *Pick manually* → **Stories (manual)**, **Number of stories**, **Empty state text**), **Teams in training** (**Show this block**), **Call to action** |
-| Contact Us (*Contact*) | **Hero (band)**, **Contact info column** (**Rows**: **Value source** pulls Main phone / Secondary phone / Email / Office hours / Address from Settings, or **Custom text**; Icon, Label), **Form column** (**Form**: Contact form / Application inquiry form; **Success heading**, **Success text**) |
+| Contact Us (*Contact*) | **Hero (band)**, **Contact info column** (**Rows**: **Value source** pulls Main phone / Secondary phone / Email / Office hours / Address from Settings, or **Custom text**; Icon, Label), **Form** (**Form provider**, **Gravity Forms form**, **Form shortcode**, **Built-in form**: Contact form / Application inquiry form; **Success heading**, **Success text** — see [Forms](#forms-built-in-gravity-forms-or-a-shortcode)) |
 
 **Hero (band)** fields: **Eyebrow**, **Heading** (defaults to the page title), **Text** (defaults to the page excerpt), **Background pattern** (None / Stars / Diagonal grid). **Call to action** fields: **Heading**, **Text**, **Buttons** (max 2, **Style**), **Background** (Navy / Navy tint / Plain / Muted).
 
@@ -123,6 +123,21 @@ Pages such as The HK9 Coloring Book, Heartland Gear, Volunteer, 5 Questions, Ser
 
 News and Privacy Policy use the default template (hero band + block content, optional Call to action).
 
+## Adding extra content to section pages
+
+Every section page (Home, About, The Program, For Veterans, Get Involved, BarKode, Stories, Contact, Donate, Events, Campaigns, Partners, People, Teams, Highlighted Team) also accepts ordinary blocks in the editor canvas at the top of the page — paragraphs, images, embeds — so extra content never needs a developer. Whatever you write there is shown in a white card in the same style as landing pages:
+
+- **Page sections → Editor content** (sidebar) decides where: **After the sections** (default — the card comes after the last section), **Before the sections (right after the hero)**, or **Hide**.
+- Nothing is shown while the canvas is empty, so pages that only use sections look exactly as before.
+- A blue note at the top of the editor reminds you that the page is built from the section panels below and where the canvas content appears; it can be dismissed.
+
+Landing pages, Thank You, the Online Application intro and the Photos gallery already place the canvas content themselves (in the card under the hero), so the **Editor content** setting does not apply to them.
+
+The **Sections — …** box under the editor and the **Page sections** panel are always shown (they cannot be hidden through *Screen Options*), and the **Sections** box stays first under the editor.
+
+![Editor guidance notice](reports/screenshots/admin-guide/about-editor-guidance-notice.png)
+![Editor content position](reports/screenshots/admin-guide/about-page-sections-editor-content.png)
+
 ## Photos gallery
 
 **Pages → Photos** (template *Photo Gallery*). The pictures are a **Gallery block** in the page canvas — select it and use the block toolbar to add, remove or reorder images. Section **Gallery options**: **Open images in a lightbox**, **Columns** (2 / 3 / 4), **Show captions**, and **Images**, which is used only when the page has no gallery block.
@@ -159,6 +174,24 @@ The destinations that "Donate"/"Support a Service Dog" buttons use site-wide are
 ![Settings — Contact](reports/screenshots/admin-guide/settings-contact.png)
 ![Settings — Header](reports/screenshots/admin-guide/settings-header.png)
 ![Settings — Footer](reports/screenshots/admin-guide/settings-footer.png)
+
+## Forms: built-in, Gravity Forms or a shortcode
+
+The Contact page (**Form** section) and the Online Application page (**Form** section) each show one form. Which form is decided by **Form provider**:
+
+- **Site default (Settings → Forms)** — the normal choice: follows **Heartland → Settings → Forms → Default form provider**, so switching the whole site is one setting.
+- **Built-in form (this plugin)** — the plugin's own contact / application inquiry form (recipients, subjects, success text and stored submissions are configured under Settings → Forms, see below).
+- **Gravity Forms** — pick a form in **Gravity Forms form** (the list shows the forms built under **Forms** in the admin menu; leave it on *Use the site default form* to use the form chosen in Settings → Forms). The form's title and description are hidden, it submits without a page reload, and it is styled to match the site. If Gravity Forms is not installed the field says so.
+- **Form shortcode** — paste a form plugin's shortcode into **Form shortcode**, e.g. `[gravityform id="2" title="false" ajax="true"]`. Only the shortcode itself is kept; any other text or HTML you paste there is removed.
+
+Site-wide: **Heartland → Settings → Forms** → **Default form provider** (Built-in / Gravity Forms / Form shortcode), **Gravity Forms: contact form** and **Gravity Forms: application form** (which Gravity form each page uses unless the page picks its own). With **Form shortcode** as the site default, each page's **Form shortcode** field supplies the shortcode.
+
+What stays the same whichever provider you choose: the section **Heading** and **Intro** (Contact), the **Heading**, **Notice above the form** and the **Before you apply / Read the 5 Questions** card (Application; the card follows **Show the "5 Questions" link**). **Success heading / Success text / Success page** only apply to the built-in form — Gravity Forms and shortcode forms show their own confirmation.
+
+Safety net: if Gravity Forms is deactivated, the chosen form is deleted, or a shortcode's plugin is switched off, the page shows the built-in form again and logged-in editors see a short note above it explaining why (visitors see only the form).
+
+![Form provider fields](reports/screenshots/admin-guide/contact-section-form-provider.png)
+![Settings — Forms: default provider](reports/screenshots/admin-guide/settings-forms-provider.png)
 
 ## Forms: recipients, viewing submissions, retention
 

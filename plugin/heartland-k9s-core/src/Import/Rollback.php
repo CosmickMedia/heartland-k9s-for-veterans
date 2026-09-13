@@ -8,9 +8,14 @@
  * Objects created by the run are deleted only when every recorded field hash
  * still matches the database (or --force); objects merely updated by the run
  * get their pre-image restored under the same rule; adopted objects are never
- * deleted. An object bound to several map rows (byte-identical payload files
- * share one attachment) is decided once: a field counts as modified only when
- * it matches none of its rows' hashes, and a deletion drops every row bound to it.
+ * deleted — an object ADOPTED by the run (existing-site mode: a pre-existing
+ * page, a legacy registry page converted to a record, a live attachment, a
+ * term or menu bound by name/slug) gets its pre-image restored and is then
+ * un-adopted: the map row and the source markers are dropped, so the object is
+ * exactly what it was and a later import adopts it afresh. An object bound to
+ * several map rows (byte-identical payload files share one attachment) is
+ * decided once: a field counts as modified only when it matches none of its
+ * rows' hashes, and a deletion drops every row bound to it.
  *
  * @package HK9\Core
  */
@@ -37,7 +42,7 @@ final class Rollback {
 	private static array $handled = [];
 
 	/**
-	 * @return array{run:string,deleted:array,restored:array,skipped:array,errors:array,dry_run:bool}|WP_Error
+	 * @return array{run:string,deleted:array,restored:array,unadopted:array,skipped:array,errors:array,dry_run:bool}|WP_Error
 	 */
 	public static function run( string $run_id, bool $force = false, bool $dry_run = false ): array|WP_Error {
 		Map::ensure();
@@ -55,12 +60,13 @@ final class Rollback {
 		}
 
 		$report = [
-			'run'      => $run_id,
-			'dry_run'  => $dry_run,
-			'deleted'  => [],
-			'restored' => [],
-			'skipped'  => [],
-			'errors'   => [],
+			'run'       => $run_id,
+			'dry_run'   => $dry_run,
+			'deleted'   => [],
+			'restored'  => [],
+			'unadopted' => [],
+			'skipped'   => [],
+			'errors'    => [],
 		];
 		$log    = new Log( $run_id );
 		$log->info( 'rollback', '', sprintf( 'Rollback started (force=%s, dry_run=%s).', $force ? 'yes' : 'no', $dry_run ? 'yes' : 'no' ) );
@@ -100,7 +106,7 @@ final class Rollback {
 		} finally {
 			Map::release_lock( $token );
 		}
-		$log->info( 'rollback', '', sprintf( 'Rollback finished: %d deleted, %d restored, %d skipped, %d errors.', count( $report['deleted'] ), count( $report['restored'] ), count( $report['skipped'] ), count( $report['errors'] ) ) );
+		$log->info( 'rollback', '', sprintf( 'Rollback finished: %d deleted, %d restored, %d un-adopted, %d skipped, %d errors.', count( $report['deleted'] ), count( $report['restored'] ), count( $report['unadopted'] ), count( $report['skipped'] ), count( $report['errors'] ) ) );
 		return $report;
 	}
 
@@ -159,6 +165,10 @@ final class Rollback {
 					$log->error( 'rollback', $key, 'delete failed', $sens );
 					return;
 				}
+				if ( 'nav_menu' === $type && $before ) {
+					// The theme locations the created menu took over go back to their previous menus.
+					self::restore_fields( 'nav_menu', $id, array_filter( $before, static fn( $f ): bool => str_starts_with( (string) $f, 'location:' ), ARRAY_FILTER_USE_KEY ), $row );
+				}
 				Map::delete( $key );
 				// Rows of other records bound to the same object point at nothing now.
 				Map::delete_by_object( $type, $id );
@@ -168,47 +178,82 @@ final class Rollback {
 			return;
 		}
 
-		// Updated (or adopted) by the run: restore the pre-image of the fields we changed.
-		if ( ! $before ) {
+		// Updated (or adopted) by the run: restore the pre-image of the fields we changed,
+		// then drop the binding when this run is the one that adopted the object.
+		$unadopt = ( $row['adopted_by_run'] ?? null ) === $run_id;
+		if ( ! $before && ! $unadopt ) {
 			return;
 		}
 		if ( $id <= 0 || ! self::exists( $type, $id ) ) {
+			if ( $unadopt && ! $dry_run ) {
+				Map::delete( $key ); // The adopted object is gone (deleted by hand): nothing to restore, drop the row.
+			}
 			$report['skipped'][] = [ 'key' => $key, 'reason' => 'object no longer exists' ];
 			return;
 		}
-		$current  = self::current( $type, $id, $row, array_keys( $before ) );
-		$modified = [];
-		foreach ( $before as $f => $v ) {
-			$h = $row['field_hashes'][ $f ]['db'] ?? null;
-			if ( null !== $h && array_key_exists( $f, $current ) && Hash::of( $current[ $f ] ) !== $h ) {
-				$modified[] = (string) $f;
-			}
-		}
-		if ( $modified && ! $force ) {
-			$report['skipped'][] = [ 'key' => $key, 'reason' => 'modified since import: ' . implode( ', ', $modified ) ];
-			$log->warn( 'rollback', $key, 'restore skipped (modified: ' . implode( ', ', $modified ) . ')', $sens );
-			return;
-		}
-		if ( ! $dry_run ) {
-			$r = self::restore_fields( $type, $id, $before, $row );
-			if ( is_wp_error( $r ) ) {
-				$report['errors'][] = sprintf( '%s: %s', $key, $r->get_error_message() );
-				return;
-			}
-			$hashes = $row['field_hashes'];
-			$after  = self::current( $type, $id, $row, array_keys( $before ) );
+		if ( $before ) {
+			$current  = self::current( $type, $id, $row, array_keys( $before ) );
+			$modified = [];
 			foreach ( $before as $f => $v ) {
-				unset( $hashes[ $f ] );
-				if ( array_key_exists( $f, $after ) ) {
-					$hashes[ $f ] = [ 'db' => Hash::of( $after[ $f ] ), 'src' => '' ];
+				$h = $row['field_hashes'][ $f ]['db'] ?? null;
+				if ( null !== $h && array_key_exists( $f, $current ) && Hash::of( $current[ $f ] ) !== $h ) {
+					$modified[] = (string) $f;
 				}
 			}
-			$pre = $row['before_data'];
-			unset( $pre[ $run_id ] );
-			Map::overwrite( $key, $hashes, $pre );
+			if ( $modified && ! $force ) {
+				$report['skipped'][] = [ 'key' => $key, 'reason' => 'modified since import: ' . implode( ', ', $modified ) ];
+				$log->warn( 'rollback', $key, 'restore skipped (modified: ' . implode( ', ', $modified ) . ')', $sens );
+				return;
+			}
+			if ( ! $dry_run ) {
+				$r = self::restore_fields( $type, $id, $before, $row );
+				if ( is_wp_error( $r ) ) {
+					$report['errors'][] = sprintf( '%s: %s', $key, $r->get_error_message() );
+					return;
+				}
+				$hashes = $row['field_hashes'];
+				$after  = self::current( $type, $id, $row, array_keys( $before ) );
+				foreach ( $before as $f => $v ) {
+					unset( $hashes[ $f ] );
+					if ( array_key_exists( $f, $after ) ) {
+						$hashes[ $f ] = [ 'db' => Hash::of( $after[ $f ] ), 'src' => '' ];
+					}
+				}
+				$pre = $row['before_data'];
+				unset( $pre[ $run_id ] );
+				Map::overwrite( $key, $hashes, $pre );
+			}
+			$report['restored'][] = [ 'key' => $key, 'id' => $id, 'fields' => array_keys( $before ) ];
+			$log->info( 'rollback', $key, 'restored ' . implode( ', ', array_keys( $before ) ), $sens );
 		}
-		$report['restored'][] = [ 'key' => $key, 'id' => $id, 'fields' => array_keys( $before ) ];
-		$log->info( 'rollback', $key, 'restored ' . implode( ', ', array_keys( $before ) ), $sens );
+		if ( $unadopt ) {
+			if ( ! $dry_run ) {
+				self::unadopt( $type, $id, $key );
+			}
+			$report['unadopted'][] = [ 'key' => $key, 'id' => $id, 'type' => $type ];
+			$log->info( 'rollback', $key, sprintf( 'un-adopted %s #%d (binding dropped, object kept)', $type, $id ), $sens );
+		}
+	}
+
+	/**
+	 * Drop the binding of an adopted object: the map row and the source markers
+	 * this plugin put on it. The object itself is never touched here.
+	 */
+	private static function unadopt( string $type, int $id, string $key ): void {
+		Map::delete( $key );
+		if ( in_array( $type, [ 'term', 'nav_menu' ], true ) ) {
+			if ( (string) get_term_meta( $id, '_hk9_source_key', true ) === $key ) {
+				delete_term_meta( $id, '_hk9_source_key' );
+				delete_term_meta( $id, '_hk9_import_run' );
+			}
+			return;
+		}
+		if ( (string) get_post_meta( $id, '_hk9_source_key', true ) === $key ) {
+			delete_post_meta( $id, '_hk9_source_key' );
+			delete_post_meta( $id, '_hk9_import_run' );
+		}
+		delete_post_meta( $id, '_hk9_import_pending' );
+		clean_post_cache( $id );
 	}
 
 	/* ------------------------------------------------------- settings rows */

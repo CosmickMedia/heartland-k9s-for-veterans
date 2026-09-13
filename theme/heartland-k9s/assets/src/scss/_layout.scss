@@ -187,6 +187,22 @@ $hk9-pattern-stars: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg
 	}
 }
 
+// Editor content (block canvas) on section templates (inc/sections.php
+// hk9_the_editor_content()): 'before' reuses the overlap card right after the
+// hero — the overlap section that follows it (contact card, legacy, questions…)
+// must then flow normally; 'after' puts the same card in a padded section so
+// it never overlaps the section above.
+.hk9-editor-content {
+	&--overlap + .hk9-overlap {
+		margin-top: 3rem;
+	}
+
+	&--flow {
+		padding-top: 4rem;
+		padding-bottom: 5rem;
+	}
+}
+
 // Overlap card: sits −64px over the navy hero band (page templates).
 .hk9-overlap {
 	position: relative;

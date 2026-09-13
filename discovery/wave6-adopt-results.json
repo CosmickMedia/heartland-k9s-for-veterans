@@ -1,0 +1,212 @@
+{
+ "impl": {
+  "summary": "Implemented the \"Existing site\" migration mode for the importer (plugin heartland-k9s-core 1.1.0) so the live heartlandk9s.org install can be migrated in place: install plugin + theme, activate, tick/confirm \"Existing site: adopt matching content\", dry run, import.\n\nWhat was built:\n1. Mode flag `mode.adopt` (admin checkbox `#hk9-import-adopt`, CLI `--adopt-existing`, REST `start.adopt`), persisted in the run state and log header; a new `adopt` action counted per step (admin \"Adopt\" column, CLI `adopt` column, log lines `ADOPT #<id> \u2026`; sensitive records log `sensitive#<hash> ADOPT #<id>` only).\n2. Adoption rules in the new read-only matcher `Import\\Adopt`: `live:page:<id>` by id (slug must match; id-exists-but-slug-differs warns and falls back to slug), any page record by `get_page_by_path()` of its slug/path, `live:barkode:<id>` \u2192 the PAGE with that id/slug converted in place (`_wp_page_template` removed, `post_type` \u2192 hk9_barkode, `clean_post_cache`; pre-image post_type/template recorded), `live:media:<id>` by id + basename of `_wp_attached_file`/`original_image` + file exists (sha256 index stays the fallback; attachment kept as-is, hashes recorded from the DB), terms/menus by slug/name (now reported as adopt). Never trashed posts, never posts bound to another key (`Map::bound_post_key`), never non-pages converted. Adopted rows: `created_by_run = NULL`, new column `adopted_by_run` (Map DB_VERSION 2, dbDelta). First bind applies title/status/template/excerpt/menu_order/parent/featured/meta/terms/content unconditionally with pre-images (id/slug/date/author kept via `PostFields::for_adopted`; a record without a content file blanks the old Avada content). Dry runs remember `dry_adopted` so hierarchy/content/media_sizes/redirect-shadow checks report the real outcome. The core Privacy Policy placeholder adoption is untouched and does not conflict.\n3. Rollback: pre-images restored (PostFields now knows `post_type` and treats absent meta as null \u2192 restoring null deletes the key, so a converted record returns to a page without registry meta), then rows adopted by that run are **un-adopted** (row + `_hk9_source_key`/`_hk9_import_run`/`_hk9_import_pending` dropped, object kept) \u2014 reported as `unadopted` in CLI/admin. Created menus now keep their `location:*` pre-image so theme locations return to the previous menus.\n4. Pre-flight (`Import\\Preflight`, admin card \"2. Pre-flight\", `GET hk9/v1/import/preflight?path=`, `wp hk9 preflight [<dir>] [--format=json]`): PHP \u2265 8.1, WP \u2265 6.4, active theme (with Appearance \u2192 Themes link), pretty permalinks, uploads writable, payload + counts, \"Existing content detected\" (unmapped page/registry/media matches computed from the manifest; pre-ticks the adopt checkbox when > 0) plus a \"Next steps\" checklist after a completed real run (verify front page/menus, deactivate Avada Builder/Core/FooGallery/FooBox, review docs/unresolved.md, delete a server-path payload).\n5. Two importer bugs surfaced by the simulation and fixed: (a) a pre-existing attachment whose slug equals a new page's slug (`about.jpg` \u2192 `about`) made WordPress publish the About page as `about-2` and hand `/about/` to the file \u2014 posts_hierarchy now renames such attachments to `media-<slug>` before publishing (dry runs warn) and warns whenever a stored slug still differs; (b) `Reconcile::readback` now refreshes the `db` hash of every non-conflicting field, so a side-effect slug change no longer produces a phantom conflict on re-runs.\n6. Docs: docs/install.md \u00a7B rewritten as the client runbook (backup, plugin+theme install, SFTP payload, pre-flight \u2192 adopt \u2192 dry run \u2192 import, what happens to pages/registry/media/menus/front page/settings, after-import plugin deactivation, Slim SEO note (theme compat verified in inc/compat.php), delete payload, rollback); docs/importer.md \u00a72.1/2.2/\u00a73/\u00a74/\u00a77/\u00a78/\u00a710.1; ARCHITECTURE \u00a78 note; STATUS entry.\n7. Version bumped to 1.1.0. Local site left populated by a fresh real-payload import; tools/url-matrix.sh passes (81 rows).",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Adopt.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Preflight.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/CLI/PreflightCommand.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/adopt-existing-suite.sh",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/adopt-existing-oldsite.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/PostsStub.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/PostsHierarchy.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/PostsContent.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/MediaFiles.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/MediaSizes.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Menus.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Terms.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Redirects.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Map.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Rollback.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Reconcile.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/PostFields.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Context.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/State.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Runner.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Rest.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Admin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/CLI/ImportCommand.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/CLI/StatusCommand.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/CLI/Commands.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/js/import.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/css/import.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/heartland-k9s-core.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/importer-suite.sh",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/install.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/importer.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/STATUS.md"
+  ],
+  "tests": [
+   {
+    "name": "php -l on every changed/new PHP file + node --check assets/js/import.js",
+    "result": "PASS",
+    "evidence": "No syntax errors in any file; import.js parses."
+   },
+   {
+    "name": "tests/importer-suite.sh (existing mini-fixture regression suite, run twice: after the first implementation and again after the slug/readback/menu-location fixes)",
+    "result": "PASS",
+    "evidence": "== 81 passed, 0 failed == both times (count() made header-aware because the summary table gained the adopt column)."
+   },
+   {
+    "name": "tests/adopt-existing-suite.sh (new simulation: reset, Avada-shaped old site with live ids 6/16/2032/2944/3/2910/3675/2483 + slug-only #9999 + renamed #2072 + trashed #2124, attachments 3028/1942/1963 at live paths + #555 identical bytes, Old Menu; preflight \u2192 dry run \u2192 import \u2192 re-runs \u2192 rollback \u2192 fresh import)",
+    "result": "PASS",
+    "evidence": "== 122 passed, 0 failed ==: preflight 7 pages / 2 registry / 3 media; dry run adopt 9/9/9 + media 4, warns about #2072, writes nothing; import adopt counts identical, 0 duplicate -N slugs, ids kept with block content and no [fusion_, page 6 front page with home template and date kept, 2910/3675 hk9_barkode with same slugs, /larry-and-archie-service-k9/ 301 \u2192 /barkode/larry-and-archie-service-k9/ 200 noindex, attachments 3028/1942/1963/555 adopted (file not re-uploaded, missing sizes filled, alt kept, 240 total), attachment slug 'about' freed \u2192 About page at /about/, 31 ADOPT log lines withholding registry slugs, url-matrix pass; re-runs 0 create/adopt/update/conflict/fail; rollback 0 skipped, 14 un-adopted, Avada content/templates back, 2910 a page with old content and no registry meta, Old Menu + primary location restored, attachments back to 4, pages back to 10; fresh import adopts again, url-matrix pass. debug.log 0 bytes."
+   },
+   {
+    "name": "Admin screen (Heartland \u2192 Setup & Import) via curl as admin + Playwright headless",
+    "result": "PASS",
+    "evidence": "HTTP 200; pre-flight panel 7 checks all is-pass; counts table headers Step/Create/Adopt/Update/Skip/Conflict/Fail; adopt checkbox present (unticked when existing=0); Next steps visible after a completed real run; REST re-fetch via 'Use this path' renders 'All checks passed.'; no pageerror/console errors."
+   },
+   {
+    "name": "REST GET hk9/v1/import/preflight (cookie + wp_rest nonce)",
+    "result": "PASS",
+    "evidence": "ok=true with 7 checks for the payload path; ?path=/etc \u2192 ok=false, payload check 'That directory is outside the allowed payload locations.'"
+   },
+   {
+    "name": "wp hk9 preflight / wp hk9 import --help",
+    "result": "PASS",
+    "evidence": "Table + --format=json both work; 'Existing content: 7 page(s), 2 legacy BarKode page(s), 3 attachment(s)' printed on the fixture; --help synopsis shows [--adopt-existing] with 0 'invalid synopsis part' warnings after the docblock fix."
+   },
+   {
+    "name": "Final state: reset + fresh real-payload import + tools/url-matrix.sh + idempotent dry run",
+    "result": "PASS",
+    "evidence": "Import complete 0 errors (media_files 240 create / 10 skip, posts 79); url-matrix exit 0 with 81 \u2705 rows; subsequent --dry-run create+adopt+update+conflict+fail = 0; debug.log 0 bytes."
+   }
+  ],
+  "issues": [
+   "Other, unrelated working-tree changes appeared in the repo while I worked (docs/admin-guide.md, plugin Forms/Sections/Settings/Notices, theme forms/GF SCSS + dist CSS, docker/fixtures/hk9-tmp-gf-setup.php, src/Admin/EditorGuidance.php, src/Support/FormProviders.php, tools/kinsta-wp.sh) \u2014 another session is editing forms/Gravity Forms work concurrently. I did not touch those files; because the plugin is bind-mounted they were live during my test runs (all suites still passed, debug.log stayed empty).",
+   "Deviation from the letter of rule 2c: an attachment record marked `sensitive` still gets its generic title / empty alt applied on adoption (pre-image kept) instead of keeping the live title, to honour the registry-privacy design (F7). The real payload has 0 sensitive attachment records, so this never triggers today.",
+   "On the first run of the simulation I edited the suite script while bash was executing it, which corrupted that run (bash reads scripts incrementally); the reported results are from clean re-runs.",
+   "Not implemented (outside the requested rules): adopting an already-converted hk9_barkode record or another same-type post by slug when the map has been lost \u2014 only pages are matched/converted. A stale hk9_barkode with the same slug would still yield a -2 record.",
+   "dist/*.zip and SHA256SUMS were not rebuilt for 1.1.0 (npm run package) \u2014 packaging was not part of the task; docs/verification.md still cites 1.0.2 as the verified build.",
+   "Menu-location restore on rollback only covers locations of the theme active at rollback time; on the real site Avada's own nav_menu_locations live in theme_mods_Avada and are untouched anyway."
+  ],
+  "integration_notes": "Branch build/wordpress-conversion, nothing committed (per instructions). Map table gains column `adopted_by_run` (Map::DB_VERSION '2'; Map::ensure() upgrades in place via dbDelta on first use \u2014 a fresh install creates it on activation). REST `start` accepts `adopt`; new route `GET hk9/v1/import/preflight[?path=]` (manage_options + nonce; path validated like start). Per-step counts now carry an `adopt` key \u2014 anything parsing the CLI summary table should look columns up by header (tests/importer-suite.sh count() already does). Rollback report has a new `unadopted` array (State::mark_rolled_back counts it; CLI/JS print it). Reconcile::readback now refreshes db hashes of all non-conflicting fields (behavioural change for every step, verified by both suites). posts_hierarchy renames attachments that hold a page's slug at the same level to `media-<slug>` before publishing \u2014 attachment pages are off (wp_attachment_pages_enabled=0) so this is invisible. To re-run the simulation: bash plugin/heartland-k9s-core/tests/adopt-existing-suite.sh (LOCAL ONLY \u2014 it empties the site); afterwards re-populate with bash tools/reset-local-site.sh && tools/wp.sh hk9 import /var/www/html/wp-content/hk9-payload --user=admin. Client runbook: docs/install.md \u00a7B; internals: docs/importer.md \u00a72.1\u20132.2, \u00a710.1."
+ },
+ "review": {
+  "verdict": "Sound overall \u2014 the adoption mode does what the report claims and I found no data-loss bug in the exercised paths (ids/slugs/dates kept, pre-images complete incl. post_type/template/parent/status/excerpt/menu_order/featured/meta/terms/content, conflicts detected on later runs, PII withheld in logs/state). Simulation re-run: 122 passed / 0 failed; url-matrix 81/81 after the final real import; debug.log empty. Two medium items should be fixed before the live run (converted-record re-adoption gap; Avada plugins active during the writes is untested), plus several low items, mostly docs/pre-flight accuracy.",
+  "findings": [
+   {
+    "severity": "medium",
+    "file": "plugin/heartland-k9s-core/src/Import/Adopt.php",
+    "issue": "post_candidate() only ever matches PAGES. A registry page already converted to hk9_barkode whose map row is missing (crash between the conversion wp_update_post() and Map::bind() in PostsStub::adopt_existing, a Map truncate/reset, or a plugin re-install) can never be re-adopted: probe on #2910 after deleting its row returned id=0 + warning, so the next run creates '<slug>-2' and the original converted post is left as an orphaned hk9_barkode with its _wp_page_template already deleted (that meta is also lost when the conversion wp_update_post() fails, because delete_post_meta runs first and the fail path only does Map::delete).",
+    "fix": "In post_candidate(), accept a post at the live id (or at the slug via get_posts post_type=$type) whose post_type === the record type and post_name === slug as a match with convert=false (also fixes the implementer's noted 'stale hk9_barkode' gap). In PostsStub::adopt_existing(), snapshot the template value before delete_post_meta() and re-add it (update_post_meta) when wp_update_post() returns WP_Error."
+   },
+   {
+    "severity": "medium",
+    "file": "docs/install.md",
+    "issue": "\u00a7B.2 step 3 instructs the client to keep Avada Builder, Avada Core, FooGallery and FooBox ACTIVE while the importer runs wp_update_post()/wp_insert_post() on 46 adopted pages and 250 attachments; the fixture (tests/adopt-existing-oldsite.php) contains none of those plugins, so their save_post / wp_insert_post_data / content filters and Fusion 'page options' meta handling are completely untested on the exact writes the migration makes. Nothing needs them once the theme is switched.",
+    "fix": "Move 'deactivate Avada Builder, Avada Core, FooGallery, FooBox' from B.5 to B.2 (before the import) and make the Next-steps/pre-flight text consistent; optionally add a pre-flight 'warn' line listing active plugins matching fusion-builder/fusion-core/foogallery/foobox."
+   },
+   {
+    "severity": "low",
+    "file": "plugin/heartland-k9s-core/src/Import/Steps/MediaFiles.php",
+    "issue": "The shared-by-sha256 loop (Map::rows_by_sha) runs BEFORE Adopt::attachment_candidate(), so for the 10 byte-identical live pairs (e.g. live:media:2149 + 2806) the second live attachment is never adopted: verified with a reset site holding both at their live paths \u2014 dry run logged '2149 ADOPT by id' and '2806 SKIP would share the attachment bound to live:media:2149'. 10 live attachments stay unbound duplicates and {{media:...}} for those keys resolve to the other id; docs/importer.md ('a live:media:<id> record first adopts the attachment with that id') and install.md ('same ids') overstate.",
+    "fix": "For live:media:* keys call Adopt::attachment_candidate() before the rows_by_sha loop (share only when the id match fails), or document that the second of each identical pair is bound to the first."
+   },
+   {
+    "severity": "low",
+    "file": "plugin/heartland-k9s-core/src/Import/Preflight.php",
+    "issue": "existing() counts every live:media id that exists as a non-trashed attachment (plain SQL) without the basename/file-exists rule, and includes both halves of identical pairs, so 'N attachment(s) would be adopted' can exceed what the run adopts (probe: preflight said 2, run adopted 1).",
+    "fix": "Use Adopt::attachment_candidate() per key (cheap \u2014 no hashing) so the count uses the real rule."
+   },
+   {
+    "severity": "low",
+    "file": "plugin/heartland-k9s-core/src/Import/Adopt.php",
+    "issue": "Slug/path matching uses get_page_by_path() with only a 'trash' exclusion, so a private/pending/draft page (with a stored slug) that happens to hold a record slug is adopted and then published with payload content on first bind (probe: private page \u2192 id matched, how=slug). Not a live-site problem today, but a silent visibility change with no warning.",
+    "fix": "Warn (dry run) when the matched page is not 'publish', or restrict the slug rule to publish/draft."
+   },
+   {
+    "severity": "low",
+    "file": "plugin/heartland-k9s-core/src/Import/Adopt.php",
+    "issue": "Attachment adoption by id + basename never checks bytes; a live file replaced in place under the same name (Enable Media Replace etc.) is adopted silently even though _hk9_sha256 from Validate::prehash is available at that point.",
+    "fix": "When _hk9_sha256 exists and differs from record sha256, log a warning ('file bytes differ from payload; adopted as-is') so the audit trail shows it."
+   },
+   {
+    "severity": "low",
+    "file": "docs/install.md",
+    "issue": "No content-freeze note: on the first bind adopted pages are overwritten unconditionally (by design), so any edit made on heartlandk9s.org after the payload snapshot (2026-09-11) is lost except via wholesale rollback. Also the old registry page content (handler/veteran details) stays in hk9_import_map.before_data and in the pages' existing revisions after conversion \u2014 needed for rollback but should be purged after sign-off; and importer.md says 'nothing is written to the attachment' although _hk9_source_key/_hk9_sha256 meta are added.",
+    "fix": "Add to \u00a7B.1: 'do not edit pages/media on the live site after <payload date>; re-apply such edits after the import'; add to \u00a7B.5: after sign-off, delete old revisions of the 16 records and the import map rows/before_data; adjust the 'nothing is written' sentence."
+   }
+  ],
+  "spot_checks": [
+   "Re-ran bash plugin/heartland-k9s-core/tests/adopt-existing-suite.sh: '== 122 passed, 0 failed ==', exit 0 (preflight 7/2/3; dry run adopt 9/9/9 + media 4; import same; 0 '-N' slugs; 2910/3675 converted, /larry-and-archie-service-k9/ 301 \u2192 /barkode/\u2026/ 200 noindex; rollback 0 skipped, 14 un-adopted; fresh import adopts again).",
+   "After the suite: bash tools/reset-local-site.sh + tools/wp.sh hk9 import /var/www/html/wp-content/hk9-payload --user=admin \u2192 'Import complete' (media_files 240 create / 10 skip, posts_stub 79); tools/url-matrix.sh \u2192 exit 0, 81 \u2705 / 0 \u274c; debug.log 0 bytes. Site left populated.",
+   "Probe (scaled originals, untested by the fixture): sideloaded IMG_curlyvest.jpg \u2192 _wp_attached_file '\u2026-scaled.jpg', original_image 'IMG_curlyvest.jpg'; Adopt::attachment_candidate matched the unscaled basename and the case-variant, rejected another basename.",
+   "Probe: private page with a record slug \u2192 adopted by slug; root record vs child page with same slug \u2192 0; page record vs post with same slug \u2192 0 (correct).",
+   "Probe: hk9_barkode #2910 with its map row + _hk9_source_key removed \u2192 post_candidate id=0 with warning (would create '<slug>-2').",
+   "Probe: reset site + attachments 2149/2806 (identical bytes at live paths) \u2192 preflight '2 attachment(s) would be adopted'; --adopt-existing --dry-run: 2149 ADOPT by id, 2806 SKIP 'would share the attachment bound to live:media:2149'.",
+   "Code read: Adopt, PostsStub, PostsHierarchy, PostsContent, PostFields, Reconcile, Map, Rollback, MediaFiles, MediaSizes, Menus, Terms, Redirects, Preflight, Context/Log, Runner/State/Rest/CLI diffs, import.js resume path (admin Resume calls /import/resume with stored mode; CLI --adopt-existing \u2192 mode.adopt incl. resume override), docs importer.md/install.md/ARCHITECTURE \u00a78. Rollback pre-images cover post_type/template/title/status/parent/excerpt/menu_order/featured/meta/terms/content; sensitive warnings/ADOPT lines withhold slugs.",
+   "Verified live payload facts: 244 live:media records, 68 with unscaled originals (served '-scaled'), 10 byte-identical pairs, 0 sensitive attachments, 16 hk9_barkode records without content files (Avada content blanked on adopt, pre-image kept), live menu is 'Electrician Main Menu' so no name collision with the 4 payload menus.",
+   "No repo files edited; git status shows only the pre-existing modifications/untracked files."
+  ]
+ },
+ "fix": {
+  "summary": "Applied every finding from the review (2 medium, 5 low). Code: (1) Adopt::post_candidate() now also matches a post that already IS the record type (hk9_barkode) at the live id or at the slug (get_posts by name) with convert=false, and returns the matched post_type; a matched page whose status differs from the record's carries a warning (finding 5); PostsStub::adopt_existing() snapshots the raw _wp_page_template before delete_post_meta() and re-adds it when the conversion wp_update_post() fails (post still a page), and counts/logs ADOPT only after a successful conversion (a failed conversion is a fail, not adopt+fail). (3) MediaFiles: in adopt mode Adopt::attachment_candidate() runs BEFORE the rows_by_sha loop, so both halves of a byte-identical live pair (e.g. 2149+2806) are adopted by their own id; the dry-run \"would share\" verdict now compares the would-be owner's adopted id instead of assuming any same-sha match is shared. (6) When the live attachment's known sha256 (_hk9_sha256 meta, or the dry-run prehash state) differs from the record's, a warning \"file bytes differ from the payload \u2026 adopted as-is\" is logged. (4) Preflight::existing() counts attachments with Adopt::attachment_candidate() (real rule, no hashing) and counts a registry record as registry by record type (also when already converted). (2) New pre-flight check \"Legacy builder plugins\" (warn + Plugins link naming active plugins whose dir is fusion-builder/fusion-core/foogallery/foobox*, never blocks); admin Next-steps text now says the plugins were deactivated before the import. Docs: install.md B.2 step 3 deactivates Avada Builder/Core/FooGallery/FooBox BEFORE the import (B.5 now \"delete once happy\"), B.1 content-freeze note (snapshot 2026-09-11), B.4 pre-flight line, media table row (duplicated uploads keep both ids; bytes-mismatch warning), B.5 step 7 post-sign-off purge of record revisions + import-map before_data (verified WP-CLI one-liners), B.6 note; importer.md \u00a72 media_files/posts_stub rows, \u00a72.1 matching table (re-adoption row, failed-conversion behaviour, status warning, sha warning, \"nothing is written\" corrected to name the marker meta), \u00a72.2 pre-flight (plugin check, real rules), \u00a710/\u00a710.1 updated to the new fixture and 155 checks; ARCHITECTURE.md \u00a78 paragraph; STATUS.md count. Tests: fixture adds the byte-identical live pair 2149 (2020/03) + 2806 (2022/12); suite adds a failed-conversion probe (tests/adopt-existing-convert-fail.php, forces wp_insert_post_empty_content in a throw-away Context), a stub FooGallery plugin pre-flight warn check, pair-specific assertions, and a step 7 crash-window re-adoption scenario (map row + marker of live:barkode:2910 deleted while it stays hk9_barkode \u2192 adopt 1 / create 0, no -2 duplicate, re-run skips). Suites: adopt-existing 155/155, importer 81/81; php -l clean; local site reset and re-imported with the real payload (30 pages, 240 attachments, 16 records), url-matrix 81/81, debug.log 0 bytes, real-payload dry run reports skip everywhere. No git commit/checkout/stash/reset performed.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Adopt.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/PostsStub.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/MediaFiles.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Preflight.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Admin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/adopt-existing-oldsite.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/adopt-existing-suite.sh",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/adopt-existing-convert-fail.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/importer.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/install.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/STATUS.md"
+  ],
+  "tests": [
+   {
+    "name": "bash plugin/heartland-k9s-core/tests/adopt-existing-suite.sh (run 2, after fixes)",
+    "result": "PASS",
+    "evidence": "'== 155 passed, 0 failed ==', exit 0. Includes: 0b failed-conversion probe (1 fail / 0 adopt, #2910 stays page with 100-width.php, no map row, no marker); pre-flight 7/2/5 + legacy_plugins pass, stub FooGallery -> warn naming 'FooGallery (stub)' with plugins.php action, ok still True, CLI prints 'NOTE  Legacy builder plugins'; dry run adopt 9/9/9, media adopt 6 (2149 and 2806 each 'ADOPT by id', 0 'would share'; ref:asset:heartland-k9s-logo would share #3028), create 235; import same counts, 0 sha256-mismatch warnings, #2806 own owner, {{media:live:media:2806}} -> 2806, 241 attachments, 33 ADOPT lines, no registry slug in ADOPT lines, url-matrix pass; re-runs 0; rollback 0 skipped / 16 un-adopted, old site restored (6 attachments); fresh import adopts again; step 7 crash window: pre-flight '0 1 0', dry run + import posts_stub adopt 1 / create 0 / fail 0, #2910 still hk9_barkode with slug, 1 record with that slug, 0 '-N' slugs, /barkode/... 200, re-run 0."
+   },
+   {
+    "name": "bash plugin/heartland-k9s-core/tests/adopt-existing-suite.sh (run 1, before expectation fixes)",
+    "result": "PASS (behaviour) / 7 expectation errors fixed",
+    "evidence": "148 passed, 7 failed: adopt counted before a failed conversion (fixed in PostsStub: ADOPT counted/logged after success), sensitive error message is withheld (check adjusted), create 235 not 234 and total 241 not 240 (my arithmetic: 2149 was previously a create), slug grep hit the redirect record's own key 'redirect:/larry-and-archie-service-k9/' (check restricted to ADOPT lines), hierarchy also logs a sensitive ADOPT #2910 line (check restricted to [posts_stub])."
+   },
+   {
+    "name": "bash plugin/heartland-k9s-core/tests/importer-suite.sh",
+    "result": "PASS",
+    "evidence": "'== 81 passed, 0 failed ==', exit 0 (run after the adopt suite, on the fixture-holding site)."
+   },
+   {
+    "name": "php -l on all Import/*.php, Import/Steps/*.php, CLI/PreflightCommand.php, tests/*.php",
+    "result": "PASS",
+    "evidence": "No syntax errors reported for any file."
+   },
+   {
+    "name": "Probe: private page holding a payload slug (finding 5)",
+    "result": "PASS",
+    "evidence": "Adopt::post_candidate -> id matched by slug, warning 'Page #447 is \"private\" on this site; the payload sets it to \"publish\" on the first import (roll the run back to restore it).'; with record status 'private' the warning is empty. Probe page deleted afterwards."
+   },
+   {
+    "name": "Probe: live attachment #2149 with the payload file name but other bytes (finding 6)",
+    "result": "PASS",
+    "evidence": "--adopt-existing --dry-run log: '[WARN] [media_files] live:media:2149 Attachment #2149 has the payload file name but its file bytes differ from the payload (sha256 b1ddd68aca29\u2026 on disk, c31ea4fefaa5\u2026 in the payload); adopted as-is, the live file is kept.' followed by 'ADOPT #2149 by id \u2026 (kept as-is) (dry run)'. Probe attachment/file removed, site reset + re-imported afterwards."
+   },
+   {
+    "name": "Documented B.5 step 7 WP-CLI cleanup commands",
+    "result": "PASS",
+    "evidence": "wp post delete $(wp post list --post_type=revision --post_parent__in=$(wp post list --post_type=hk9_barkode --post_status=any --format=ids | tr ' ' ',') --format=ids) --force -> 'Success: Deleted post \u2026' per id, revisions left: 0; wp db query \"UPDATE $(wp db prefix)hk9_import_map SET before_data = before_data\" -> Query succeeded (ran as a no-op variant locally; wp db prefix = wp_)."
+   },
+   {
+    "name": "Final local site state",
+    "result": "PASS",
+    "evidence": "tools/reset-local-site.sh + tools/wp.sh hk9 import /var/www/html/wp-content/hk9-payload --user=admin -> 'Import complete' (media_files 240 create / 10 skip, posts_stub 79); pages=30 attachments=240 records=16, front page 200; bash tools/url-matrix.sh exit 0, 81 \u2705 / 0 \u274c; debug.log 0 bytes; real-payload --dry-run reports no create/adopt/update/conflict/fail on any step."
+   }
+  ],
+  "issues": [
+   "Finding 7 (purge of pre-images/revisions after sign-off) is implemented as documented WP-CLI one-liners in install.md B.5 step 7, not as an admin button; nulling before_data makes a later rollback of that run un-adopt without restoring (documented).",
+   "For sensitive (registry) records the new log detail '(already converted; binding restored)' and the conversion-failure message are withheld as designed \u2014 only 'sensitive#<hash> ADOPT #<id>' / '(details withheld)' appear; the suite's probe therefore checks the withheld state message rather than the text.",
+   "Pre-existing, not changed: the redirect record keys themselves (e.g. 'redirect:/larry-and-archie-service-k9/') appear verbatim in the run log at the redirects step \u2014 they are public URL paths (the printed QR routes), not registry data, but note it if log contents are ever considered sensitive.",
+   "The legacy-plugin pre-flight check matches by plugin directory slug (fusion-builder, fusion-core, foogallery, foobox*); a plugin installed under a renamed directory would not be flagged. The check is a Note and never blocks the run.",
+   "Bytes of a live attachment matched by id are still not compared for the match itself (by design, no hashing); the new warning relies on the validate prehash (real runs write _hk9_sha256 before media_files; dry runs use state.prehash, where a duplicate-sha id overwritten by a later id may go unwarned in the dry run only).",
+   "The working tree already carried many uncommitted modifications from earlier work on this branch; my edits are on top of them and nothing was committed, stashed, checked out or reset."
+  ],
+  "integration_notes": "Behaviour changes to be aware of: (a) in adopt mode a live:media:<id> record is now bound to its own live attachment even when another record has identical bytes \u2014 the 9 live pairs in the real payload become 18 separate adoptions on heartlandk9s.org (only ref:asset:heartland-k9s-logo still shares #3028); (b) Adopt::post_candidate() returns an extra 'post_type' element and may return a non-empty warning for an id match (status mismatch); (c) Preflight adds a check with id 'legacy_plugins' (status pass|warn) \u2014 the admin JS and CLI render it generically, no JS change needed; the 'existing.media' count now uses Adopt::attachment_candidate() and 'existing.registry' counts by record type; (d) PostsStub counts/logs ADOPT after a successful conversion (dry runs unchanged); (e) the fixture now creates 6 attachments (adds 2149 at 2020/03 and 2806 at 2022/12), so suite expectations moved to media adopt 6 / create 235 / 241 total / 33 ADOPT lines / 16 un-adopted. The adopt suite empties the local site; it was reset and re-populated with a clean non-adopt import of the real payload at the end (map rows are 'created', as before). New test helper tests/adopt-existing-convert-fail.php is local-only (refuses without HK9_LOCAL_DEV) and removes its own log file."
+ }
+}

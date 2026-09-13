@@ -44,13 +44,24 @@ final class PostsContent extends Step {
 			return;
 		}
 		$fields = $desired['fields'];
+
+		$row     = Map::get( $key );
+		$id      = $row && Map::STATUS_ACTIVE === $row['status'] ? $row['object_id'] : 0;
+		$adopted = ( $row && Map::STATUS_ACTIVE === $row['status'] && null === $row['created_by_run'] );
+		if ( 0 === $id && $ctx->dry() && ! empty( $ctx->state['dry_adopted'][ $key ] ) ) {
+			$id      = (int) $ctx->state['dry_adopted'][ $key ];
+			$row     = [ 'object_id' => $id, 'field_hashes' => [], 'created_by_run' => null ];
+			$adopted = true;
+		}
+		// An adopted page is defined by the payload alone: a record without a content
+		// file means "no content", so the old builder markup is cleared (pre-image kept).
+		if ( $adopted && ! isset( $fields['content'] ) ) {
+			$fields['content'] = '';
+		}
 		if ( ! $fields ) {
 			$ctx->result( $key, 'skip', 'no content', $sens );
 			return;
 		}
-
-		$row = Map::get( $key );
-		$id  = $row && Map::STATUS_ACTIVE === $row['status'] ? $row['object_id'] : 0;
 		if ( 0 === $id || ! get_post( $id ) ) {
 			if ( $ctx->dry() ) {
 				$ctx->result( $key, 'create', sprintf( '%d blocks', $desired['blocks'][1] ), $sens );
@@ -63,9 +74,13 @@ final class PostsContent extends Step {
 		$current = PostFields::current( $id, array_keys( $fields ) );
 		$plan    = Reconcile::plan( $row, $fields, $current, $ctx->overwrite() );
 		$first   = ! isset( $row['field_hashes']['content'] ) && isset( $fields['content'] );
-		$action  = $first && 'update' === $plan['action'] ? 'create' : $plan['action'];
+		$action  = $first && 'update' === $plan['action'] ? ( $adopted ? 'adopt' : 'create' ) : $plan['action'];
 		$detail  = $plan['conflicts'] ? 'conflicts: ' . implode( ',', $plan['conflicts'] ) : sprintf( '%d blocks', $desired['blocks'][1] );
-		$ctx->result( $key, $action, $detail, $sens );
+		if ( 'adopt' === $action ) {
+			$ctx->adopted( $key, $id, $detail . ( $ctx->dry() ? ' (dry run)' : '' ), $sens );
+		} else {
+			$ctx->result( $key, $action, $detail, $sens );
+		}
 		if ( $ctx->dry() ) {
 			return;
 		}

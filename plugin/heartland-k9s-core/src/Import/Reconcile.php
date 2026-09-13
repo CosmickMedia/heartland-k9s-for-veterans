@@ -128,13 +128,18 @@ final class Reconcile {
 	}
 
 	/**
-	 * After writing, replace the 'db' hashes of the fields that were APPLIED with
-	 * hashes of the values re-read from the database. Fields that were skipped as
-	 * conflicts keep their stored hashes, so the conflict persists until resolved.
+	 * After writing, replace the 'db' hashes with hashes of the values re-read from
+	 * the database — for the fields that were APPLIED and for every other
+	 * non-conflicting field too (a write can change a field as a side effect, e.g.
+	 * publishing a page makes WordPress uniquify its slug). Fields that were skipped
+	 * as conflicts keep their stored hashes, so the conflict persists until resolved.
 	 */
 	public static function readback( array $plan, array $current_after ): array {
 		$hashes = $plan['hashes'];
-		foreach ( array_keys( $plan['apply'] ) as $f ) {
+		foreach ( array_keys( $hashes ) as $f ) {
+			if ( in_array( $f, $plan['conflicts'], true ) ) {
+				continue;
+			}
 			if ( array_key_exists( $f, $current_after ) ) {
 				$hashes[ $f ]['db'] = Hash::of( $current_after[ $f ] );
 			}

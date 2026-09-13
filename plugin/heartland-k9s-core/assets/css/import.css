@@ -299,3 +299,107 @@
 .hk9-import button[disabled] {
 	cursor: not-allowed;
 }
+
+/* Pre-flight panel */
+
+.hk9-import__checks {
+	margin: 8px 0 0;
+	padding: 0;
+	list-style: none;
+}
+
+.hk9-import__check {
+	display: flex;
+	gap: 10px;
+	align-items: flex-start;
+	padding: 6px 0;
+	border-top: 1px solid #f0f0f1;
+}
+
+.hk9-import__check:first-child {
+	border-top: 0;
+}
+
+.hk9-import__check-status {
+	flex: 0 0 56px;
+	display: inline-block;
+	padding: 1px 0;
+	border-radius: 3px;
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.02em;
+	text-align: center;
+	background: #00a32a;
+	color: #fff;
+}
+
+.hk9-import__check.is-warn .hk9-import__check-status {
+	background: #dba617;
+	color: #1d2327;
+}
+
+.hk9-import__check.is-fail .hk9-import__check-status {
+	background: #d63638;
+	color: #fff;
+}
+
+.hk9-import__check-body {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.hk9-import__check-body strong {
+	display: inline-block;
+	margin-right: 6px;
+}
+
+.hk9-import__check-detail {
+	color: #50575e;
+}
+
+.hk9-import__check-body .button-small {
+	margin-left: 6px;
+	vertical-align: middle;
+}
+
+.hk9-import__preflight-summary {
+	margin: 10px 0 0;
+	font-weight: 600;
+}
+
+.hk9-import__preflight-summary.is-ok {
+	color: #007017;
+}
+
+.hk9-import__preflight-summary.is-bad {
+	color: #d63638;
+}
+
+.hk9-import__adopt-help {
+	margin: -4px 0 12px 24px;
+}
+
+.hk9-import__counts td.is-adopt {
+	color: #2271b1;
+	font-weight: 600;
+}
+
+.hk9-import__next {
+	margin-top: 16px;
+	padding: 12px 16px;
+	background: #f0f6fc;
+	border: 1px solid #72aee6;
+}
+
+.hk9-import__next h3 {
+	margin-top: 0;
+}
+
+.hk9-import__next ol {
+	margin: 0 0 0 18px;
+}
+
+.hk9-import__next li {
+	margin-bottom: 6px;
+}

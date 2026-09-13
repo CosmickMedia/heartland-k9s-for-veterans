@@ -4,6 +4,18 @@
  * (slug uniqueness is skipped for drafts, so siblings under different parents
  * never get spurious -2 suffixes, and nothing half-imported is public).
  *
+ * In "existing site" mode (mode.adopt) an unmapped record is first matched
+ * against the pages already on the site (Adopt::post_candidate: live id, then
+ * slug/path). A match is bound as ADOPTED (created_by_run = NULL, so rollback
+ * restores its pre-image instead of deleting it) and flagged pending, so the
+ * hierarchy/content passes apply the payload unconditionally on the first bind
+ * (the old builder content is the pre-migration state, not an edit). A page
+ * matched by a BarKode record is converted in place (post_type) keeping its id
+ * and slug; the pre-image (post_type, template) is recorded for rollback. A
+ * record that already IS the record type (converted by an earlier run whose
+ * map row is gone) is re-adopted as it is, so a lost binding never produces a
+ * "<slug>-2" duplicate.
+ *
  * @package HK9\Core
  */
 
@@ -11,9 +23,12 @@ declare(strict_types=1);
 
 namespace HK9\Core\Import\Steps;
 
+use HK9\Core\Import\Adopt;
 use HK9\Core\Import\Context;
+use HK9\Core\Import\Hash;
 use HK9\Core\Import\Manifest;
 use HK9\Core\Import\Map;
+use HK9\Core\Import\PostFields;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -47,6 +62,10 @@ final class PostsStub extends Step {
 		}
 		if ( $id > 0 ) {
 			$ctx->result( $key, 'skip', 'exists #' . $id, $sens );
+			return;
+		}
+
+		if ( $ctx->adopt() && $this->adopt_existing( $key, $record, $type, $sens ) ) {
 			return;
 		}
 
@@ -98,6 +117,103 @@ final class PostsStub extends Step {
 				'payload_hash'   => $this->manifest()->payload_hash( $record ),
 			]
 		);
+	}
+
+	/**
+	 * Existing-site mode: bind the record to the page that already is this
+	 * content. Returns true when the record was handled (adopted, or would be in
+	 * a dry run); false means "no match — create as usual".
+	 */
+	private function adopt_existing( string $key, array $record, string $type, bool $sens ): bool {
+		$ctx   = $this->ctx;
+		$found = Adopt::post_candidate( $this->manifest(), $key, $record );
+		if ( '' !== $found['warning'] ) {
+			$ctx->warn( $key, $found['warning'], $sens );
+		}
+		$id = (int) $found['id'];
+		if ( $id <= 0 ) {
+			return false;
+		}
+		$detail = sprintf(
+			'%s "%s" by %s%s',
+			'' !== (string) $found['post_type'] ? (string) $found['post_type'] : 'page',
+			(string) ( $record['slug'] ?? '' ),
+			$found['how'],
+			$found['convert'] ? ' -> converted to ' . $type : ( 'page' !== $type ? ' (already converted; binding restored)' : '' )
+		);
+		if ( $ctx->dry() ) {
+			$ctx->adopted( $key, $id, $detail . ' (dry run)', $sens );
+			$ctx->state['dry_adopted'][ $key ] = $id;
+			return true;
+		}
+
+		Map::reserve( $key, $type, $ctx->run_id );
+
+		$before = [];
+		$hashes = [];
+		if ( $found['convert'] ) {
+			// Snapshot what the conversion changes, then convert in place (id + slug kept).
+			$current            = PostFields::current( $id, [ 'post_type', 'template' ] );
+			$before['post_type'] = $current['post_type'];
+			$before['template']  = $current['template'];
+			// A page template the new theme does not ship would make wp_update_post()
+			// reject the write for the new post type (templates are validated per type);
+			// records use fields, not templates, so the meta goes (restored on rollback).
+			// The raw value is kept aside: a conversion that fails leaves the page a page,
+			// and a page keeps its template.
+			$raw_template = metadata_exists( 'post', $id, '_wp_page_template' ) ? (string) get_post_meta( $id, '_wp_page_template', true ) : null;
+			delete_post_meta( $id, '_wp_page_template' );
+			$r = wp_update_post(
+				[
+					'ID'        => $id,
+					'post_type' => $type,
+				],
+				true
+			);
+			if ( is_wp_error( $r ) ) {
+				clean_post_cache( $id );
+				if ( null !== $raw_template && 'page' === get_post_type( $id ) ) {
+					update_post_meta( $id, '_wp_page_template', $raw_template );
+				}
+				Map::delete( $key );
+				$ctx->fail( $key, sprintf( 'Could not convert page #%d to %s: %s', $id, $type, $r->get_error_message() ), $sens );
+				return true;
+			}
+			clean_post_cache( $id );
+			$after = PostFields::current( $id, [ 'post_type', 'template' ] );
+			foreach ( [ 'post_type', 'template' ] as $f ) {
+				$hashes[ $f ] = [
+					'db'  => Hash::of( $after[ $f ] ),
+					'src' => Hash::of( $after[ $f ] ),
+				];
+			}
+		}
+
+		// Counted (and logged as ADOPT) only once the conversion, if any, went through:
+		// a failed conversion is a fail, not an adoption.
+		$ctx->adopted( $key, $id, $detail, $sens );
+
+		update_post_meta( $id, '_hk9_source_key', $key );
+		update_post_meta( $id, '_hk9_import_run', $ctx->run_id );
+		update_post_meta( $id, '_hk9_import_pending', 1 );
+
+		Map::bind(
+			$key,
+			$type,
+			$id,
+			$ctx->run_id,
+			[
+				'created_by_run' => null,
+				'adopted_by_run' => $ctx->run_id,
+				'payload_hash'   => $this->manifest()->payload_hash( $record ),
+				'field_hashes'   => $hashes,
+				'before_data'    => [],
+			]
+		);
+		if ( $before ) {
+			Map::record( $key, $ctx->run_id, $hashes, $before );
+		}
+		return true;
 	}
 
 	/**

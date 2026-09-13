@@ -475,6 +475,67 @@ final class Shared {
 		);
 	}
 
+	/**
+	 * Form provider fields shared by the contact and application `form`
+	 * sections: `provider` (inherit = Settings → Forms default), the Gravity
+	 * Forms form picker (options from GFAPI when Gravity Forms is active; the
+	 * id is stored as a numeric string by the select type) and a sanitized
+	 * `shortcode` (only [shortcode] tags survive; executed with do_shortcode()).
+	 *
+	 * @return array[] Field definitions.
+	 */
+	public static function form_provider_fields(): array {
+		$gravity_options = static function (): array {
+			return class_exists( 'HK9\\Core\\Support\\FormProviders' ) ? \HK9\Core\Support\FormProviders::gravity_form_options() : [];
+		};
+		$gravity_help = class_exists( 'HK9\\Core\\Support\\FormProviders' )
+			? \HK9\Core\Support\FormProviders::gravity_help()
+			: __( 'Gravity Forms is not active.', 'heartland-k9s-core' );
+		$providers    = class_exists( 'HK9\\Core\\Support\\FormProviders' )
+			? \HK9\Core\Support\FormProviders::labels( true )
+			: [
+				'inherit'   => __( 'Site default (Settings → Forms)', 'heartland-k9s-core' ),
+				'builtin'   => __( 'Built-in form (this plugin)', 'heartland-k9s-core' ),
+				'gravity'   => __( 'Gravity Forms', 'heartland-k9s-core' ),
+				'shortcode' => __( 'Form shortcode', 'heartland-k9s-core' ),
+			];
+
+		return [
+			[
+				'type'    => 'select',
+				'key'     => 'provider',
+				'label'   => __( 'Form provider', 'heartland-k9s-core' ),
+				'help'    => __( '"Site default" follows Heartland → Settings → Forms → Default form provider. The built-in form emails the recipients configured there and stores submissions; Gravity Forms and shortcodes are handled by their own plugin.', 'heartland-k9s-core' ),
+				'options' => $providers,
+				'default' => 'inherit',
+			],
+			[
+				'type'             => 'select',
+				'key'              => 'gravity_form_id',
+				'label'            => __( 'Gravity Forms form', 'heartland-k9s-core' ),
+				'help'             => $gravity_help,
+				'placeholder'      => __( '— Use the site default form —', 'heartland-k9s-core' ),
+				'options'          => [],
+				'options_callback' => $gravity_options,
+				'default'          => '',
+				'sanitize_callback' => static function ( mixed $value ): string {
+					// Numeric id or '' (the select type stores strings; helpers cast to int).
+					return is_scalar( $value ) && ctype_digit( (string) $value ) && (int) $value > 0 ? (string) (int) $value : '';
+				},
+			],
+			[
+				'type'              => 'text',
+				'key'               => 'shortcode',
+				'label'             => __( 'Form shortcode', 'heartland-k9s-core' ),
+				'help'              => __( 'Shown when the provider is "Form shortcode", e.g. [gravityform id="2" title="false" ajax="true"] or another form plugin\'s shortcode. Only the [shortcode] itself is kept — other text and HTML are removed.', 'heartland-k9s-core' ),
+				'placeholder'       => '[gravityform id="1" title="false" description="false" ajax="true"]',
+				'sanitize_callback' => static function ( mixed $value ): string {
+					return class_exists( 'HK9\\Core\\Support\\FormProviders' ) ? \HK9\Core\Support\FormProviders::sanitize_shortcode( $value ) : '';
+				},
+			],
+		];
+	}
+
 	/** Common "mode" select for listing sections. */
 	public static function mode_field( string $auto_label ): array {
 		return [

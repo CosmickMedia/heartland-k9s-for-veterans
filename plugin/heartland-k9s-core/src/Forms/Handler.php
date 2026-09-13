@@ -52,6 +52,11 @@ namespace HK9\Core\Forms {
 		private static ?array $forms = null;
 
 		public static function register(): void {
+			// Provider layer (built-in / Gravity Forms / shortcode): declares the hk9_form_provider*() helpers.
+			if ( class_exists( 'HK9\\Core\\Support\\FormProviders' ) ) {
+				\HK9\Core\Support\FormProviders::register();
+			}
+
 			add_action( 'admin_post_' . self::ACTION, [ self::class, 'handle_admin_post' ] );
 			add_action( 'admin_post_nopriv_' . self::ACTION, [ self::class, 'handle_admin_post' ] );
 			add_action( 'wp_enqueue_scripts', [ self::class, 'register_assets' ] );

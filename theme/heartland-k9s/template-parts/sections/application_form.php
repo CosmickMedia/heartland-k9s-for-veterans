@@ -1,7 +1,13 @@
 <?php
 /**
  * Section: application_form (application template, id `form`) — the initial
- * application inquiry form (plugin-rendered) plus a link card to the 5 Questions page.
+ * application inquiry form plus a link card to the 5 Questions page.
+ *
+ * The form itself comes from the section's provider (`hk9_form_provider()`):
+ * the plugin's built-in application form (heading/notice/success page passed
+ * through), a Gravity Forms form or a form shortcode. With an external
+ * provider the heading and the notice (when not empty) still render above the
+ * form, and the "Before you apply" card still follows the toggle.
  *
  * @package heartland-k9s
  *
@@ -36,6 +42,10 @@ if ( hk9_link_is_set( $hk9_success ) ) {
 	$hk9_form_args['success_url'] = $hk9_success;
 }
 
+// Provider: built-in (default) / Gravity Forms / shortcode. External providers that cannot render fall back to the built-in form.
+$hk9_provider      = hk9_form_provider( $hk9_data, 'application' );
+$hk9_provider_html = 'builtin' !== ( $hk9_provider['provider'] ?? 'builtin' ) ? hk9_render_form_provider( $hk9_provider, [ 'id' => 'hk9-form-application-provider' ] ) : '';
+
 hk9_section_open( $hk9_id, 'hk9-section--py20 hk9-application' );
 ?>
 <div class="container hk9-narrow">
@@ -51,7 +61,19 @@ hk9_section_open( $hk9_id, 'hk9-section--py20 hk9-application' );
 	<?php endif; ?>
 
 	<div class="hk9-application__form hk9-card hk9-card--panel">
-		<?php if ( function_exists( 'hk9_the_form' ) ) : ?>
+		<?php if ( '' !== $hk9_provider_html ) : ?>
+			<?php // External provider: the section heading + notice frame the form; the provider handles its own confirmation. ?>
+			<div class="hk9-form-wrap hk9-form-wrap--application hk9-form-wrap--provider" id="hk9-form-application">
+				<?php if ( '' !== $hk9_heading ) : ?>
+					<h2 class="hk9-form__heading" id="hk9-form-application-heading"><?php echo esc_html( $hk9_heading ); ?></h2>
+				<?php endif; ?>
+				<?php if ( '' !== $hk9_notice ) : ?>
+					<div class="hk9-form__notice" role="note"><?php echo wp_kses( wpautop( $hk9_notice ), [ 'p' => [], 'strong' => [], 'em' => [], 'br' => [], 'a' => [ 'href' => [], 'target' => [], 'rel' => [] ] ] ); ?></div>
+				<?php endif; ?>
+				<?php echo $hk9_provider_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- provider markup (Gravity Forms / shortcode output). ?>
+			</div>
+		<?php elseif ( function_exists( 'hk9_the_form' ) ) : ?>
+			<?php echo hk9_form_provider_notice( $hk9_provider ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper; '' for visitors. ?>
 			<?php hk9_the_form( 'application', $hk9_form_args ); ?>
 		<?php else : ?>
 			<?php if ( '' !== $hk9_heading ) : ?>

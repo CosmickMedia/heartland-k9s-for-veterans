@@ -1,0 +1,150 @@
+{
+ "impl": {
+  "summary": "Implemented a form-provider layer (built-in / Gravity Forms / shortcode) for the contact and application form sections plus a site-wide default in Heartland \u2192 Settings \u2192 Forms, Gravity Forms styling (.hk9-gf), editor-content rendering on every sections template with a per-page position setting (hk9_sections_layout.content_position: after | before | hide), and block-editor guidance (info notice, always-visible/first section boxes, provider-dependent field toggling). All verified on the local stack: sections-test.php 42/42 PASS (3 new provider/layout checks added, the one changed layout-shape assertion now includes content_position=after), built-in forms unchanged on /contact/ and /online-application/ (a real submission went through the JS path: success panel, submission stored, Mailpit received it; temp record deleted), Gravity provider renders gform_wrapper inside .hk9-gf on a temp contact page (screenshots at 1440/390, computed styles: 48px controls, 2px radius, --hk9-border, muted/50 bg, 14px/500 labels, navy 56px full-width submit, 2px navy focus ring, crimson validation), shortcode provider executes [gravityform \u2026] (only shortcode tags survive sanitizing; unknown shortcode / missing GF form fall back to the built-in form), settings default switch (forms.provider=gravity) flips both real pages to GF and reverts cleanly, editor content on /about/ verified for after/before/hide (content.css enqueued only when shown; page restored byte-identical), axe PASS on /contact/, /tmp-gf-contact/, /online-application/ at 390+1440, debug.log empty. Temp page, GF test form and temp fixtures deleted.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Support/FormProviders.php (new)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Admin/EditorGuidance.php (new)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Admin/Notices.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/Handler.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Shared.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/definitions/contact.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/definitions/application.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Layout.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Panel.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/js/sections.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/sections-test.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/form.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/application_form.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/sections.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags-records.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/assets.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/contact.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_gravity-forms.scss (new)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/forms.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_layout.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_pages-shared.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/forms.css (rebuilt)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css (rebuilt)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md (\u00a75, \u00a77, \u00a710)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/about-editor-guidance-notice.png (new)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/about-page-sections-editor-content.png (new)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/contact-section-form-provider.png (new)",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/settings-forms-provider.png (new)"
+  ],
+  "tests": [
+   {
+    "name": "sections-test.php (tools/wp.sh eval-file \u2026/tests/sections-test.php)",
+    "result": "PASS",
+    "evidence": "42 checks, 0 failed (baseline 39). Adjusted layout_form_shape_sanitized to expect content_position=after (new field); added layout_content_position (enum validation, garbage\u2192after, schema rejects 'top'), form_provider_fields_and_resolution (invalid provider\u2192inherit, non-numeric GF id\u2192'', shortcode sanitized to [tag \u2026] only, idempotent+schema-valid, inherit\u2192builtin via settings, unknown shortcode/missing GF form \u2192 unavailable + notice + no markup) and form_provider_shortcode_renders (registered shortcode rendered inside .hk9-shortcode-form)."
+   },
+   {
+    "name": "Built-in provider unchanged on /contact/ and /online-application/",
+    "result": "PASS",
+    "evidence": "curl: both 200 with class=\"hk9-form hk9-form--\u2026\" (1 each) and no gform_wrapper; markup structure (h2 + .hk9-form-wrap--contact form) identical to before. Playwright JS submit on /contact/ \u2192 'Message Sent' success panel, hk9_submission record created, Mailpit received '[HK9 Contact] \u2026 from Test Verify'; temp submission deleted afterwards."
+   },
+   {
+    "name": "Gravity provider on temp page /tmp-gf-contact/ (contact.php template, GF form via GFAPI::add_form)",
+    "result": "PASS",
+    "evidence": "curl grep gform_wrapper=3, wrapper .hk9-form-provider.hk9-form-provider--gravity.hk9-gf; GF theme CSS/JS enqueued. Computed styles: input 48px min-height, 2px radius, border rgb(229,224,220)=--hk9-border, bg rgba(244,240,236,.5), Inter 14px; label 14px/500 8px gap; select 48px; textarea 120px; submit 56px navy rgb(28,47,74) full width; focus box-shadow 0 0 0 2px navy; required marker crimson; empty submit \u2192 crimson borders, messages and summary. Screenshots 1440/390 reviewed."
+   },
+   {
+    "name": "Shortcode provider + fallbacks",
+    "result": "PASS",
+    "evidence": "Stored value sanitized from '<p>x</p> [gravityform \u2026] junk' to '[gravityform id=\"1\" title=\"false\" description=\"false\" ajax=\"true\"]'; page rendered gform_wrapper inside .hk9-shortcode-form. Unknown shortcode and GF form #999 \u2192 built-in form rendered (notice markup absent for anonymous visitors)."
+   },
+   {
+    "name": "Settings default provider switch",
+    "result": "PASS",
+    "evidence": "forms.provider=gravity + gravity_contact_form/gravity_application_form=1 with sections on 'inherit' \u2192 /contact/ and /online-application/ rendered the GF form (hk9-form-provider--gravity=1, builtin=0); provider=shortcode without a section shortcode \u2192 built-in; option reverted (=== original). Application page screenshot shows heading + notice + 'Before you apply' card around the GF form."
+   },
+   {
+    "name": "Editor content on /about/",
+    "result": "PASS",
+    "evidence": "Empty canvas \u2192 no card (baseline). Temp paragraph: default \u2192 section.hk9-editor-content--flow after #hk9-cta, content.css enqueued; content_position=before \u2192 .hk9-editor-content--overlap before #hk9-legacy; hide \u2192 nothing, no content.css. Screenshots checked at 1440 (prose styles apply; overlap spacing correct). Page content and layout meta restored (content identical, temp revisions deleted)."
+   },
+   {
+    "name": "Block editor guidance (Playwright, wp-admin)",
+    "result": "PASS",
+    "evidence": "About: core/notices notice id hk9-editor-guidance present with template-specific text; Page sections panel has #hk9-layout-content-position; selecting 'before' mirrors {order,hidden,content_position:'before'} into core/editor meta and updates the notice text live; #normal-sortables contains only hk9_sections (first, open); all section <details> open. Contact: panel labelled 'Form', provider select present, Gravity/shortcode fields hidden unless the effective provider matches, GF options list '\u2014 Use the site default form \u2014 | HK9 TEMP GF Contact Test (#1)'. Settings \u2192 Forms: 'Default form provider' (Built-in / Gravity Forms / Form shortcode) and Gravity form selects populated."
+   },
+   {
+    "name": "axe (node tools/axe.mjs --urls=/contact/,/tmp-gf-contact/,/online-application/)",
+    "result": "PASS",
+    "evidence": "0 critical / 0 serious / 0 moderate / 0 minor on all three URLs at 390 and 1440."
+   },
+   {
+    "name": "CSS build (node tools/build-css.mjs --check)",
+    "result": "PASS",
+    "evidence": "theme.css 47.6 kB raw / 9.3 kB gzip (budget 90/16); forms.css 16.8\u219228.7 kB raw / 4.5 kB gzip (Gravity Forms partial); other bundles byte-identical."
+   },
+   {
+    "name": "Route smoke + debug.log",
+    "result": "PASS",
+    "evidence": "16 main routes 200 after the other agent's re-import; no .hk9-editor-content on payload pages (empty canvases); debug.log 0 lines throughout."
+   },
+   {
+    "name": "Cleanup",
+    "result": "PASS",
+    "evidence": "GFAPI::delete_form(1) ok, 0 GF forms left; tmp-gf-contact page gone; temp fixtures removed from docker/fixtures; temp submission deleted; hk9_settings restored."
+   }
+  ],
+  "issues": [
+   "Section-level gravity_form_id is stored as a numeric string ('1'), not an int: the field framework's select type (the only type with a dynamic options picker) stores strings and adding a new Fields type was outside my area; helpers cast to int and the settings-level ids ARE ints. Documented in ARCHITECTURE \u00a75/\u00a710.",
+   "Files outside the listed AREA that I had to touch minimally: src/Sections/Layout.php + Panel.php (content_position schema/sanitize + the panel select \u2014 explicitly requested), src/Settings/Schema.php (the three new settings keys; no extension hook exists), assets/js/sections.js (3 lines so the block editor mirrors content_position). I did not edit Plugin.php: FormProviders boots from Forms\\Handler::register() and EditorGuidance from Admin\\Notices::register().",
+   "Design decision: when the chosen provider cannot render (GF inactive, form missing/inactive, empty/unregistered shortcode) the theme renders the built-in form plus an editor-only note (users with edit_pages) rather than an empty column; documented in the admin guide.",
+   "The GF form list (GFAPI::get_forms) is only fetched in admin/ajax/REST/CLI contexts (it loads every form's meta); the frontend validates the single stored id with GFAPI::get_form. Settings pickers fetch the list only on the Heartland \u2192 Settings screen.",
+   "Revision diffs (RevisionGuard formatter in Sections/Registry.php, outside my area) still print only order/hidden for hk9_sections_layout; content_position is stored/restored correctly but not shown in the diff text.",
+   "Plugin-less theme fallbacks for hk9_form_provider()/hk9_render_form_provider() were lint-checked and mirror the plugin logic but were not exercised live (deactivating the plugin would have disturbed the other agent's import runs).",
+   "The local site was reset/re-imported by the other agent three times during verification; every check was re-run after content returned, and the temporary page was recreated each time."
+  ],
+  "integration_notes": "Nothing bumped (per instructions). Global helpers added by the plugin (all function_exists-guarded, with theme fallbacks in inc/sections.php): hk9_form_providers(), hk9_form_provider($section,$role) \u2192 {provider, role, gravity_form_id:int, shortcode, source, available, notice}, hk9_render_form_provider($resolved,$args), hk9_form_provider_notice($resolved), hk9_gravity_forms_active(), hk9_gravity_forms_list(), hk9_sanitize_form_shortcode(). Theme helpers: hk9_editor_content_position($post_id,$template) ('after'|'before'|'hide'|'' for native-content templates landing/application/thank-you/gallery/default or empty canvas), hk9_the_editor_content(), hk9_template_has_native_content(); hk9_render_sections()/hk9_rec_render_sections()/contact.php inject the card; inc/assets.php adds the content bundle when the card shows. New filters: hk9/forms/provider, hk9/theme/native_content_templates, hk9/theme/editor_content_position, hk9/sections/native_content_templates. Layout meta shape is now {order, hidden, content_position} (default 'after'; old {order,hidden} values sanitize to it). New settings keys forms.provider ('builtin'), forms.gravity_contact_form (0), forms.gravity_application_form (0) \u2014 the theme's inc/defaults.php has no entries for them (hk9_theme_option falls back to the explicit defaults passed by the fallback helpers). CSS: assets/src/scss/_gravity-forms.scss is imported by forms.scss (forms bundle, loaded on contact/application templates); .hk9-editor-content styles live in _layout.scss (core) with a :has() rule in _pages-shared.scss; dist/forms.css and dist/theme.css were rebuilt with tools/build-css.mjs. Gravity Forms remains optional and unbundled (every call guarded)."
+ },
+ "review": {
+  "verdict": "APPROVE (no blocking defects). Provider layer, GF fallback, schema and layout handling all verified live; only low-severity polish items remain.",
+  "findings": [
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/sections/form.php (and application_form.php)",
+    "issue": "A registered shortcode that renders nothing (e.g. an enclosing shortcode whose inner content the sanitizer strips: '[caption]x[/caption]' \u2192 '[caption] [/caption]', resolve() available=true, render() returns '') silently falls back to the built-in form with no editor note, because the notice is only set for unregistered tags/missing GF forms.",
+    "fix": "In the theme parts, when `! empty( $hk9_provider['available'] ) && '' === $hk9_provider_html && 'builtin' !== $hk9_provider['provider']`, set `$hk9_provider['notice']` to an 'The [tag] shortcode produced no output; the built-in form is shown instead.' string before calling hk9_form_provider_notice() (or have FormProviders::render() flag it via a by-ref/second return)."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Shared.php:form_provider_fields()",
+    "issue": "`gravity_form_options( int $current = 0 )` is invoked from the options_callback with no argument (Field::options() passes $field), so the 'keep the stored id as an option while unavailable' branch is dead. With GF active, saving a page whose form was trashed/deleted makes Select::sanitize() reset gravity_form_id to '' (value not in options) \u2014 silent loss; the code comment claims otherwise.",
+    "fix": "Either accept the silent reset and delete the misleading comment/branch, or make the options_callback read the current value (e.g. `static function ( array $field ) { return gravity_form_options( (int) ( $field['_current'] ?? 0 ) ); }` if the framework can pass it) / drop the Select-type option validation for this field by keeping `options_callback` returning the stored id merged in."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Shared.php:form_provider_fields()",
+    "issue": "`FormProviders::gravity_help()` is evaluated eagerly when definitions load, so (a) every admin/REST/CLI request that normalizes definitions calls `GFAPI::get_forms()` (once per request, but on init for all admin pages), and (b) the REST schema `description` of gravity_form_id on the frontend reads 'Gravity Forms is active but has no forms yet' regardless of reality (list is empty outside admin).",
+    "fix": "Use a static help string ('Shown when the provider is Gravity Forms\u2026') in the field definition and print the active/no-forms status separately in the panel (e.g. via the section `description` or an admin-only inline note), so no GFAPI call happens at definition load."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/sections.php:hk9_editor_content_position()",
+    "issue": "Emptiness is judged by `trim( post_content )`; a canvas holding only an empty paragraph block (`<!-- wp:paragraph --><p></p><!-- /wp:paragraph -->`) renders an empty `.hk9-editor-content--flow` section with 4rem/5rem padding (visible blank band) and enqueues content.css. Same limitation as the pre-existing hk9_the_content_card(), so consistent, but now it affects every sections template.",
+    "fix": "Add a shared helper `hk9_content_is_blank( $post_id )` that returns true when `trim( wp_strip_all_tags( get_post_field('post_content') ) ) === ''` and the content has no non-paragraph blocks (`parse_blocks()` filter on blockName), and use it in both hk9_editor_content_position() and hk9_the_content_card()."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/Registry.php (RevisionGuard formatter)",
+    "issue": "Revision diffs for hk9_sections_layout print only order/hidden; content_position changes are stored/restored but invisible in the diff (implementer disclosed).",
+    "fix": "Append `Editor content: <label>` to the layout formatter output using Layout::content_labels()."
+   }
+  ],
+  "spot_checks": [
+   "sections-test.php via container path: 42 checks, 0 failed.",
+   "Gravity Forms deactivated: /contact/ and /online-application/ \u2192 200, built-in form (hk9-form--*) \u00d71, gform_wrapper 0, provider notice 0, no PHP warning text; debug.log 0 lines; GF reactivated afterwards.",
+   "With GF inactive and hk9_settings forms.provider=gravity + gravity_contact_form=5 (temp, restored ===): resolve(inherit) \u2192 provider gravity, id 5, available=false, source settings; render() \u2192 '' so the theme falls back to the built-in form.",
+   "rest_validate_value_from_schema(defaults) = true for contact/form, application/form and Layout::empty_value(); gravity_form_id schema is plain string (no enum, so stored ids always validate), provider enum [inherit,builtin,gravity,shortcode]; sanitize 'GRAVITY'\u2192inherit, '007'\u2192'7', '999' validates.",
+   "Shortcode sanitizer: <script>\u2026, <img onerror>, nested [[\u2026]], tabs, unterminated '[', plain text all reduced to [tag \u2026] tokens or ''; idempotent in every case; only shortcode_exists() tags render.",
+   "Precedence matrix (settings provider=gravity, id 7): section builtin+id3 \u2192 builtin; inherit+id3 \u2192 gravity id3 (section id overrides); inherit \u2192 gravity 7; gravity+'' \u2192 7 from settings; bogus \u2192 settings. Application role with no settings id \u2192 available=false with notice.",
+   "CSS: dist/forms.css has 0 gform/gfield/ginput selectors outside .hk9-gf; only top-level selectors in _gravity-forms.scss are .hk9-form-provider and .hk9-gf; --hk9-primary-rgb token exists; .hk9-editor-content--overlap + .hk9-overlap spacing rule present for the 'before' case on contact/about.",
+   "i18n: all strings in new/changed plugin files use 'heartland-k9s-core', theme files 'heartland-k9s'; editor notice strings pass through wp_json_encode; Renderer emits data-hk9-key so the provider toggle JS targets exist.",
+   "No section template-part uses setup_postdata/the_post(), so the_content() in the 'after' editor-content slot cannot pick up a leaked nested-loop post."
+  ]
+ }
+}

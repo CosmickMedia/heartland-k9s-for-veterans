@@ -47,6 +47,14 @@ final class Context {
 		return ! empty( $this->state['mode']['overwrite'] );
 	}
 
+	/**
+	 * "Existing site" mode: bind payload records to matching pre-existing
+	 * pages/attachments (by live id or slug) instead of creating duplicates.
+	 */
+	public function adopt(): bool {
+		return ! empty( $this->state['mode']['adopt'] );
+	}
+
 	public function user_login(): string {
 		$user = get_userdata( (int) $this->state['user_id'] );
 		return $user ? $user->user_login : 'cli';
@@ -93,6 +101,7 @@ final class Context {
 		if ( ! isset( $this->state['counts'][ $step ] ) ) {
 			$this->state['counts'][ $step ] = [
 				'create'   => 0,
+				'adopt'    => 0,
 				'update'   => 0,
 				'skip'     => 0,
 				'conflict' => 0,
@@ -159,10 +168,22 @@ final class Context {
 	}
 
 	/**
-	 * Record a result for a key ('create' | 'update' | 'skip' | 'conflict').
+	 * Record a result for a key ('create' | 'adopt' | 'update' | 'skip' | 'conflict').
 	 */
 	public function result( string $key, string $kind, string $detail = '', bool $sensitive = false ): void {
 		$this->count( $kind );
 		$this->log->info( $this->step, $key, strtoupper( $kind ) . ( '' !== $detail ? ' ' . $detail : '' ), $sensitive );
+	}
+
+	/**
+	 * Record an adoption (a pre-existing object bound to a payload key). The
+	 * object id is always logged — "key -> #id" is the audit trail of the
+	 * existing-site migration — while every other detail of a sensitive record
+	 * is withheld as usual.
+	 */
+	public function adopted( string $key, int $id, string $detail = '', bool $sensitive = false ): void {
+		$this->count( 'adopt' );
+		$who = $sensitive ? 'sensitive#' . Hash::short( $key ) : $key;
+		$this->log->write( 'info', $this->step, $who, 'ADOPT #' . $id . ( ! $sensitive && '' !== $detail ? ' ' . $detail : '' ) );
 	}
 }

@@ -32,6 +32,9 @@ final class MediaSizes extends Step {
 		$sens = Context::is_sensitive( $record );
 		$row  = Map::get( $key );
 		$id   = $row && Map::STATUS_ACTIVE === $row['status'] ? $row['object_id'] : 0;
+		if ( 0 === $id && $ctx->dry() && ! empty( $ctx->state['dry_adopted'][ $key ] ) ) {
+			$id = (int) $ctx->state['dry_adopted'][ $key ]; // Would be adopted (existing-site dry run).
+		}
 		if ( 0 === $id ) {
 			if ( $ctx->dry() ) {
 				// A record whose bytes another record would create first shares that attachment.

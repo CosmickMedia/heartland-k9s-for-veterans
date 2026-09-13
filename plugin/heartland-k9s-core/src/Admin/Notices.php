@@ -20,6 +20,11 @@ final class Notices {
 
 	public static function register(): void {
 		add_action( 'admin_notices', [ self::class, 'theme_notice' ] );
+
+		// Section-page editor guidance (block editor notice, always-visible section boxes, provider field toggles).
+		if ( class_exists( EditorGuidance::class ) ) {
+			EditorGuidance::register();
+		}
 	}
 
 	/**

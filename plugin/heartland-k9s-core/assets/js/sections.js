@@ -101,7 +101,9 @@
 				hidden.push( id );
 			}
 		} );
-		return { order: order, hidden: hidden };
+		// Editor-content position (select on section templates, hidden input elsewhere).
+		var position = $( '[name$="[content_position]"]', box );
+		return { order: order, hidden: hidden, content_position: position && position.value ? position.value : 'after' };
 	}
 
 	/** Reflect layout in the content panel: order the section panels + hidden badges. */

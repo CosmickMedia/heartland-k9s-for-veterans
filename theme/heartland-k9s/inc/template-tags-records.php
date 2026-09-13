@@ -70,6 +70,10 @@ function hk9_rec_render_sections( int $post_id, string $template, array $inject 
 	$before = is_array( $inject['before'] ?? null ) ? $inject['before'] : [];
 	$after  = is_array( $inject['after'] ?? null ) ? $inject['after'] : [];
 
+	// Editor content (block canvas) position; '' for templates with a native content slot (landing, application …).
+	$content_position = hk9_editor_content_position( $post_id, $template );
+	$content_pending  = in_array( $content_position, [ 'before', 'after' ], true );
+
 	foreach ( $sections as $section ) {
 		$id = (string) $section['id'];
 		if ( isset( $before[ $id ] ) && is_callable( $before[ $id ] ) ) {
@@ -92,6 +96,11 @@ function hk9_rec_render_sections( int $post_id, string $template, array $inject 
 			call_user_func( $after[ $id ] );
 			unset( $after[ $id ] );
 		}
+
+		if ( $content_pending && 'before' === $content_position && in_array( (string) $section['type'], [ 'hero_band', 'hero_image' ], true ) ) {
+			hk9_the_editor_content( $post_id, 'before' );
+			$content_pending = false;
+		}
 	}
 
 	// Anchors that never rendered (hidden section): still run the callbacks so page content is never lost.
@@ -99,6 +108,10 @@ function hk9_rec_render_sections( int $post_id, string $template, array $inject 
 		if ( is_callable( $callback ) ) {
 			call_user_func( $callback );
 		}
+	}
+
+	if ( $content_pending ) {
+		hk9_the_editor_content( $post_id, $content_position );
 	}
 }
 

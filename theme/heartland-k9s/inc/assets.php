@@ -101,6 +101,10 @@ function hk9_style_bundles(): array {
 						$add( 'blog', 'forms' );
 					}
 			}
+			// Editor content shown on a sections template (.hk9-prose card before/after the sections).
+			if ( in_array( hk9_editor_content_position( $post_id, $template ), [ 'before', 'after' ], true ) ) {
+				$add( 'content' );
+			}
 		} elseif ( 'post' === $type ) {
 			$add( 'content', 'blog' );
 			if ( comments_open( $post_id ) || get_comments_number( $post_id ) ) {

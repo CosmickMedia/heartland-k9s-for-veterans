@@ -20,6 +20,11 @@
 .hk9-template-contact {
 	.hk9-main {
 		padding-bottom: 5rem;
+
+		// The editor-content card carries its own 80px bottom padding when it closes the page.
+		&:has(> .hk9-editor-content--flow:last-child) {
+			padding-bottom: 0;
+		}
 	}
 }
 

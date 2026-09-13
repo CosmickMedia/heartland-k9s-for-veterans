@@ -102,6 +102,7 @@ final class Terms extends Step {
 				$ctx->run_id,
 				[
 					'created_by_run' => $adopted ? null : $ctx->run_id,
+					'adopted_by_run' => $adopted ? $ctx->run_id : null,
 					'payload_hash'   => $this->manifest()->payload_hash( $record ),
 					'field_hashes'   => Reconcile::fresh( $desired, $after ),
 				]
@@ -112,12 +113,16 @@ final class Terms extends Step {
 		// Existing (mapped or adopted): reconcile fields.
 		$current = $this->current( $term_id, $tax );
 		$plan    = Reconcile::plan( $adopted && ! $row ? [ 'object_id' => $term_id, 'field_hashes' => [] ] : $row, $desired, $current, $ctx->overwrite() );
-		$ctx->result( $key, $plan['action'], $plan['conflicts'] ? 'conflicts: ' . implode( ',', $plan['conflicts'] ) : '', $sens );
+		if ( $adopted && ! $row ) {
+			$ctx->adopted( $key, $term_id, sprintf( '%s:%s by slug%s%s', $tax, $slug, $plan['apply'] ? ' (fields applied: ' . implode( ',', array_keys( $plan['apply'] ) ) . ')' : '', $ctx->dry() ? ' (dry run)' : '' ), $sens );
+		} else {
+			$ctx->result( $key, $plan['action'], $plan['conflicts'] ? 'conflicts: ' . implode( ',', $plan['conflicts'] ) : '', $sens );
+		}
 		if ( $ctx->dry() ) {
 			return;
 		}
 		if ( ! $row ) {
-			Map::bind( $key, 'term', $term_id, $ctx->run_id, [ 'created_by_run' => null ] );
+			Map::bind( $key, 'term', $term_id, $ctx->run_id, [ 'created_by_run' => null, 'adopted_by_run' => $ctx->run_id ] );
 			update_term_meta( $term_id, '_hk9_source_key', $key );
 		}
 		if ( $plan['apply'] ) {

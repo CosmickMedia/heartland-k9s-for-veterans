@@ -1,6 +1,6 @@
 <?php
 /**
- * REST endpoints for the admin import screen: hk9/v1/import/{status,start,step,pause,resume,retry,rollback,reset}.
+ * REST endpoints for the admin import screen: hk9/v1/import/{status,preflight,start,step,pause,resume,retry,rollback,reset}.
  *
  * Every route requires manage_options (administrators) and the wp_rest nonce
  * (cookie auth); write routes additionally require unfiltered_html so block
@@ -50,6 +50,23 @@ final class Rest {
 
 		register_rest_route(
 			self::NS,
+			'/import/preflight',
+			[
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => [ self::class, 'preflight' ],
+				'permission_callback' => $perm,
+				'args'                => [
+					'path' => [
+						'type'              => 'string',
+						'default'           => '',
+						'sanitize_callback' => static fn( $v ) => is_string( $v ) ? trim( $v ) : '',
+					],
+				],
+			]
+		);
+
+		register_rest_route(
+			self::NS,
 			'/import/start',
 			[
 				'methods'             => WP_REST_Server::CREATABLE,
@@ -65,6 +82,10 @@ final class Rest {
 						'default' => false,
 					],
 					'overwrite' => [
+						'type'    => 'boolean',
+						'default' => false,
+					],
+					'adopt'     => [
 						'type'    => 'boolean',
 						'default' => false,
 					],
@@ -134,6 +155,31 @@ final class Rest {
 		return new WP_REST_Response( Runner::status() );
 	}
 
+	/**
+	 * Pre-flight facts for the selected payload (or for `path`, validated like start).
+	 */
+	public static function preflight( WP_REST_Request $request ): WP_REST_Response|WP_Error {
+		$path = (string) $request['path'];
+		$dir  = null;
+		if ( '' !== $path ) {
+			$dir = Payload::validate_admin_path( $path );
+			if ( is_wp_error( $dir ) ) {
+				// Report it inside the pre-flight instead of failing the panel.
+				$report                = Preflight::run( '' );
+				$report['ok']          = false;
+				$report['checks']      = array_values( array_filter( $report['checks'], static fn( $c ) => 'payload' !== $c['id'] ) );
+				$report['checks'][]    = [
+					'id'     => 'payload',
+					'label'  => __( 'Payload', 'heartland-k9s-core' ),
+					'status' => 'fail',
+					'detail' => $dir->get_error_message(),
+				];
+				return new WP_REST_Response( $report );
+			}
+		}
+		return new WP_REST_Response( Preflight::run( $dir ) );
+	}
+
 	public static function start( WP_REST_Request $request ): WP_REST_Response|WP_Error {
 		$unfiltered = self::require_unfiltered_html();
 		if ( is_wp_error( $unfiltered ) ) {
@@ -142,11 +188,12 @@ final class Rest {
 		$mode = [
 			'dry_run'   => (bool) $request['dry_run'],
 			'overwrite' => (bool) $request['overwrite'],
+			'adopt'     => (bool) $request['adopt'],
 			'batch'     => (int) $request['batch'],
 			'budget'    => (int) $request['budget'],
 		];
 		if ( $request['resume'] ) {
-			$state = Runner::resume( [ 'overwrite' => $mode['overwrite'], 'dry_run' => $mode['dry_run'] ] );
+			$state = Runner::resume( [ 'overwrite' => $mode['overwrite'], 'dry_run' => $mode['dry_run'], 'adopt' => $mode['adopt'] ] );
 		} else {
 			$path = (string) $request['path'];
 			if ( '' === $path ) {

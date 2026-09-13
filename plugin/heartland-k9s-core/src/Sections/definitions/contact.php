@@ -108,46 +108,57 @@ return [
 			],
 		],
 		[
-			'id'       => 'form',
-			'meta_key' => 'hk9_sec_contact_form',
-			'label'    => __( 'Form column', 'heartland-k9s-core' ),
-			'fields'   => [
+			'id'          => 'form',
+			'meta_key'    => 'hk9_sec_contact_form',
+			'label'       => __( 'Form', 'heartland-k9s-core' ),
+			'description' => __( 'The form column of the contact card. Provider: the built-in form (recipients, subjects and success text under Heartland → Settings → Forms), a Gravity Forms form, or any form shortcode.', 'heartland-k9s-core' ),
+			'fields'      => array_merge(
 				[
-					'type'  => 'text',
-					'key'   => 'heading',
-					'label' => __( 'Heading', 'heartland-k9s-core' ),
-				],
-				[
-					'type'  => 'textarea',
-					'key'   => 'intro',
-					'label' => __( 'Intro', 'heartland-k9s-core' ),
-					'rows'  => 2,
-				],
-				[
-					'type'    => 'select',
-					'key'     => 'form',
-					'label'   => __( 'Form', 'heartland-k9s-core' ),
-					'options' => [
-						'contact'     => __( 'Contact form', 'heartland-k9s-core' ),
-						'application' => __( 'Application inquiry form', 'heartland-k9s-core' ),
+					[
+						'type'  => 'text',
+						'key'   => 'heading',
+						'label' => __( 'Heading', 'heartland-k9s-core' ),
 					],
-					'default' => 'contact',
+					[
+						'type'  => 'textarea',
+						'key'   => 'intro',
+						'label' => __( 'Intro', 'heartland-k9s-core' ),
+						'rows'  => 2,
+					],
 				],
+				Shared::form_provider_fields(),
 				[
-					'type'  => 'text',
-					'key'   => 'success_heading',
-					'label' => __( 'Success heading', 'heartland-k9s-core' ),
-				],
-				[
-					'type'  => 'textarea',
-					'key'   => 'success_text',
-					'label' => __( 'Success text', 'heartland-k9s-core' ),
-					'rows'  => 2,
-				],
-			],
-			'defaults' => [
+					[
+						'type'    => 'select',
+						'key'     => 'form',
+						'label'   => __( 'Built-in form', 'heartland-k9s-core' ),
+						'help'    => __( 'Which built-in form to show (and which Settings → Forms default Gravity form applies).', 'heartland-k9s-core' ),
+						'options' => [
+							'contact'     => __( 'Contact form', 'heartland-k9s-core' ),
+							'application' => __( 'Application inquiry form', 'heartland-k9s-core' ),
+						],
+						'default' => 'contact',
+					],
+					[
+						'type'  => 'text',
+						'key'   => 'success_heading',
+						'label' => __( 'Success heading', 'heartland-k9s-core' ),
+						'help'  => __( 'Built-in form only. Gravity Forms and shortcode forms use their own confirmation.', 'heartland-k9s-core' ),
+					],
+					[
+						'type'  => 'textarea',
+						'key'   => 'success_text',
+						'label' => __( 'Success text', 'heartland-k9s-core' ),
+						'rows'  => 2,
+					],
+				]
+			),
+			'defaults'    => [
 				'heading'         => 'Send a Message',
 				'intro'           => '',
+				'provider'        => 'inherit',
+				'gravity_form_id' => '',
+				'shortcode'       => '',
 				'form'            => 'contact',
 				'success_heading' => 'Message Sent',
 				'success_text'    => 'Thank you for reaching out. We will get back to you shortly.',

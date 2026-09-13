@@ -1,8 +1,11 @@
 <?php
 /**
- * `hk9_sections_layout` meta: {order: string[], hidden: string[]} per page,
- * shared by every template. Resolution against a template's definitions
- * yields the ordered list of visible section ids.
+ * `hk9_sections_layout` meta: {order: string[], hidden: string[],
+ * content_position: 'after'|'before'|'hide'} per page, shared by every
+ * template. Resolution against a template's definitions yields the ordered
+ * list of visible section ids; `content_position` tells the theme where a
+ * section template shows the page's block content (after the sections by
+ * default, right after the hero, or not at all).
  *
  * @package HK9\Core
  */
@@ -17,12 +20,34 @@ final class Layout {
 
 	public const META_KEY = 'hk9_sections_layout';
 
+	/** Editor-content positions. */
+	public const CONTENT_AFTER   = 'after';
+	public const CONTENT_BEFORE  = 'before';
+	public const CONTENT_HIDE    = 'hide';
+	public const CONTENT_OPTIONS = [ self::CONTENT_AFTER, self::CONTENT_BEFORE, self::CONTENT_HIDE ];
+
 	/** Canonical empty value. */
 	public static function empty_value(): array {
 		return [
-			'order'  => [],
-			'hidden' => [],
+			'order'            => [],
+			'hidden'           => [],
+			'content_position' => self::CONTENT_AFTER,
 		];
+	}
+
+	/** Editor-content position labels (value => label). */
+	public static function content_labels(): array {
+		return [
+			self::CONTENT_AFTER  => __( 'After the sections', 'heartland-k9s-core' ),
+			self::CONTENT_BEFORE => __( 'Before the sections (right after the hero)', 'heartland-k9s-core' ),
+			self::CONTENT_HIDE   => __( 'Hide', 'heartland-k9s-core' ),
+		];
+	}
+
+	/** Sanitizes an editor-content position ('after' when unknown). */
+	public static function sanitize_content_position( mixed $value ): string {
+		$value = is_scalar( $value ) ? sanitize_key( (string) $value ) : '';
+		return in_array( $value, self::CONTENT_OPTIONS, true ) ? $value : self::CONTENT_AFTER;
 	}
 
 	/** REST schema. */
@@ -34,8 +59,13 @@ final class Layout {
 		return [
 			'type'                 => 'object',
 			'properties'           => [
-				'order'  => $ids + [ 'default' => [] ],
-				'hidden' => $ids + [ 'default' => [] ],
+				'order'            => $ids + [ 'default' => [] ],
+				'hidden'           => $ids + [ 'default' => [] ],
+				'content_position' => [
+					'type'    => 'string',
+					'enum'    => self::CONTENT_OPTIONS,
+					'default' => self::CONTENT_AFTER,
+				],
 			],
 			'additionalProperties' => false,
 			'default'              => self::empty_value(),
@@ -86,8 +116,9 @@ final class Layout {
 			$hidden = $clean( $input['hidden'] ?? [] );
 		}
 		return [
-			'order'  => $order,
-			'hidden' => $hidden,
+			'order'            => $order,
+			'hidden'           => $hidden,
+			'content_position' => self::sanitize_content_position( $input['content_position'] ?? null ),
 		];
 	}
 
@@ -108,8 +139,9 @@ final class Layout {
 			}
 		}
 		return [
-			'order'  => $order,
-			'hidden' => $hidden,
+			'order'            => $order,
+			'hidden'           => $hidden,
+			'content_position' => self::CONTENT_AFTER,
 		];
 	}
 

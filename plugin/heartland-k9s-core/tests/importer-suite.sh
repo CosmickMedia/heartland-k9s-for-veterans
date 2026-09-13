@@ -31,10 +31,11 @@ check(){ if [ "$2" = "$3" ]; then ok "$1 ($2)"; else bad "$1 (got '$2', want '$3
 wp()   { $WP "$@" 2>/dev/null; }
 # run_import <dir|--resume> [flags...] -> stdout captured in $last, exit code in $rc
 run_import() { last=$($WP hk9 import "$@" --user=admin --quiet-progress 2>&1); rc=$?; }
-# count <step> <create|update|skip|conflict|fail> from the last summary table
-count() { # the summary is a tab-separated table when stdout is not a TTY
-  local col; case "$2" in create) col=2;; update) col=3;; skip) col=4;; conflict) col=5;; fail) col=6;; esac
-  local v; v=$(printf '%s\n' "$last" | awk -F'\t' -v s="$1" -v c="$col" '$1 == s { print $c; exit }')
+# count <step> <create|adopt|update|skip|conflict|fail> from the last summary table
+count() { # the summary is a tab-separated table when stdout is not a TTY; columns are looked up by header name
+  local v; v=$(printf '%s\n' "$last" | awk -F'\t' -v s="$1" -v name="$2" '
+    $1 == "step" { for (i = 1; i <= NF; i++) if ($i == name) col = i; next }
+    $1 == s && col { print $col; exit }')
   printf '%s' "${v:-?}"
 }
 run_id() { printf '%s\n' "$last" | sed -n 's/.*Run \([0-9a-z-]*\) status.*/\1/p' | head -1; }

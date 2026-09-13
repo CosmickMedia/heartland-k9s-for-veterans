@@ -53,6 +53,7 @@ final class State {
 			'mode'           => [
 				'dry_run'    => false,
 				'overwrite'  => false,
+				'adopt'      => false,
 				'batch'      => 25,
 				'budget'     => 20,
 				'until_step' => '',
@@ -74,6 +75,7 @@ final class State {
 			'failed_keys'    => [],
 			'prehash'        => [],
 			'dry_created'    => [],
+			'dry_adopted'    => [],
 			'started_at'     => '',
 			'updated_at'     => '',
 			'finished_at'    => '',
@@ -163,10 +165,11 @@ final class State {
 		if ( isset( $runs[ $run_id ] ) ) {
 			$runs[ $run_id ]['rolled_back']     = true;
 			$runs[ $run_id ]['rollback_report'] = [
-				'deleted'  => count( $report['deleted'] ?? [] ),
-				'restored' => count( $report['restored'] ?? [] ),
-				'skipped'  => count( $report['skipped'] ?? [] ),
-				'at'       => gmdate( 'c' ),
+				'deleted'   => count( $report['deleted'] ?? [] ),
+				'restored'  => count( $report['restored'] ?? [] ),
+				'unadopted' => count( $report['unadopted'] ?? [] ),
+				'skipped'   => count( $report['skipped'] ?? [] ),
+				'at'        => gmdate( 'c' ),
 			];
 			update_option( self::RUNS_OPTION, $runs, false );
 		}

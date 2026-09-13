@@ -8,12 +8,25 @@
  * media_sizes. Dedupes by sha256 (map table, then _hk9_sha256 meta written by
  * validate's prehash pass) so manual uploads with identical bytes are adopted.
  *
- * Shared attachments: when two payload records carry byte-identical files, the
- * first record (manifest order) creates the attachment and OWNS its fields; every
- * later record is bound to the same attachment as a secondary row that never
- * writes title/alt/caption/description/date (its map row mirrors the owner's
- * field hashes so both rows hash-match the object, re-runs skip, and rollback
- * can delete the attachment once).
+ * Existing-site mode (mode.adopt): a `live:media:<id>` record FIRST looks for the
+ * attachment with that id whose file has the payload file's basename
+ * (Adopt::attachment_candidate) — before any byte-identical match, so both halves
+ * of a duplicated live upload keep their own attachment — no hashing, no
+ * re-upload, no regenerated sizes; the attachment keeps its title/alt/caption/
+ * description and the map row records the database values as-is (a file whose
+ * bytes differ from the payload's is adopted anyway, with a warning). (Registry
+ * images are the exception: a sensitive record still applies its generic title /
+ * empty alt, with the pre-image kept for rollback.) The sha256 index remains the
+ * fallback. Every first binding to a pre-existing attachment — by id or by
+ * sha256 — is reported as ADOPT.
+ *
+ * Shared attachments: when two payload records carry byte-identical files and
+ * the later one has no live attachment of its own, the first record (manifest
+ * order) creates or adopts the attachment and OWNS its fields; every later record
+ * is bound to the same attachment as a secondary row that never writes
+ * title/alt/caption/description/date (its map row mirrors the owner's field
+ * hashes so both rows hash-match the object, re-runs skip, and rollback can
+ * delete the attachment once).
  *
  * @package HK9\Core
  */
@@ -22,6 +35,7 @@ declare(strict_types=1);
 
 namespace HK9\Core\Import\Steps;
 
+use HK9\Core\Import\Adopt;
 use HK9\Core\Import\Context;
 use HK9\Core\Import\Hash;
 use HK9\Core\Import\Manifest;
@@ -63,13 +77,27 @@ final class MediaFiles extends Step {
 		}
 
 		$adopted = false;
+		$how     = '';
 		if ( 0 === $id ) {
-			// Dedupe by content hash: another payload record's attachment first (oldest row wins) ...
-			foreach ( Map::rows_by_sha( $sha ) as $other ) {
-				if ( $other['source_key'] !== $key && 'attachment' === get_post_type( $other['object_id'] ) ) {
-					$id      = $other['object_id'];
+			// In existing-site mode a live:media:<id> record first takes the live attachment with
+			// its own id and file name — before any byte-identical match, so both halves of a
+			// duplicated live upload keep their own attachment (and their own id for tokens) ...
+			if ( $ctx->adopt() ) {
+				$id = Adopt::attachment_candidate( $key, $record );
+				if ( $id > 0 ) {
 					$adopted = true;
-					break;
+					$how     = 'id';
+				}
+			}
+			// ... then another payload record's attachment with the same bytes (oldest row wins) ...
+			if ( 0 === $id ) {
+				foreach ( Map::rows_by_sha( $sha ) as $other ) {
+					if ( $other['source_key'] !== $key && 'attachment' === get_post_type( $other['object_id'] ) ) {
+						$id      = $other['object_id'];
+						$adopted = true;
+						$how     = 'shared';
+						break;
+					}
 				}
 			}
 			// ... then a pre-existing upload with identical bytes.
@@ -79,6 +107,16 @@ final class MediaFiles extends Step {
 					$id = (int) $ctx->state['prehash'][ $sha ];
 				}
 				$adopted = $id > 0;
+				$how     = $adopted ? 'sha256' : '';
+			}
+			// Dry run: a pre-existing attachment that an earlier record would already have adopted
+			// (same object id) is a shared attachment; a different object is this record's own.
+			if ( $adopted && 'shared' !== $how && $ctx->dry() ) {
+				$owner_key = (string) ( $ctx->state['dry_created'][ $sha ] ?? '' );
+				if ( '' !== $owner_key && $owner_key !== $key && (int) ( $ctx->state['dry_adopted'][ $owner_key ] ?? 0 ) === $id ) {
+					$ctx->result( $key, 'skip', sprintf( 'would share the attachment bound to %s (identical file)', $this->owner_label( $owner_key ) ), $sens );
+					return;
+				}
 			}
 		}
 
@@ -86,7 +124,7 @@ final class MediaFiles extends Step {
 			// Dry runs write nothing, so a later record with the same bytes cannot find the
 			// attachment this one would create: remember it to report the share accurately.
 			if ( $ctx->dry() && isset( $ctx->state['dry_created'][ $sha ] ) && $ctx->state['dry_created'][ $sha ] !== $key ) {
-				$ctx->result( $key, 'skip', sprintf( 'would share the attachment created for %s (identical file)', $this->owner_label( (string) $ctx->state['dry_created'][ $sha ] ) ), $sens );
+				$ctx->result( $key, 'skip', sprintf( 'would share the attachment bound to %s (identical file)', $this->owner_label( (string) $ctx->state['dry_created'][ $sha ] ) ), $sens );
 				return;
 			}
 			if ( $ctx->dry() ) {
@@ -103,13 +141,49 @@ final class MediaFiles extends Step {
 			return;
 		}
 
+		$fresh   = ! $row || $row['object_id'] !== $id;
 		$current = self::current( $id );
-		$plan    = Reconcile::plan( $row && $row['object_id'] === $id ? $row : [ 'object_id' => $id, 'field_hashes' => [] ], $desired, $current, $ctx->overwrite() );
-		$ctx->result( $key, $plan['action'], ( $adopted ? 'adopted #' . $id . ' ' : '' ) . ( $plan['conflicts'] ? 'conflicts: ' . implode( ',', $plan['conflicts'] ) : '' ), $sens );
+		if ( $fresh && $adopted && 'id' === $how ) {
+			// Matched by id + file name only: say so when the bytes on disk are not the payload's
+			// (a file replaced in place under the same name), so the audit trail carries it.
+			$known = $this->known_sha( $id );
+			if ( '' !== $known && $known !== $sha ) {
+				$ctx->warn( $key, sprintf( 'Attachment #%d has the payload file name but its file bytes differ from the payload (sha256 %s… on disk, %s… in the payload); adopted as-is, the live file is kept.', $id, substr( $known, 0, 12 ), substr( $sha, 0, 12 ) ), $sens );
+			}
+		}
+		if ( $fresh && $adopted && 'id' === $how && ! $sens ) {
+			// Adopted as-is: the live attachment keeps its title/alt/caption/description/date;
+			// the row records the database values so later runs see them as untouched.
+			$plan = [
+				'action'      => 'skip',
+				'apply'       => [],
+				'conflicts'   => [],
+				'overwritten' => [],
+				'hashes'      => [],
+				'before'      => [],
+			];
+			foreach ( $desired as $f => $v ) {
+				$plan['hashes'][ $f ] = [
+					'db'  => Hash::of( $current[ $f ] ?? null ),
+					'src' => Hash::of( $v ),
+				];
+			}
+		} else {
+			$plan = Reconcile::plan( $fresh ? [ 'object_id' => $id, 'field_hashes' => [] ] : $row, $desired, $current, $ctx->overwrite() );
+		}
+		if ( $fresh && $adopted ) {
+			$ctx->adopted( $key, $id, sprintf( 'by %s, %s%s', $how, basename( (string) $record['file'] ), $plan['apply'] ? ' (fields applied: ' . implode( ',', array_keys( $plan['apply'] ) ) . ')' : ' (kept as-is)' ) . ( $ctx->dry() ? ' (dry run)' : '' ), $sens );
+		} else {
+			$ctx->result( $key, $plan['action'], $plan['conflicts'] ? 'conflicts: ' . implode( ',', $plan['conflicts'] ) : '', $sens );
+		}
 		if ( $ctx->dry() ) {
+			if ( $fresh ) {
+				$ctx->state['dry_adopted'][ $key ] = $id;
+				$ctx->state['dry_created'][ $sha ] = $key;
+			}
 			return;
 		}
-		if ( ! $row || $row['object_id'] !== $id ) {
+		if ( $fresh ) {
 			Map::bind(
 				$key,
 				'attachment',
@@ -117,13 +191,24 @@ final class MediaFiles extends Step {
 				$ctx->run_id,
 				[
 					'created_by_run' => null,
+					'adopted_by_run' => $ctx->run_id,
 					'sha256'         => $sha,
+					'field_hashes'   => [],
+					'before_data'    => [],
 				]
 			);
 			if ( '' === (string) get_post_meta( $id, '_hk9_source_key', true ) ) {
 				update_post_meta( $id, '_hk9_source_key', $key );
 			}
-			update_post_meta( $id, '_hk9_sha256', $sha );
+			if ( 'id' === $how ) {
+				// Bound by live id + file name (bytes not hashed here): keep the hash the
+				// validate pre-pass computed from the real file; fill it in only when absent.
+				if ( '' === (string) get_post_meta( $id, '_hk9_sha256', true ) ) {
+					update_post_meta( $id, '_hk9_sha256', $sha );
+				}
+			} else {
+				update_post_meta( $id, '_hk9_sha256', $sha );
+			}
 		}
 		if ( $plan['apply'] ) {
 			$r = self::apply( $id, $plan['apply'] );
@@ -169,6 +254,7 @@ final class MediaFiles extends Step {
 				$ctx->run_id,
 				[
 					'created_by_run' => null,
+					'adopted_by_run' => $ctx->run_id,
 					'sha256'         => $sha,
 					'payload_hash'   => $this->manifest()->payload_hash( $record ),
 					'field_hashes'   => $hashes,
@@ -181,6 +267,24 @@ final class MediaFiles extends Step {
 			return;
 		}
 		Map::record( $key, $ctx->run_id, $hashes, [], $this->manifest()->payload_hash( $record ) );
+	}
+
+	/**
+	 * sha256 of a pre-existing attachment's file as far as it is known: the
+	 * `_hk9_sha256` mirror (written by validate's prehash pass in real runs) or,
+	 * in a dry run, the hash the pass kept in state. '' when unknown.
+	 */
+	private function known_sha( int $id ): string {
+		$meta = strtolower( (string) get_post_meta( $id, '_hk9_sha256', true ) );
+		if ( '' !== $meta ) {
+			return $meta;
+		}
+		foreach ( (array) ( $this->ctx->state['prehash'] ?? [] ) as $sha => $known_id ) {
+			if ( (int) $known_id === $id ) {
+				return strtolower( (string) $sha );
+			}
+		}
+		return '';
 	}
 
 	/**

@@ -66,6 +66,16 @@ final class Admin {
 		return self::$status;
 	}
 
+	/** Pre-flight report for this request (computed once for the config + the server-side panel). */
+	private static ?array $preflight = null;
+
+	private static function preflight(): array {
+		if ( null === self::$preflight ) {
+			self::$preflight = Preflight::run();
+		}
+		return self::$preflight;
+	}
+
 	/** Per-user transient carrying the last upload result (never trusted from the URL). */
 	private static function notice_key(): string {
 		return 'hk9_import_notice_' . get_current_user_id();
@@ -81,12 +91,13 @@ final class Admin {
 		wp_enqueue_script( 'hk9-import', HK9_CORE_URL . 'assets/js/import.js', [ 'wp-a11y' ], is_file( $js ) ? (string) filemtime( $js ) : HK9_CORE_VERSION, true );
 
 		$config = [
-			'root'    => esc_url_raw( rest_url( Rest::NS . '/import/' ) ),
-			'nonce'   => wp_create_nonce( 'wp_rest' ),
-			'status'  => self::status(),
-			'logBase' => esc_url_raw( self::log_url() ),
-			'steps'   => State::STEPS,
-			'i18n'    => [
+			'root'      => esc_url_raw( rest_url( Rest::NS . '/import/' ) ),
+			'nonce'     => wp_create_nonce( 'wp_rest' ),
+			'status'    => self::status(),
+			'preflight' => self::preflight(),
+			'logBase'   => esc_url_raw( self::log_url() ),
+			'steps'     => State::STEPS,
+			'i18n'      => [
 				'idle'         => __( 'Idle', 'heartland-k9s-core' ),
 				'running'      => __( 'Running', 'heartland-k9s-core' ),
 				'paused'       => __( 'Paused', 'heartland-k9s-core' ),
@@ -109,7 +120,13 @@ final class Admin {
 				'warnings'     => __( 'Warnings', 'heartland-k9s-core' ),
 				'retry'        => __( 'Retry failed', 'heartland-k9s-core' ),
 				'overwrite'    => __( 'overwrite', 'heartland-k9s-core' ),
+				'adopt'        => __( 'adopt existing', 'heartland-k9s-core' ),
 				'run'          => __( 'run', 'heartland-k9s-core' ),
+				'preflightOk'  => __( 'All checks passed.', 'heartland-k9s-core' ),
+				'preflightBad' => __( 'Fix the failed checks before importing.', 'heartland-k9s-core' ),
+				'pass'         => __( 'OK', 'heartland-k9s-core' ),
+				'warn'         => __( 'Note', 'heartland-k9s-core' ),
+				'failWord'     => __( 'Failed', 'heartland-k9s-core' ),
 				'errorsSuffix' => /* translators: %d: number of record errors */ __( '%d error(s)', 'heartland-k9s-core' ),
 				'colKey'       => __( 'Key', 'heartland-k9s-core' ),
 				'colStep'      => __( 'Step', 'heartland-k9s-core' ),
@@ -136,6 +153,7 @@ final class Admin {
 				'cancel'       => __( 'Cancel', 'heartland-k9s-core' ),
 				'deleted'      => __( 'deleted', 'heartland-k9s-core' ),
 				'restored'     => __( 'restored', 'heartland-k9s-core' ),
+				'unadopted'    => __( 'un-adopted (kept)', 'heartland-k9s-core' ),
 				'skipped'      => __( 'skipped', 'heartland-k9s-core' ),
 				'errorWord'    => __( 'error', 'heartland-k9s-core' ),
 			],
@@ -233,9 +251,22 @@ final class Admin {
 					</div>
 				</section>
 
-				<section class="hk9-import__card" aria-labelledby="hk9-import-run-h">
-					<h2 id="hk9-import-run-h"><?php esc_html_e( '2. Run', 'heartland-k9s-core' ); ?></h2>
+				<section class="hk9-import__card" aria-labelledby="hk9-import-preflight-h">
+					<h2 id="hk9-import-preflight-h"><?php esc_html_e( '2. Pre-flight', 'heartland-k9s-core' ); ?></h2>
+					<p class="description"><?php esc_html_e( 'Checked before every run. On a site that already holds the old heartlandk9s.org content, the last line tells you how many pages and media files the payload matches; adopt them so nothing is duplicated.', 'heartland-k9s-core' ); ?></p>
+					<div id="hk9-import-preflight" class="hk9-import__preflight">
+						<?php self::render_preflight( self::preflight() ); ?>
+					</div>
+				</section>
+
+				<section class="hk9-import__card hk9-import__card--wide" aria-labelledby="hk9-import-run-h">
+					<h2 id="hk9-import-run-h"><?php esc_html_e( '3. Run', 'heartland-k9s-core' ); ?></h2>
 					<div class="hk9-import__controls">
+						<?php $existing = (int) ( self::preflight()['existing']['total'] ?? 0 ); ?>
+						<label><input type="checkbox" id="hk9-import-adopt" <?php checked( $existing > 0 ); ?> /> <?php esc_html_e( 'Existing site: adopt matching content', 'heartland-k9s-core' ); ?></label>
+						<p class="description hk9-import__adopt-help" id="hk9-import-adopt-help">
+							<?php esc_html_e( 'Pages that already exist with the same id or slug are converted in place (same id, same URL, the old builder content is replaced and kept for rollback); the legacy BarKode registry pages become BarKode records with the same slug (their printed QR paths redirect); attachments with the same id and file name are reused as they are (nothing is re-uploaded, only missing image sizes are generated); menus and terms with the same name/slug are reused. Every adoption is listed in the "Adopt" column and in the run log, and a rollback restores what was replaced. Leave it unticked on a fresh site.', 'heartland-k9s-core' ); ?>
+						</p>
 						<label><input type="checkbox" id="hk9-import-overwrite" /> <?php esc_html_e( 'Overwrite conflicts (revert edits made on this site to the payload values)', 'heartland-k9s-core' ); ?></label>
 						<div class="hk9-import__buttons">
 							<button type="button" class="button" id="hk9-import-dry" <?php disabled( ! $kses_ok ); ?>><?php esc_html_e( 'Dry run', 'heartland-k9s-core' ); ?></button>
@@ -260,6 +291,7 @@ final class Admin {
 							<tr>
 								<th scope="col"><?php esc_html_e( 'Step', 'heartland-k9s-core' ); ?></th>
 								<th scope="col"><?php esc_html_e( 'Create', 'heartland-k9s-core' ); ?></th>
+								<th scope="col"><?php esc_html_e( 'Adopt', 'heartland-k9s-core' ); ?></th>
 								<th scope="col"><?php esc_html_e( 'Update', 'heartland-k9s-core' ); ?></th>
 								<th scope="col"><?php esc_html_e( 'Skip', 'heartland-k9s-core' ); ?></th>
 								<th scope="col"><?php esc_html_e( 'Conflict', 'heartland-k9s-core' ); ?></th>
@@ -275,10 +307,20 @@ final class Admin {
 						<summary><?php esc_html_e( 'Warnings', 'heartland-k9s-core' ); ?> <span class="hk9-import__count"></span></summary>
 						<ul></ul>
 					</details>
+
+					<div id="hk9-import-next" class="hk9-import__next" hidden>
+						<h3><?php esc_html_e( 'Next steps', 'heartland-k9s-core' ); ?></h3>
+						<ol>
+							<li><?php esc_html_e( 'Open the site: check the front page, the primary and footer menus, the BarKode page and one migrated page.', 'heartland-k9s-core' ); ?> <a href="<?php echo esc_url( home_url( '/' ) ); ?>" target="_blank" rel="noopener"><?php esc_html_e( 'View site', 'heartland-k9s-core' ); ?></a> · <a href="<?php echo esc_url( admin_url( 'nav-menus.php' ) ); ?>"><?php esc_html_e( 'Menus', 'heartland-k9s-core' ); ?></a> · <a href="<?php echo esc_url( admin_url( 'options-reading.php' ) ); ?>"><?php esc_html_e( 'Reading settings', 'heartland-k9s-core' ); ?></a></li>
+							<li><?php esc_html_e( 'The old page-builder plugins (Avada Builder, Avada Core, FooGallery, FooBox) were deactivated before the import; if one is still active, deactivate it now. Delete them — and the Avada theme — once you are happy with the migrated site.', 'heartland-k9s-core' ); ?> <a href="<?php echo esc_url( admin_url( 'plugins.php' ) ); ?>"><?php esc_html_e( 'Plugins', 'heartland-k9s-core' ); ?></a></li>
+							<li><?php esc_html_e( 'Review the open business decisions listed in docs/unresolved.md (office days, imagery, PayPal, registry privacy scope, form recipients) and set them under Heartland → Settings.', 'heartland-k9s-core' ); ?></li>
+							<li id="hk9-import-next-payload"><?php esc_html_e( 'The payload was supplied as a server path and was left in place: delete that folder now (it contains registry data and every original image).', 'heartland-k9s-core' ); ?></li>
+						</ol>
+					</div>
 				</section>
 
 				<section class="hk9-import__card hk9-import__card--wide" aria-labelledby="hk9-import-runs-h">
-					<h2 id="hk9-import-runs-h"><?php esc_html_e( '3. Runs & rollback', 'heartland-k9s-core' ); ?></h2>
+					<h2 id="hk9-import-runs-h"><?php esc_html_e( '4. Runs & rollback', 'heartland-k9s-core' ); ?></h2>
 					<p class="description"><?php esc_html_e( 'Rollback removes only objects created by that run (and restores settings it changed). Records edited since the import are skipped unless you force it; pages, uploads and menus that existed before the run are never deleted.', 'heartland-k9s-core' ); ?></p>
 					<div id="hk9-import-runs"></div>
 					<h3><?php esc_html_e( 'Import map', 'heartland-k9s-core' ); ?></h3>
@@ -286,6 +328,30 @@ final class Admin {
 				</section>
 			</div>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Server-side pre-flight panel (the JS re-renders it from the same report shape
+	 * when the payload path changes or a run finishes).
+	 */
+	public static function render_preflight( array $report ): void {
+		?>
+		<ul class="hk9-import__checks">
+			<?php foreach ( (array) $report['checks'] as $c ) : ?>
+				<li class="hk9-import__check is-<?php echo esc_attr( (string) $c['status'] ); ?>">
+					<span class="hk9-import__check-status"><?php echo esc_html( 'pass' === $c['status'] ? __( 'OK', 'heartland-k9s-core' ) : ( 'warn' === $c['status'] ? __( 'Note', 'heartland-k9s-core' ) : __( 'Failed', 'heartland-k9s-core' ) ) ); ?></span>
+					<span class="hk9-import__check-body">
+						<strong><?php echo esc_html( (string) $c['label'] ); ?></strong>
+						<span class="hk9-import__check-detail"><?php echo esc_html( (string) $c['detail'] ); ?></span>
+						<?php if ( ! empty( $c['action']['url'] ) ) : ?>
+							<a class="button button-small" href="<?php echo esc_url( (string) $c['action']['url'] ); ?>"><?php echo esc_html( (string) $c['action']['label'] ); ?></a>
+						<?php endif; ?>
+					</span>
+				</li>
+			<?php endforeach; ?>
+		</ul>
+		<p class="hk9-import__preflight-summary <?php echo ! empty( $report['ok'] ) ? 'is-ok' : 'is-bad'; ?>"><?php echo esc_html( ! empty( $report['ok'] ) ? __( 'All checks passed.', 'heartland-k9s-core' ) : __( 'Fix the failed checks before importing.', 'heartland-k9s-core' ) ); ?></p>
 		<?php
 	}
 

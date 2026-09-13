@@ -1,6 +1,6 @@
 <?php
 /**
- * WP-CLI: wp hk9 import | rollback | reset-state.
+ * WP-CLI: wp hk9 import | rollback | reset-state | preflight.
  *
  * @package HK9\Core
  */
@@ -33,6 +33,7 @@ final class ImportCommand {
 		WP_CLI::add_command( 'hk9 import', self::class );
 		WP_CLI::add_command( 'hk9 rollback', RollbackCommand::class );
 		WP_CLI::add_command( 'hk9 reset-state', ResetStateCommand::class );
+		WP_CLI::add_command( 'hk9 preflight', PreflightCommand::class );
 	}
 
 	/**
@@ -48,6 +49,9 @@ final class ImportCommand {
 	 *
 	 * [--overwrite]
 	 * : Resolve conflicts (records edited on this site) in favour of the payload.
+	 *
+	 * [--adopt-existing]
+	 * : Existing site: bind payload records to the pages (by live id or slug), legacy BarKode pages (converted in place) and attachments (by live id + file name) already on this site instead of creating "-2" duplicates; reported in the "adopt" column, logged as "ADOPT #id".
 	 *
 	 * [--resume]
 	 * : Continue the paused/interrupted run, or start a new pass over a finished one.
@@ -83,6 +87,7 @@ final class ImportCommand {
 	 *
 	 *     wp hk9 import /var/www/html/wp-content/hk9-payload --user=admin --dry-run
 	 *     wp hk9 import /var/www/html/wp-content/hk9-payload --user=admin
+	 *     wp hk9 import /home/site/hk9-payload --adopt-existing --user=admin
 	 *     wp hk9 import --resume --user=admin
 	 *     wp hk9 import ./payload --step=media_files --user=admin
 	 *
@@ -93,7 +98,7 @@ final class ImportCommand {
 	}
 
 	/**
-	 * wp hk9 import <dir> [--dry-run] [--overwrite] [--resume] [--step=<name>] [--batch=<n>] [--budget=<s>] --user=<admin>
+	 * wp hk9 import <dir> [--dry-run] [--overwrite] [--adopt-existing] [--resume] [--step=<name>] [--batch=<n>] [--budget=<s>] --user=<admin>
 	 */
 	public static function import( array $args, array $assoc ): void {
 		self::require_admin_user();
@@ -104,6 +109,7 @@ final class ImportCommand {
 		$mode    = [
 			'dry_run'    => ! empty( $assoc['dry-run'] ),
 			'overwrite'  => ! empty( $assoc['overwrite'] ),
+			'adopt'      => ! empty( $assoc['adopt-existing'] ),
 			'batch'      => isset( $assoc['batch'] ) ? max( 1, (int) $assoc['batch'] ) : 50,
 			'budget'     => isset( $assoc['budget'] ) ? max( 2, (int) $assoc['budget'] ) : 30,
 			'until_step' => isset( $assoc['step'] ) ? (string) $assoc['step'] : '',
@@ -129,6 +135,9 @@ final class ImportCommand {
 			];
 			if ( ! empty( $assoc['overwrite'] ) ) {
 				$overrides['overwrite'] = true;
+			}
+			if ( ! empty( $assoc['adopt-existing'] ) ) {
+				$overrides['adopt'] = true;
 			}
 			if ( ! empty( $assoc['dry-run'] ) ) {
 				$overrides['dry_run'] = true;
@@ -159,14 +168,14 @@ final class ImportCommand {
 			WP_CLI::error( $result->get_error_message() );
 		}
 		$state = $result;
-		WP_CLI::log( sprintf( '%s run %s (%s%s) — payload %s', $resume ? 'Resuming' : 'Starting', $state['run_id'], $state['mode']['dry_run'] ? 'DRY RUN' : 'import', $state['mode']['overwrite'] ? ', overwrite' : '', $state['payload_dir'] ) );
+		WP_CLI::log( sprintf( '%s run %s (%s%s%s) — payload %s', $resume ? 'Resuming' : 'Starting', $state['run_id'], $state['mode']['dry_run'] ? 'DRY RUN' : 'import', ! empty( $state['mode']['adopt'] ) ? ', adopt existing' : '', $state['mode']['overwrite'] ? ', overwrite' : '', $state['payload_dir'] ) );
 
 		$quiet = ! empty( $assoc['quiet-progress'] );
 		$last  = '';
 		if ( ! $quiet ) {
 			Runner::$on_step = static function ( string $step, array $s ): void {
 				$c = $s['counts'][ $step ] ?? [];
-				WP_CLI::log( sprintf( '  %-16s done  create=%d update=%d skip=%d conflict=%d fail=%d', $step, (int) ( $c['create'] ?? 0 ), (int) ( $c['update'] ?? 0 ), (int) ( $c['skip'] ?? 0 ), (int) ( $c['conflict'] ?? 0 ), (int) ( $c['fail'] ?? 0 ) ) );
+				WP_CLI::log( sprintf( '  %-16s done  create=%d adopt=%d update=%d skip=%d conflict=%d fail=%d', $step, (int) ( $c['create'] ?? 0 ), (int) ( $c['adopt'] ?? 0 ), (int) ( $c['update'] ?? 0 ), (int) ( $c['skip'] ?? 0 ), (int) ( $c['conflict'] ?? 0 ), (int) ( $c['fail'] ?? 0 ) ) );
 			};
 		}
 		$final = Runner::run_all(
@@ -200,13 +209,14 @@ final class ImportCommand {
 			$rows[] = [
 				'step'     => $step,
 				'create'   => (int) ( $c['create'] ?? 0 ),
+				'adopt'    => (int) ( $c['adopt'] ?? 0 ),
 				'update'   => (int) ( $c['update'] ?? 0 ),
 				'skip'     => (int) ( $c['skip'] ?? 0 ),
 				'conflict' => (int) ( $c['conflict'] ?? 0 ),
 				'fail'     => (int) ( $c['fail'] ?? 0 ),
 			];
 		}
-		\WP_CLI\Utils\format_items( 'table', $rows, [ 'step', 'create', 'update', 'skip', 'conflict', 'fail' ] );
+		\WP_CLI\Utils\format_items( 'table', $rows, [ 'step', 'create', 'adopt', 'update', 'skip', 'conflict', 'fail' ] );
 
 		$fatal = array_filter( $state['errors'], static fn( $e ) => ! empty( $e['fatal'] ) );
 		$items = array_filter( $state['errors'], static fn( $e ) => empty( $e['fatal'] ) );
@@ -261,13 +271,16 @@ final class ImportCommand {
 		foreach ( $report['restored'] as $r ) {
 			WP_CLI::log( sprintf( '  restored  %s [%s]', $r['key'], implode( ', ', (array) ( $r['fields'] ?? [] ) ) ) );
 		}
+		foreach ( (array) ( $report['unadopted'] ?? [] ) as $u ) {
+			WP_CLI::log( sprintf( '  unadopted %s (#%d, kept)', $u['key'], (int) ( $u['id'] ?? 0 ) ) );
+		}
 		foreach ( $report['skipped'] as $s ) {
 			WP_CLI::warning( sprintf( 'skipped   %s — %s', $s['key'], $s['reason'] ) );
 		}
 		foreach ( $report['errors'] as $e ) {
 			WP_CLI::warning( 'error     ' . $e );
 		}
-		WP_CLI::success( sprintf( '%s: %d deleted, %d restored, %d skipped, %d errors.', $dry ? 'Rollback dry run' : 'Rollback', count( $report['deleted'] ), count( $report['restored'] ), count( $report['skipped'] ), count( $report['errors'] ) ) );
+		WP_CLI::success( sprintf( '%s: %d deleted, %d restored, %d un-adopted, %d skipped, %d errors.', $dry ? 'Rollback dry run' : 'Rollback', count( $report['deleted'] ), count( $report['restored'] ), count( (array) ( $report['unadopted'] ?? [] ) ), count( $report['skipped'] ), count( $report['errors'] ) ) );
 	}
 
 	/**

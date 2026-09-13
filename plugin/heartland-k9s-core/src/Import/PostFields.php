@@ -3,7 +3,9 @@
  * Post-like records: desired values, current values, and the single-call write.
  *
  * Field names used in map rows: title, slug, status, parent, template, excerpt,
- * date, menu_order, featured, content, meta:<key>, terms:<taxonomy>.
+ * date, menu_order, featured, content, post_type, meta:<key>, terms:<taxonomy>.
+ * A meta field reads as null when the key is absent (and writing null deletes
+ * it), so a rollback of an adopted page restores "no meta" exactly.
  *
  * @package HK9\Core
  */
@@ -220,6 +222,16 @@ final class PostFields {
 	}
 
 	/**
+	 * Fields the hierarchy pass writes to an ADOPTED post: everything the payload
+	 * defines except the publish date (an adopted page keeps its id, slug, date
+	 * and author; the slug is equal by construction).
+	 */
+	public static function for_adopted( array $fields ): array {
+		unset( $fields['date'] );
+		return $fields;
+	}
+
+	/**
 	 * Current database values for the named fields.
 	 */
 	public static function current( int $id, array $fields ): array {
@@ -230,7 +242,8 @@ final class PostFields {
 		$out = [];
 		foreach ( $fields as $f ) {
 			if ( str_starts_with( $f, 'meta:' ) ) {
-				$out[ $f ] = get_post_meta( $id, substr( $f, 5 ), true );
+				$mk        = substr( $f, 5 );
+				$out[ $f ] = metadata_exists( 'post', $id, $mk ) ? get_post_meta( $id, $mk, true ) : null;
 				continue;
 			}
 			if ( str_starts_with( $f, 'terms:' ) ) {
@@ -251,6 +264,7 @@ final class PostFields {
 				'menu_order' => (int) $post->menu_order,
 				'featured'   => (int) get_post_meta( $id, '_thumbnail_id', true ),
 				'content'    => (string) $post->post_content,
+				'post_type'  => (string) $post->post_type,
 				default      => null,
 			};
 		}
@@ -262,14 +276,19 @@ final class PostFields {
 	 * the revision created by that update carries the section meta), then terms.
 	 */
 	public static function apply( int $id, array $apply ): true|WP_Error {
-		$args  = [ 'ID' => $id ];
-		$meta  = [];
-		$terms = [];
+		$args        = [ 'ID' => $id ];
+		$meta        = [];
+		$delete_meta = [];
+		$terms       = [];
 		$unset_thumb = false;
 
 		foreach ( $apply as $f => $v ) {
 			if ( str_starts_with( $f, 'meta:' ) ) {
-				$meta[ substr( $f, 5 ) ] = $v;
+				if ( null === $v ) {
+					$delete_meta[] = substr( $f, 5 ); // Pre-image "key absent" (rollback of an adopted page).
+				} else {
+					$meta[ substr( $f, 5 ) ] = $v;
+				}
 				continue;
 			}
 			if ( str_starts_with( $f, 'terms:' ) ) {
@@ -297,6 +316,12 @@ final class PostFields {
 					break;
 				case 'content':
 					$args['post_content'] = $v;
+					break;
+				case 'post_type':
+					// Only ever page <-> hk9_barkode (existing-site adoption and its rollback).
+					if ( '' !== (string) $v && post_type_exists( (string) $v ) ) {
+						$args['post_type'] = (string) $v;
+					}
 					break;
 				case 'date':
 					if ( '' !== (string) $v ) {
@@ -358,6 +383,9 @@ final class PostFields {
 		}
 		if ( $unset_thumb ) {
 			delete_post_meta( $id, '_thumbnail_id' );
+		}
+		foreach ( $delete_meta as $mk ) {
+			delete_post_meta( $id, $mk );
 		}
 		foreach ( $terms as $tax => $ids ) {
 			$r = wp_set_object_terms( $id, array_map( 'intval', $ids ), $tax, false );

@@ -41,7 +41,7 @@ final class Runner {
 	/**
 	 * Begin a new run.
 	 *
-	 * @param array $mode {dry_run, overwrite, batch, budget, until_step}
+	 * @param array $mode {dry_run, overwrite, adopt, batch, budget, until_step}
 	 */
 	public static function start( string $dir, array $mode, int $user_id, string $source = 'path' ): array|WP_Error {
 		Map::ensure();
@@ -75,6 +75,7 @@ final class Runner {
 				'dir'       => $state['payload_dir'],
 				'dry_run'   => $state['mode']['dry_run'],
 				'overwrite' => $state['mode']['overwrite'],
+				'adopt'     => $state['mode']['adopt'],
 				'user'      => $user_id,
 				'generated' => $manifest->generated_at(),
 			]
@@ -105,7 +106,7 @@ final class Runner {
 		if ( ! is_file( trailingslashit( $state['payload_dir'] ) . 'manifest.json' ) ) {
 			return new WP_Error( 'hk9_import_payload_gone', __( 'The payload directory of this run no longer exists.', 'heartland-k9s-core' ), [ 'status' => 400 ] );
 		}
-		foreach ( [ 'overwrite', 'batch', 'budget', 'until_step', 'dry_run' ] as $k ) {
+		foreach ( [ 'overwrite', 'adopt', 'batch', 'budget', 'until_step', 'dry_run' ] as $k ) {
 			if ( array_key_exists( $k, $mode_overrides ) ) {
 				$state['mode'][ $k ] = $mode_overrides[ $k ];
 			}
@@ -125,6 +126,7 @@ final class Runner {
 			$state['failed_keys'] = [];
 			$state['prehash']     = [];
 			$state['dry_created'] = [];
+			$state['dry_adopted'] = [];
 			$state['finished_at'] = '';
 			$state['passes']      = (int) $state['passes'] + 1;
 			$log->info( 'run', '', sprintf( 'Resuming with a new pass (#%d).', $state['passes'] ) );
@@ -331,7 +333,7 @@ final class Runner {
 		if ( ! $full ) {
 			$state['errors']   = array_slice( $state['errors'], -100 );
 			$state['warnings'] = array_slice( $state['warnings'], -100 );
-			unset( $state['prehash'], $state['dry_created'] );
+			unset( $state['prehash'], $state['dry_created'], $state['dry_adopted'] );
 		}
 		$state['errors_total']   = count( State::load()['errors'] );
 		$state['warnings_total'] = count( State::load()['warnings'] );
@@ -358,6 +360,7 @@ final class Runner {
 		return [
 			'dry_run'    => ! empty( $mode['dry_run'] ),
 			'overwrite'  => ! empty( $mode['overwrite'] ),
+			'adopt'      => ! empty( $mode['adopt'] ),
 			'batch'      => max( 1, min( 1000, (int) ( $mode['batch'] ?? 25 ) ) ),
 			'budget'     => max( 2, min( 600, (int) ( $mode['budget'] ?? 20 ) ) ),
 			'until_step' => $until,

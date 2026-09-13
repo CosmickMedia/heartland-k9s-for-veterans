@@ -5,6 +5,10 @@
  * Custom table `{$wpdb->prefix}hk9_import_map` with a UNIQUE source_key. Every
  * imported (or adopted) object has a row carrying per-field hashes (read back
  * from the database after each write) and pre-images of updated fields per run.
+ * `created_by_run` names the run that created the object (NULL = adopted: the
+ * object pre-existed and is never deleted by rollback); `adopted_by_run` names
+ * the run that bound a pre-existing object, so rolling that run back restores
+ * the pre-image and drops the binding again ("un-adopt").
  * Byte-identical payload files share one attachment: its oldest row owns the
  * object, later rows for the same object are secondary (see owner()).
  * Postmeta mirrors (`_hk9_source_key`, `_hk9_import_run`, `_hk9_sha256`) exist
@@ -24,7 +28,7 @@ defined( 'ABSPATH' ) || exit;
 
 final class Map {
 
-	public const DB_VERSION     = '1';
+	public const DB_VERSION     = '2';
 	public const VERSION_OPTION = 'hk9_import_map_version';
 	public const LOCK_OPTION    = 'hk9_import_lock';
 
@@ -57,6 +61,7 @@ final class Map {
 	object_id bigint(20) unsigned NOT NULL DEFAULT 0,
 	sha256 char(64) DEFAULT NULL,
 	created_by_run varchar(40) DEFAULT NULL,
+	adopted_by_run varchar(40) DEFAULT NULL,
 	last_run varchar(40) DEFAULT NULL,
 	payload_hash char(64) DEFAULT NULL,
 	field_hashes longtext,
@@ -67,6 +72,7 @@ final class Map {
 	UNIQUE KEY source_key (source_key),
 	KEY sha256 (sha256),
 	KEY created_by_run (created_by_run),
+	KEY adopted_by_run (adopted_by_run),
 	KEY object (object_type,object_id)
 ) {$collate};";
 
@@ -109,6 +115,21 @@ final class Map {
 		$table = self::table();
 		$row   = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM {$table} WHERE object_type = %s AND object_id = %d AND object_id > 0 ORDER BY id ASC LIMIT 1", $type, $id ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return $row ? self::decode( $row ) : null;
+	}
+
+	/**
+	 * Source key of the record bound to a post (any post-like object type, i.e.
+	 * everything but terms/menus/settings, which live in other id spaces).
+	 * Used by adoption so a post is never claimed by two payload keys.
+	 */
+	public static function bound_post_key( int $id ): ?string {
+		global $wpdb;
+		if ( $id <= 0 ) {
+			return null;
+		}
+		$table = self::table();
+		$key   = $wpdb->get_var( $wpdb->prepare( "SELECT source_key FROM {$table} WHERE object_id = %d AND status = %s AND object_type NOT IN ('term','nav_menu','reading','option','redirect') ORDER BY id ASC LIMIT 1", $id, self::STATUS_ACTIVE ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		return is_string( $key ) && '' !== $key ? $key : null;
 	}
 
 	/**
@@ -194,7 +215,7 @@ final class Map {
 	/**
 	 * Bind an object id to a row and mark it active.
 	 *
-	 * @param array $data Extra columns: sha256, payload_hash, field_hashes, before_data, created_by_run (null = adopted).
+	 * @param array $data Extra columns: sha256, payload_hash, field_hashes, before_data, created_by_run (null = adopted), adopted_by_run.
 	 */
 	public static function bind( string $key, string $type, int $object_id, string $run, array $data = [] ): void {
 		global $wpdb;
@@ -210,6 +231,9 @@ final class Map {
 		];
 		if ( array_key_exists( 'created_by_run', $data ) ) {
 			$cols['created_by_run'] = $data['created_by_run'];
+		}
+		if ( array_key_exists( 'adopted_by_run', $data ) ) {
+			$cols['adopted_by_run'] = $data['adopted_by_run'];
 		}
 		foreach ( [ 'sha256', 'payload_hash' ] as $c ) {
 			if ( array_key_exists( $c, $data ) ) {
@@ -252,7 +276,12 @@ final class Map {
 		}
 		$hashes = array_merge( $row['field_hashes'], $field_hashes );
 		$pre    = $row['before_data'];
-		if ( $before && $row['created_by_run'] !== $run ) {
+		if ( $before && $row['created_by_run'] === $run ) {
+			// A created object needs no pre-image (rollback deletes it) — except menu
+			// locations, which belong to the theme, not to the menu the run created.
+			$before = array_filter( $before, static fn( $f ): bool => str_starts_with( (string) $f, 'location:' ), ARRAY_FILTER_USE_KEY );
+		}
+		if ( $before ) {
 			$pre[ $run ] = $pre[ $run ] ?? [];
 			foreach ( $before as $f => $v ) {
 				if ( ! array_key_exists( $f, $pre[ $run ] ) ) {
@@ -294,14 +323,31 @@ final class Map {
 	}
 
 	/**
-	 * Rows created by a run OR carrying a pre-image for it.
+	 * Rows created by a run, adopted by it, OR carrying a pre-image for it.
 	 */
 	public static function rows_for_run( string $run ): array {
 		global $wpdb;
 		$table = self::table();
 		$like  = '%' . $wpdb->esc_like( '"' . $run . '":' ) . '%';
-		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE created_by_run = %s OR before_data LIKE %s ORDER BY id ASC", $run, $like ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$rows  = $wpdb->get_results( $wpdb->prepare( "SELECT * FROM {$table} WHERE created_by_run = %s OR adopted_by_run = %s OR before_data LIKE %s ORDER BY id ASC", $run, $run, $like ), ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
 		return array_map( [ self::class, 'decode' ], $rows ?: [] );
+	}
+
+	/**
+	 * source_key => object_id for every active row bound to an object (one query;
+	 * the pre-flight uses it to skip records that are already imported).
+	 *
+	 * @return array<string,int>
+	 */
+	public static function active_objects(): array {
+		global $wpdb;
+		$table = self::table();
+		$rows  = $wpdb->get_results( "SELECT source_key, object_id FROM {$table} WHERE status = 'active' AND object_id > 0", ARRAY_A ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery,WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		$out   = [];
+		foreach ( $rows ?: [] as $r ) {
+			$out[ (string) $r['source_key'] ] = (int) $r['object_id'];
+		}
+		return $out;
 	}
 
 	public static function all_keys(): array {

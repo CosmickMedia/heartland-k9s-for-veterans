@@ -78,7 +78,7 @@ final class StatusCommand {
 		$s = $snapshot['state'];
 		WP_CLI::log( sprintf( 'Status:   %s', $s['status'] ) );
 		if ( State::STATUS_IDLE !== $s['status'] ) {
-			WP_CLI::log( sprintf( 'Run:      %s (%s%s, pass %d)', $s['run_id'], ! empty( $s['mode']['dry_run'] ) ? 'dry run' : 'import', ! empty( $s['mode']['overwrite'] ) ? ', overwrite' : '', (int) $s['passes'] ) );
+			WP_CLI::log( sprintf( 'Run:      %s (%s%s%s, pass %d)', $s['run_id'], ! empty( $s['mode']['dry_run'] ) ? 'dry run' : 'import', ! empty( $s['mode']['adopt'] ) ? ', adopt existing' : '', ! empty( $s['mode']['overwrite'] ) ? ', overwrite' : '', (int) $s['passes'] ) );
 			WP_CLI::log( sprintf( 'Payload:  %s', $s['payload_dir'] ) );
 			WP_CLI::log( sprintf( 'Step:     %s (%d/%d) cursor %d/%d', $s['step'], (int) $s['step_index'] + 1, count( State::STEPS ), (int) $s['cursor'], (int) $s['step_total'] ) );
 			WP_CLI::log( sprintf( 'Errors:   %d   Warnings: %d', (int) $s['errors_total'], (int) $s['warnings_total'] ) );
@@ -89,10 +89,10 @@ final class StatusCommand {
 				if ( null === $c ) {
 					continue;
 				}
-				$rows[] = [ 'step' => $step ] + $c;
+				$rows[] = [ 'step' => $step ] + $c + [ 'adopt' => 0 ];
 			}
 			if ( $rows ) {
-				\WP_CLI\Utils\format_items( 'table', $rows, [ 'step', 'create', 'update', 'skip', 'conflict', 'fail' ] );
+				\WP_CLI\Utils\format_items( 'table', $rows, [ 'step', 'create', 'adopt', 'update', 'skip', 'conflict', 'fail' ] );
 			}
 		}
 		WP_CLI::log( sprintf( 'Lock:     %s', $snapshot['lock'] ? 'held (expires in ' . (int) $snapshot['lock']['expires_in'] . ' s)' : 'free' ) );
@@ -108,7 +108,7 @@ final class StatusCommand {
 					'run'      => $r['run_id'],
 					'started'  => $r['started_at'],
 					'status'   => $r['status'] . ( ! empty( $r['rolled_back'] ) ? ' (rolled back)' : '' ),
-					'mode'     => ( ! empty( $r['mode']['dry_run'] ) ? 'dry-run' : 'import' ) . ( ! empty( $r['mode']['overwrite'] ) ? '+overwrite' : '' ),
+					'mode'     => ( ! empty( $r['mode']['dry_run'] ) ? 'dry-run' : 'import' ) . ( ! empty( $r['mode']['adopt'] ) ? '+adopt' : '' ) . ( ! empty( $r['mode']['overwrite'] ) ? '+overwrite' : '' ),
 					'errors'   => (int) $r['errors'],
 				];
 			}

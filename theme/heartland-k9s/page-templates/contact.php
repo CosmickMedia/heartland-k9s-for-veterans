@@ -41,6 +41,9 @@ while ( have_posts() ) :
 	$hk9_heroes  = array_values( array_filter( $hk9_sections, static fn( array $s ): bool => in_array( $s['type'], [ 'hero_band', 'hero_image' ], true ) ) );
 	$hk9_columns = array_values( array_filter( $hk9_sections, static fn( array $s ): bool => ! in_array( $s['type'], [ 'hero_band', 'hero_image' ], true ) ) );
 
+	// Editor content (block canvas): 'before' = overlap card right after the hero (the contact card then follows), 'after' = after the card.
+	$hk9_content_position = hk9_editor_content_position( $hk9_page_id, $hk9_template );
+
 	foreach ( $hk9_heroes as $hk9_section ) {
 		get_template_part(
 			'template-parts/sections/' . $hk9_section['type'],
@@ -52,6 +55,10 @@ while ( have_posts() ) :
 				'template' => $hk9_template,
 			]
 		);
+	}
+
+	if ( 'before' === $hk9_content_position ) {
+		hk9_the_editor_content( $hk9_page_id, 'before' );
 	}
 
 	if ( ! empty( $hk9_columns ) ) :
@@ -76,6 +83,10 @@ while ( have_posts() ) :
 		<?php
 		hk9_section_close();
 	endif;
+
+	if ( 'after' === $hk9_content_position ) {
+		hk9_the_editor_content( $hk9_page_id, 'after' );
+	}
 endwhile;
 
 get_footer();

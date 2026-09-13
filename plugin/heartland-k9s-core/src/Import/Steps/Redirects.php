@@ -66,7 +66,7 @@ final class Redirects extends Step {
 		}
 		if ( ! str_contains( $from, '?' ) ) {
 			$hit = url_to_postid( home_url( $from ) );
-			if ( $hit > 0 && 'publish' === get_post_status( $hit ) ) {
+			if ( $hit > 0 && 'publish' === get_post_status( $hit ) && ! $this->would_be_converted( $hit ) ) {
 				$ctx->warn( $key, sprintf( 'Source %s matches published post #%d; the redirect will shadow it.', $from, $hit ) );
 			}
 		}
@@ -116,6 +116,27 @@ final class Redirects extends Step {
 	}
 
 	/* ------------------------------------------------------------ helpers */
+
+	/**
+	 * Existing-site dry run: a legacy registry page that the import would convert
+	 * into a BarKode record no longer exists at its root path after the real run,
+	 * so its legacy-path redirect shadows nothing.
+	 */
+	private function would_be_converted( int $post_id ): bool {
+		if ( ! $this->ctx->dry() ) {
+			return false;
+		}
+		foreach ( (array) ( $this->ctx->state['dry_adopted'] ?? [] ) as $key => $id ) {
+			if ( (int) $id !== $post_id ) {
+				continue;
+			}
+			$record = $this->record( (string) $key );
+			if ( $record && \HK9\Core\Import\Adopt::CONVERT_TYPE === (string) ( $record['type'] ?? '' ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	/**
 	 * @return array|WP_Error {type,id}|{type,path}|{type,slug}

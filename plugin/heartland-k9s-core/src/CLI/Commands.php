@@ -6,6 +6,7 @@
  *   wp hk9 import ...                            (CLI\ImportCommand, importer module)
  *   wp hk9 status                                (CLI\StatusCommand, importer module)
  *   wp hk9 rollback / reset-state                (CLI\RollbackCommand / CLI\ResetStateCommand when present)
+ *   wp hk9 preflight [<dir>]                     (CLI\PreflightCommand, importer module)
  *
  * Other modules can add entries through the `hk9/cli/commands` filter:
  *   [ 'hk9 something' => ClassOrCallable ].
@@ -31,6 +32,7 @@ final class Commands {
 			'hk9 status'      => 'HK9\\Core\\CLI\\StatusCommand',
 			'hk9 rollback'    => 'HK9\\Core\\CLI\\RollbackCommand',
 			'hk9 reset-state' => 'HK9\\Core\\CLI\\ResetStateCommand',
+			'hk9 preflight'   => 'HK9\\Core\\CLI\\PreflightCommand',
 		];
 		/**
 		 * Filters the CLI command map (command name => class name or callable).

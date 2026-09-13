@@ -68,6 +68,50 @@ final class Schema {
 		];
 	}
 
+	/** Provider labels for the "Default form provider" select (value => label). */
+	private static function provider_options(): array {
+		if ( class_exists( 'HK9\\Core\\Support\\FormProviders' ) ) {
+			return \HK9\Core\Support\FormProviders::labels( false );
+		}
+		return [
+			'builtin'   => __( 'Built-in form (this plugin)', 'heartland-k9s-core' ),
+			'gravity'   => __( 'Gravity Forms', 'heartland-k9s-core' ),
+			'shortcode' => __( 'Form shortcode', 'heartland-k9s-core' ),
+		];
+	}
+
+	/** Help text for the Gravity Forms pickers (states whether Gravity Forms is active). */
+	private static function gravity_help(): string {
+		if ( class_exists( 'HK9\\Core\\Support\\FormProviders' ) ) {
+			return \HK9\Core\Support\FormProviders::gravity_help();
+		}
+		return __( 'Gravity Forms is not active.', 'heartland-k9s-core' );
+	}
+
+	/**
+	 * Renders a `number` setting (stored int form id) as a select of the active
+	 * Gravity Forms forms; the stored id is kept as an option while unavailable.
+	 */
+	private static function gravity_select( string $key ): array {
+		$current = 0;
+		if ( class_exists( 'HK9\\Core\\Settings\\Store' ) ) {
+			$current = (int) ( Store::raw()['forms'][ $key ] ?? 0 );
+		}
+		$options = [ '' => __( '— Not set —', 'heartland-k9s-core' ) ];
+		// The form list is only needed when the settings screen renders (fields() also runs on admin_init for every admin request).
+		$on_settings_screen = isset( $_GET['page'] ) && Page::SLUG === sanitize_key( wp_unslash( $_GET['page'] ) ); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only screen check.
+		if ( $on_settings_screen && class_exists( 'HK9\\Core\\Support\\FormProviders' ) ) {
+			$options += \HK9\Core\Support\FormProviders::gravity_form_options( $current );
+		} elseif ( $current > 0 ) {
+			/* translators: %d: form id */
+			$options[ (string) $current ] = sprintf( __( 'Form #%d', 'heartland-k9s-core' ), $current );
+		}
+		return [
+			'type'    => 'select',
+			'options' => $options,
+		];
+	}
+
 	private static function link( string $url = '', string $target = '_self' ): array {
 		return array_merge(
 			self::EMPTY_LINK,
@@ -210,6 +254,9 @@ final class Schema {
 				'store_submissions'        => true,
 				'contact_success_text'     => 'Thank you — your message has been sent. We will get back to you as soon as we can.',
 				'application_success_page' => self::link( '/thank-you/' ),
+				'provider'                 => 'builtin',
+				'gravity_contact_form'     => 0,
+				'gravity_application_form' => 0,
 			],
 			'analytics' => [
 				'fathom_site_id' => '',
@@ -346,6 +393,9 @@ final class Schema {
 				'store_submissions'        => [ 'type' => 'toggle' ],
 				'contact_success_text'     => [ 'type' => 'textarea' ],
 				'application_success_page' => [ 'type' => 'link' ],
+				'provider'                 => [ 'type' => 'select', 'options' => [ 'builtin', 'gravity', 'shortcode' ] ],
+				'gravity_contact_form'     => [ 'type' => 'number', 'min' => 0 ],
+				'gravity_application_form' => [ 'type' => 'number', 'min' => 0 ],
 			],
 			'analytics' => [
 				'fathom_site_id' => [ 'type' => 'code' ],
@@ -526,8 +576,11 @@ final class Schema {
 			],
 			'forms'     => [
 				'label'       => __( 'Forms', 'heartland-k9s-core' ),
-				'description' => __( 'Contact and application-inquiry forms. Recipients: one email address per line.', 'heartland-k9s-core' ),
+				'description' => __( 'Contact and application-inquiry forms. The provider decides which form the Contact and Application pages show (each page can override it in its "Form" section). Recipients: one email address per line.', 'heartland-k9s-core' ),
 				'fields'      => [
+					'provider'                 => $def( 'forms', 'provider', __( 'Default form provider', 'heartland-k9s-core' ), __( 'Built-in: the plugin\'s own contact and application forms (recipients, subjects and submissions below). Gravity Forms: the forms picked below. Form shortcode: each page\'s "Form" section supplies the shortcode.', 'heartland-k9s-core' ), [ 'options' => self::provider_options() ] ),
+					'gravity_contact_form'     => $def( 'forms', 'gravity_contact_form', __( 'Gravity Forms: contact form', 'heartland-k9s-core' ), self::gravity_help(), self::gravity_select( 'gravity_contact_form' ) ),
+					'gravity_application_form' => $def( 'forms', 'gravity_application_form', __( 'Gravity Forms: application form', 'heartland-k9s-core' ), self::gravity_help(), self::gravity_select( 'gravity_application_form' ) ),
 					'contact_recipients'       => $def( 'forms', 'contact_recipients', __( 'Contact form recipients', 'heartland-k9s-core' ), __( 'One address per line. When empty, the site admin email is used.', 'heartland-k9s-core' ) ),
 					'application_recipients'   => $def( 'forms', 'application_recipients', __( 'Application inquiry recipients', 'heartland-k9s-core' ), __( 'One address per line. When empty, the contact recipients are used.', 'heartland-k9s-core' ) ),
 					'from_name'                => $def( 'forms', 'from_name', __( 'From name', 'heartland-k9s-core' ), __( 'Defaults to the site title.', 'heartland-k9s-core' ) ),
