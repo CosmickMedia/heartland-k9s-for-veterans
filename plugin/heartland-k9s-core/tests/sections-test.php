@@ -403,7 +403,11 @@ $form_raw = $form_def->sanitize(
 $form_sc  = $form_def->sanitize( [ '__present' => '1', 'provider' => 'shortcode', 'shortcode' => 'no brackets here' ] );
 $app_def  = Registry::definition( 'application', 'form' );
 $app_keys = array_column( $app_def->fields, 'key' );
+// "inherit" follows Settings → Forms; pin the site default to builtin for this check (the local stack may run on Gravity Forms after provisioning).
+$hk9_builtin_default = static fn( $value, string $path ) => 'forms.provider' === $path ? 'builtin' : $value;
+add_filter( 'hk9/settings/get', $hk9_builtin_default, 10, 2 );
 $resolved = hk9_form_provider( $form_def->defaults(), 'contact' );
+remove_filter( 'hk9/settings/get', $hk9_builtin_default, 10 );
 $sc_res   = hk9_form_provider( [ 'provider' => 'shortcode', 'shortcode' => '[hk9_not_a_real_shortcode_xyz]' ], 'contact' );
 $gf_res   = hk9_form_provider( [ 'provider' => 'gravity', 'gravity_form_id' => '999999' ], 'application' );
 $prov_ok  = 'inherit' === $form_raw['provider'] && '' === $form_raw['gravity_form_id'] && '[gravityform id="3" title="false"]' === $form_raw['shortcode']

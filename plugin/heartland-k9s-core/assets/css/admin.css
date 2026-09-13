@@ -275,3 +275,17 @@
 	line-height: 1.1;
 	color: #1d2327;
 }
+
+/* Settings → Forms: "Heartland forms in Gravity Forms" panel (Forms\GravityProvisioner::render_settings_panel). */
+.hk9-gravity-panel__status {
+	margin: 0 0 .75em;
+}
+.hk9-gravity-panel__status li {
+	margin-bottom: .25em;
+}
+.hk9-gravity-panel__drift {
+	color: #b32d2e;
+}
+.hk9-gravity-panel__actions .button + .button {
+	margin-left: .5em;
+}

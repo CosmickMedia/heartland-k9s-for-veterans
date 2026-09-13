@@ -34,6 +34,7 @@ final class Plugin {
 		'HK9\\Core\\Privacy\\Registry'        => 'always',
 		'HK9\\Core\\Forms\\Handler'           => 'always',
 		'HK9\\Core\\Forms\\Submissions'       => 'always',
+		'HK9\\Core\\Forms\\GravityProvisioner' => 'always',
 		'HK9\\Core\\Events\\Dates'            => 'always',
 		'HK9\\Core\\Analytics\\Fathom'        => 'always',
 		'HK9\\Core\\Rest\\Pick'               => 'always',

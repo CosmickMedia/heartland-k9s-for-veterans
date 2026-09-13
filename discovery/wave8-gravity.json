@@ -1,0 +1,222 @@
+{
+ "impl": {
+  "summary": "Added automatic Gravity Forms provisioning (plugin Forms\\GravityProvisioner + CLI\\GravityCommand): when Gravity Forms is active, \"Contact\" and \"Initial Application Inquiry\" are built via GFAPI with the specified fields, notifications (recipients from Settings \u2192 Forms, replyTo = email merge tag, [HK9 \u2026] subjects) and confirmations (message / redirect to /thank-you/), marked with hk9_provisioned={role,version,plugin,time}, ids stored in forms.gravity_*_form and forms.provider switched to gravity only when both ids were empty. Entry points: Settings \u2192 Forms panel (\"Create the Heartland forms in Gravity Forms\" / \"Re-create / update\", admin-post hk9_gravity_provision with manage_options + dedicated nonce arg), `wp hk9 gravity provision [--force]` / `wp hk9 gravity status [--format=json]`, a new `hk9/import/finalized` action fired by Import\\Steps\\Finalize (non-dry runs) and admin_init(5) on Settings \u2192 Forms / Setup & Import (only when GF active, ids empty, no run recorded). Idempotent (stored/marked forms kept or adopted, never duplicated); --force updates in place (field ids stable, entries + hand-added notifications kept) and re-creates trashed/deleted forms; nothing is ever deleted; status reports drift (trashed/inactive/missing/outdated). Theme: rewrote _gravity-forms.scss (Orbital theme chosen and documented) so GF forms pixel-match the built-in form \u2014 measured geometry identical at 1440 and 390 (labels/inputs/button positions equal; 523 of 1.99M px differ at 1440 = sub-pixel AA of \"* Required\"); FormProviders now filters gform_required_legend (\"* Required\") and gform_validation_message (built-in summary sentence) for hk9-gf-form forms; fixed GF-reset side effects (select text centring, placeholder size, required-marker line height, validation summary focus border/gap, spinner hidden, consent/radio styling, half columns at the 768 breakpoint). Docs (ARCHITECTURE \u00a72/\u00a710, admin-guide Forms section + where-to-edit table, install \u00a7A6/\u00a7B.5/\u00a7D5, import Next steps) and tests (tests/gravity-test.php, 27 checks) added; sections-test made provider-independent. Local site left on provider=gravity with forms #26 (Contact) and #11 (Initial Application Inquiry); builtin toggled once and verified.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/GravityProvisioner.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/CLI/GravityCommand.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Support/FormProviders.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Steps/Finalize.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Import/Admin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Plugin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Page.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/assets/css/admin.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/gravity-test.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/sections-test.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_gravity-forms.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/forms.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/install.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/settings-forms-gravity-provision.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/contact-1440-default.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/contact-1440-error.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/contact-1440-success.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/contact-390-default.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/contact-390-error.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/contact-390-success-gf.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/application-1440-default.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/application-1440-error-gf.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/application-390-default.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/gravity/admin-settings-forms.png"
+  ],
+  "tests": [
+   {
+    "name": "tests/gravity-test.php (tools/wp.sh eval-file \u2026/tests/gravity-test.php)",
+    "result": "PASS \u2014 27 checks, 0 failed",
+    "evidence": "status_fresh_site, provision_creates_forms (2 new forms, provider_set), settings_written, last_run_recorded, contact_form_settings (orbital/cssClass/top_label/asterisk/honeypot/marker), contact_form_fields (Name advanced First Name/Last Name John/Doe, Email, Subject select = Config::subjects(), Message), contact_notification (to info@heartlandk9s.org, replyTo {Email Address:2}, subject '[HK9 Contact] {Subject:3} from {Name (First):1.3} {Name (Last):1.6}'), contact_confirmation, application_form_fields (51 states, radio veteran/family_member/other, 7 heard-from options, consent linking /5-questions/), application_notification (director@heartlandk9s.org), application_confirmation (redirect \u2192 /thank-you/), provision_idempotent (second call 'kept', form count unchanged), manual_provider_kept (provider=shortcode untouched), no_auto_after_manual_clear, explicit_run_adopts_marked_forms, force_updates_in_place (same id, button/placeholder restored, hand-added notification + entry kept), status_reports_version_drift, status_reports_trashed_form, trashed_form_falls_back, force_recreates_trashed_form (trashed form left in trash), status_reports_missing_form, render_gravity_in_hk9_gf, contact_part_renders_gravity, application_part_renders_gravity, import_finalized_provisions (hk9/import/finalized \u2192 2 forms, by=import, 3 $ctx->info lines), import_finalized_idempotent, cleanup (5 test forms deleted, pre-existing forms untouched, settings restored)"
+   },
+   {
+    "name": "tests/sections-test.php",
+    "result": "PASS \u2014 47 checks, 0 failed",
+    "evidence": "form_provider_fields_and_resolution now pins forms.provider to builtin via the hk9/settings/get filter for its 'inherit \u2192 builtin' check (it previously assumed the site default); gravity_list_not_fetched_at_boot still passes"
+   },
+   {
+    "name": "tests/core-fixes-test.php",
+    "result": "PASS \u2014 93 passed, 0 failed",
+    "evidence": "== 93 passed, 0 failed =="
+   },
+   {
+    "name": "wp hk9 gravity provision / status / --force",
+    "result": "PASS",
+    "evidence": "Fresh site: 'contact created #10', 'application created #11', 'forms.provider set to gravity'; second run: both 'kept'; --force: 'updated in place' with same ids; status --format=json returns gravity_active/provider/last_run/forms{state,drift,note,candidates}; current local state: contact id=26 ok, application id=11 ok, 'Both Heartland forms are present and active.'"
+   },
+   {
+    "name": "Pixel comparison /contact/ built-in vs Gravity Forms at 1440 (default state)",
+    "result": "PASS",
+    "evidence": "Measured DOM geometry identical: labels y=539/635/731/827 h=16, inputs y=563/659/755/851 (48px, textarea 120px), button y=995 h=56, wrap h=708 in both; pixel diff of the 645\u00d7770 card crop = 523 of 1,986,600 px (bbox 137,239\u2013274,266 = sub-pixel anti-aliasing of the '* Required' note). Composite: scratchpad/gravity/contact-1440-default.png"
+   },
+   {
+    "name": "Pixel comparison /contact/ at 390 (default state)",
+    "result": "PASS",
+    "evidence": "Inputs y=1148.5/1244.5/1340.5/1436.5/1532.5 w=276, button y=1676.5 h=56, docH 3441 in both; pixel diff 3,413 of 1,279,200 px (asterisk sub-pixel positions). Composite: scratchpad/gravity/contact-390-default.png"
+   },
+   {
+    "name": "Error state (submit empty) at 1440 and 390",
+    "result": "PASS",
+    "evidence": "GF AJAX re-render shows .gform_validation_errors styled like .hk9-form__summary (padding 16/20, radius 8, rgba(185,28,28,.06) bg, .3 border, focus outline) with heading 'Please correct the highlighted fields and try again.' (gform_validation_message filter), per-field crimson messages worded like the built-in ('Email Address is required.', 'Please select an option for Subject.'), crimson borders, error field height 100 = label16+8+input48+8+msg20 like the built-in. Composites: contact-1440-error.png, contact-390-error.png, application-1440-error-gf.png"
+   },
+   {
+    "name": "Confirmation state (real test entries, deleted afterwards)",
+    "result": "PASS",
+    "evidence": "Contact: gform_confirmation_wrapper rendered at 1440 with h=92.5, padding 16/20, radius 8, rgba(47,125,79,.08)/.3 border, Fraunces 20/28 green title 'Message Sent' \u2014 same numbers as the built-in .hk9-form__success (built-in shows a focus outline because it autofocuses); 390 h=115. Application: AJAX submit redirected to http://localhost:8093/thank-you/. GF entries #1\u2013#4 (and #5/#6 created by the test file) deleted via GFAPI::delete_entry / delete_form; the built-in test submission (hk9_submission #595) deleted. Composites: contact-1440-success.png, contact-390-success-gf.png"
+   },
+   {
+    "name": "Notifications (Mailpit)",
+    "result": "PASS",
+    "evidence": "Contact: '[HK9 Contact] Other from Test Screenshot' \u2192 info@heartlandk9s.org, From 'Heartland Canines for Veterans <admin@hk9.test>', Reply-To tmp-test@hk9-local.test. Application: '[HK9 Application Inquiry] Test Applicant' \u2192 director@heartlandk9s.org, body lists Name/Email/Phone/City/State Missouri/I am a\u2026 A veteran/How did you hear/message/Acknowledgement. (GF 3.0 queues notifications asynchronously; sent synchronously for the check with gform_is_asynchronous_notifications_enabled=false.)"
+   },
+   {
+    "name": "Settings \u2192 Forms panel + admin-post button",
+    "result": "PASS",
+    "evidence": "Panel shows 'Gravity Forms 3.0.1.1 is active', both forms with edit links and 'OK (Heartland definition v1)', Update/Create buttons; clicking Re-create (confirm accepted) POSTs to admin-post.php and returns with the notice 'Gravity Forms: \"Contact\" (#26) updated in place \u2026'. First visit with ids empty auto-provisioned (adopted marked forms) and the pickers showed Contact (#26) / Initial Application Inquiry (#11) selected. Screenshot: docs/reports/screenshots/admin-guide/settings-forms-gravity-provision.png"
+   },
+   {
+    "name": "Built-in provider toggle",
+    "result": "PASS",
+    "evidence": "provider=builtin \u2192 /contact/ contains form.hk9-form--contact (1) and no gform_wrapper (0), /online-application/ contains form.hk9-form--application; provider=gravity \u2192 gform_wrapper present, no built-in form; site left on gravity"
+   },
+   {
+    "name": "php -l / CSS budget",
+    "result": "PASS",
+    "evidence": "No syntax errors in any changed PHP file; node tools/build-css.mjs --check exit 0 (forms.css 35.8 kB raw / 5.4 kB gzip)"
+   }
+  ],
+  "issues": [
+   "During the first (buggy) run of the new test file, its cleanup deleted the site's originally provisioned Contact form #10 (the test had adopted #10 and mis-recorded it as test-created). No real entries existed (only my just-deleted test entries). The test bookkeeping was fixed (only ids absent before each call are ever deleted; cleanup asserts no pre-existing form was lost) and the Contact form was re-created with --force as #26; the local site now runs on #26 (Contact) / #11 (Initial Application Inquiry).",
+   "Local docker mail: the bind-mounted dev mu-plugin (docker/mu-plugins/hk9-dev.php) was not visible inside the running container until `docker compose restart wordpress`; before that wp_mail() failed ('Could not instantiate mail function'), which is the one line in debug.log (from my built-in test submission at 12:01 UTC). Not a code issue.",
+   "Gravity Forms 3.0 rejects example.com addresses as test domains (GF_Field_Email::is_email_rejected), so test entries used tmp-test@hk9-local.test. GF sends notifications through its async (WP-Cron) queue by default \u2014 documented in install.md \u00a7D5.",
+   "Deliberate deviations from the built-in form: the application 'I am a\u2026' is a radio group (per task) so that row is 107.5px instead of a 72px select; the textarea label is the longer 'Tell us a little about yourself and what you are looking for' (per task); GF's Name field keeps its default combined message 'This field is required. Please complete the following fields: First Name, Last Name.'; textareas/City have no maxLength (GF would print a character counter the reference has none of).",
+   "Theme choice: Orbital (documented in _gravity-forms.scss and ARCHITECTURE \u00a710). Because GF's stylesheets load after forms.css, a few overrides use the extra `.gform_wrapper.gform-theme` specificity or GF variables (`--gf-ctrl-label-line-height-req`, `--gf-form-validation-*`, `--gf-ctrl-placeholder-*`).",
+   "No version bump and no CHANGELOG entry (orchestrator releases); nothing committed. Mailpit still holds the two notification e-mails generated during testing (dev sink only)."
+  ],
+  "integration_notes": "New plugin module HK9\\\\Core\\\\Forms\\\\GravityProvisioner is booted from Plugin::MODULES ('always', after Forms\\\\Submissions); CLI command 'hk9 gravity' is added through the existing hk9/cli/commands filter (CLI\\\\GravityCommand). New action `hk9/import/finalized` ($state, $ctx) fires at the end of Import\\\\Steps\\\\Finalize::cleanup() for non-dry runs. Settings: new `note` field forms.gravity_provision with a `render` callback (Settings\\\\Page now calls `$field['render']` for note fields) \u2014 no new stored setting; the panel's submit buttons are named `action` with a dedicated nonce arg `hk9_gravity_nonce` because the Settings API form posts its own `action=update` / `_wpnonce`. FormProviders gained is_hk9_form(), required_legend() and validation_message() (GF filters, scoped to forms whose cssClass contains hk9-gf-form). Filters added: hk9/forms/gravity_auto_provision (bool), hk9/forms/gravity_marked_forms (id => marker), action hk9/forms/gravity_provisioned. GravityProvisioner::VERSION (1) must be bumped whenever contact_definition()/application_definition() change so `status` reports outdated forms. Theme forms.css rebuilt (npm run build:css). Docs updated: ARCHITECTURE \u00a72 layout + \u00a710 Provisioning paragraph, admin-guide 'Gravity Forms: automatic set-up' + where-to-edit table (recipients seed GF notifications only), install \u00a7A6 / \u00a7B.5 / \u00a7D5, import screen Next steps. Screenshot evidence in the scratchpad gravity/ folder (composites + raw/); one new committed doc screenshot docs/reports/screenshots/admin-guide/settings-forms-gravity-provision.png. Release: bump plugin+theme versions and add a changelog entry for the provisioner, the new hook/filters, the GF CSS rewrite and tests/gravity-test.php."
+ },
+ "review": {
+  "verdict": "REQUEST CHANGES. Core provisioning is solid (definitions match the canonical arrays, idempotent, never deletes, dry-run/GF-inactive guards hold, cap+nonce correct, contact form pixel-equivalent, axe clean, no CSS leakage), but --force rewrites a hand-picked client form, the application form does not match the built-in one it claims to mirror, and the documented \"install GF before the import\" path seeds notifications with the wrong recipients.",
+  "findings": [
+   {
+    "severity": "high",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/GravityProvisioner.php",
+    "issue": "provision_role() (lines 349-375) applies merge_for_update() to ANY live form stored in forms.gravity_*_form when $force is set, marker or not. Verified on the stack: a tmp form with one custom field set as gravity_contact_form \u2192 provision(true) replaced its fields with Name/Email/Subject/Message, renamed it \"Contact (1)\" and stamped hk9_provisioned. The panel shows the force button even when status says \"a form picked by hand; left as is\", so one click destroys a client-built form's fields.",
+    "fix": "In provision_role(): if $force && (marker($existing)===null || marker role !== $role) do NOT update in place \u2014 either GFAPI::add_form() a new marked form and store its id (leave the hand-picked form untouched) or return action 'skipped' with a message. Hide/disable the force button and add a test (force_leaves_unmarked_form_alone)."
+   },
+   {
+    "severity": "medium",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/GravityProvisioner.php",
+    "issue": "application_definition() diverges from Forms\\ApplicationForm: applicant_type is a SELECT \"I am a\" (Select one / Veteran / Family member of a veteran / Other) in the built-in form but a RADIO \"I am a\u2026\" (A veteran / A family member\u2026) in GF; textarea label \"Tell us about yourself\" vs \"Tell us a little about yourself and what you are looking for\"; button \"Submit Inquiry\" vs \"Send Inquiry\". Measured: GF form 734px vs 699px at 1440, 1179 vs 1128 at 390 (screenshots app-form-{gravity,builtin}-1440.png). Settings panel text and admin-guide promise \"the same fields as the built-in forms\".",
+    "fix": "Use select_field($f['type'], 'I am a', ApplicationForm choice labels, 'Select one', true, 'gf_left_half'), label 'Tell us about yourself', button 'Submit Inquiry' (or change the built-in to match and fix docs); bump VERSION so status flags existing forms."
+   },
+   {
+    "severity": "medium",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/GravityProvisioner.php",
+    "issue": "maybe_auto_provision() runs on the first visit to Setup & Import (page hk9-import), i.e. BEFORE the import writes forms.*_recipients. Config::recipients() then falls back to admin_email, so both GF notifications are seeded with the admin address; because last_run is recorded, should_auto_provision() is false at hk9/import/finalized and they are never re-seeded. install.md recommends installing GF before the import, which makes this the documented path.",
+    "fix": "Remove $is_import from maybe_auto_provision() (let the finalize hook provision after Options ran), or in on_import_finalized() refresh the hk9_admin notification 'to' when last_run.by === 'auto'. Add a test for the pre-import visit."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/GravityProvisioner.php",
+    "issue": "name_field() sets no errorMessage, so GF prints \"This field is required. Please complete the following fields: First Name, Last Name.\" under Name and in the summary (wraps at 517px \u2192 error-state form 901px vs built-in 885px).",
+    "fix": "Add 'errorMessage' => __('First Name and Last Name are required.') to name_field()."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_gravity-forms.scss",
+    "issue": "Validation-summary list links keep orbital defaults: color rgb(192,43,10), 1px border, 3px radius (built-in list is crimson rgb(185,28,28), no border); summary box 189px vs 193px. Consent checkbox/radios keep orbital box-shadow (rgba(0,0,0,.1) 0 1px 3px\u2026) where the built-in checkbox has none.",
+    "fix": "Near line 423: `.gform_validation_errors a { color:#b91c1c; border:0; border-radius:0 }`; add `box-shadow:none` for `input[type=checkbox], input[type=radio]` in .hk9-gf; rebuild with npm run build:css."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+    "issue": "Admin guide and the settings panel description say the GF forms have \"the same fields as the built-in forms\"; ARCHITECTURE \u00a710 correctly documents the radio/label/button differences \u2014 the docs contradict each other until the application definition is aligned.",
+    "fix": "Align the definition (finding 2) and keep the wording, or document the differences in admin-guide/install and the panel text."
+   }
+  ],
+  "spot_checks": [
+   "Read GravityProvisioner.php, GravityCommand.php, FormProviders/Finalize/Admin/Plugin/Page/Schema diffs, docs diffs, _gravity-forms.scss structure, ContactForm/ApplicationForm field defs.",
+   "wp eval: live forms #26/#11 field-by-field equal to definition() (types, required, placeholders, cssClass, choice values 5/51/3/7, name sub-inputs First Name/John, Last Name/Doe, consent label linking /5-questions/); notifications to info@/director@heartlandk9s.org, from {admin_email}, replyTo {Email Address:2}, [HK9 \u2026] subjects; confirmations message / redirect http://localhost:8093/thank-you/.",
+   "Idempotency: provision(false) \u2192 contact kept#26, application kept#11, provider_set false, no new forms. Hand-picked unmarked tmp form as contact id \u2192 kept, status note 'not created by Heartland'; provision(true) rewrote it (finding 1). tmp form deleted, settings (26/11/gravity) and hk9_gravity_provision option restored; final: 2 active forms, 0 tmp.",
+   "Finalize::cleanup() returns on $ctx->dry() before do_action('hk9/import/finalized'); should_auto_provision()/available() require class_exists('GFAPI'); handle_admin_post: current_user_can('manage_options') + check_admin_referer('hk9_gravity_provision','hk9_gravity_nonce').",
+   "Playwright, both providers, /contact/ + /online-application/ at 1440 and 390, default + empty-submit error state: contact form rect identical (517x556 / 276x652), inputs 48px, textarea 120px, 1px rgb(229,224,220) border, 2px radius, rgba(244,240,236,.5) bg, labels 14px/500, sublabel ' *' via ::after in rgb(184,46,69), button 56px navy 14/500; error borders rgb(185,28,28), summary box padding 16/20, radius 8, rgba(185,28,28,.06). Application: radio vs select + wording differences (finding 2).",
+   "forms.css: 66 gf rules, all under .hk9-gf (no leakage). node tools/axe.mjs --urls=/contact/,/online-application/ (gravity provider): 0 violations at 390/1440. php -l clean on all changed PHP. wp hk9 gravity status: both forms ok, provider gravity."
+  ]
+ },
+ "fix": {
+  "summary": "Applied every finding from the review (2 medium, 1 high, 3 low) plus the extra wiring they needed, re-ran the suites, rebuilt CSS and re-measured both pages.\n\nHIGH \u2013 `--force` on a hand-picked form: `provision_role()` now checks the marker before `merge_for_update()`; a selected form without the `hk9_provisioned` marker, or one marked for the other role, returns action `skipped` with a message (\"\u2026 was not created by Heartland \u2026 left as is. To use the Heartland definition, clear the selection under Settings \u2192 Forms and run Create again.\") and is never written. `status()` gained `marker_role`; the settings panel only renders the force button when it has something to update/re-create (a marked form of the right role, or a trashed/missing one), its confirm text and description say hand-picked forms are left alone, and `wp hk9 gravity provision` warns on `skipped`. Tests: force_leaves_unmarked_form_alone, force_skips_other_role_form, panel_hides_force_for_hand_picked_forms.\n\nMEDIUM \u2013 application definition aligned with `Forms\\ApplicationForm`: \"I am a\" select (`ApplicationForm::applicant_type_options()`, new public helper shared by both providers \u2014 Veteran / Family member of a veteran / Other, placeholder \"Select one\", `gf_left_half`, required), textarea label \"Tell us about yourself\", button \"Submit Inquiry\". `GravityProvisioner::VERSION` = 2, so existing forms show drift; the stack's provisioned forms #26/#11 were updated in place with `wp hk9 gravity provision --force` (status: both OK, v2; notification recipients unchanged).\n\nMEDIUM \u2013 pre-import seeding: the Setup & Import screen no longer triggers `maybe_auto_provision()` (Settings \u2192 Forms only; the import's `hk9/import/finalized` hook provisions after the Options step). Additionally `provision()` records what each notification was seeded with (`hk9_gravity_provision.seeded[role] = {to, fromName, from}`, via new `notification_seed()`), and `on_import_finalized()` \u2014 when forms already exist \u2014 calls `refresh_seeded_notifications()`: each value still equal to its recorded seed is re-seeded from the imported settings (`GFFormsModel::update_form_meta(...,'notifications')`), values edited in Gravity Forms are never overwritten, changes are logged through `$ctx->info()`. Tests: pre_import_seed_uses_admin_email, import_finalized_refreshes_seeded_notifications, import_finalized_keeps_edited_notification, import_screen_does_not_provision.\n\nLOW \u2013 Name field message: `errorMessage` added, but GF's `set_required_error()` always appends \"Please complete the following fields: \u2026\" to it, so the real fix is a `gform_field_validation` hook in `FormProviders` (hk9 forms only): \"First Name is required.\" / \"Last Name is required.\" / \"First Name and Last Name are required.\" A companion `gform_form_validation_errors` hook drops GF's \"Label: \" prefix in the summary list so it reads like the built-in list.\n\nLOW \u2013 SCSS: summary links now `.gform_validation_errors ol a` (outranks Orbital's rule) with no border/radius, underline, colour #7f1d1d; checkbox/radio `box-shadow: none`. Note: the built-in summary links are `color: inherit` = #7f1d1d (measured rgb(127,29,29) on the built-in form), not #b91c1c as the finding stated \u2014 matched the built-in, not the suggested value. CSS rebuilt (forms.css 37.3 kB / 5.5 kB gzip).\n\nLOW \u2013 docs: ARCHITECTURE \u00a710, admin-guide and install.md updated (select/label/button, Settings \u2192 Forms as the only screen trigger, seed refresh, hand-picked forms never rewritten, `marker_role`, `seeded`); the admin-guide panel screenshot regenerated.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/GravityProvisioner.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Forms/ApplicationForm.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Support/FormProviders.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/CLI/GravityCommand.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/gravity-test.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_gravity-forms.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/forms.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/install.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/axe.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/settings-forms-gravity-provision.png"
+  ],
+  "tests": [
+   {
+    "name": "gravity-test.php (tools/wp.sh eval-file \u2026/tests/gravity-test.php)",
+    "result": "PASS",
+    "evidence": "34 checks, 0 failed (was 28). New: force_leaves_unmarked_form_alone (tmp unmarked form #38 as contact \u2192 provision(true) action 'skipped', title/fields/button/no marker untouched, no new form), panel_hides_force_for_hand_picked_forms (force button present with a Heartland form selected, absent + no Create button when both selected forms are hand-picked), force_skips_other_role_form (application form selected as contact \u2192 'skipped', still the 9-field application form, status drift 'provisioned for the \"application\" role'), pre_import_seed_uses_admin_email (auto run with empty recipients \u2192 to = admin@hk9.test, seeds recorded), import_finalized_refreshes_seeded_notifications (after settings written, finalize re-seeded contact \u2192 tmp-info@, application \u2192 tmp-director@, fromName 'Tmp Sender', 2 log lines, no new form/run), import_finalized_keeps_edited_notification (hand-edited 'to' survives; no log lines when nothing changes), import_screen_does_not_provision (admin_init on page=hk9-import creates nothing, hk9-settings&tab=forms creates 2 forms by=auto). Updated: application_form_fields (select 'I am a' / 'Select one' / gf_left_half, choices = ApplicationForm::applicant_type_options(), label 'Tell us about yourself', button 'Submit Inquiry'), contact_form_settings (Name errorMessage), status_reports_version_drift ('built with definition v0, current is v2'). Cleanup: 10 test forms deleted, the 2 pre-existing forms untouched, settings/option restored (provider=gravity, contact=26, application=11). Run twice (before and after the FormProviders change)."
+   },
+   {
+    "name": "sections-test.php",
+    "result": "PASS",
+    "evidence": "47 checks, 0 failed."
+   },
+   {
+    "name": "php -l on every changed PHP file",
+    "result": "PASS",
+    "evidence": "No syntax errors in GravityProvisioner.php, ApplicationForm.php, FormProviders.php, GravityCommand.php, gravity-test.php, sections-test.php, Admin.php, Finalize.php, Plugin.php, Page.php, Schema.php."
+   },
+   {
+    "name": "npm run build:css",
+    "result": "PASS",
+    "evidence": "forms.css 37.3 kB raw / 5.5 kB gzip; compiled rules verified: `.hk9-gf .gform_wrapper .gform_validation_errors ol a{color:#7f1d1d;\u2026border:0;border-radius:0;\u2026}` and `.hk9-gf .gform_wrapper .gfield input[type=checkbox],\u2026[type=radio]{\u2026box-shadow:none}`."
+   },
+   {
+    "name": "wp hk9 gravity provision --force / status (live forms #26/#11)",
+    "result": "PASS",
+    "evidence": "Both 'updated in place'; status: contact id=26 ok 'Contact' (Heartland v2), application id=11 ok (Heartland v2), 'Both Heartland forms are present and active'. Form #11 fields: 6 select 'I am a' | 'Select one' | gf_left_half; 8 textarea 'Tell us about yourself'; button 'Submit Inquiry'; notification to director@heartlandk9s.org; contact Name errorMessage 'First Name and Last Name are required.'; option seeded = {contact:{to:info@\u2026,fromName:'Heartland Canines for Veterans',from:'{admin_email}'}, application:{to:director@\u2026}}. GF entries on #26/#11: 0/0."
+   },
+   {
+    "name": "Playwright measurement, gravity vs builtin, /contact/ + /online-application/ at 1440 and 390 (default + empty-submit error)",
+    "result": "PASS",
+    "evidence": "Default state: GF wrapper (legend + form) height == built-in form height on all four: contact 556 (1440) / 652 (390), application 699 (1440) / 1128 (390) \u2014 previously 734 vs 699 and 1179 vs 1128. Both providers: inputs 48px, textarea 120px, selects 48px (3 on the application, 0 radios), 1px rgb(229,224,220) border, 2px radius, rgba(244,240,236,.5) bg, labels 14px/500, button 56px full-width rgb(28,47,74) 'Send Message' / 'Submit Inquiry', checkbox 18px box-shadow none, label sets identical (I am a / Tell us about yourself). Error state: error borders rgb(185,28,28); summary padding 16/20, radius 8, bg rgba(185,28,28,.06), heading 15px/600 #7f1d1d, autofocused; links rgb(127,29,29) underline, 0 border, 0 radius (built-in links measured rgb(127,29,29) too); GF field errors: 'First Name and Last Name are required.', 'Email Address is required.', 'Please select an option for I am a.', 'Tell us about yourself is required.', 'Please confirm that you have read the 5 Questions before submitting.'; summary list items are message-only (4 items on contact vs the built-in's 5: the Name field is one GF field, so the GF summary is one list row (26px) shorter \u2014 contact 859 vs 885 at 1440; at 390 GF's longer heading sentence wraps, 1022 vs 1032 / 1640 vs 1600)."
+   },
+   {
+    "name": "node tools/axe.mjs --urls=/contact/,/online-application/ (gravity provider)",
+    "result": "PASS",
+    "evidence": "0 critical / 0 serious / 0 moderate / 0 minor at 390 and 1440 on both URLs (docs/reports/axe.md updated by the run)."
+   },
+   {
+    "name": "debug.log",
+    "result": "PASS",
+    "evidence": "No new entries during the session (only a pre-existing 12:01 built-in wp_mail_failed line)."
+   }
+  ],
+  "issues": [
+   "Reviewer's finding 5 said the built-in summary links are rgb(185,28,28); the built-in `.hk9-form__summary a` is `color: inherit` = #7f1d1d (measured rgb(127,29,29)), so the GF links were matched to #7f1d1d, not #b91c1c.",
+   "The `errorMessage` on the Name field alone does not shorten GF's message (GF_Field::set_required_error() always appends 'Please complete the following fields: \u2026'); the fix is the `gform_field_validation` hook in FormProviders (hk9 forms only), the errorMessage stays as a fallback.",
+   "Error-state heights are not pixel-identical and cannot be: GF's Name is one field (one summary row / one inline message vs two in the built-in form), and GF's summary heading sentence is longer than the built-in's; box styling is identical.",
+   "Out of scope, observed on the built-in application form (released 1.2.0): its client-side JS shows 'Please confirm: I have read the 5 Questions\u2026' for the checkbox while the server (and the GF form) says 'Please confirm that you have read the 5 Questions before submitting.' (forms-frontend.js line 151 ignores `required_message`). Not changed.",
+   "The stack's provisioned forms #26/#11 were updated in place to definition v2 with `wp hk9 gravity provision --force` (fields/notification/confirmation re-applied from settings; no entries existed). `forms.provider` was toggled to builtin for the comparison run and restored to gravity; all settings (ids 26/11, recipients, from_*) verified restored.",
+   "docs/reports/axe.md is a rolling report overwritten by each run; it now records this run (/contact/ + /online-application/)."
+  ],
+  "integration_notes": "Nothing committed (per instructions). Behaviour changes to be aware of when merging: (1) `GravityProvisioner::VERSION` is 2 \u2014 any site with v1 forms shows drift until `--force` / 'Re-create / update' is run; the definitions (select instead of radio, label, button) only reach existing forms through that update. (2) `provision()` now returns action `skipped` for a selected form without the right marker; callers that switch on actions (CLI handled; the admin notice just prints the message). (3) Option `hk9_gravity_provision` gained `seeded`; `status()` entries gained `marker_role`. (4) `maybe_auto_provision()` no longer runs on page=hk9-import \u2014 the import's finalize hook is the automatic path there; docs updated accordingly. (5) FormProviders registers two more GF filters (`gform_field_validation`, `gform_form_validation_errors`), both no-ops for forms whose cssClass lacks `hk9-gf-form`. (6) Theme `forms.css` rebuilt from `_gravity-forms.scss`; no version bump was made to the theme/plugin (both 1.2.0, released) \u2014 a 'Build It' style release would need the usual bumps. Scratch artefacts (measurement scripts, screenshots) live only in the session scratchpad."
+ }
+}

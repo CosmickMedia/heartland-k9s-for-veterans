@@ -44,8 +44,120 @@ namespace HK9\Core\Support {
 		/** Per-request cache of gravity_form_exists(), form id => bool. */
 		private static array $exists_cache = [];
 
-		/** Nothing to hook: helpers are declared when this file loads (booted from Forms\Handler). */
-		public static function register(): void {}
+		/** Whether render_gravity() is printing a form right now (Gravity Forms filters only apply inside .hk9-gf). */
+		private static bool $rendering = false;
+
+		/**
+		 * Helpers are declared when this file loads (booted from Forms\Handler).
+		 * Hooks (provisioned forms only — cssClass `hk9-gf-form` — or while
+		 * render_gravity() runs): the required-field legend ("* Required"), the
+		 * validation summary sentence and list (messages only) and the Name
+		 * field's required message, all worded like the built-in form.
+		 */
+		public static function register(): void {
+			add_filter( 'gform_required_legend', [ self::class, 'required_legend' ], 10, 2 );
+			add_filter( 'gform_validation_message', [ self::class, 'validation_message' ], 10, 2 );
+			add_filter( 'gform_field_validation', [ self::class, 'name_field_validation' ], 10, 4 );
+			add_filter( 'gform_form_validation_errors', [ self::class, 'validation_errors_list' ], 10, 2 );
+		}
+
+		/**
+		 * Validation summary list of a provisioned form: the messages only (the built-in
+		 * summary lists "First Name is required."), not Gravity Forms' "Label: message"
+		 * — the label repeats the message's own wording and, for the Name field, names
+		 * a hidden legend.
+		 *
+		 * @param array $errors [{field_label, field_selector, message}].
+		 * @param array $form   Form.
+		 */
+		public static function validation_errors_list( $errors, $form = [] ): array {
+			if ( ! is_array( $errors ) || ! self::is_hk9_form( $form ) ) {
+				return is_array( $errors ) ? $errors : [];
+			}
+			foreach ( $errors as &$error ) {
+				if ( is_array( $error ) ) {
+					$error['field_label'] = '';
+				}
+			}
+			unset( $error );
+			return $errors;
+		}
+
+		/**
+		 * Required Name field of a provisioned form: the built-in wording ("First Name is
+		 * required." / "Last Name is required." / both) instead of Gravity Forms' sentence,
+		 * which always appends "Please complete the following fields: First Name, Last Name."
+		 * to the field's own message (GF_Field::set_required_error()). Other fields, other
+		 * forms and non-required failures are untouched.
+		 *
+		 * @param array{is_valid:bool, message:string} $result Validation result.
+		 * @param mixed                                $value  Submitted value (input id => value).
+		 * @param array                                $form   Form.
+		 * @param object                               $field  GF_Field.
+		 */
+		public static function name_field_validation( $result, $value, $form = [], $field = null ): array {
+			$result = is_array( $result ) ? $result : [ 'is_valid' => true, 'message' => '' ];
+			if ( ! empty( $result['is_valid'] ) || ! is_object( $field ) || 'name' !== (string) ( $field->type ?? '' ) || empty( $field->isRequired ) || ! self::is_hk9_form( $form ) ) {
+				return $result;
+			}
+			$missing = [];
+			foreach ( is_array( $field->inputs ?? null ) ? $field->inputs : [] as $input ) {
+				if ( ! is_array( $input ) || ! empty( $input['isHidden'] ) ) {
+					continue;
+				}
+				$id = (string) ( $input['id'] ?? '' );
+				$v  = is_array( $value ) ? (string) ( $value[ $id ] ?? '' ) : '';
+				if ( '' === trim( $v ) ) {
+					$missing[] = (string) ( ! empty( $input['customLabel'] ) ? $input['customLabel'] : ( $input['label'] ?? '' ) );
+				}
+			}
+			$missing = array_values( array_filter( $missing ) );
+			if ( [] === $missing ) {
+				return $result; // Failed for another reason: keep Gravity Forms' message.
+			}
+			$result['message'] = 1 === count( $missing )
+				/* translators: %s: field label */
+				? sprintf( __( '%s is required.', 'heartland-k9s-core' ), $missing[0] )
+				/* translators: 1: first field label, 2: second field label */
+				: sprintf( __( '%1$s and %2$s are required.', 'heartland-k9s-core' ), $missing[0], implode( ', ', array_slice( $missing, 1 ) ) );
+			return $result;
+		}
+
+		/** Whether a Gravity form is one of ours (provisioned by Forms\GravityProvisioner: cssClass carries `hk9-gf-form`). */
+		public static function is_hk9_form( mixed $form ): bool {
+			$css = is_array( $form ) && isset( $form['cssClass'] ) && is_string( $form['cssClass'] ) ? $form['cssClass'] : '';
+			return str_contains( ' ' . $css . ' ', ' hk9-gf-form ' );
+		}
+
+		/**
+		 * Validation summary heading of a provisioned form: the built-in form's
+		 * sentence instead of Gravity Forms' default (the list of fields follows).
+		 *
+		 * @param string $markup Default `<h2 class="gform_submission_error">…</h2>`.
+		 * @param array  $form   Form.
+		 */
+		public static function validation_message( $markup, $form = [] ): string {
+			if ( ! self::is_hk9_form( $form ) ) {
+				return (string) $markup;
+			}
+			return '<h2 class="gform_submission_error">' . esc_html__( 'Please correct the highlighted fields and try again.', 'heartland-k9s-core' ) . '</h2>';
+		}
+
+		/**
+		 * Gravity Forms prints '"*" indicates required fields' above every form;
+		 * inside .hk9-gf the note reads like the built-in form ("* Required").
+		 *
+		 * @param string $legend Default legend.
+		 * @param array  $form   Form.
+		 */
+		public static function required_legend( $legend, $form = [] ): string {
+			// The AJAX re-render (validation errors) runs outside render_gravity(): the provisioned
+			// forms are recognised by their cssClass so the note stays the same after a failed submit.
+			if ( ! self::$rendering && ! self::is_hk9_form( $form ) ) {
+				return (string) $legend;
+			}
+			return '<span class="gfield_required" aria-hidden="true">*</span> ' . esc_html__( 'Required', 'heartland-k9s-core' );
+		}
 
 		/** Clears the per-request Gravity Forms caches (after adding/trashing forms in the same request, e.g. tests). */
 		public static function flush(): void {
@@ -354,7 +466,12 @@ namespace HK9\Core\Support {
 			if ( $form_id <= 0 || ! function_exists( 'gravity_form' ) ) {
 				return '';
 			}
-			$html = gravity_form( $form_id, false, false, false, null, true, 0, false );
+			self::$rendering = true;
+			try {
+				$html = gravity_form( $form_id, false, false, false, null, true, 0, false );
+			} finally {
+				self::$rendering = false;
+			}
 			return is_string( $html ) ? $html : '';
 		}
 

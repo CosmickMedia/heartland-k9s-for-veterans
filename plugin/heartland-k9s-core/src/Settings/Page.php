@@ -172,6 +172,9 @@ final class Page {
 
 		switch ( $field['type'] ) {
 			case 'note':
+				if ( is_callable( $field['render'] ?? null ) ) {
+					call_user_func( $field['render'], $id, $field );
+				}
 				break;
 
 			case 'toggle':

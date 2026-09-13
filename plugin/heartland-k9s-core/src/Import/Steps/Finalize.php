@@ -2,7 +2,8 @@
 /**
  * Step 12: finalize — attach media to their parent posts, report orphans
  * (map rows no longer in the payload; never deleted), soft-flush rewrite
- * rules, and delete an uploaded (web-served) payload copy after a clean run.
+ * rules, delete an uploaded (web-served) payload copy after a clean run and
+ * fire `hk9/import/finalized` (non-dry runs).
  *
  * @package HK9\Core
  */
@@ -145,5 +146,16 @@ final class Finalize extends Step {
 			// A server path (CLI, or a bind-mounted dev directory that may be read-only) is never deleted.
 			$ctx->info( '', sprintf( 'Payload directory %s was supplied as a server path and is left in place; remove it yourself if it sits inside the web root.', $dir ) );
 		}
+
+		/**
+		 * Fires at the end of a non-dry import run, after the settings, menus and
+		 * redirects are in place (e.g. Forms\GravityProvisioner creates the
+		 * Gravity Forms forms when Gravity Forms is active and none is selected).
+		 * Listeners must not throw: an exception here fails the run.
+		 *
+		 * @param array   $state Run state (counts, errors, warnings, mode …).
+		 * @param Context $ctx   Import context (info()/warn() write to the run log).
+		 */
+		do_action( 'hk9/import/finalized', $ctx->state, $ctx );
 	}
 }

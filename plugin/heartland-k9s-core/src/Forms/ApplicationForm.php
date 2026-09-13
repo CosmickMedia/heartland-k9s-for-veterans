@@ -137,11 +137,7 @@ final class ApplicationForm extends AbstractForm {
 				'placeholder_option' => __( 'Select one', 'heartland-k9s-core' ),
 				'required'           => true,
 				'maxlength'          => 40,
-				'options'            => [
-					'veteran'       => __( 'Veteran', 'heartland-k9s-core' ),
-					'family_member' => __( 'Family member of a veteran', 'heartland-k9s-core' ),
-					'other'         => __( 'Other', 'heartland-k9s-core' ),
-				],
+				'options'            => self::applicant_type_options(),
 				'width'              => 'half',
 			],
 			[
@@ -179,6 +175,20 @@ final class ApplicationForm extends AbstractForm {
 		$type = $this->display_value( 'applicant_type', $values['applicant_type'] ?? '' );
 		$name = $this->submitter_name( $values );
 		return '' !== $type ? sprintf( '%1$s (%2$s)', $name, $type ) : $name;
+	}
+
+	/**
+	 * "I am a" choices (value => label); shared with the Gravity Forms definition
+	 * (Forms\GravityProvisioner) so both providers offer the same select.
+	 *
+	 * @return array<string,string>
+	 */
+	public static function applicant_type_options(): array {
+		return [
+			'veteran'       => __( 'Veteran', 'heartland-k9s-core' ),
+			'family_member' => __( 'Family member of a veteran', 'heartland-k9s-core' ),
+			'other'         => __( 'Other', 'heartland-k9s-core' ),
+		];
 	}
 
 	/** @return array<string,string> */

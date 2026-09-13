@@ -1,15 +1,28 @@
 // ---------------------------------------------------------------------------
 // Gravity Forms inside the theme's form panels (.hk9-gf wraps gravity_form()
-// output on the contact card and the application panel). Gravity Forms 2.5+
-// ships its own theme ("Orbital": .gform_wrapper.gform-theme--framework) driven
-// by --gf-* custom properties, with an inline <style> per form that sets the
-// colour variables on the wrapper. We do not fight that stylesheet: the
-// variables are re-declared on the <form> element (a descendant, so it wins
-// over the wrapper's inline values) and only the few measurements that the
-// reference form fixes (48px controls, 2px radius, 1px --hk9-border, muted/50
-// background, 14px/500 labels, navy full-width 56px submit, crimson errors)
-// are set directly with enough specificity to beat GF's `:where()` rules.
-// Field grid: GF's own 12-column grid keeps gf_left_half / gf_right_half.
+// output on the contact card and the application panel).
+//
+// Theme choice: the provisioned forms use Gravity Forms' "Orbital" theme
+// (`$form['theme'] = 'orbital'`, GF 2.7+). Orbital is driven by `--gf-*`
+// custom properties and rules of zero specificity (`:where()`), so the theme
+// can re-declare the variables on the <form> (a descendant of the wrapper
+// that carries GF's inline variable <style>) and override the handful of
+// fixed measurements with plain selectors. The classic "gravity-theme"
+// stylesheet uses high-specificity rules that would need `!important` fights,
+// and "legacy" markup has no field grid — neither can be matched cleanly.
+//
+// Target: the built-in .hk9-form (see _forms.scss) — 48px controls, 2px
+// radius, 1px --hk9-border, muted/50 background, 14px/500 labels 8px above
+// the control, 1.5rem gaps, name row 2 columns from 768px, 120px textarea,
+// navy 56px full-width submit, crimson validation, 2px focus ring, "*
+// Required" note, success panel (.hk9-form__success look) as confirmation.
+// GF's own markup: .gform_wrapper.gform-theme--orbital > .gform_heading
+// (.gform_required_legend) + form.hk9-gf-form > .gform_validation_errors? +
+// .gform_fields (12-col grid) > .gfield(.gfield--width-half|.gfield_error)
+// > .gfield_label (+ .gfield_required) + .ginput_container (+ .gfield_validation_message)
+// + .gform_footer > input.gform_button; confirmation: .gform_confirmation_wrapper
+// > .gform_confirmation_message (our h2.hk9-gf-confirmation__title + <p>).
+// Everything is scoped under .hk9-gf so GF's look never leaks out of it.
 // ---------------------------------------------------------------------------
 
 .hk9-form-provider {
@@ -27,6 +40,7 @@
 .hk9-gf {
 	.gform_wrapper {
 		margin: 0;
+		min-width: 0;
 	}
 
 	// Colour/size variables consumed by the Orbital theme (re-declared below the wrapper).
@@ -39,6 +53,9 @@
 		--gf-color-primary-lighter: var(--hk9-primary);
 		--gf-color-in-ctrl-primary: var(--hk9-primary);
 		--gf-color-in-ctrl-primary-rgb: var(--hk9-primary-rgb);
+		--gf-color-in-ctrl-primary-contrast: #fff;
+		--gf-color-in-ctrl-primary-darker: var(--hk9-primary);
+		--gf-color-in-ctrl-primary-lighter: var(--hk9-primary);
 		--gf-color-danger: #b91c1c;
 		--gf-color-danger-rgb: 185, 28, 28;
 		--gf-radius: 2px;
@@ -58,7 +75,15 @@
 		--gf-ctrl-bg-color-hover: rgba(var(--hk9-muted-rgb), .5);
 		--gf-ctrl-bg-color-focus: rgba(var(--hk9-muted-rgb), .5);
 		--gf-ctrl-color: var(--hk9-fg);
+		--gf-ctrl-font-family: var(--hk9-font-sans);
+		--gf-ctrl-font-size: 1rem;
+		--gf-ctrl-font-style: normal;
+		--gf-ctrl-font-weight: 400;
+		--gf-ctrl-letter-spacing: normal;
 		--gf-ctrl-placeholder-color: var(--hk9-muted-fg);
+		--gf-ctrl-placeholder-font-size: 1rem;
+		--gf-ctrl-placeholder-font-weight: 400;
+		--gf-ctrl-placeholder-opacity: 1;
 		--gf-ctrl-shadow: var(--hk9-shadow-sm);
 		--gf-ctrl-outline-color-focus: var(--hk9-focus-ring);
 		--gf-ctrl-outline-width-focus: 2px;
@@ -74,13 +99,22 @@
 		--gf-ctrl-label-color-primary: var(--hk9-fg);
 		--gf-ctrl-label-color-secondary: var(--hk9-fg);
 		--gf-ctrl-label-color-req: var(--hk9-secondary);
+		--gf-ctrl-label-font-family-req: var(--hk9-font-sans);
 		--gf-ctrl-label-font-size-req: .875rem;
+		--gf-ctrl-label-font-style-req: normal;
+		--gf-ctrl-label-font-weight-req: 500;
+		--gf-ctrl-label-letter-spacing-req: normal;
+		--gf-ctrl-label-line-height-req: 1.1429;
+		--gf-ctrl-label-padding-x-req: 0;
 		--gf-ctrl-desc-color: var(--hk9-muted-fg);
 		--gf-ctrl-desc-color-error: #b91c1c;
 		--gf-label-space-primary: .5rem;
+		--gf-label-space-y-secondary: .5rem;
+		--gf-label-space-y-md-secondary: .5rem;
 		--gf-form-gap-y: 1.5rem;
 		--gf-form-gap-x: 1.5rem;
 		--gf-field-gap-x: 1.5rem;
+		--gf-field-gap-y: 1.5rem;
 		--gf-form-footer-margin-y-start: 1.5rem;
 		--gf-ctrl-btn-bg-color-primary: var(--hk9-primary);
 		--gf-ctrl-btn-bg-color-hover-primary: rgba(var(--hk9-primary-rgb), .9);
@@ -95,10 +129,48 @@
 		--gf-ctrl-btn-shadow-hover: none;
 		--gf-ctrl-btn-shadow-focus: none;
 		--gf-ctrl-choice-check-color: var(--hk9-primary);
+		--gf-ctrl-choice-size: 1.125rem;
+		--gf-ctrl-choice-size-md: 1.125rem;
+		--gf-form-validation-bg-color: rgba(185, 28, 28, .06);
+		--gf-form-validation-border-color: rgba(185, 28, 28, .3);
+		--gf-form-validation-border-color-focus: rgba(185, 28, 28, .3);
+		--gf-form-validation-outline-focus: 2px solid #b91c1c;
+		--gf-form-validation-radius: .5rem;
+		--gf-form-validation-shadow: none;
+		--gf-form-validation-gap: 0;
+		--gf-form-validation-margin-y: 0;
+		--gf-form-validation-padding-x: 1.25rem;
+		--gf-form-validation-padding-y: 1rem;
 
 		@include media-breakpoint-up(md) {
 			--gf-font-size-primary: .875rem;
+			--gf-ctrl-font-size: .875rem;
+			--gf-ctrl-placeholder-font-size: .875rem;
 		}
+	}
+
+	// GF's heading block only carries the required legend (title/description are off):
+	// print it like .hk9-form__required-note ("* Required", 14px muted, then the 1.5rem form gap).
+	.gform_wrapper .gform_heading {
+		margin: 0 0 1.5rem;
+		padding: 0;
+	}
+
+	.gform_wrapper .gform_required_legend {
+		margin: 0;
+		padding: 0;
+		font-family: var(--hk9-font-sans);
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+
+	}
+
+	// The note's marker carries the built-in note's 2px offset (specificity above the generic marker rule below).
+	.gform_wrapper.gform-theme .gform_required_legend .gfield_required {
+		color: var(--hk9-secondary);
+		margin: 0 0 0 .125rem;
+		padding: 0;
 	}
 
 	// Labels: 14px/500, 8px above the control (reference label + space-y-2).
@@ -115,12 +187,56 @@
 		padding: 0;
 	}
 
-	// Required marker: crimson, like the built-in form's "*".
-	.gform_wrapper .gfield_required,
-	.gform_wrapper .gfield_required_text {
+	.gform_wrapper .gform-field-label__text {
+		display: inline;
+		line-height: inherit;
+		padding: 0;
+	}
+
+	// Hidden field labels (the Name legend): keep them for screen readers only.
+	.gform_wrapper .hidden_label > .gfield_label,
+	.gform_wrapper .hidden_label > legend.gfield_label {
+		position: absolute !important;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	// Required marker: crimson "*" 2px after the label text, same line box as the label.
+	.gform_wrapper.gform-theme .gfield_required,
+	.gform_wrapper.gform-theme .gfield_required_text,
+	.gform_wrapper.gform-theme .gfield_required_asterisk {
+		display: inline;
 		color: var(--hk9-secondary);
-		font-size: .875rem;
+		font-size: inherit;
+		line-height: inherit;
 		font-weight: 500;
+		padding: 0;
+		margin: 0;
+		vertical-align: baseline;
+	}
+
+	.gform_wrapper.gform-theme .gfield_label > .gfield_required {
+		margin-left: .125rem;
+
+		&::before {
+			content: " ";
+		}
+	}
+
+	// The advanced Name field prints one (hidden) legend + "First Name" / "Last Name"
+	// sub-labels: add the marker to each sub-label like the built-in half fields.
+	.gform_wrapper .gfield--type-name.gfield_contains_required .gform-field-label--type-sub::after {
+		content: " *";
+		color: var(--hk9-secondary);
+		font-weight: 500;
+		margin-left: .125rem;
 	}
 
 	// Controls: 48px min-height, 2px radius, 1px border, muted/50 background, focus ring.
@@ -153,6 +269,10 @@
 		&::placeholder {
 			color: var(--hk9-muted-fg);
 			opacity: 1;
+			font-family: inherit;
+			font-size: inherit;
+			font-weight: inherit;
+			letter-spacing: inherit;
 		}
 
 		// 2px ring (reference: 1px) — the same deliberate accessibility deviation as the built-in form.
@@ -170,8 +290,12 @@
 		}
 	}
 
+	// GF's reset unsets Chrome's `select { align-items: center }`, which would pin the
+	// option text to the top of the 48px box; restore the centring the built-in select has.
 	.gform_wrapper .gfield select {
 		padding: .5rem 2.5rem .5rem .75rem;
+		align-items: center;
+		white-space: nowrap;
 		-webkit-appearance: none;
 		appearance: none;
 		background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2352637a' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
@@ -197,12 +321,65 @@
 		resize: vertical;
 	}
 
+	// Field grid: GF's 12-column grid, 1.5rem gaps; halves pair up from 768px like the built-in
+	// grid (GF pairs them from 640px — pulled back to the theme breakpoint). The Name field's
+	// inner First/Last row follows the same rule.
+	.gform_wrapper .gform_fields {
+		row-gap: 1.5rem;
+		column-gap: 1.5rem;
+	}
+
+	.gform_wrapper .gfield {
+		min-width: 0;
+	}
+
+	@include media-breakpoint-down(md) {
+		.gform_wrapper .gfield.gfield--width-half {
+			grid-column: 1 / -1;
+		}
+
+		.gform_wrapper .ginput_container--name .gform-grid-col.gform-grid-col--size-auto {
+			flex: 0 0 100%;
+			inline-size: 100%;
+		}
+	}
+
+	// Description / help text (rare on our forms) reads like .hk9-form__help.
+	.gform_wrapper .gfield_description:not(.validation_message):not(.gfield_validation_message) {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+		margin: .5rem 0 0;
+		padding: 0;
+	}
+
+	// Character counter (when a field has a max length): help-text look.
+	.gform_wrapper .ginput_counter {
+		font-size: .875rem;
+		line-height: 1.4286;
+		color: var(--hk9-muted-fg);
+		margin: .5rem 0 0;
+		padding: 0;
+	}
+
 	// Validation: crimson borders/messages; the summary box matches .hk9-form__summary.
 	// (The input selector repeats the base rule's :not() chain so this later rule wins on specificity.)
 	.gform_wrapper .gfield_error input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="hidden"]):not([type="file"]),
 	.gform_wrapper .gfield_error select,
 	.gform_wrapper .gfield_error textarea {
 		border-color: #b91c1c;
+	}
+
+	.gform_wrapper .gfield_error {
+		background: none;
+		border: 0;
+		padding: 0;
+	}
+
+	.gform_wrapper .gfield_error .gfield_label,
+	.gform_wrapper .gfield_error legend.gfield_label,
+	.gform_wrapper .gfield_error .gform-field-label {
+		color: var(--hk9-fg);
 	}
 
 	.gform_wrapper .gfield_validation_message,
@@ -212,13 +389,16 @@
 		padding: 0;
 		background: none;
 		border: 0;
+		font-family: var(--hk9-font-sans);
 		font-size: .875rem;
 		line-height: 1.4286;
+		font-weight: 400;
 		color: #b91c1c;
 	}
 
 	.gform_wrapper .gform_validation_errors,
 	.gform_wrapper .validation_error {
+		position: static;
 		margin: 0 0 1.5rem;
 		padding: 1rem 1.25rem;
 		border: 1px solid rgba(185, 28, 28, .3);
@@ -226,21 +406,84 @@
 		background: rgba(185, 28, 28, .06);
 		box-shadow: none;
 		color: #7f1d1d;
+		font-family: var(--hk9-font-sans);
 		font-size: .9375rem;
 		line-height: 1.5;
 
-		h2,
-		.gform_submission_error {
-			font-family: var(--hk9-font-sans);
-			font-size: .9375rem;
-			font-weight: 600;
-			color: #7f1d1d;
-			margin: 0;
+		display: block;
+		gap: 0;
+
+		&:focus {
+			border-color: rgba(185, 28, 28, .3);
+			outline: 2px solid #b91c1c;
+			outline-offset: 2px;
 		}
 
-		a {
-			color: inherit;
+		h2,
+		.gform_submission_error {
+			display: block;
+			font-family: var(--hk9-font-sans);
+			font-size: .9375rem;
+			line-height: 1.5;
+			font-weight: 600;
+			color: #7f1d1d;
+			margin: 0 0 .5rem;
+			padding: 0;
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		.gform-icon {
+			display: none;
+		}
+
+		.validation_list,
+		ol {
+			display: block;
+			margin: 0;
+			padding-left: 1.25rem;
+			list-style: disc;
+			font-size: .9375rem;
+			line-height: 1.5;
+
+			li {
+				display: list-item;
+				margin: 0;
+				padding: 0;
+			}
+
+			li + li {
+				margin-top: .25rem;
+			}
+		}
+
+		// Summary links: the box colour (#7f1d1d) underlined, no box — like .hk9-form__summary a
+		// (Orbital's `.gform-theme--framework .gform_validation_errors ol a` draws a 1px transparent
+		// border + radius and its own link colour; `ol a` here outranks it).
+		a,
+		ol a,
+		.validation_list a {
+			color: #7f1d1d;
 			text-decoration: underline;
+			font-weight: 400;
+			border: 0;
+			border-radius: 0;
+			padding: 0;
+			outline: 0;
+			transition: none;
+
+			&:hover,
+			&:focus-visible {
+				color: #7f1d1d;
+			}
+
+			&:focus-visible {
+				outline: 2px solid #b91c1c;
+				outline-offset: 2px;
+				border-color: transparent;
+			}
 		}
 	}
 
@@ -266,6 +509,7 @@
 		min-height: 3.5rem;
 		height: 3.5rem;
 		padding: 0 2rem;
+		font-family: var(--hk9-font-sans);
 		font-size: .875rem;
 		line-height: 1.4286;
 		font-weight: 500;
@@ -273,6 +517,7 @@
 		border-color: #fff;
 		color: #fff;
 		box-shadow: none;
+		cursor: pointer;
 
 		&:hover,
 		&:focus-visible {
@@ -281,6 +526,8 @@
 			color: #fff;
 		}
 
+		// AJAX submit: GF disables the button and appends its spinner image; the button
+		// dims like .hk9-form__submit.is-sending and the spinner stays hidden.
 		&:disabled,
 		&[disabled] {
 			opacity: .5;
@@ -288,29 +535,86 @@
 		}
 	}
 
-	// Checkboxes / radios / consent: navy accent, 15px labels like the built-in checkbox row.
+	.gform_wrapper .gform_ajax_spinner,
+	.gform_ajax_spinner {
+		display: none !important;
+	}
+
+	// Checkboxes / radios / consent: 18px navy controls, 15px labels like the built-in checkbox row.
+	// No box-shadow: GF applies --gf-ctrl-shadow (our --hk9-shadow-sm) to choice inputs too; the built-in checkbox has none.
 	.gform_wrapper .gfield input[type="checkbox"],
 	.gform_wrapper .gfield input[type="radio"] {
+		width: 1.125rem;
+		height: 1.125rem;
+		min-height: 0;
+		margin: .125rem 0 0;
+		flex-shrink: 0;
 		accent-color: var(--hk9-primary);
+		box-shadow: none;
 
 		&:focus-visible {
 			outline: 2px solid var(--hk9-focus-ring);
 			outline-offset: 2px;
+			box-shadow: none;
 		}
 	}
 
+	.gform_wrapper .gfield input[type="checkbox"] {
+		border-radius: 2px;
+	}
+
+	.gform_wrapper .gfield .gchoice,
+	.gform_wrapper .gfield .ginput_container_consent {
+		display: flex;
+		align-items: flex-start;
+		gap: .75rem;
+		margin: 0;
+		padding: 0;
+	}
+
+	.gform_wrapper .gfield .gfield_radio,
+	.gform_wrapper .gfield .gfield_checkbox {
+		display: flex;
+		flex-direction: column;
+		gap: .5rem;
+		margin: 0;
+		padding: 0;
+	}
+
 	.gform_wrapper .gfield .gchoice label,
-	.gform_wrapper .gfield .gfield_consent_label {
+	.gform_wrapper .gfield .gfield_consent_label,
+	.gform_wrapper .gfield .gform-field-label--type-inline {
+		display: block;
+		font-family: var(--hk9-font-sans);
 		font-weight: 400;
 		font-size: .9375rem;
 		line-height: 1.5;
+		color: var(--hk9-fg);
 		margin: 0;
+		padding: 0;
+		max-width: none;
+
+		// Links inside choice labels (the "5 Questions" link): the theme's base anchor look.
+		a {
+			color: var(--hk9-secondary);
+			text-decoration: none;
+
+			&:hover,
+			&:focus-visible {
+				color: var(--hk9-secondary);
+				text-decoration: underline;
+			}
+		}
 	}
 
-	.gform_wrapper .gfield_description:not(.validation_message) {
-		font-size: .875rem;
-		line-height: 1.4286;
-		color: var(--hk9-muted-fg);
+	// Consent field ("I have read the 5 Questions…"): hidden legend, then the checkbox row.
+	// GF prints its own required marker inside the checkbox label; space it like the built-in one.
+	.gform_wrapper.gform-theme .gfield_consent_label > .gfield_required {
+		margin-left: .125rem;
+
+		&::before {
+			content: " ";
+		}
 	}
 
 	// Honeypot ("gform_validation_container") and screen-reader helpers stay hidden.
@@ -329,10 +633,30 @@
 		border: 1px solid rgba(47, 125, 79, .3);
 		background: rgba(47, 125, 79, .08);
 		color: #14532d;
+		font-family: var(--hk9-font-sans);
 		font-size: .9375rem;
 		line-height: 1.5;
 
 		> :last-child { margin-bottom: 0; }
+
+		&:focus {
+			outline: 2px solid rgba(47, 125, 79, .6);
+			outline-offset: 2px;
+		}
+
+		.hk9-gf-confirmation__title,
+		h2 {
+			font-family: var(--hk9-font-serif);
+			font-size: 1.25rem;
+			line-height: 1.4;
+			font-weight: 700;
+			color: #14532d;
+			margin: 0 0 .5rem;
+		}
+
+		p {
+			margin: 0;
+		}
 	}
 
 	.gform_confirmation_wrapper .gform_confirmation_message {
