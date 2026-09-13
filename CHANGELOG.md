@@ -2,6 +2,12 @@
 
 Theme and plugin share one version number and are released together; each GitHub release carries `heartland-k9s.zip` and `heartland-k9s-core.zip`, which the sites' update checkers install.
 
+## v1.3.0 — 2026-09-13
+
+- SEO: per-page 'Search & social' fields (title, description, social image, noindex, canonical), Open Graph/Twitter cards with 1200×630 images, canonical + rel prev/next, sitemap lastmod, visible breadcrumbs, and JSON-LD structured data (NGO organization with EIN/501(c)(3)/address/DonateAction, WebSite, WebPage, BreadcrumbList, Article, Event with timezone-correct dates, FAQPage, team Person list). Automatically defers to Slim SEO / Yoast / Rank Math / AIOSEO / SEOPress and merges only the extra nodes.
+- Performance: WebP sub-sizes for theme image sizes, inline critical CSS, deferred italic font, responsive mobile hero with matching preload, gallery tile sizes, Gravity Forms assets only on form pages — mobile Lighthouse 94–100, home LCP 2.25 s.
+- URLs: author-archive redirects (/author/admin/, /author/hk9director/ → /), URL coverage report for all 371 crawled/sitemapped live URLs, url-coverage simulation suite.
+
 ## v1.2.2 — 2026-09-13
 
 - Theme: hk9_theme_updater() helper for forced update checks (Dashboard → Updates picks releases up automatically; this is for WP-CLI/manual checks).
