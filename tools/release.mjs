@@ -28,9 +28,10 @@ if (out('git status --porcelain')) { console.error('Working tree is not clean â€
 if (out(`git tag -l ${tag}`)) { console.error(`Tag ${tag} already exists.`); process.exit(1); }
 
 const bump = (file, re, replacement) => {
-  const p = path.join(root, file); const s = fs.readFileSync(p, 'utf8'); const n = s.replace(re, replacement);
-  if (n === s) { console.error(`Version pattern not found in ${file}`); process.exit(1); }
-  fs.writeFileSync(p, n); console.log(`bumped ${file}`);
+  const p = path.join(root, file); const s = fs.readFileSync(p, 'utf8');
+  if (!re.test(s)) { console.error(`Version pattern not found in ${file}`); process.exit(1); }
+  const n = s.replace(re, replacement);
+  fs.writeFileSync(p, n); console.log(`${n === s ? 'already at' : 'bumped'} ${file}`);
 };
 bump('theme/heartland-k9s/style.css', /^Version:\s*.+$/m, `Version: ${version}`);
 bump('theme/heartland-k9s/functions.php', /define\( 'HK9_THEME_VERSION', '[^']+' \)/, `define( 'HK9_THEME_VERSION', '${version}' )`);
