@@ -34,6 +34,7 @@
       "youtube": "",
       "linkedin": "",
       "x": "",
+      "tiktok": "",
       "candid_url": "https://app.candid.org/profile/9494475/heartland-canines-for-veterans-inc-47-4991572/?pkId=0c9bd385-c54d-417d-8e44-a7057050afae",
       "show_guidestar_seal": true,
       "ein": "47-4991572",
@@ -195,11 +196,14 @@
       "col3_heading": "Get Involved",
       "col4_heading": "Contact Us",
       "copyright": "© {year} Heartland Canines for Veterans. All rights reserved.",
-      "credit": "Built with ♥ for our veterans.",
+      "credit": "Built with ♥ for our veterans",
+      "credit_by_label": "Cosmick Media",
+      "credit_by_url": "https://www.cosmickmedia.com",
       "show_seal": true
     },
     "blog": {
       "layout": "list",
+      "search_placeholder": "Search…",
       "hero_title": "News",
       "hero_text": "Updates from Heartland Canines for Veterans: events, campaigns and news from our Veteran–K9 teams.",
       "hero_image": 0,

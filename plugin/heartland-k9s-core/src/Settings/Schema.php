@@ -177,6 +177,7 @@ final class Schema {
 				'youtube'               => '',
 				'linkedin'              => '',
 				'x'                     => '',
+				'tiktok'                => '',
 				'candid_url'            => 'https://app.candid.org/profile/9494475/heartland-canines-for-veterans-inc-47-4991572/',
 				'show_guidestar_seal'   => true,
 				'ein'                   => '47-4991572',
@@ -218,12 +219,15 @@ final class Schema {
 				'col2_heading' => 'Quick Links',
 				'col3_heading' => 'Get Involved',
 				'col4_heading' => 'Contact Us',
-				'copyright'    => '© {year} Heartland Canines for Veterans. All rights reserved.',
-				'credit'       => 'Built with ♥ for our veterans.',
-				'show_seal'    => true,
+				'copyright'       => '© {year} Heartland Canines for Veterans. All rights reserved.',
+				'credit'          => 'Built with ♥ for our veterans',
+				'credit_by_label' => 'Cosmick Media',
+				'credit_by_url'   => 'https://www.cosmickmedia.com',
+				'show_seal'       => true,
 			],
 			'blog'      => [
 				'layout'              => 'list',
+				'search_placeholder'  => 'Search…',
 				'hero_title'          => 'News',
 				'hero_text'           => '',
 				'hero_image'          => 0,
@@ -317,6 +321,7 @@ final class Schema {
 				'youtube'               => [ 'type' => 'url' ],
 				'linkedin'              => [ 'type' => 'url' ],
 				'x'                     => [ 'type' => 'url' ],
+				'tiktok'                => [ 'type' => 'url' ],
 				'candid_url'            => [ 'type' => 'url' ],
 				'show_guidestar_seal'   => [ 'type' => 'toggle' ],
 				'ein'                   => [ 'type' => 'text' ],
@@ -357,12 +362,15 @@ final class Schema {
 				'col2_heading' => [ 'type' => 'text' ],
 				'col3_heading' => [ 'type' => 'text' ],
 				'col4_heading' => [ 'type' => 'text' ],
-				'copyright'    => [ 'type' => 'text' ],
-				'credit'       => [ 'type' => 'text' ],
-				'show_seal'    => [ 'type' => 'toggle' ],
+				'copyright'       => [ 'type' => 'text' ],
+				'credit'          => [ 'type' => 'text' ],
+				'credit_by_label' => [ 'type' => 'text' ],
+				'credit_by_url'   => [ 'type' => 'url' ],
+				'show_seal'       => [ 'type' => 'toggle' ],
 			],
 			'blog'      => [
 				'layout'              => [ 'type' => 'select', 'options' => [ 'list', 'grid' ] ],
+				'search_placeholder'  => [ 'type' => 'text' ],
 				'hero_title'          => [ 'type' => 'text' ],
 				'hero_text'           => [ 'type' => 'textarea' ],
 				'hero_image'          => [ 'type' => 'image' ],
@@ -500,6 +508,7 @@ final class Schema {
 					'youtube'               => $def( 'contact', 'youtube', __( 'YouTube URL', 'heartland-k9s-core' ) ),
 					'linkedin'              => $def( 'contact', 'linkedin', __( 'LinkedIn URL', 'heartland-k9s-core' ) ),
 					'x'                     => $def( 'contact', 'x', __( 'X (Twitter) URL', 'heartland-k9s-core' ) ),
+					'tiktok'                => $def( 'contact', 'tiktok', __( 'TikTok URL', 'heartland-k9s-core' ), __( 'Social links appear in the footer only when filled in.', 'heartland-k9s-core' ) ),
 					'candid_url'            => $def( 'contact', 'candid_url', __( 'Candid / GuideStar profile URL', 'heartland-k9s-core' ) ),
 					'show_guidestar_seal'   => $def( 'contact', 'show_guidestar_seal', __( 'Show the GuideStar transparency seal', 'heartland-k9s-core' ) ),
 					'ein'                   => $def( 'contact', 'ein', __( 'EIN', 'heartland-k9s-core' ) ),
@@ -545,16 +554,31 @@ final class Schema {
 			],
 			'footer'    => [
 				'label'       => __( 'Footer', 'heartland-k9s-core' ),
-				'description' => __( 'Footer text. Link columns use the menus assigned to the "Footer: Quick Links" and "Footer: Get Involved" locations.', 'heartland-k9s-core' ),
+				'description' => sprintf(
+					/* translators: %s: URL of the Appearance → Menus screen. */
+					__( 'Footer text. The link columns (Quick Links, Get Involved) and the bottom-bar legal links are menus: assign them to the "Footer — Quick Links", "Footer — Get Involved" and "Footer — Legal" locations under <a href="%s">Appearance → Menus</a> (Manage Locations tab).', 'heartland-k9s-core' ),
+					esc_url( admin_url( 'nav-menus.php?action=locations' ) )
+				),
 				'fields'      => [
-					'description'  => $def( 'footer', 'description', __( 'Description', 'heartland-k9s-core' ), __( 'Short paragraph under the footer logo.', 'heartland-k9s-core' ) ),
-					'tagline'      => $def( 'footer', 'tagline', __( 'Tagline', 'heartland-k9s-core' ), __( 'Serif italic line in crimson.', 'heartland-k9s-core' ) ),
-					'col2_heading' => $def( 'footer', 'col2_heading', __( 'Column 2 heading', 'heartland-k9s-core' ) ),
-					'col3_heading' => $def( 'footer', 'col3_heading', __( 'Column 3 heading', 'heartland-k9s-core' ) ),
-					'col4_heading' => $def( 'footer', 'col4_heading', __( 'Column 4 heading', 'heartland-k9s-core' ) ),
-					'copyright'    => $def( 'footer', 'copyright', __( 'Copyright line', 'heartland-k9s-core' ), __( '{year} is replaced with the current year.', 'heartland-k9s-core' ) ),
-					'credit'       => $def( 'footer', 'credit', __( 'Credit line', 'heartland-k9s-core' ), __( 'The ♥ character is rendered as the crimson heart icon.', 'heartland-k9s-core' ) ),
-					'show_seal'    => $def( 'footer', 'show_seal', __( 'Show the GuideStar seal in the footer', 'heartland-k9s-core' ) ),
+					'description'     => $def( 'footer', 'description', __( 'Description', 'heartland-k9s-core' ), __( 'Short paragraph under the footer logo.', 'heartland-k9s-core' ) ),
+					'tagline'         => $def( 'footer', 'tagline', __( 'Tagline', 'heartland-k9s-core' ), __( 'Serif italic line in crimson.', 'heartland-k9s-core' ) ),
+					'col2_heading'    => $def( 'footer', 'col2_heading', __( 'Column 2 heading', 'heartland-k9s-core' ), __( 'Above the "Footer — Quick Links" menu.', 'heartland-k9s-core' ) ),
+					'col3_heading'    => $def( 'footer', 'col3_heading', __( 'Column 3 heading', 'heartland-k9s-core' ), __( 'Above the "Footer — Get Involved" menu.', 'heartland-k9s-core' ) ),
+					'col4_heading'    => $def( 'footer', 'col4_heading', __( 'Column 4 heading', 'heartland-k9s-core' ), __( 'Above the contact details (from the Contact tab).', 'heartland-k9s-core' ) ),
+					'menus_note'      => [
+						'type'  => 'note',
+						'label' => __( 'Column links', 'heartland-k9s-core' ),
+						'help'  => sprintf(
+							/* translators: %s: URL of the Appearance → Menus screen. */
+							__( 'Edit the links in each column under <a href="%s">Appearance → Menus</a>: pick the menu assigned to "Footer — Quick Links" or "Footer — Get Involved", add or remove pages, then Save Menu. When no menu is assigned, the theme prints its reference links.', 'heartland-k9s-core' ),
+							esc_url( admin_url( 'nav-menus.php' ) )
+						),
+					],
+					'copyright'       => $def( 'footer', 'copyright', __( 'Copyright line', 'heartland-k9s-core' ), __( '{year} is replaced with the current year.', 'heartland-k9s-core' ) ),
+					'credit'          => $def( 'footer', 'credit', __( 'Credit line', 'heartland-k9s-core' ), __( 'Bottom-right line of the footer. The ♥ character is rendered as the crimson heart icon. The "by …" link below is appended after it; leave this empty to hide the whole line.', 'heartland-k9s-core' ) ),
+					'credit_by_label' => $def( 'footer', 'credit_by_label', __( 'Credit "by" label', 'heartland-k9s-core' ), __( 'Printed as "… by [label]." after the credit line, e.g. "Built with ♥ for our veterans by Cosmick Media." Leave empty to omit the "by …" part.', 'heartland-k9s-core' ) ),
+					'credit_by_url'   => $def( 'footer', 'credit_by_url', __( 'Credit "by" link', 'heartland-k9s-core' ), __( 'Where the label links to (opens in a new tab). Leave empty to print the label without a link.', 'heartland-k9s-core' ) ),
+					'show_seal'       => $def( 'footer', 'show_seal', __( 'Show the GuideStar seal in the footer', 'heartland-k9s-core' ), __( 'Also needs the Candid / GuideStar profile URL and the seal switch on the Contact tab.', 'heartland-k9s-core' ) ),
 				],
 			],
 			'blog'      => [
@@ -572,6 +596,16 @@ final class Schema {
 					'show_tags'           => $def( 'blog', 'show_tags', __( 'Show tags', 'heartland-k9s-core' ) ),
 					'show_related'        => $def( 'blog', 'show_related', __( 'Show related posts', 'heartland-k9s-core' ) ),
 					'related_count'       => $def( 'blog', 'related_count', __( 'Related posts count', 'heartland-k9s-core' ) ),
+					'search_placeholder'  => $def( 'blog', 'search_placeholder', __( 'Search box placeholder', 'heartland-k9s-core' ), __( 'Hint text inside the search field (404 page, search results, empty listings).', 'heartland-k9s-core' ) ),
+					'helpful_links_note'  => [
+						'type'  => 'note',
+						'label' => __( 'Helpful links (404 & search)', 'heartland-k9s-core' ),
+						'help'  => sprintf(
+							/* translators: %s: URL of the Appearance → Menus screen. */
+							__( 'The "Or try one of these pages" buttons on the 404 page and on empty search results come from the menu assigned to the "Helpful links (404 & search)" location under <a href="%s">Appearance → Menus</a>. When no menu is assigned, the theme links Home, About, the K9 provider page, Contact, Donate and News.', 'heartland-k9s-core' ),
+							esc_url( admin_url( 'nav-menus.php?action=locations' ) )
+						),
+					],
 				],
 			],
 			'forms'     => [

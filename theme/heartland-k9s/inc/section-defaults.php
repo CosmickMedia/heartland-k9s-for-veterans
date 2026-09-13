@@ -191,8 +191,10 @@ function hk9_theme_section_defaults( string $template ): array {
 			break;
 
 		default:
+			// page.php: hero band (can be unticked) + optional CTA band (hidden by default).
 			$sections = [
 				'hero_band' => $hero_band,
+				'cta'       => array_merge( $cta_band(), [ 'hidden' => true ] ),
 			];
 			break;
 	}

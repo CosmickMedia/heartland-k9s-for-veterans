@@ -8,7 +8,7 @@ Log in at `/wp-admin/`. Everything specific to Heartland lives under the **Heart
 
 Every page has two layers: the **block editor canvas** at the top (used on migrated pages, News and Privacy Policy) and a box titled **Sections — <template name>** below it (open the **Meta Boxes** bar if collapsed). Each section is a collapsible panel of fields; which sections exist depends on the page's **Template** (sidebar → **Page** tab → **Template**).
 
-The sidebar panel **Page sections** controls order and visibility: *"Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content."* The hero is always shown. The same panel has **Editor content**, which places anything written in the block canvas before or after the sections (or hides it) — see [Adding extra content to section pages](#adding-extra-content-to-section-pages). Save with the blue **Save** button. Section content, the section order and the Editor content setting are all part of the page's revisions: the **Revisions** screen (linked from the sidebar) shows them line by line — "Section layout" lists *Order*, *Hidden* and *Editor content* — and restoring a revision brings them back with it.
+The sidebar panel **Page sections** controls order and visibility: *"Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content."* The hero is always shown on the section templates (on the default template it can be unticked — see [New pages](#new-pages-the-default-template-and-the-heartland-patterns)). The same panel has **Editor content**, which places anything written in the block canvas before or after the sections (or hides it) — see [Adding extra content to section pages](#adding-extra-content-to-section-pages). Save with the blue **Save** button. Section content, the section order and the Editor content setting are all part of the page's revisions: the **Revisions** screen (linked from the sidebar) shows them line by line — "Section layout" lists *Order*, *Hidden* and *Editor content* — and restoring a revision brings them back with it.
 
 ![About editor overview](reports/screenshots/admin-guide/about-editor-overview.png)
 ![Page sections panel](reports/screenshots/admin-guide/about-page-sections-panel.png)
@@ -121,7 +121,36 @@ Pages such as The HK9 Coloring Book, Heartland Gear, Volunteer, 5 Questions, Ser
 ![Landing page overview](reports/screenshots/admin-guide/landing-editor-overview.png)
 ![Sponsor tiers](reports/screenshots/admin-guide/landing-section-tiers-items.png)
 
-News and Privacy Policy use the default template (hero band + block content, optional Call to action).
+News and Privacy Policy use the default template (hero band + block content, optional Call to action) — see the next section.
+
+## New pages: the default template and the Heartland patterns
+
+**Pages → Add New** gives every new page the default template. Type the title, write in the canvas, publish — the page already looks like the rest of the site:
+
+- The **title** becomes the heading of the navy hero band at the top; the **Excerpt** (sidebar → **Page** tab → **Excerpt**) becomes the line under it. The **Hero (band)** panel under the editor can override both (**Eyebrow**, **Heading**, **Text**, **Background pattern**).
+- To start a page **without** the band, untick **Hero (band)** in the **Page sections** sidebar panel: the title is then shown as the first heading of the white content card.
+- Everything written in the canvas sits in the white card. Ordinary paragraphs, headings, lists, images and galleries need no styling — they pick up the site's fonts and colours.
+- **Call to action** (a band with a heading, one line of text and up to two buttons) is switched off by default; tick it under **Page sections** and fill the panel to end the page with it.
+- A blue note at the top of the editor repeats these steps; it can be dismissed.
+
+To build richer layouts, open the block inserter (**+** top left) → **Patterns** tab → **Heartland**. Each pattern is a ready-made group of ordinary blocks in the site design; insert it, then click into any text, picture or button to change it:
+
+| Pattern | What it gives you |
+|---|---|
+| **Text + image (image left)** / **(image right)** | A photo beside a heading, paragraph and button (stacks on phones). Click the placeholder picture → **Replace** to pick a photo. |
+| **Three feature cards** | Three white cards (title, text, "Learn more" link) like the Home page cards; one column on phones. |
+| **Call to action band** | Navy band with heading, text and two buttons (crimson + outline). Select the band and switch its **Styles** to **Tinted band** for the light version. Buttons point at the Donate / Volunteer destinations from Settings. |
+| **FAQ (details)** | A heading and three expandable question/answer panels; select a panel and **Duplicate** it for more questions. |
+| **Two buttons row** | A crimson button and a navy outline button. |
+| **Quote / testimonial** | A quote in the rounded muted panel with the name line underneath. Only publish approved names and quotes. |
+| **Stats row (3 numbers)** | Three big numbers with a short label each. Use verified figures only. |
+| **Contact details block** | A muted card with the phone numbers, e-mail, address and office hours copied from **Heartland → Settings → Contact** at the moment you insert it (edit or delete any line afterwards; changing Settings later does not update a card already on a page — the footer and Contact page do follow Settings). If a phone number or e-mail changes, either edit the card's text on each page that uses it or delete the card and insert the pattern again to pick up the new values. |
+| **Section heading with crimson divider** | Centred heading, the short crimson bar and an intro line. |
+
+The same looks are available as block **Styles** (select a block → sidebar → **Styles**) so you can restyle blocks you already have: Group → **Card**, **Card (muted)**, **Navy band**, **Tinted band**, **Statistic**, **Callout panel**; Paragraph → **Lead**; Separator → **Crimson bar**, **Thin rule**; Quote → **Testimonial**; List → **Checklist**; Button → **Navy** (the built-in **Outline** style gives the navy outline button). What you see in the editor is what the page shows.
+
+![Default page editor](reports/screenshots/admin-guide/default-page-editor.png)
+![Heartland patterns in the inserter](reports/screenshots/admin-guide/default-page-patterns.png)
 
 ## Adding extra content to section pages
 
@@ -154,7 +183,17 @@ The destinations that "Donate"/"Support a Service Dog" buttons use site-wide are
 
 ## Menus
 
-**Appearance → Menus**. Four locations (**Manage Locations** tab): **Primary navigation**, **Footer — Quick Links**, **Footer — Get Involved**, **Footer — Legal**. Edit items on the **Edit Menus** tab (add pages from the left column, drag to reorder, nest for dropdowns) and **Save Menu**. Footer column headings live in Settings → Footer.
+**Appearance → Menus**. Five locations (**Manage Locations** tab):
+
+| Location | Where it shows |
+|---|---|
+| **Primary navigation** | The header menu (and the phone menu). |
+| **Footer — Quick Links** | The links under the footer's second column heading. |
+| **Footer — Get Involved** | The links under the footer's third column heading. |
+| **Footer — Legal** | The small links in the footer's bottom bar (Privacy Policy). |
+| **Helpful links (404 & search)** | The "Or try one of these pages" buttons on the "Page not found" page and on empty search results. Optional — when no menu is assigned the theme links Home, About, the K9 provider page, Contact, Donate and News. |
+
+Edit items on the **Edit Menus** tab (add pages from the left column, drag to reorder, nest for dropdowns) and **Save Menu**. Footer column **headings** live in Settings → Footer (that tab also links back here). BarKode records are never offered as menu items — leave it that way.
 
 ![Menu locations](reports/screenshots/admin-guide/menus-locations.png)
 ![Edit menus](reports/screenshots/admin-guide/menus-edit.png)
@@ -165,10 +204,11 @@ The destinations that "Donate"/"Support a Service Dog" buttons use site-wide are
 
 - **Branding** — **Header logo**, **Header logo height (px)**, **Footer logo**, **Footer logo height (px)**, **Show the two-line wordmark next to the logo**, **Wordmark line 1 / 2**. The favicon is **Appearance → Customize → Site Identity → Site Icon**.
 - **Colors & Fonts** — **Primary (navy)**, **Secondary (crimson)**, **Page background**, **Body text**, **Muted background**, **Muted text**, **Borders**, **Accent**; **Heading font**, **Body font**.
-- **Contact** — phones and labels, **General email**, **Director email**, **Development email**, address, **Office hours**, **Office days**, **Service area line**, social URLs, **Candid / GuideStar profile URL**, **EIN**, **Legal name**, **Tax-deductibility statement**. Feeds the footer, Contact page, Donate page and structured data.
+- **Contact** — phones and labels, **General email**, **Director email**, **Development email**, address, **Office hours**, **Office days**, **Service area line**, social URLs (**Facebook**, **Instagram**, **YouTube**, **LinkedIn**, **X (Twitter)**, **TikTok** — each icon appears in the footer only when its URL is filled in), **Candid / GuideStar profile URL**, **EIN**, **Legal name**, **Tax-deductibility statement**. Feeds the footer, Contact page, Donate page and structured data.
 - **Destinations** — where recurring buttons point (Donate page, Online donation form, Veteran application, 5 Questions page, Volunteer, listings, gear shop, …). "Pick a page or enter an external address — never an ID."
 - **Header** — **Show the header button**, **Header button label**, **Header button destination** (falls back to the Donate page), **Sticky header**.
-- **Footer** — **Description**, **Tagline**, **Column 2/3/4 heading**, **Copyright line** (`{year}` auto-fills), **Credit line**, **Show the GuideStar seal in the footer**.
+- **Footer** — **Description**, **Tagline**, **Column 2/3/4 heading** (the links under them are menus — the **Column links** note on this tab links to Appearance → Menus), **Copyright line** (`{year}` auto-fills), **Credit line** ("Built with ♥ for our veterans" — the ♥ becomes the heart icon), **Credit "by" label** and **Credit "by" link** (printed after it as "… by Cosmick Media." with the name linked; empty the label to drop the "by" part, empty the credit line to hide the whole line), **Show the GuideStar seal in the footer**.
+- **Blog** — listing options (see [Blog / News](#blog--news)) plus **Search box placeholder** (the hint text in the search field) and a note pointing to the **Helpful links (404 & search)** menu location.
 
 ![Settings — Branding](reports/screenshots/admin-guide/settings-branding.png)
 ![Settings — Contact](reports/screenshots/admin-guide/settings-contact.png)

@@ -156,7 +156,7 @@ final class Definitions {
 		$contact_line = '';
 		if ( function_exists( 'hk9_option' ) ) {
 			$phone        = (string) hk9_option( 'contact.phone_main', '' );
-			$contact_line = '' !== $phone ? sprintf( 'Heartland Canines for Veterans · %s', $phone ) : '';
+			$contact_line = '' !== $phone ? sprintf( '%s · %s', (string) get_bloginfo( 'name' ), $phone ) : '';
 		}
 
 		return [

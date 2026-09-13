@@ -1,0 +1,238 @@
+{
+ "impl": {
+  "summary": "Theme 1.2.0 + plugin 1.2.0 (headers, constants, readme stable tag). (1) Footer credit is now \"Built with \u2665 for our veterans by Cosmick Media.\" from three settings \u2014 footer.credit (default \"Built with \u2665 for our veterans\", \u2665 \u2192 heart icon, trailing full stop trimmed before \"by\"), footer.credit_by_label (\"Cosmick Media\"), footer.credit_by_url (https://www.cosmickmedia.com); the label is a plain 12px white@60 link (target _blank, rel noopener noreferrer, underline only on hover), omitted entirely when the label is empty. Added to Settings\\Schema (Footer tab with help text), theme inc/defaults.php, footer.php, payload-src/records/settings.json, and applied to the local hk9_settings option via Store::update. Bottom bar measured 49px at 1440 (reference) and 113px at 390 (unchanged 3-row stack; credit stays one 16px line). (2) Default page template (page.php): hero band (title + excerpt, Hero (band) panel: eyebrow/heading/intro/pattern) that can now be unticked under Page sections (plugin default.php definition: can_hide => true) for a plain start (title as the card's h1 inside .hk9-page-plain), content card (.hk9-prose), optional Call to action band (hidden by default; theme fallback section-defaults mirror it; 80px spacer between overlap card and the band). Editor guidance notice now has a default-template message. Ten theme block patterns in theme/heartland-k9s/patterns/*.php (standard headers, category \"Heartland\" registered at init 9): text + image left/right (media-text, placeholder assets/img/placeholder-4x3.svg), three feature cards, CTA band, FAQ (details), two buttons, quote/testimonial, stats row, contact details (pre-filled from contact.* settings), section heading with crimson divider. Block styles registered in inc/blocks.php with CSS in _prose.scss compiled into both content.css and editor.css (Card, Card (muted), Navy band, Tinted band, Statistic, Callout, Lead, Crimson bar, Thin rule, Testimonial, Checklist, Navy button; core buttons = 56px CTA buttons; details summaries get the crimson chevron). Verified by inserting all patterns into a temporary tmp-patterns page (screenshots patterns-1440.png / patterns-390.png), fixing card flex-centering, card rhythm, media-text mobile padding, band button stacking; verified in the block editor (iframe canvas computed styles match the front end, patterns listed under Heartland, notice + Hero/CTA panels present, no console errors) and a classic \"Sample Page\"-style page with hero, plain start and hero+CTA. Temp pages and auto-drafts deleted. (3) Settings audit: everything user-facing already resolved to settings/menus/sections except: TikTok social added (contact.tiktok + Simple Icons glyph in tools/build-icons.mjs, rendered only when set, verified visually then cleared), search placeholder (blog.search_placeholder), 404/empty-search helpful links now a menu location \"Helpful links (404 & search)\" with the reference fallback (Blog tab note), BarKode contact-line fallback uses the site title (theme + plugin), Footer tab description + \"Column links\" note link to Appearance \u2192 Menus; menu locations all named clearly. (4) Docs: admin-guide (new-pages/patterns section, menus table, footer credit, TikTok, blog options; two new admin screenshots), ARCHITECTURE \u00a75/\u00a77/\u00a711, STATUS, theme readme changelog. Lite payload rebuilt (only option:hk9_settings changed).",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/heartland-k9s-core.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Sections/definitions/default.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Admin/EditorGuidance.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Meta/Definitions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/style.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/functions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/readme.txt",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/footer.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/searchform.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_barkode.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/defaults.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/blocks.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/section-defaults.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/setup.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags-blog.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/text-image-left.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/text-image-right.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/feature-cards.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/cta-band.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/faq.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/two-buttons.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/testimonial.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/stats-row.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/contact-details.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/section-heading.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/img/placeholder-4x3.svg",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_prose.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_footer.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_layout.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/content.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/editor.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/icons.svg",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/icons.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/build-icons.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/licenses/LICENSE-simple-icons.txt",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/settings.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/STATUS.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/default-page-editor.png",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/admin-guide/default-page-patterns.png",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/screenshots/wp/chromium/",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/diffs/report.md",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/client-ready/footer-1440.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/client-ready/footer-390.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/client-ready/patterns-1440.png",
+   "/private/tmp/claude-501/-Users-carleykuehner-www-heartland-k9s-for-veterans/e00e485e-27ec-47ae-8b39-e0fa2a5559ea/scratchpad/client-ready/patterns-390.png"
+  ],
+  "tests": [
+   {
+    "name": "php -l on every touched PHP file (plugin, theme inc/templates, 10 pattern files)",
+    "result": "PASS",
+    "evidence": "No syntax errors detected for all files (loop over git-status .php files + patterns/*.php printed nothing but 'lint done')"
+   },
+   {
+    "name": "tools/wp.sh eval-file tests/sections-test.php --user=admin",
+    "result": "PASS",
+    "evidence": "47 checks, 0 failed"
+   },
+   {
+    "name": "tools/wp.sh eval-file tests/core-fixes-test.php --user=admin",
+    "result": "PASS",
+    "evidence": "== 93 passed, 0 failed =="
+   },
+   {
+    "name": "node tools/axe.mjs --urls=/,/about/,/privacy-policy/,/contact/",
+    "result": "PASS",
+    "evidence": "0 critical / 0 serious / 0 moderate / 0 minor on all 4 URLs \u00d7 390/1440 (also ran on the temp tmp-patterns/tmp-sample pages: 0 serious; one moderate heading-order on tmp-patterns caused only by the temp page's own h4 'Pattern:' labels)"
+   },
+   {
+    "name": "node tools/network-audit.mjs --urls=/,/privacy-policy/",
+    "result": "PASS",
+    "evidence": "both URLs clean: main-frame hosts localhost:8093 only, no forbidden hosts, no failed requests, no console errors"
+   },
+   {
+    "name": "node tools/screenshot.mjs --widths=390,1440 --menu --out=docs/reports/screenshots/wp && node tools/compare.mjs",
+    "result": "PASS",
+    "evidence": "Reference deltas unchanged vs a pre-change baseline captured at the start of the session: every route keeps the same page height (home 6514/3706, about 4716/2595, program 5833/3832, veterans 5543/3152, get-involved 5392/2706, barkode 5595/3251, stories 5401/3227, contact 3441/1773) and the % differing figures are identical to \u00b10.01 (e.g. home 42.23%/30.61% @390, 16.65%/12.27% @1440; contact 25.18%/10.96% @390, 15.60%/7.40% @1440). Pixel-diffing baseline vs final per route: exactly 694 px @390 and 902 px @1440 differ inside the footer bottom bar on every route = the new credit link text; the only other clusters (about-1440 78 px, get-involved-1440 494 px, stories-1440 3226 px in photo regions) are identical between two pre-change captures, i.e. run-to-run image noise, not from this change."
+   },
+   {
+    "name": "Footer bottom bar height + credit link (Playwright measurement on /)",
+    "result": "PASS",
+    "evidence": "1440: .hk9-footer__bottom 49px (reference 49), credit line 16px, link href https://www.cosmickmedia.com/ target=_blank rel='noopener noreferrer', color rgba(255,255,255,0.6) 12px, text-decoration none \u2192 underline on hover; 390: bottom bar 113px (unchanged 3-row stack), credit still one 16px line; screenshots client-ready/footer-1440.png and footer-390.png"
+   },
+   {
+    "name": "Patterns render on the front end (temporary tmp-patterns page, default template)",
+    "result": "PASS",
+    "evidence": "All 10 Heartland patterns registered (WP_Block_Patterns_Registry lists heartland-k9s/* with category 'Heartland'); inserted via wp eval into tmp-patterns, screenshots client-ready/patterns-1440.png (4709px) and patterns-390.png (7690px) inspected; fixed card child centering (flex column + constrained-layout auto margins), 16px card rhythm, media-text mobile padding/heading gap, band buttons stacking <640px, details chevron; page deleted afterwards"
+   },
+   {
+    "name": "Block editor for the default template (Playwright, admin/admin)",
+    "result": "PASS",
+    "evidence": "post-new.php?post_type=page: guidance notice present ('Default page: write your content here \u2014 the page title becomes the navy hero heading\u2026'), Sections box lists Hero (band) + Call to action, Page sections layout items hero_band canhide=1 checked, cta canhide=1 unchecked; inserter \u2192 Patterns \u2192 Heartland shows 10 items; editor iframe canvas computed styles match the front end (card white/1px border/8px radius/32px padding/flex, band navy #1c2f4a white centred 16px radius, button crimson 56px 14px/500 2px radius, stat Fraunces 60px crimson, testimonial muted 24px radius no left border); 0 console errors; screenshots copied to docs/reports/screenshots/admin-guide/default-page-editor.png and default-page-patterns.png"
+   },
+   {
+    "name": "Classic 'Sample Page'-style page + plain start + hero+CTA (temporary tmp-sample page)",
+    "result": "PASS",
+    "evidence": "Title + paragraphs, no excerpt \u2192 navy band with title, content card, 80px bottom spacer; hero unticked \u2192 .hk9-page-plain card with the title as h1, tint CTA band below; hero + navy CTA \u2192 80px spacer then the band (fixed an initial missing gap); imported default pages (/privacy-policy/) unchanged: hero=1, cta=0; page deleted afterwards"
+   },
+   {
+    "name": "Settings screen tabs (Footer / Blog / Contact) render",
+    "result": "PASS",
+    "evidence": "Footer tab shows Credit line 'Built with \u2665 for our veterans', Credit \"by\" label 'Cosmick Media', Credit \"by\" link, the 'Column links' note and a description linking to Appearance \u2192 Menus; Blog tab shows 'Search box placeholder' = Search\u2026 and the 'Helpful links (404 & search)' note; Contact tab shows 'TikTok URL'; debug.log empty (0 lines) after the whole session"
+   },
+   {
+    "name": "TikTok glyph + 404 helpful links menu location",
+    "result": "PASS",
+    "evidence": "tiktok symbol present in icons.svg (path verified byte-for-byte against simple-icons@16.30.0/icons/tiktok.svg); temporarily setting contact.tiktok rendered the glyph beside Facebook (social.png), then cleared back to ''. 404 page: fallback links Home/About/Program/Contact/Donate/News; a temporary tmp-helpful menu assigned to 'helpful' replaced them with its items; menu deleted and the leftover nav_menu_locations key removed"
+   }
+  ],
+  "issues": [
+   "package.json (new 'release' script) and tools/release.mjs changed on disk during this session from another process \u2014 not touched by me; left as found.",
+   "'Show hero' is implemented as the Page sections checkbox (hero_band gets can_hide => true on the default template only) rather than a new field inside the hero panel: hero_band shares one meta key/field set across 16 templates, so adding a field only for 'default' would force a distinct meta key and orphan the hk9_sec_hero_band data already stored on the imported default-template pages (Privacy Policy, News, drafts).",
+   "The Contact details pattern copies the phone/e-mail/address/hours into the page at insertion time (block content is static); the footer/Contact page still follow Settings. Documented in the admin guide.",
+   "WordPress caches the theme pattern file list per theme Version \u2014 on the local stack the list was stale until the bump to 1.2.0 (documented in ARCHITECTURE \u00a711); a site upgrading to 1.2.0 invalidates it automatically.",
+   "Compare deltas: only the credit link text differs (694 px @390 / 902 px @1440 per route, all inside the footer bottom bar); page heights identical to the baseline. dist/*.zip and payload-lite ZIP were not repackaged (npm run package is the release step); the untracked payload-lite/manifest.json was rebuilt and differs only in option:hk9_settings + generated_at."
+  ],
+  "integration_notes": "Versions: theme 1.2.0 (style.css, HK9_THEME_VERSION, readme Stable tag + changelog), plugin 1.2.0 (header + HK9_CORE_VERSION; the plugin has no readme.txt). New settings keys (Schema + theme defaults + payload-src): contact.tiktok (url, ''), footer.credit (text, 'Built with \u2665 for our veterans' \u2014 no trailing period), footer.credit_by_label ('Cosmick Media'), footer.credit_by_url ('https://www.cosmickmedia.com'), blog.search_placeholder ('Search\u2026'); note-type fields footer.menus_note and blog.helpful_links_note. New theme menu location 'helpful' (Helpful links (404 & search)); hk9_blog_helpful_links() reads it when assigned. Default template definition: hero_band can_hide=true, cta hidden_default=true with descriptions; EditorGuidance adds i18n key 'default'. Theme page.php renders hero (or .hk9-page-plain when hidden) \u2192 content card \u2192 remaining sections (80px .hk9-section--pb20 spacer before the first band). Block styles are registered from a table in hk9_register_block_styles(); their CSS lives in _prose.scss (compiled into content.css and editor.css). Patterns: theme/heartland-k9s/patterns/*.php (Categories: heartland-k9s; category registered at init 9); the image patterns use hk9_pattern_placeholder_image() \u2192 assets/img/placeholder-4x3.svg (derived from lucide paw-print, ISC \u2014 noted in readme licenses). Local site option already carries the new footer values (Store::update); contact.tiktok is '' (verified render then cleared). Rebuild assets with npm run build:css && npm run build:js (&& build:icons for the sprite, already run). Reference screenshots in docs/reports/screenshots/wp and docs/reports/diffs/report.md were regenerated. Temporary content (tmp-patterns, tmp-sample pages, two auto-drafts, tmp-helpful menu) has been removed; no imported content touched."
+ },
+ "review": {
+  "verdict": "PASS \u2014 all claims verified on the local stack; no blocking or medium findings. Footer credit renders exactly \"Built with \u2665 for our veterans by Cosmick Media.\" (heart = 12px SVG with accessible title \"love\", link href https://www.cosmickmedia.com/ target=_blank rel=\"noopener noreferrer\", escaped via esc_url/esc_html, 12px rgba(255,255,255,.6), weight 400, no background/border/image, text-decoration none \u2192 underline on hover). Bottom bar 49px @1440 / 113px @390, credit line 16px. Three new footer settings + blog.search_placeholder + contact.tiktok each have a Schema default, a Store sanitizer (text \u2192 sanitize_text_field keeps \u2665; url \u2192 esc_url_raw), a UI field with help text, a theme inc/defaults.php fallback, a payload-src/records/settings.json entry, and a consuming template (footer.php / searchform.php). All 10 heartland-k9s/* patterns parse with parse_blocks: no freeform/unregistered blocks, serialize round-trip identical, category \"heartland-k9s\" \u2192 \"Heartland\", 0 core/* patterns. page.php hero toggle works (hidden=['hero_band'] \u2192 .hk9-page-plain with h1 title, no band; default \u2192 band + card + spacer, CTA hidden; CTA ticked \u2192 band rendered). Theme grep for hardcoded org data is clean (only the Google Maps / PayPal URL builders in template-parts, and the plugin-less defaults file). sections-test 47/0, core-fixes 93/0, axe /privacy-policy/ 0/0/0/0 at both widths, php -l clean on every touched PHP file, no hk9 entries in debug.log (only a third-party gravityforms textdomain notice). No tmp-/auto-draft posts left behind.",
+  "findings": [
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/contact-details.php",
+    "issue": "The Contact details pattern copies contact.* values into post content at insertion time, so a later change under Heartland \u2192 Settings \u2192 Contact will not update pages that already used the pattern. This is documented in the pattern description and admin-guide, so it is a known trade-off rather than a defect.",
+    "fix": "No change required; optionally add one sentence to the admin-guide patterns table reminding staff to re-insert or edit the block after changing phone/e-mail settings."
+   },
+   {
+    "severity": "info",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/footer.php",
+    "issue": "Leaving footer.credit empty hides the entire credit line including the \"by Cosmick Media\" part (by design; the help text says so). If the client ever wants only the developer credit they must keep a non-empty credit string.",
+    "fix": "None needed; behaviour matches the Schema help text and ARCHITECTURE \u00a77."
+   }
+  ],
+  "spot_checks": [
+   "curl /privacy-policy/ footer bottom bar: <p class=\"hk9-footer__credit\">Built with <svg \u2026 title=love> for our veterans <span class=\"hk9-footer__credit-by\">by <a class=\"hk9-footer__credit-link\" href=\"https://www.cosmickmedia.com\" target=\"_blank\" rel=\"noopener noreferrer\">Cosmick Media</a>.</span></p>",
+   "Playwright @1440/390: .hk9-footer__bottom 49px/113px, credit 16px, link color rgba(255,255,255,0.6) 12px weight 400, bg transparent, border 0, deco none \u2192 underline on hover, 0 <img> in credit",
+   "wp option get hk9_settings: footer.credit='Built with \u2665 for our veterans', credit_by_label='Cosmick Media', credit_by_url='https://www.cosmickmedia.com', blog.search_placeholder='Search\u2026', contact.tiktok=''",
+   "Schema.php: defaults (l.223-225, 230, 180), field types (l.366-368 text/text/url, 373, 324), UI fields with help (l.578-580, 599, 511) + note fields menus_note/helpful_links_note; Store.php sanitizes url via esc_url_raw (l.282-287) and text via sanitize_text_field (l.368-370); wp eval confirmed sanitize_text_field keeps \u2665",
+   "theme inc/defaults.php l.93/136-138/143 mirror the defaults; payload-src/records/settings.json l.37/199-201/206 contain the new keys; footer.php + searchform.php consume them; inc/setup.php registers 'helpful' location consumed by hk9_blog_helpful_links()",
+   "wp eval-file (temporary tmp-check-patterns.php, removed): 10 heartland-k9s/* patterns, category label 'Heartland', freeform=none unregistered=none roundtrip-ok for every pattern, core/* patterns 0",
+   "Temporary page tmp-hero-toggle (id 497, force-deleted): default \u2192 hk9-hero--band=1 plain=0 cta=0 spacer=1 content=1; hidden=['hero_band'] \u2192 band=0 hk9-page-plain=1 <h1>tmp-hero-toggle cta=1; hidden=[] \u2192 band=1 cta=1 spacer=1; post list --s=tmp- count 0, auto-draft pages 0",
+   "grep theme/**/*.php (excluding inc/defaults.php, vendor, i18n comments) for heartlandk9s|800-913|417-|facebook.com|zeffy|http: only Google Maps search builder (template-tags-records.php:779) and PayPal hosted-button builder (options.php:35/45); no Heartland/Cosmick/Neosho literals outside section-defaults reference copy",
+   "tools/wp.sh eval-file tests/sections-test.php \u2192 47 checks, 0 failed; core-fixes-test.php \u2192 93 passed, 0 failed; node tools/axe.mjs --urls=/privacy-policy/ \u2192 0/0/0/0 at 390 and 1440 (PASS)",
+   "php -l on all git-status .php files + patterns/*.php: no errors; versions in sync at 1.2.0 (plugin header + HK9_CORE_VERSION, style.css, HK9_THEME_VERSION, readme Stable tag + changelog entry); icons.json/icons.svg contain tiktok, LICENSE-simple-icons.txt lists it",
+   "debug.log: 0 lines mentioning heartland-k9s/hk9; only a gravityforms _load_textdomain_just_in_time notice (third-party)"
+  ]
+ },
+ "fix": {
+  "summary": "Review verdict was PASS with no high/medium findings. Applied the one cheap low: added an explicit sentence to the \"Contact details block\" row of the patterns table in docs/admin-guide.md telling staff to either edit the card's text on each page or delete the card and re-insert the pattern after a phone/e-mail change in Settings (the pattern copies contact.* at insertion time; footer and Contact page follow Settings live). The info finding (empty footer.credit hides the whole line) matches Schema help text and ARCHITECTURE \u00a77 \u2014 no change. Rebuilt CSS + JS (dist output byte-identical to the already-staged files; budget check passes), then re-ran every check named in the review on the local docker stack: all pass with the same numbers the reviewer reported. No temporary objects left behind; no git commit/checkout/stash/reset performed.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/content.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/editor.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/patterns/contact-details.php"
+  ],
+  "tests": [
+   {
+    "name": "npm run build:css && npm run build:js (+ build-css.mjs --check)",
+    "result": "PASS",
+    "evidence": "theme.css 48.1 kB raw / 9.4 kB gzip, forms 28.7/4.5, content 24.6/3.9, blog 26.2/4.4, pages 14.0/2.5, records 30.1/4.8, editor 31.9/4.9; theme.js 2.1 kB; --check exit 0. git status shows dist files 'M ' (index only) \u2014 rebuilt bytes identical to what was already staged."
+   },
+   {
+    "name": "tools/wp.sh eval-file plugin/heartland-k9s-core/tests/sections-test.php",
+    "result": "PASS",
+    "evidence": "47 checks, 0 failed (all PASS lines incl. rest_put_one_revision, layout_hidden_by_default, form_provider_*, rest_autosave_carries_meta, classic_preview_fallback_deletes_autosave)."
+   },
+   {
+    "name": "tools/wp.sh eval-file plugin/heartland-k9s-core/tests/core-fixes-test.php",
+    "result": "PASS",
+    "evidence": "== 93 passed, 0 failed == (upload guard, forms failures, redirect sslverify groups all PASS)."
+   },
+   {
+    "name": "node tools/axe.mjs --urls=/privacy-policy/,/contact/ (390 + 1440)",
+    "result": "PASS",
+    "evidence": "axe-core 4.13.0 / chromium 153: /privacy-policy/ 390 \u2192 0/0/0/0, 1440 \u2192 0/0/0/0; /contact/ 390 \u2192 0/0/0/0, 1440 \u2192 0/0/0/0. Result: PASS. Report written to scratchpad only (docs/reports/axe.md untouched)."
+   },
+   {
+    "name": "php -l on every modified/untracked .php file + all theme/heartland-k9s/patterns/*.php",
+    "result": "PASS",
+    "evidence": "70 files linted, 0 failures (vendor/ directory skipped as a non-file; third-party)."
+   },
+   {
+    "name": "Pattern parse check (temporary tests/tmp-check-patterns.php, removed after run)",
+    "result": "PASS",
+    "evidence": "10 heartland-k9s/* patterns, 0 core/* patterns, category heartland-k9s \u2192 'Heartland'; every pattern: freeform=none, unregistered=none, serialize_blocks round-trip identical, categories=heartland-k9s. ALL PATTERNS OK. Script deleted; tests/ dir listing confirms no tmp- file remains."
+   },
+   {
+    "name": "page.php hero toggle (temporary page 'tmp-hero-toggle' id 594, force-deleted)",
+    "result": "PASS",
+    "evidence": "default layout \u2192 hk9-hero--band=1 hk9-page-plain=0 cta=0 pb20-spacer=1 content present; hidden=['hero_band'] \u2192 band=0 plain=1 <h1>tmp-hero-toggle</h1> cta rendered spacer=0 (intentional: .hk9-page-plain carries 5rem bottom padding, spacer is hero-only per page.php); hidden=[] \u2192 band=1 cta rendered spacer=1. Afterwards: post list --s=tmp- count 0, auto-draft pages 0."
+   },
+   {
+    "name": "Footer credit markup (curl /privacy-policy/) + hk9_settings option",
+    "result": "PASS",
+    "evidence": "<p class=\"hk9-footer__credit\">Built with <svg \u2026 width=12 height=12 role=img><title>love</title>\u2026</svg> for our veterans <span class=\"hk9-footer__credit-by\">by <a class=\"hk9-footer__credit-link\" href=\"https://www.cosmickmedia.com\" target=\"_blank\" rel=\"noopener noreferrer\">Cosmick Media</a>.</span></p>. Option: footer.credit='Built with \u2665 for our veterans', credit_by_label='Cosmick Media', credit_by_url='https://www.cosmickmedia.com', blog.search_placeholder='Search\u2026', contact.tiktok=''."
+   },
+   {
+    "name": "Playwright footer measurements @1440 / @390 (scratchpad script)",
+    "result": "PASS",
+    "evidence": "1440: .hk9-footer__bottom 49px, credit 16px; 390: bottom 113px, credit 16px. Both: link color rgba(255,255,255,0.6), 12px, weight 400, bg transparent, border 0, text-decoration none \u2192 underline on hover, href https://www.cosmickmedia.com/, target _blank, rel 'noopener noreferrer', 0 <img> in credit, SVG 12x12 title 'love', accessible text 'Built with love for our veterans by Cosmick Media.'"
+   },
+   {
+    "name": "Hardcoded org-data grep in theme PHP (excluding inc/defaults.php, inc/section-defaults.php, comments)",
+    "result": "PASS",
+    "evidence": "grep -rnE 'heartlandk9s|800-913|417-312|facebook\\.com|zeffy|cosmickmedia|Neosho|12651' theme/heartland-k9s --include='*.php' \u2192 no matches outside the excluded defaults files."
+   },
+   {
+    "name": "Version sync + TikTok icon",
+    "result": "PASS",
+    "evidence": "style.css Version 1.2.0, HK9_THEME_VERSION 1.2.0, plugin header Version 1.2.0, HK9_CORE_VERSION 1.2.0, theme readme.txt Stable tag 1.2.0 with '= 1.2.0 =' changelog entry; icons.json + icons.svg contain tiktok; LICENSE-simple-icons.txt lists it."
+   },
+   {
+    "name": "debug.log after the full run",
+    "result": "PASS",
+    "evidence": "docker exec hk9-wordpress-1: debug.log has 1 line, 0 entries mentioning hk9/heartland-k9s; the only entry is the third-party 'gravityforms' _load_textdomain_just_in_time notice (pre-existing, not ours)."
+   }
+  ],
+  "issues": [
+   "No blocking or medium issues found; the review verdict PASS holds after re-verification.",
+   "Known, documented trade-off (low, now more explicitly documented): the Contact details pattern snapshots contact.* values at insertion time, so a later Settings change does not update cards already on pages \u2014 staff must edit the card or re-insert the pattern (footer and Contact page do follow Settings live).",
+   "Known by design (info): an empty footer.credit hides the entire credit line including 'by Cosmick Media'; to keep only the developer credit the client must leave a non-empty credit string. Matches Schema help text and ARCHITECTURE \u00a77.",
+   "The working tree contains substantial pre-existing uncommitted work on branch build/wordpress-conversion (docs, screenshots, Updater.php, vendor/, tools/release.mjs, dist files) that predates this task; only the one-sentence admin-guide edit is mine. Nothing was committed, per instructions."
+  ],
+  "integration_notes": "Only change made: one sentence appended to the '**Contact details block**' row of the patterns table in docs/admin-guide.md (line 147). No PHP, SCSS, JS, schema, settings, or payload files were modified; the CSS/JS rebuild reproduced the already-staged dist output byte-for-byte, so there is nothing new to review in assets/dist. Temporary artefacts: tests/tmp-check-patterns.php (deleted), page id 594 'tmp-hero-toggle' (force-deleted, 0 tmp- posts / 0 auto-drafts remain), axe report and Playwright script written to the session scratchpad only (docs/reports/axe.md untouched). No git commit/checkout/stash/reset was run; no imported content was deleted or renamed; no BarKode personal data was printed. Docker stack (hk9-wordpress-1, hk9-db-1, hk9-mailpit-1) was up throughout and http://localhost:8093/ returned 200."
+ }
+}

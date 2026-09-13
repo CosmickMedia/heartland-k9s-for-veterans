@@ -32,6 +32,7 @@ Local stack: `docker compose -f docker/docker-compose.yml up -d && docker/setup.
 - [x] Front page + reference page templates (about/program/veterans/get-involved/barkode/stories/contact)
 - [x] Landing/donate/events/campaigns/partners/people/teams/highlighted/gallery/application templates
 - [x] CPT singles · blog templates · search/404/comments · block styles
+- [x] Client-ready defaults (theme + plugin 1.2.0): default page template = hero band (hideable) + content card + optional CTA; 10 "Heartland" block patterns with matching editor/front-end block styles; footer credit "Built with ♥ for our veterans by Cosmick Media." from settings; TikTok social; search placeholder + "Helpful links (404 & search)" menu location; settings completeness audit (ARCHITECTURE §7)
 - [ ] SEO/robots/OG · performance
 
 ## Phase 5 — Content & import

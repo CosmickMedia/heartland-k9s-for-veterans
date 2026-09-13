@@ -2,9 +2,11 @@
   "name": "heartland-k9s-for-veterans",
   "version": "1.0.0",
   "private": true,
-  "description": "Heartland Canines for Veterans — WordPress theme (heartland-k9s) + companion plugin (heartland-k9s-core), migration payload and verification tooling.",
+  "description": "Heartland Canines for Veterans \u2014 WordPress theme (heartland-k9s) + companion plugin (heartland-k9s-core), migration payload and verification tooling.",
   "license": "GPL-2.0-or-later",
-  "engines": { "node": ">=20" },
+  "engines": {
+    "node": ">=20"
+  },
   "scripts": {
     "build": "npm run build:css && npm run build:js && npm run build:icons",
     "build:css": "node tools/build-css.mjs",
@@ -20,7 +22,8 @@
     "verify:axe": "node tools/axe.mjs",
     "verify:network": "node tools/network-audit.mjs",
     "verify:urls": "bash tools/url-matrix.sh",
-    "package": "node tools/package.mjs"
+    "package": "node tools/package.mjs",
+    "release": "node tools/release.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.10.2",

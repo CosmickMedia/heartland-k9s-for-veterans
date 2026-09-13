@@ -20,6 +20,7 @@ final class Plugin {
 	/** Modules in boot order (class => context: 'always' | 'admin' | 'cli'). */
 	private const MODULES = [
 		'HK9\\Core\\Support\\Helpers'         => 'always',
+		'HK9\\Core\\Support\\Updater'         => 'always',
 		'HK9\\Core\\Support\\SectionHelpers'  => 'always',
 		'HK9\\Core\\Settings\\Store'          => 'always',
 		'HK9\\Core\\PostTypes\\Capabilities'  => 'always',

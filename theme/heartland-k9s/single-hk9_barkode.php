@@ -41,8 +41,8 @@ while ( have_posts() ) :
 	}
 	if ( '' === $hk9_contact ) {
 		$hk9_phone = trim( (string) hk9_theme_option( 'contact.phone_main' ) );
-		/* translators: %s: phone number */
-		$hk9_contact = '' !== $hk9_phone ? sprintf( __( 'Questions? Contact Heartland Canines for Veterans at %s.', 'heartland-k9s' ), $hk9_phone ) : '';
+		/* translators: 1: organisation (site title), 2: phone number */
+		$hk9_contact = '' !== $hk9_phone ? sprintf( __( 'Questions? Contact %1$s at %2$s.', 'heartland-k9s' ), get_bloginfo( 'name' ), $hk9_phone ) : '';
 	}
 
 	$hk9_type_labels = [

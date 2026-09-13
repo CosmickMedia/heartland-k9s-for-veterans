@@ -42,6 +42,7 @@ function hk9_theme_setup(): void {
 			'footer_quick'    => __( 'Footer — Quick Links', 'heartland-k9s' ),
 			'footer_involved' => __( 'Footer — Get Involved', 'heartland-k9s' ),
 			'legal'           => __( 'Footer — Legal', 'heartland-k9s' ),
+			'helpful'         => __( 'Helpful links (404 & search)', 'heartland-k9s' ),
 		]
 	);
 

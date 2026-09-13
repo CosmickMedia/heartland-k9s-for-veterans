@@ -189,10 +189,27 @@
 		p { margin: 0; }
 
 		a { color: inherit; }
+
+		// Developer credit link: same 12px white@60 as the bar, underline only on hover/focus
+		// (nested so it outranks the generic `.hk9-footer a:hover` rule).
+		.hk9-footer__credit-link {
+			color: inherit;
+			text-decoration: none;
+			text-underline-offset: .15em;
+
+			&:hover,
+			&:focus-visible {
+				color: inherit;
+				text-decoration: underline;
+			}
+		}
 	}
 
+	// "Built with ♥ for our veterans by Cosmick Media." — inline-flex so the 12px heart
+	// sits on the text baseline; the "by …" span keeps its full stop next to the name.
 	&__credit {
 		display: inline-flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: .25rem;
 
@@ -201,6 +218,10 @@
 			height: .75rem;
 			color: var(--hk9-secondary);
 			fill: currentColor;
+		}
+
+		@include media-breakpoint-down(md) {
+			justify-content: center;
 		}
 	}
 

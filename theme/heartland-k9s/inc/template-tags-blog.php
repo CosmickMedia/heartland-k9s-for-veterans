@@ -241,9 +241,35 @@ function hk9_blog_empty_copy(): array {
  * @return array<int, array{label:string,url:string,attrs:string}>
  */
 function hk9_blog_helpful_links(): array {
-	$links = [
-		[ 'label' => __( 'Home', 'heartland-k9s' ), 'url' => home_url( '/' ), 'attrs' => '' ],
-	];
+	$links = [];
+
+	// Staff-managed list: Appearance → Menus → location "Helpful links (404 & search)".
+	if ( has_nav_menu( 'helpful' ) ) {
+		$locations = get_nav_menu_locations();
+		$menu_id   = (int) ( $locations['helpful'] ?? 0 );
+		$items     = $menu_id > 0 ? wp_get_nav_menu_items( $menu_id ) : [];
+		foreach ( is_array( $items ) ? $items : [] as $item ) {
+			if ( ! $item instanceof WP_Post || (int) $item->menu_item_parent > 0 ) {
+				continue; // Top level only: the 404 card is a flat row of buttons.
+			}
+			$url = (string) $item->url;
+			if ( '' === $url || ( 'post_type' === $item->type && 'publish' !== get_post_status( (int) $item->object_id ) ) ) {
+				continue;
+			}
+			$attrs = '';
+			if ( '_blank' === $item->target ) {
+				$attrs = ' target="_blank" rel="noopener noreferrer"';
+			}
+			$links[] = [ 'label' => (string) $item->title, 'url' => $url, 'attrs' => $attrs ];
+		}
+		if ( ! empty( $links ) ) {
+			/** This filter is documented below. */
+			return apply_filters( 'hk9/theme/helpful_links', $links );
+		}
+	}
+
+	// Fallback when no menu is assigned: Home, About, the K9 provider page, Contact, Donate, News.
+	$links[] = [ 'label' => __( 'Home', 'heartland-k9s' ), 'url' => home_url( '/' ), 'attrs' => '' ];
 
 	$about = get_page_by_path( 'about' );
 	if ( $about instanceof WP_Post && 'publish' === $about->post_status ) {

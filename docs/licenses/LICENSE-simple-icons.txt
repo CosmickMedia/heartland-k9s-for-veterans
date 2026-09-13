@@ -5,6 +5,7 @@ Brand glyphs embedded in tools/build-icons.mjs and emitted into the heartland-k9
   facebook     simple-icons v16.30.0 icons/facebook.svg
   instagram    simple-icons v16.30.0 icons/instagram.svg
   linkedin     simple-icons v13.21.0 icons/linkedin.svg
+  tiktok       simple-icons v16.30.0 icons/tiktok.svg
   x-social     simple-icons v16.30.0 icons/x.svg
   youtube      simple-icons v16.30.0 icons/youtube.svg
 

@@ -3,7 +3,7 @@ Contributors: heartlandk9s
 Requires at least: 6.4
 Tested up to: 7.1
 Requires PHP: 8.1
-Stable tag: 1.1.0
+Stable tag: 1.2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -23,7 +23,9 @@ self-hosted Fraunces + Inter and an inline lucide icon sprite. Pairs with the
 * inc/template-tags.php  – hk9_image(), hk9_button(), hk9_the_hero(), hk9_pagination()…
 * inc/menus.php          – primary/footer menu rendering + reference fallbacks
 * inc/sections.php       – hk9_render_sections() + plugin-independent accessors
-* inc/blocks.php         – block styles, editor tokens, offline editor
+* inc/blocks.php         – block styles (Card, Navy band, Statistic, Lead, Crimson bar, Testimonial, Checklist, Navy button…), editor tokens, offline editor, "Heartland" pattern category
+* patterns/*.php         – block patterns (core blocks + the theme block styles): text + image, feature cards, CTA band, FAQ, buttons, testimonial, stats, contact details, section heading
+* assets/img/            – placeholder-4x3.svg used by the image patterns until a photo is picked
 * inc/compat.php         – SEO meta only when no SEO plugin is active
 * inc/plugin-notice.php  – admin notice when the companion plugin is missing
 * page-templates/*.php   – section templates (Template Name headers)
@@ -52,10 +54,35 @@ screenshot.png in the theme root. Do not ship a placeholder image.
 * Bootstrap 5.3.8 — MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
 * Fraunces, Inter — SIL Open Font License 1.1 (assets/fonts/OFL-*.txt)
 * lucide icons — ISC (docs/licenses/LICENSE-lucide.txt)
-* Simple Icons brand glyphs (facebook, instagram, youtube, linkedin, x-social) — CC0 1.0
+* Simple Icons brand glyphs (facebook, instagram, youtube, linkedin, x-social, tiktok) — CC0 1.0
   (docs/licenses/LICENSE-simple-icons.txt); embedded in tools/build-icons.mjs
+* assets/img/placeholder-4x3.svg — theme artwork built from the lucide "paw-print" glyph (ISC)
 
 == Changelog ==
+
+= 1.2.0 =
+* Default page template is the starting point for new pages: hero band (title + excerpt, or the
+  Hero (band) panel: eyebrow / heading / intro / pattern) that can be unticked under Page sections
+  for a plain start (title inside the content card), the block content card, and an optional
+  Call to action band (hidden by default). The block editor shows a default-template guidance notice.
+* Block patterns in a "Heartland" category (patterns/*.php, core blocks only): Text + image (left /
+  right), Three feature cards, Call to action band, FAQ (details), Two buttons row, Quote /
+  testimonial, Stats row, Contact details block (pre-filled from Settings → Contact), Section
+  heading with crimson divider. Matching block styles in inc/blocks.php with CSS shared by
+  content.css and editor.css (Card, Card (muted), Navy band, Tinted band, Statistic, Lead,
+  Crimson bar, Thin rule, Testimonial, Checklist, Navy button); core buttons render as the
+  theme's 56 px CTA buttons; Details summaries get the crimson chevron.
+* Footer credit: "Built with ♥ for our veterans by Cosmick Media." — footer.credit +
+  footer.credit_by_label / footer.credit_by_url settings (plain 12 px bar text, underline on hover).
+* Social links: TikTok (contact.tiktok) with the Simple Icons glyph; every social icon renders only
+  when its URL is set.
+* Settings completeness: search placeholder (blog.search_placeholder); 404 / empty-search helpful
+  links from the new "Helpful links (404 & search)" menu location (reference fallback when
+  unassigned); BarKode contact fallback uses the site title; Settings → Footer links to
+  Appearance → Menus for the column links.
+
+= 1.1.0 =
+* Companion release for plugin 1.1.x (existing-site migration mode, content-only payload).
 
 = 1.0.2 =
 * Performance: the frontend CSS is a 47 kB core (theme.css) plus per-template bundles

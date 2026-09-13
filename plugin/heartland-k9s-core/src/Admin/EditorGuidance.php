@@ -84,6 +84,7 @@ final class EditorGuidance {
 				'hide'     => __( 'Anything you write here is not shown on the page (Page sections → Editor content).', 'heartland-k9s-core' ),
 				'change'   => __( 'Change where it appears under Page sections → Editor content in the sidebar.', 'heartland-k9s-core' ),
 				'native'   => __( 'The text and blocks you write here appear in the card under the hero. Optional sections (%s) are in the panels below the editor and can be switched on under Page sections.', 'heartland-k9s-core' ),
+				'default'  => __( 'Default page: write your content here — the page title becomes the navy hero heading and the excerpt (Page → Excerpt) its intro line. Use the Heartland patterns (block inserter → Patterns → Heartland) for cards, columns and calls to action. The Hero (band) and Call to action panels are below the editor; untick "Hero (band)" under Page sections to start the page plainly, tick "Call to action" to add the band.', 'heartland-k9s-core' ),
 			],
 		];
 		$js     = <<<'JS'
@@ -104,8 +105,11 @@ final class EditorGuidance {
 	}
 	function message( slug, position ) {
 		var info = cfg.templates && cfg.templates[ slug ];
-		if ( ! info || slug === 'default' ) {
+		if ( ! info ) {
 			return '';
+		}
+		if ( slug === 'default' ) {
+			return cfg.i18n['default'] || '';
 		}
 		if ( info.native ) {
 			return cfg.i18n.native.replace( '%s', info.sections );

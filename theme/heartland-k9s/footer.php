@@ -13,7 +13,9 @@ $hk9_col2        = (string) hk9_theme_option( 'footer.col2_heading' );
 $hk9_col3        = (string) hk9_theme_option( 'footer.col3_heading' );
 $hk9_col4        = (string) hk9_theme_option( 'footer.col4_heading' );
 $hk9_copyright   = hk9_replace_tokens( (string) hk9_theme_option( 'footer.copyright' ) );
-$hk9_credit      = hk9_replace_tokens( (string) hk9_theme_option( 'footer.credit' ) );
+$hk9_credit      = trim( hk9_replace_tokens( (string) hk9_theme_option( 'footer.credit' ) ) );
+$hk9_credit_by   = trim( (string) hk9_theme_option( 'footer.credit_by_label' ) );
+$hk9_credit_url  = trim( (string) hk9_theme_option( 'footer.credit_by_url' ) );
 
 $hk9_email      = (string) hk9_theme_option( 'contact.email' );
 $hk9_phone      = (string) hk9_theme_option( 'contact.phone_main' );
@@ -29,13 +31,35 @@ $hk9_socials    = [
 	'youtube'   => [ 'label' => 'YouTube', 'icon' => 'youtube', 'url' => (string) hk9_theme_option( 'contact.youtube' ) ],
 	'linkedin'  => [ 'label' => 'LinkedIn', 'icon' => 'linkedin', 'url' => (string) hk9_theme_option( 'contact.linkedin' ) ],
 	'x'         => [ 'label' => 'X', 'icon' => 'x-social', 'url' => (string) hk9_theme_option( 'contact.x' ) ],
+	'tiktok'    => [ 'label' => 'TikTok', 'icon' => 'tiktok', 'url' => (string) hk9_theme_option( 'contact.tiktok' ) ],
 ];
 $hk9_socials    = array_filter( $hk9_socials, static fn( $s ) => '' !== $s['url'] );
 
-// "Built with ♥ for our veterans." → heart icon in place of the glyph.
-$hk9_credit_html = esc_html( $hk9_credit );
-if ( false !== strpos( $hk9_credit, '♥' ) ) {
-	$hk9_credit_html = str_replace( '♥', hk9_icon( 'heart', [ 'fill' => true, 'size' => 12, 'title' => __( 'love', 'heartland-k9s' ) ] ), esc_html( $hk9_credit ) );
+// "Built with ♥ for our veterans by Cosmick Media." → heart icon in place of the glyph,
+// the "by …" label linked (footer.credit_by_label / footer.credit_by_url); the whole
+// "by" part is omitted when the label is empty. Settings\Schema keeps the credit
+// without a trailing full stop; one saved with it ("… veterans.") is trimmed before
+// "by" is appended so the line never reads "veterans. by".
+$hk9_credit_html = '';
+if ( '' !== $hk9_credit ) {
+	if ( '' !== $hk9_credit_by ) {
+		$hk9_credit = rtrim( $hk9_credit, " \t." );
+	}
+	$hk9_credit_html = esc_html( $hk9_credit );
+	if ( false !== strpos( $hk9_credit, '♥' ) ) {
+		$hk9_credit_html = str_replace( '♥', hk9_icon( 'heart', [ 'fill' => true, 'size' => 12, 'title' => __( 'love', 'heartland-k9s' ) ] ), $hk9_credit_html );
+	}
+	if ( '' !== $hk9_credit_by ) {
+		$hk9_by_html = '' !== $hk9_credit_url
+			? '<a class="hk9-footer__credit-link" href="' . esc_url( $hk9_credit_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( $hk9_credit_by ) . '</a>'
+			: esc_html( $hk9_credit_by );
+		// One <span> for "by …." so the inline-flex credit keeps the full stop next to the name.
+		$hk9_credit_html .= ' <span class="hk9-footer__credit-by">' . sprintf(
+			/* translators: %s: name of the site's developer (linked). */
+			esc_html_x( 'by %s', 'footer credit line', 'heartland-k9s' ),
+			$hk9_by_html
+		) . '.</span>';
+	}
 }
 ?>
 </main>
@@ -152,7 +176,7 @@ if ( false !== strpos( $hk9_credit, '♥' ) ) {
 					?>
 				</nav>
 			<?php endif; ?>
-			<?php if ( '' !== $hk9_credit ) : ?>
+			<?php if ( '' !== $hk9_credit_html ) : ?>
 				<p class="hk9-footer__credit"><?php echo $hk9_credit_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above. ?></p>
 			<?php endif; ?>
 		</div>
