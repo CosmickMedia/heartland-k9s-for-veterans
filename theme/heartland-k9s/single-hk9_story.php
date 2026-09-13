@@ -44,6 +44,7 @@ while ( have_posts() ) :
 					<?php echo hk9_image( $hk9_thumb, 'large', [ 'alt' => $hk9_veteran ? sprintf( /* translators: %s: veteran name */ __( 'Photo: %s', 'heartland-k9s' ), $hk9_veteran ) : get_the_title(), 'sizes' => '(max-width: 1023px) calc(100vw - 32px), 928px' ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core image markup. ?>
 				</figure>
 			<?php endif; ?>
+			<?php hk9_the_breadcrumbs(); // After the edge-to-edge figure (its negative top margin needs to stay the card's first line). ?>
 
 			<?php if ( '' !== $hk9_quote ) : ?>
 				<blockquote class="hk9-single__quote">

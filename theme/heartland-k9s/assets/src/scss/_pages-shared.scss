@@ -163,3 +163,106 @@
 		}
 	}
 }
+
+// 4. Breadcrumbs (template-parts/breadcrumbs.php, inc/seo.php) ----------------
+// A quiet 13px "Home › Section › Page" trail. It is the first line of the
+// overlap card (default/landing pages, record singles, posts) or, when a page
+// has no content card, a small strip below the navy band. The current page is
+// unlinked; separators are the chevron-right sprite icon. Sized so it never
+// competes with the hero title (reference pages have no breadcrumb bar).
+.hk9-breadcrumbs {
+	font-family: var(--hk9-font-sans);
+	font-size: .8125rem;
+	line-height: 1.4;
+	color: var(--hk9-muted-fg);
+	margin: 0 0 1.5rem;
+
+	&__list {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: .25rem 0;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	&__item {
+		display: inline-flex;
+		align-items: center;
+		gap: .125rem;
+		min-width: 0;
+		margin: 0;
+	}
+
+	&__sep {
+		flex: none;
+		width: .875rem;
+		height: .875rem;
+		margin: 0 .125rem;
+		opacity: .55;
+	}
+
+	&__link {
+		color: inherit;
+		text-decoration: none;
+		border-radius: .125rem;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--hk9-primary);
+			text-decoration: underline;
+			text-underline-offset: .15em;
+		}
+	}
+
+	&__current {
+		color: var(--hk9-fg);
+		font-weight: 500;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		max-width: min(100%, 26rem);
+	}
+
+	// Single posts: aligned with the 720px reading column.
+	&--reading {
+		max-width: 45rem;
+		margin-left: auto;
+		margin-right: auto;
+	}
+}
+
+// Inside block content cards (.hk9-prose): keep the trail out of the prose rhythm
+// (list markers, indent, link colour, paragraph margins).
+.hk9-prose .hk9-breadcrumbs {
+	margin: 0 0 1.5rem;
+
+	.hk9-breadcrumbs__list {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.hk9-breadcrumbs__item { margin: 0; }
+
+	// Outranks the prose link rule (.hk9-prose a:not(.hk9-btn):not(…), specificity 0,3,1).
+	.hk9-breadcrumbs__list .hk9-breadcrumbs__item .hk9-breadcrumbs__link {
+		color: inherit;
+		text-decoration: none;
+
+		&:hover,
+		&:focus-visible {
+			color: var(--hk9-primary);
+			text-decoration: underline;
+			text-decoration-thickness: 1px;
+		}
+	}
+}
+
+// Below an empty band (no content card): the trail flows under the hero.
+.hk9-breadcrumbs-strip {
+	padding-top: 1.5rem;
+
+	.hk9-breadcrumbs { margin-bottom: 0; }
+}

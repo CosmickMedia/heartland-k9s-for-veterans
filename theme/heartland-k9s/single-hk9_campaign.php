@@ -65,6 +65,7 @@ while ( have_posts() ) :
 				</div>
 			<?php endif; ?>
 			<div class="<?php echo $hk9_thumb > 0 ? 'hk9-overlap__body ' : ''; ?>hk9-single__body">
+				<?php hk9_the_breadcrumbs(); ?>
 				<h2 class="hk9-single__subheading"><?php esc_html_e( 'About this campaign', 'heartland-k9s' ); ?></h2>
 				<?php echo hk9_paragraphs( $hk9_summary, 'hk9-lead' ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in helper. ?>
 				<dl class="hk9-single__facts">

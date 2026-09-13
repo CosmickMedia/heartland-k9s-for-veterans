@@ -1,0 +1,399 @@
+{
+ "urls": {
+  "summary": "URL coverage proven end to end. (1) New `tools/url-coverage.mjs` parses the Screaming Frog crawl (350 rows, multi-line CSV), fetches the live page sitemap read-only (40 URLs, 21 not in the crawl), docs/migration-map.md, payload-lite live_paths + media-index served_full_url, redirects.json + the plugin seed list and tools/url-matrix.sh, and writes docs/reports/url-coverage.md: 371 rows (24 pages, 16 registry pages, 2 author archives, 48 http\u2192https host redirects, 88 image originals/-scaled, 38 -WxH medium renditions, 84 FooGallery cache thumbs, 71 Avada/plugin/core assets), each with type, live status, post-migration expectation and how it is verified; every image URL resolves to a live:media:<id> record (originals by live_path, -scaled by served_full_url, -WxH by base path, cache thumbs by FooGallery's dir naming) and the consistency checks pass. (2) Author archives: /author/admin/ and /author/hk9director/ \u2192 301 / added to Redirects\\Store::seeds() and payload-src/records/redirects.json; seeded on the main stack with `wp hk9 redirects seed` and verified with curl (301, X-Redirect-By: hk9-legacy, Cache-Control public; ?author=1 and unknown authors stay 404; query string preserved) \u2014 the resolver on parse_request prio 1 wins over Privacy::block_author_query. tools/url-matrix.sh extended (all 19 crawled pages were already there; added the two author rows + /?author=1 404) and run on the main stack: 84 \u2705 / 0 \u274c. (3) New re-runnable plugin/heartland-k9s-core/tests/url-coverage-suite.sh: brings the fresh stack (8095) up clean, rebuilds the old live site (all 40 pages with live ids/slugs/parents/templates, all 244 attachments with live ids at their live paths copied from payload/media, core sizes + -scaled generated, second author, old menu, reading settings), installs plugin+theme from build/*.zip, copies payload-lite into the container, runs preflight/dry-run/import with --adopt-existing (244 adopted, 0 fails), then curls every URL: 24/24 pages, 16/16 registry paths 301\u2192/barkode/\u2026/\u2192200, 2/2 author archives, 126/126 crawled image URLs 200, 84/84 FooGallery cache thumbs reported separately (absent, not in the payload), 799/799 upload URLs referenced by the new theme output resolve (none under /uploads/cache/), url-matrix 84 \u2705, debug.log clean; results written into the report; stack torn down with down -v. Final recorded run: 34 passed / 0 failed. A second run with a plugin ZIP built from the working tree passed the seeded-rules path (34/34, \"seeded by the plugin\"). docs/migration-map.md: two outdated rows corrected (author archives now Redirect; uploads paths identical in adoption mode) and a \"URL coverage\" section appended with the numbers.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/url-coverage.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/url-matrix.sh",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/redirects.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Redirects/Store.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/tests/url-coverage-suite.sh",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/url-coverage.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/migration-map.md"
+  ],
+  "tests": [
+   {
+    "name": "node tools/url-coverage.mjs --probe-live (report generation + consistency checks)",
+    "result": "pass",
+    "evidence": "docs/reports/url-coverage.md: 371 URLs (350 crawled + 21 sitemap-only); page 24, registry page 16, author archive 2, http redirect 48, image original 88, image size variant 38, FooGallery cache thumb 84 (all mapped to a live attachment), theme asset 49, plugin asset 20, core asset 2; Consistency checks: \u2705 every URL classified, every sitemap URL in the migration map, every page/registry path has a url-matrix row, both author archives seeded + in redirects.json + in the matrix, sitemap image crawled, no simulated URL failed. Exit 0."
+   },
+   {
+    "name": "wp hk9 redirects seed + curl on the main stack (8093)",
+    "result": "pass",
+    "evidence": "Success: 2 seed rule(s) written (25 total rules). /author/admin/ \u2192 HTTP 301, Cache-Control: public, max-age=86400, X-Redirect-By: hk9-legacy, Location: http://localhost:8093/; /author/hk9director/ \u2192 same; /?author=1 \u2192 404; /author/nobody/ \u2192 404; /author/admin/?utm_source=x \u2192 301 \u2192 /?utm_source=x. `wp hk9 redirects test /author/admin/ /author/hk9director/` \u2192 2 PASS (offline)."
+   },
+   {
+    "name": "bash tools/url-matrix.sh http://localhost:8093 (main stack)",
+    "result": "pass",
+    "evidence": "exit 0; 84 \u2705, 0 \u274c (was 81 rows; +/author/admin/ 301, +/author/hk9director/ 301 with x-redirect-by: hk9-legacy, +/?author=1 404). Output saved in the scratchpad (url-matrix-main.md)."
+   },
+   {
+    "name": "plugin/heartland-k9s-core/tests/url-coverage-suite.sh \u2014 recorded run with build/*.zip (fresh stack 8095)",
+    "result": "pass",
+    "evidence": "34 passed, 0 failed. fixture: 40 pages, 244 attachments, 1257 files (103 s); pre-flight 244/244 media, 24 pages + 16 registry; dry run media_files adopt 244 fail 0; import: media_files adopt 244 create 5 fail 0, posts_stub adopt 40 create 39 fail 0, no step failed; #2910 \u2192 hk9_barkode larry-and-archie-service-k9; pages 24/24; registry 16/16 (301 \u2192 /barkode/\u2026/ \u2192 200); author archives 2/2 (added by the suite because ZIP 1.2.2 predates the seed \u2014 noted in the report); crawled image URLs 126/126 \u2192 200; FooGallery cache thumbs 84/84 absent (not in payload); X-Redirect-By hk9-legacy, ?author=1 404, record noindex; new-theme upload references 799/799 \u2192 200, 0 under /uploads/cache/, 108/126 crawled files referenced verbatim; url-matrix 84 \u2705 / 0 \u274c; debug.log 0 PHP warnings; teardown down -v (0 hk9fresh containers/volumes left, temp dir removed)."
+   },
+   {
+    "name": "url-coverage-suite.sh \u2014 run with a plugin ZIP built from the working tree (HK9_PLUGIN_ZIP)",
+    "result": "pass",
+    "evidence": "34 passed, 0 failed; 'author archives: 2 \u00d7 301 \u2192 / (seeded by the plugin) (2/2)' \u2014 proves Store::seeds() installs the rules on activation; 803/803 referenced upload URLs; url-matrix 0 \u274c; stack torn down."
+   },
+   {
+    "name": "Lint",
+    "result": "pass",
+    "evidence": "php -l Store.php: No syntax errors; php -l of the embedded fixture PHP (extracted from the suite heredoc): No syntax errors; bash -n url-coverage-suite.sh + url-matrix.sh: ok; node --check url-coverage.mjs: ok; redirects.json parses."
+   }
+  ],
+  "issues": [
+   "Outside my AREA, needs the orchestrator: plugin/heartland-k9s-core/tests/lite-payload-suite.sh line 175 hardcodes `check \"url matrix: 81 \u2705\"` \u2014 tools/url-matrix.sh now has 84 rows (the three author-archive rows), so that assertion must become 84; docs/importer.md (\"passes (81 \u2705)\") and docs/verification.md (\"81/81 on the fresh stack\") and docs/reports/url-matrix*.md carry the old count too.",
+   "payload-lite/ and build/heartland-k9s-payload-lite.zip were NOT rebuilt (outside my AREA): the two new redirect records in payload-src/records/redirects.json reach the payload only after `node tools/build-payload.mjs --lite` + `npm run package`; the packaged plugin 1.2.2 also predates the Store::seeds() change, so the recorded suite run added the two rules itself (`wp hk9 redirects add`) and says so in the report \u2014 after the next release/package, a re-run exercises the seeded path (already proven with a working-tree ZIP: 34/34).",
+   "The main stack (8093) now carries the two seeded author-archive rules (option hk9_redirects), added intentionally with `wp hk9 redirects seed` as instructed; nothing else on the main stack was changed.",
+   "The suite's fixture generates WordPress core sizes for the 244 files with the stock GD editor; every crawled -WxH name matched exactly, but if a future WordPress changed its rounding a variant name could differ from the live file \u2014 on the real site the files simply stay as they are (adoption never regenerates existing sizes), so this would be a simulation artefact, not a migration problem.",
+   "docs/reports/url-matrix.md (main-stack matrix report, outside my AREA) was not regenerated; the fresh run of the matrix is embedded in docs/reports/url-coverage.md instead."
+  ],
+  "integration_notes": "tools/url-coverage.mjs regenerates docs/reports/url-coverage.md from urls-internal_all.csv, the live sitemap (fetched read-only; `--sitemap=<file>` for a saved copy), docs/migration-map.md (parses the Pages table: Live URL + id + disposition), payload-lite/manifest.json + payload/media-index.json, payload-src/records/redirects.json, Redirects\\\\Store::seeds() (parsed from the PHP source) and tools/url-matrix.sh; simulation numbers and the live probe are kept in an HTML comment `<!-- hk9-url-coverage-state \u2026 -->` at the end of the report so re-runs without `--suite`/`--probe-live` keep them. `--emit-urls=<json>` writes the classified list for the suite. The suite (plugin/heartland-k9s-core/tests/url-coverage-suite.sh) is self-contained: env HK9_PLUGIN_ZIP/HK9_THEME_ZIP (default build/*.zip), HK9_TMPDIR, HK9_KEEP_STACK=1 to keep the fresh stack; it needs the FULL payload/ (media files, mounted at /payload by docker/fresh) and payload-lite/; it always does `down -v` first and at the end; the old-site fixture PHP is embedded (heredoc) and refuses non-localhost hosts; registry pages get placeholder titles (\\\"Registry page <id>\\\") \u2014 no BarKode data is ever printed. Rule change in Redirects\\\\Store::seeds(): two new path rules (/author/admin/, /author/hk9director/ \u2192 /) \u2014 installed on plugin activation; existing sites need `wp hk9 redirects seed`. url-matrix.sh gained 3 rows (84 total). migration-map.md: the author-archive row and the uploads row in \\\"Other live URLs\\\" were corrected for adoption mode and a \\\"URL coverage\\\" section was appended."
+ },
+ "seo": {
+  "summary": "Implemented the SEO + structured-data area end to end. New plugin module `HK9\\Core\\Seo` (Module, Detector, Context, Description, Image, Head, Schema, Breadcrumbs, Fields, Sitemap; registered in Plugin.php MODULES after Analytics). Detection of Slim SEO / Yoast / Rank Math / AIOSEO / SEOPress / The SEO Framework yields 'full' vs 'plugin-managed' mode (Settings \u2192 SEO selector auto|full|plugin|off with a rendered status note). Full mode prints document title parts (SEO title field replaces the title; posts page = blog.hero_title; Page N kept), meta description (field \u2192 excerpt \u2192 hero/mission text \u2192 team/campaign summary or story quote \u2192 first paragraph \u226540 chars \u2192 tagline, trimmed ~155 chars at a word boundary), self-referencing canonical incl. /page/N/ (core rel_canonical removed; field override), wp_robots noindex,follow for the field/registry/fixtures, rel prev/next on paged listings, full Open Graph (1200\u00d7630 'hk9-og' crop registered at init, alt/width/height/type, article:* on posts) + Twitter cards, and one JSON-LD @graph (NGO with legalName/alternateName/logo/address/telephone/email/nonprofitStatus/taxID/sameAs/contactPoint/DonateAction, WebSite+SearchAction, WebPage/CollectionPage/AboutPage/ContactPage/SearchResultsPage, BreadcrumbList, BlogPosting, Event on singles + the events listing with timezone-offset ISO 8601 dates and endDate only when set, FAQPage from rendered faq sections, Person ItemList on the people template with no emails, DonateAction on the donate page). Plugin-managed mode prints none of the plugin's tags; the NGO/Event/FAQ/ItemList/DonateAction nodes use Slim SEO's @id scheme and are merged directly into Slim SEO's graph via `slim_seo_schema_graph` (one script, one Organization; verified with Slim SEO 4.10.1 installed temporarily, then removed incl. options), with a separate same-@id graph as the fallback for other plugins (verified with Slim's Schema feature off). Per-post \"Search & social\" meta box (title/description/social image/noindex/canonical) via the fields framework with registered REST-schema meta, revisions, REST pre-sanitizing and block-editor mirroring; shows a note in plugin-managed mode. Core sitemap in full mode: editorial types listed, noindexed posts + fixtures excluded, lastmod on post/front/term entries. Theme: compat.php now delegates to the plugin (minimal plugin-less fallback kept), new inc/seo.php + template-parts/breadcrumbs.php (Home \u203a Section \u203a Page, small muted trail, aria-current) placed inside the content card on default/landing pages, in story/team/campaign/event singles and posts; SCSS in _pages-shared.scss; CSS rebuilt. Payload settings.json gained the seo group (mode auto, default social image = hero-home token, same_as = Facebook + Candid, breadcrumbs on). Docs: docs/seo.md (new), admin-guide SEO section, ARCHITECTURE \u00a72/\u00a77/\u00a711/\u00a712. tools/schema-check.mjs written and run: 29/29 URLs pass in full mode, 10/10 with Slim SEO merged, 3/3 fallback; Lighthouse SEO 100 on /, /events/, /donate/. Plugin-less theme verified on the fresh stack (torn down afterwards). All tmp objects removed and local settings restored.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Module.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Detector.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Context.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Description.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Image.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Head.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Breadcrumbs.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Fields.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Sitemap.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Plugin.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Settings/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/compat.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/seo.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/template-parts/breadcrumbs.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/functions.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/page-templates/landing.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_story.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_team.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_campaign.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single-hk9_event.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/single.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_pages-shared.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/schema-check.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/payload-src/records/settings.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/seo.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/admin-guide.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md"
+  ],
+  "tests": [
+   {
+    "name": "php -l on every touched PHP file (plugin Seo/*, Plugin.php, Settings/Schema.php, theme compat/seo/breadcrumbs/page/landing/singles/functions)",
+    "result": "pass",
+    "evidence": "No syntax errors detected for all files; node --check tools/schema-check.mjs ok"
+   },
+   {
+    "name": "tools/schema-check.mjs full mode, 29 URLs (home, 8 reference pages, all listing pages, story/team/campaign/event singles, tmp upcoming event, /news/, /news/page/2/, fixture post, category, search)",
+    "result": "pass",
+    "evidence": "29/29 URLs pass; exactly 1 JSON-LD block each; types e.g. /service-dogs-and-the-ada/: NGO\u00d71, ImageObject\u00d72, WebSite\u00d71, WebPage\u00d71, BreadcrumbList\u00d71, FAQPage\u00d71; /meet-the-team/: \u2026ItemList\u00d71; /events/ with tmp event: Event\u00d71; /fixture-a-short-title/: BlogPosting\u00d71"
+   },
+   {
+    "name": "Event schema dates/timezone (tmp event 2026-11-14 10:00\u201314:30 America/Chicago; Joplin event July)",
+    "result": "pass",
+    "evidence": "startDate 2026-11-14T10:00:00-06:00, endDate 2026-11-14T14:30:00-06:00 (CST) vs 2026-07-25T18:00:00-05:00 (CDT); endDate omitted when hk9_end empty; PostalAddress parsed from 'Joplin, MO' / '109 W Main St\\nNeosho, MO 64850'; organizer \u2192 NGO @id; offers url + InStock"
+   },
+   {
+    "name": "Per-post fields: noindex / SEO title / description / canonical override + REST meta",
+    "result": "pass",
+    "evidence": "tmp event with hk9_seo_* set: <title>Custom SEO Title\u2026</title>, robots 'noindex, follow', description from field, canonical + og:url = https://example.org/canonical-target/, event dropped from wp-sitemap-posts-hk9_event-1.xml (count 0); GET /wp-json/wp/v2/hk9_event/761 meta shows hk9_seo_title/description/image/noindex/canonical with typed values"
+   },
+   {
+    "name": "Head tags full mode (home, paged, search, 404, post)",
+    "result": "pass",
+    "evidence": "/ title 'Heartland Canines for Veterans \u2013 So They Never Walk Alone', og:image hero-home-1024x630.webp with width/height/type/alt; /news/ rel=next \u2192 /news/page/2/, /news/page/2/ title 'News \u2013 Page 2 \u2013 \u2026', canonical /news/page/2/, rel=prev; post: og:type article + article:published_time/modified_time/section; /?s=dog robots noindex, no description/canonical; 404 no schema"
+   },
+   {
+    "name": "Sitemap full mode",
+    "result": "pass",
+    "evidence": "wp-sitemap.xml lists page, hk9_story, hk9_team, hk9_campaign, hk9_event, category, post_tag; entries carry <lastmod>2026-09-13T10:45:58+00:00</lastmod>; noindexed post and fixtures excluded; no barkode/person/partner"
+   },
+   {
+    "name": "Registry record (hk9_barkode single)",
+    "result": "pass",
+    "evidence": "0 ld+json blocks, robots 'noindex, nofollow', generic description, og:image = default social image (not the record photo)"
+   },
+   {
+    "name": "Plugin-managed mode with Slim SEO 4.10.1 (installed temporarily)",
+    "result": "pass",
+    "evidence": "Head shows exactly 1 title/description/canonical/og:title/og:image/twitter:card each and no 'Heartland K9s SEO' block; schema-check 10/10 with a single slim-seo-schema block: NGO\u00d71 (merged into Slim's #organization: legalName, address, taxID, nonprofitStatus, sameAs, contactPoint, DonateAction), WebPage.potentialAction = [ReadAction ref, DonateAction] on /donate/, Event/FAQPage/ItemList appended; Settings \u2192 SEO note 'Detected SEO plugin: Slim SEO 4.10.1 \u2026 Plugin-managed mode'; Search & social box shows the note and no fields; Slim SEO's sitemap has 0 barkode entries"
+   },
+   {
+    "name": "Generic fallback (Slim SEO Schema feature off \u2192 separate hk9-schema graph)",
+    "result": "pass",
+    "evidence": "schema-check 3/3 (/donate/ NGO+ImageObject+WebPage with url/name+DonateAction, /service-dogs-and-the-ada/ FAQPage, /meet-the-team/ ItemList); one hk9-schema script printed at wp_footer"
+   },
+   {
+    "name": "Slim SEO removal after the test",
+    "result": "pass",
+    "evidence": "plugin deactivated + deleted (plugin list count 0), options slim_seo and slim_seo_db_version deleted, no slim tables, no slim cron hooks"
+   },
+   {
+    "name": "Lighthouse SEO category (node tools/lighthouse.mjs --urls=/,/events/,/donate/ --runs=1)",
+    "result": "pass",
+    "evidence": "SEO 100 / 100 / 100 (performance 96/99/99, accessibility 100, best-practices 100); JSON in scratchpad/seo-lh/{home,events,donate}-run1.json"
+   },
+   {
+    "name": "Visible breadcrumbs",
+    "result": "pass",
+    "evidence": "Rendered trails: /service-dogs-and-the-ada/ 'Home \u203a Service Dogs and the ADA' (first line of the content card), /stories/madison-and-gunther/ 'Home \u203a Success Stories \u203a Madison & Gunther' (after the bleed figure), /teams/billy-and-caddie/ 'Home \u203a HK9 Teams in Training \u203a Billy & Caddie', /campaigns/one-of-us/ 'Home \u203a Campaigns \u203a \u201cOne of Us\u201d Campaign', event single 'Home \u203a Events \u203a \u2026', post 'Home \u203a News \u203a \u2026', /privacy-policy/ 'Home \u203a Privacy Policy'; none on /, /about/ (reference template), search; screenshots reviewed at 1440/390 (muted 13px, chevrons, wraps on mobile; prose link colour overridden after a specificity fix)"
+   },
+   {
+    "name": "Admin screens",
+    "result": "pass",
+    "evidence": "Settings \u2192 SEO tab renders all 8 fields + status note, 0 PHP notices; 'Search & social' box present on post.php (page 278) and post-new.php with data-hk9-mirror='fields' and fields.js/sections.js enqueued; debug.log empty throughout"
+   },
+   {
+    "name": "Plugin-less theme (fresh stack 8095, theme copied in, plugin absent)",
+    "result": "pass",
+    "evidence": "Child page under parent: theme fallback block '<!-- Heartland K9s SEO meta -->' with description + og:title, core canonical, breadcrumbs 'Home \u203a tmp-seo Parent \u203a tmp-seo Child page', no JSON-LD, empty debug.log; stack removed with -v afterwards"
+   },
+   {
+    "name": "CSS build budget",
+    "result": "pass",
+    "evidence": "node tools/build-css.mjs --check: theme.css 49.4 kB raw / 9.6 kB gzip (budget 90/16)"
+   },
+   {
+    "name": "Cleanup of tmp objects on the main stack",
+    "result": "pass",
+    "evidence": "tmp event 761 deleted (--force), 'hk9-dev fixtures delete' removed 18 posts/7 terms/1 user, hk9_settings 'seo' group removed again (option keys back to the original 11 groups), temporary hk9_seo_title on the News page deleted, post search for 'tmp-seo' returns 0 rows"
+   }
+  ],
+  "issues": [
+   "theme/heartland-k9s/functions.php was edited (one word: 'seo' added to the inc module list) although it is not in my AREA \u2014 inc/seo.php cannot load otherwise.",
+   "theme/heartland-k9s/assets/dist/theme.css was rebuilt by tools/build-css.mjs and therefore also compiles the in-progress _fonts.scss changes of another agent; whoever finishes the fonts work should rebuild once more.",
+   "While testing, another agent's uncommitted inc/assets.php briefly fatalled (undefined hk9_deferred_fonts) \u2014 it resolved itself within seconds; not related to this work.",
+   "The payload's default social image is the ref asset hero-home (1024\u00d71024 on the local stack), so share cards are 1024\u00d7630 rather than 1200\u00d7630 until a landscape 1200\u00d7630 image is uploaded under Settings \u2192 SEO (documented in docs/seo.md \u00a77).",
+   "Plugin-managed merging is only wired for Slim SEO's slim_seo_schema_graph filter; Yoast/Rank Math/AIOSEO/SEOPress/TSF get the separate same-@id graph (untested against those plugins).",
+   "No version bump / changelog entries were made (release is the owner's 'Build It' step); docs/install.md \u00a7B.0 Slim SEO row still describes the old theme behaviour and could mention that Heartland now merges its NGO/Event/FAQ schema into Slim SEO's graph."
+  ],
+  "integration_notes": "Boot: `HK9\\Core\\Seo\\Module` is in Plugin::MODULES right after Analytics\\Fathom (needs Settings, Sections, Meta, Events\\Dates). Global helpers declared by the plugin (guarded): hk9_seo_mode(), hk9_seo_plugin(), hk9_seo_prints_meta(), hk9_breadcrumb_trail(), hk9_seo_canonical(), hk9_seo_description(), hk9_seo_image(), hk9_seo_schema_json(). Theme: inc/compat.php delegates when hk9_seo_prints_meta() exists (hk9_seo_delegated()); inc/seo.php provides hk9_breadcrumbs()/hk9_the_breadcrumbs()/hk9_breadcrumbs_enabled() and a plugin-less trail; breadcrumbs are gated by setting seo.breadcrumbs. New settings group `seo` (schema_mode, default_social_image, org_logo, org_alternate_name, org_description, same_as, twitter_site, breadcrumbs) \u2014 Store/importer accept it without changes; payload-src/records/settings.json carries the defaults. New image size 'hk9-og' 1200\u00d7630 (crop) \u2014 the importer's media_sizes step picks it up automatically via wp_get_missing_image_subsizes(); the theme's hk9_ensure_image_size() creates missing crops on demand. Meta keys hk9_seo_title/description/image/noindex/canonical on page, post, hk9_story, hk9_team, hk9_campaign, hk9_event (filter hk9/seo/post_types). Privacy\\Registry::meta_description is unhooked by Seo\\Head in full mode (the plugin prints the registry description itself via the hk9/seo/description filter). Verification tools: node tools/schema-check.mjs [--urls=\u2026] [--expect-scripts=2] (exit 1 on errors) and tools/lighthouse.mjs. Docs: docs/seo.md, docs/admin-guide.md 'Search engines & social sharing (SEO)', docs/ARCHITECTURE.md \u00a712 (+\u00a72 layout, boot order, \u00a77 SEO tab, \u00a711 breadcrumbs). Release: bump plugin + theme versions and changelog per the usual 'Build It' flow; Slim SEO is NOT bundled and was removed from the local stack after verification."
+ },
+ "perf": {
+  "summary": "Performance pass on the theme (area: assets.php, setup.php, template-tags.php image helpers, theme.js, generated font partial) with measured proof. Mobile Lighthouse (median of 3, same tool/settings, same local stack): / 94\u219299 (LCP 3.08\u21922.25 s), /about/ 96\u219299, /program/ 96\u219299, /contact/ 93\u219294, /news/ 99\u2192100, /events/ 98\u219299, /meet-the-team/ 95\u219299, /photos/ 75\u219295 (LCP 8.03\u21922.93 s). A11y/BP/SEO 100 everywhere; CLS 0; TBT 0. Targets met on 7 of 8 pages; /contact/ stays at 94 (runs 94/95/94) because of the Gravity Forms stack (38 kB gzip render-blocking CSS + 117 kB deferred JS incl. jQuery) \u2014 experiments show nothing left in the theme on that path; options documented. Home LCP < 2.5 s met.\n\nChanges: (1) WebP sub-sizes via image_editor_output_format (JPEG\u2192WebP; PNG\u2192WebP only for opaque truecolor/greyscale PNGs, palette/alpha PNGs stay PNG), WebP quality 80 (core's 86 gave only \u221210 %); hero 768w 108\u219275 kB, about card 87\u219253 kB, testimonial 59\u219230 kB, events flyer PNG 628\u219271 kB. (2) New sizes hk9-tile (512\u00d7683 soft) and hk9-portrait-sm (300\u00d7400 crop) so gallery tiles have candidates between medium and large. (3) render_block_core/gallery rewrites tile `sizes` from the real column/container widths (measured), using core's own srcset function; photos page eager tiles 2 567\u21921 055 kB. (4) hero_image.image_mobile rendered as <picture><source srcset sizes> with a matching per-media-query preload (imagesrcset/imagesizes) \u2014 verified one hero request per breakpoint; without a mobile image Chrome picks the 768w candidate at 412@1.75. (5) Fraunces italic (82 kB, only used below the fold) removed from the CSS and loaded via the Font Loading API after load + FCP + fonts.ready, with <noscript> and block-editor fallbacks; generator emits fonts.json. (6) Theme CSS (core + bundles) printed inline instead of <link>s \u2014 measured meet-the-team 94\u219299, news 99\u2192100, no FOUC possible; toggle via HK9_INLINE_CSS / filter. (7) Gravity Forms 3.0.1's empty orbital stylesheet (0 bytes, 1 blocking RTT) dropped while the file is empty; verified GF assets load only on form pages. Docs: new docs/performance.md (before/after tables, LCP element per page, bytes, remaining opportunities, re-measure commands); docs/install.md \u00a7D.6 hosting/LiteSpeed Cache/purge/Cache-Control/WebP-support guidance. Lighthouse after-run published to docs/reports/lighthouse/report.md (+ baseline report). Screenshot diff vs docs/reports/screenshots/wp/chromium: 0.00 % on 14 of 16 route\u00d7width pairs, contact 0.01/0.03 % (pre-existing GF nuance); network audit PASS (16 URLs); axe PASS; debug.log empty; no tmp objects left.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/setup.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/assets.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/template-tags.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/js/theme.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.js",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/editor.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/src/scss/_fonts.scss",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/fonts/fonts.json",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/fonts/build-fonts.py",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/performance.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/install.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/report.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/lighthouse/report-baseline-2026-09-13.md"
+  ],
+  "tests": [
+   {
+    "name": "Lighthouse mobile baseline (before), 8 URLs \u00d7 3 runs",
+    "result": "pass",
+    "evidence": "node tools/lighthouse.mjs \u2026 --out=<scratch>/perf-before: / 94 (LCP 3.08), /about/ 96, /program/ 96, /contact/ 93 (LCP 3.16), /news/ 99, /events/ 98, /meet-the-team/ 95, /photos/ 75 (LCP 8.03 s, 53 gallery images / 2.57 MB). Copied to docs/reports/lighthouse/report-baseline-2026-09-13.md"
+   },
+   {
+    "name": "Lighthouse mobile after, 8 URLs \u00d7 3 runs (same settings)",
+    "result": "pass (7/8 \u2265 95; /contact/ 94)",
+    "evidence": "docs/reports/lighthouse/report.md: / 99/99/99 FCP 0.91 LCP 2.25; /about/ 99 LCP 2.10; /program/ 99 LCP 2.10; /contact/ 94/95/94 LCP 3.00; /news/ 100 LCP 1.73; /events/ 99 LCP 1.95; /meet-the-team/ 99 LCP 2.25; /photos/ 95/95/95 LCP 2.93 (eager tiles 1 055 kB). A11y/BP/SEO 100, CLS 0.000, TBT 0 on every URL"
+   },
+   {
+    "name": "WebP sub-size generation (tmp attachments, then regeneration of the theme sizes on the main stack)",
+    "result": "pass",
+    "evidence": "tmp-perf-test import: JPEG \u2192 all sizes image/webp; RGBA PNG (logo) \u2192 image/png; opaque RGB PNG (3.4 MB flyer) \u2192 webp. Theme sizes regenerated for 233 images with wp_update_image_subsizes (the importer's path): 209 images WebP theme sizes, 24 alpha/palette PNGs kept PNG, 0 errors; hero-home-768x768 108 295 \u2192 75 204 B; tmp objects deleted"
+   },
+   {
+    "name": "Hero candidate selection and image_mobile <picture>/preload",
+    "result": "pass",
+    "evidence": "Playwright: home 412@1.75 currentSrc hero-home-768x768.webp; tmp page with image_mobile: 412@1.75 \u2192 about-dog-768x768.webp only, 767@2 \u2192 about-dog.webp, 768@1 \u2192 hero-home-768x768.webp, 1440 \u2192 hero-home.webp \u2014 exactly one hero request per breakpoint (preload and <source> agree); tmp page deleted"
+   },
+   {
+    "name": "Deferred italic font",
+    "result": "pass",
+    "evidence": "Playwright 412 and 1440: roman faces requested at ~60\u201394 ms, fraunces-italic-var.woff2 after load/FCP (~150 ms); document.fonts lists 'Fraunces italic 300 800 loaded'; footer tagline computed font-style italic with Fraunces. Lighthouse trace: italic request now starts after observed FCP"
+   },
+   {
+    "name": "Gallery tile sizes (photos page)",
+    "result": "pass",
+    "evidence": "Rendered sizes=\"(max-width: 599px) calc(50vw - 49px), (max-width: 767px) calc(33.33vw - 38px), (max-width: 1088px) calc(33.33vw - 54px), 309px\" (core adds 'auto,' for lazy tiles); measured tile widths 157/162/202/287/309 px match. Full-scroll picks: 412@1.75 all 71 tiles 1.5 MB (300w/455w candidates), 393@3 2.3 MB (512-wide WebP), 1440 1.9 MB; before: 2.57 MB for 53 eager tiles"
+   },
+   {
+    "name": "Pixel comparison against docs/reports/screenshots/wp/chromium (8 routes \u00d7 390/1440)",
+    "result": "pass",
+    "evidence": "tools/screenshot.mjs + tools/compare.mjs: heights identical everywhere; 0.00 % differing on 14 pairs, contact 0.01 % (390) / 0.03 % (1440). One earlier capture showed a transient 0.97 % on home-1440 (lazy image not captured by the tool); re-capture 0.00 %"
+   },
+   {
+    "name": "node tools/network-audit.mjs",
+    "result": "pass",
+    "evidence": "PASS \u2014 all 16 URLs clean (no forbidden hosts, no failed requests, no console errors); run twice (after all changes)"
+   },
+   {
+    "name": "node tools/axe.mjs",
+    "result": "pass",
+    "evidence": "PASS \u2014 no serious/critical violations across 16 URLs \u00d7 2 widths"
+   },
+   {
+    "name": "Gravity Forms asset scoping",
+    "result": "pass",
+    "evidence": "curl: no gform/gravity assets on / and /about/; on /contact/ and /online-application/ 3 GF stylesheets + scripts; the 0-byte gravity-forms-orbital-theme.min.css link no longer printed (verified file size 0 on disk before dropping)"
+   },
+   {
+    "name": "php -l on every theme inc file + functions.php + MediaSizes.php; CSS budget check; debug.log",
+    "result": "pass",
+    "evidence": "No syntax errors; tools/build-css.mjs --check passes (core 49.2 kB / 9.6 kB gzip); debug.log 0 bytes at the end (one transient fatal from an edit window at 15:07 was cleared); no 0-byte upload files; no tmp- posts/attachments left"
+   }
+  ],
+  "issues": [
+   "/contact/ scores 94 (94/95/94), below the \u226595 target: its text LCP is charged with Gravity Forms' 38 kB gzip render-blocking CSS + ~117 kB deferred JS (jQuery/migrate/wp-* helpers included) and the two fonts. Experiments: blocking GF JS \u2192 96, GF CSS \u2192 94, fonts \u2192 96; fetchpriority=low on GF scripts changed nothing (Chrome already fetches deferred scripts at Low). Options documented in docs/performance.md \u00a73 (LiteSpeed 'Load JS Deferred: Delayed' for GF handles, non-AJAX gravity_form(), or the built-in provider) \u2014 all outside the theme or product decisions.",
+   "Incident on the MAIN stack, repaired: `tools/wp.sh media regenerate --image_size=hk9-tile --yes` (used once to generate the new tile size) combined with the WebP output filter made core convert every full-size file to a WebP copy and re-point _wp_attached_file while WP-CLI kept the old metadata \u2192 154 attachments inconsistent (one 0-byte amazon.webp from a palette PNG). Repaired with a tmp script: _wp_attached_file restored to the metadata file for all 154, the 154 WebP full copies created by that run deleted, verified 0 inconsistencies and 0 zero-byte files. The PNG rule was tightened (palette PNGs keep PNG) and the caveat ('regenerate whole attachments, never --image_size') is documented in the setup.php docblock, docs/performance.md and the docs' regenerate commands. The 5 new design images (236\u2013240) were fully regenerated on purpose and now have file=.webp + original_image=.jpg, which is what a live import produces for them.",
+   "Out-of-area touch: tools/fonts/build-fonts.py (the generator of the 'Do not edit' _fonts.scss) \u2014 minimal change: the italic spec is marked deferred, the partial omits it, and a fonts.json manifest is written; generator re-run offline (--skip-download), woff2 outputs byte-identical.",
+   "docs/ARCHITECTURE.md \u00a711 still says the stylesheets are 'enqueued'/'loaded'; they are now printed inline by default (hk9_enqueue_theme_style(), filter hk9/theme/inline_css) and the italic face is runtime-loaded \u2014 ARCHITECTURE.md and docs/reports/lighthouse/summary.md were being edited by other agents / are outside the area, so they were not updated; a one-line note in each is advisable. New sizes hk9-tile and hk9-portrait-sm are also not in \u00a711's size list.",
+   "hk9-og (SEO agent's 1200\u00d7630 social crop) is generated as WebP like every other sub-size; Seo/Image.php already derives the mime from the URL. If a network is found not to render WebP og:image, that size needs a JPEG exception in Seo/Image.php (noted in docs/performance.md \u00a74).",
+   "MediaSizes.php needed no change: the output-format filter is registered at theme load and applies to wp_update_image_subsizes() in admin/REST/CLI contexts (the theme must be active for the importer anyway). The import now also generates hk9-tile and hk9-portrait-sm (two more small files per image) and WebP encoding \u2014 the B.4 timing note ('3\u201310 minutes') still holds but is slightly conservative.",
+   "The optional live-site step `wp media regenerate --yes` (to make the adopted media's core sizes WebP) will, with the filter active, also write a WebP copy of every full-size file and make it the attachment file (JPEG kept as original_image) \u2014 normal core behaviour; the importer's adoption code accepts both names (checked Adopt.php / Validate.php). Documented; not run on live."
+  ],
+  "integration_notes": "All work is uncommitted in the working tree on build/wordpress-conversion (no git commit/checkout performed). Rebuilt assets: npm run build:css and build:js were run (dist/theme.css, editor.css, theme.js updated; dist/theme.css also picked up another agent's in-progress _pages-shared.scss change because the build compiles the shared tree). Theme behaviour changes to be aware of: (a) image_editor_output_format now active in every context \u2014 new uploads get WebP sub-sizes and a WebP full copy (JPEG original kept as original_image); JPEG\u2192WebP, PNG only when opaque truecolor/greyscale (hk9_png_webp_safe); filters hk9/theme/webp_subsizes, hk9/theme/webp_quality (80). (b) Two new image sizes hk9-tile (512\u00d7683) and hk9-portrait-sm (300\u00d7400 crop) \u2014 the importer's media_sizes step will generate them for the 244 adopted files on live (WebP). (c) Theme CSS is inline by default (HK9_INLINE_CSS constant / hk9/theme/inline_css filter to revert to <link>s); style handles hk9-theme/hk9-<bundle> still exist so wp_add_inline_style dependencies keep working. (d) Fraunces italic is no longer in theme.css/editor.css: assets/fonts/fonts.json (generated) drives hk9_deferred_fonts() \u2192 HK9.config.fonts \u2192 theme.js FontFace loader; <noscript> and block-editor (enqueue_block_assets) fallbacks declare the @font-face; never run the old font build without the updated generator. (e) hk9_the_hero() renders image_mobile through <picture><source srcset sizes> and hk9_preload_lcp_image() emits two media-scoped preloads; new helpers hk9_hero_mobile_source()/hk9_hero_mobile_media()/hk9_hero_desktop_media() in template-tags.php. (f) render_block_core/gallery filter hk9_gallery_block_sizes() + hk9_gallery_sizes_context() in setup.php; hk9_content_image_sizes() consults the context. (g) style_loader_tag filter drops Gravity Forms' orbital stylesheet only while its file is 0 bytes. Local stack state: theme sizes of all 233 images are now WebP (originals JPEG), the 5 design images fully regenerated (file .webp + original_image .jpg), hk9-tile/hk9-portrait-sm/hk9-og exist for all images; the --image_size incident was fully repaired (see issues). Reports: docs/reports/lighthouse/report.md replaced by the after run (8 URLs), report-baseline-2026-09-13.md added, run JSONs copied (git-ignored); summary.md there still describes the 1.0.2 run. Release: theme version not bumped (release is the orchestrator's 'Build It' step); a CHANGELOG entry summarising the seven items above is appropriate."
+ },
+ "review": {
+  "verdict": "PASS with minor findings. (a) URLs: tools/url-matrix.sh on the main stack (8093) = 84 \u2705 / 0 \u274c incl. /author/admin/ and /author/hk9director/ 301 \u2192 / and /?author=1 404; docs/reports/url-coverage.md classifies all 371 URLs (350 crawl rows + 21 sitemap-only) into 10 classes, each with a defensible post-migration rule (pages 200 same URL by adopted id+slug; registry 301 \u2192 /barkode/\u2026/ noindex; author archives 301 \u2192 /; http\u2192https host-level; originals/-scaled/-WxH untouched on disk; FooGallery cache thumbs kept on disk but unreferenced; Avada/plugin assets not content URLs) and consistency checks pass. (b) SEO: with Slim SEO 4.10.1 ACTIVE (installed temporarily, then deactivated, deleted, and its slim_seo/slim_seo_db_version options removed) /, /events/, /meet-the-team/ each have exactly 1 <title>, 1 meta description, 1 canonical, 1 og:title and 1 JSON-LD script whose graph holds NGO\u00d71, WebSite\u00d71, no duplicate @id (the plugin's NGO/ItemList merged into Slim's graph); Slim's sitemap index lists no hk9_barkode type. With Slim INACTIVE the full output is present: tools/schema-check.mjs 9/9 URLs pass (one block each, correct page types incl. FAQPage/ItemList/SearchResultsPage), Lighthouse SEO = 100 on /, /contact/, /events/; registry records carry meta noindex,nofollow + X-Robots-Tag; search has noindex,follow and no canonical; core wp-sitemap lists page/story/team/campaign/event only, 0 registry records; per-post fields verified on a tmp page (deleted): <script> stripped from title, javascript: canonical dropped, https canonical accepted, noindex honoured, every meta attribute entity-escaped, JSON-LD encoded with JSON_HEX_TAG; hk9_seo_* meta registered with show_in_rest for page and post; php -l clean on all touched files. (c) Performance: Lighthouse mobile (runs=1) / 98 (LCP 2.40 s), /contact/ 94 (LCP 3.00 s), /events/ 100 (LCP 1.88 s) \u2014 consistent with docs/performance.md (99 / 94 / 99, median of 3) within single-run noise; A11y/BP/SEO 100, CLS 0, TBT 0. The hero preload on / and /barkode/ carries exactly the rendered <img> srcset and sizes=\"100vw\" with fetchpriority=high. No WebP regression: 37 PNG attachments, none with alpha/palette got WebP renditions; header/footer logo still served as PNG. Visual diff vs docs/reports/screenshots/wp/chromium: 0.00 % on 13 of 16 route\u00d7width pairs, contact 0.01/0.03 % (pre-existing), get-involved-390 0.09 % which is pixel-level lossy WebP re-encoding of the partner logo tiles (crop inspected, layout identical). debug.log empty; no tmp objects left on the main stack.",
+  "findings": [
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Head.php",
+    "issue": "Pages marked noindex (per-post toggle, and registry records in full mode) still print a self-referencing <link rel=\"canonical\">, the full OG/Twitter set and (for the toggle) the JSON-LD WebPage graph. Verified on tmp page 782: `<meta name='robots' content='noindex, follow'>` + `<link rel=\"canonical\" href=\"\u2026/tmp-seo-review/\">` + `<script id=\"hk9-schema\">`; /barkode/hk923-005/ shows noindex,nofollow + canonical + og:title. Google documents noindex + self-canonical as conflicting signals.",
+    "fix": "In Head::canonical()/print(): when Context::noindex() is true (and no explicit hk9_seo_canonical override), skip the canonical tag and rel prev/next; optionally skip Schema output (`Schema` already skips hk9_barkode \u2014 extend the same guard to Fields::is_noindex()). Keep OG tags (harmless for sharing). Add a schema-check row for a noindexed URL asserting 0 canonical."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/url-coverage.md",
+    "issue": "The recorded simulation section still states the installed ZIP predates the author-archive seed rules and that the suite added them with `wp hk9 redirects add`; the agent says a second run with a working-tree ZIP passed via the seeded path, but that run is not what the report records, so the seeded-on-activation path (Store::seeds()) is not evidenced in the checked-in report.",
+    "fix": "npm run package (rebuild build/heartland-k9s-core.zip from the working tree), re-run plugin/heartland-k9s-core/tests/url-coverage-suite.sh, and let it overwrite the Simulation section so the report shows 'seeded by the plugin' for the two author rows; drop the 'predates' bullet."
+   },
+   {
+    "severity": "low",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/inc/setup.php",
+    "issue": "Opaque PNG attachments now end up with mixed-format renditions: 12 of the 37 PNG attachments on the main stack have both PNG sub-sizes (the pre-existing core sizes) and WebP sub-sizes (theme sizes regenerated after the image_editor_output_format change), so a single srcset mixes .png and .webp candidates. The same will happen on the live site because the importer only generates missing sizes. Valid HTML and no visual impact (partner logos diff 0.09 % at 390 px, layout identical), but inconsistent bytes per breakpoint and confusing for anyone auditing the media library.",
+    "fix": "Either accept and document it in docs/performance.md (\u00a7WebP) and docs/install.md \u00a7D.6, or add a post-import/one-off `wp media regenerate --image_size=<theme sizes>` note; if full consistency is wanted, run `wp media regenerate` for image/png attachments once after go-live (only 37 files)."
+   },
+   {
+    "severity": "info",
+    "file": "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/performance.md",
+    "issue": "docs/performance.md measures /program/ with an image hero, but on the main stack /the-service-k9-program/ (the live page the coverage report maps as `program`) renders the band hero with hk9_sec_hero_image image=0 \u2014 the two are different pages, which is fine, but a reader comparing the two docs may expect the LCP-image numbers to apply to the live URL.",
+    "fix": "Add one sentence to docs/performance.md clarifying that /program/ is the reference-template page and /the-service-k9-program/ is the migrated live page with a band hero (text LCP), or measure both."
+   }
+  ],
+  "spot_checks": [
+   "bash tools/url-matrix.sh http://localhost:8093 \u2192 84 \u2705 / 0 \u274c (author archives 301 \u2192 / with x-redirect-by hk9-legacy; /?author=1 404)",
+   "docs/reports/url-coverage.md: 371 rows, 10 classes, Rules table with verification column; Consistency checks \u2705; Simulation 34 passed / 0 failed (recorded with the 1.2.2 ZIP + suite-added author rules)",
+   "Slim SEO INACTIVE: /, /events/, /meet-the-team/, /news/ \u2192 1 <title> (the 2nd `<title` match is an SVG icon title), 1 description, 1 canonical, 1 og:title, 1 ld+json; node tools/schema-check.mjs on 9 URLs \u2192 9/9 PASS",
+   "Slim SEO ACTIVE (plugin install slim-seo --activate, 4.10.1): same 3 pages \u2192 1/1/1/1/1; graph = WebSite\u00d71, SearchAction, WebPage, ReadAction, NGO\u00d71, ImageObject\u00d71 (+BreadcrumbList, +ItemList on people) with no duplicate @id; Slim sitemap index has no hk9_barkode; then deactivate + delete + options slim_seo/slim_seo_db_version removed (0 left)",
+   "/barkode/hk923-005/ \u2192 meta robots noindex,nofollow + X-Robots-Tag; /?s=dog \u2192 noindex,follow, 0 canonical; /wp-sitemap.xml lists page/hk9_story/hk9_team/hk9_campaign/hk9_event only, 0 /barkode/<slug>/ entries",
+   "tmp page 782 (deleted afterwards): hk9_seo_title '<script>\u2026' stored as '\"Quoted\" & Co', description '\"><img\u2026>' stored as '\"> desc', canonical 'javascript:alert(3)' stored as '' and self-canonical printed, https canonical accepted and printed, noindex=1 \u2192 noindex,follow; all attributes entity-escaped; get_registered_meta_keys shows 5 hk9_seo_* keys with show_in_rest for page + post",
+   "node tools/lighthouse.mjs --urls=/,/contact/,/events/ --runs=1 \u2192 98/94/100 perf, SEO 100 all, LCP 2.40/3.00/1.88 s, CLS 0, TBT 0 (doc: 99/94/99, LCP 2.25/3.00/1.95)",
+   "Home preload: href hero-home.webp, imagesrcset identical to the <img srcset> (7 candidates), imagesizes=100vw, fetchpriority=high; same on /barkode/",
+   "wp eval over 37 PNG attachments: 0 alpha/palette PNGs have WebP sub-sizes; 12 opaque PNGs have mixed PNG+WebP sub-sizes; header/footer logo src/srcset are .png",
+   "tools/screenshot.mjs + tools/compare.mjs vs docs/reports/screenshots/wp/chromium: 13/16 at 0.00 %, contact 0.01/0.03 %, get-involved-390 0.09 % \u2014 crop of rows 2600\u20133540 shows partner logo tiles re-encoded (WebP), identical layout",
+   "php -l on Seo/*.php, Plugin.php, Settings/Schema.php, Redirects/Store.php, theme compat/seo/assets/setup/template-tags/breadcrumbs/functions/page/single*/landing \u2192 no syntax errors; debug.log 0 lines; tmp posts 0"
+  ]
+ },
+ "fix": {
+  "summary": "Applied all four review findings and re-ran the affected checks on the main stack (8093) and the fresh stack (8095, torn down afterwards).\n\n(1) noindex + canonical conflict (Head.php): added `Context::rel_canonical()` / `Context::has_canonical_override()`; `Head::print()` now skips `<link rel=\"canonical\">` and rel prev/next on any singular view where `Context::noindex()` is true (per-post toggle, hk9_barkode records, local fixtures) unless the per-post canonical override names another URL; `og:url` and the OG/Twitter set stay. `Schema::printable()` extends the old hk9_barkode-only guard to `is_singular() && Context::noindex()`, so noindexed pages print no JSON-LD (full mode) and get no extras merged (plugin mode). `tools/schema-check.mjs` gained noindex rows (`--noindex=`, default `/barkode/hk923-005/`; `--noindex=` empty to skip) asserting robots noindex present, 0 canonical, 0 prev/next, 0 JSON-LD. Verified: registry record \u2192 `noindex, nofollow` + X-Robots-Tag, 0 canonical, 0 ld+json, og:title/og:url still 1; tmp page 783 (deleted) with hk9_seo_noindex=1 \u2192 `noindex, follow`, 0 canonical, 0 JSON-LD; with canonical override https://example.org/elsewhere/ \u2192 that canonical printed, 0 JSON-LD; toggle off \u2192 self canonical + 1 JSON-LD. docs/seo.md, docs/ARCHITECTURE.md \u00a712 updated.\n\n(2) url-coverage report: `npm run build` + `npm run package` rebuilt build/heartland-k9s-core.zip (now contains src/Seo/ and the Store::seeds() author-archive rules, no tests/) and build/heartland-k9s.zip; re-ran plugin/heartland-k9s-core/tests/url-coverage-suite.sh \u2192 34 passed / 0 failed, Simulation section now records \"author archives (301 \u2192 /; seeded by the plugin) 2/2\", notes [] (the \"predates\" bullet is gone). Fresh stack and suite temp files removed.\n\n(3) Mixed PNG/WebP renditions: documented as expected behaviour in docs/performance.md \u00a72.1 and \u00a74 (12 of 37 opaque PNGs on the local stack; one-off `wp media regenerate --yes`, or the PNG-only whole-attachment command, makes each image one format again) and docs/install.md \u00a7D.6 (Image Optimization bullet).\n\n(4) docs/performance.md \u00a71: note that `/program/` (page 290, Program template, image hero) is the reference-template page while the migrated live page `/the-service-k9-program/` (page 282) renders the band hero with no image (text LCP) \u2014 verified by curl (hk9-hero--image + image preload vs hk9-hero--band, 0 preload).\n\nSlim SEO was installed once more only to confirm plugin-managed mode still works after the Schema guard change (3/3 schema-check, one slim-seo-schema block per page, no hk9-schema, no NGO merged into the noindexed record's graph), then deactivated, deleted, and its slim_seo / slim_seo_db_version options removed (0 slim options/transients/cron events left). Gravity Forms stays active; debug.log 0 lines; 0 tmp objects.",
+  "files": [
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Context.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Head.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/plugin/heartland-k9s-core/src/Seo/Schema.php",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/tools/schema-check.mjs",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/seo.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/ARCHITECTURE.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/performance.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/install.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/docs/reports/url-coverage.md",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/build/heartland-k9s-core.zip",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/build/heartland-k9s.zip",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/build/SHA256SUMS",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/editor.css",
+   "/Users/carleykuehner/www/heartland-k9s-for-veterans/theme/heartland-k9s/assets/dist/theme.js"
+  ],
+  "tests": [
+   {
+    "name": "php -l on touched plugin files",
+    "result": "PASS",
+    "evidence": "php -l plugin/heartland-k9s-core/src/Seo/*.php \u2192 no syntax errors (Head.php, Context.php, Schema.php and the rest); node --check tools/schema-check.mjs OK"
+   },
+   {
+    "name": "noindex \u2192 no canonical / prev-next / JSON-LD (registry record, main stack)",
+    "result": "PASS",
+    "evidence": "curl /barkode/hk923-005/: HTTP 200, X-Robots-Tag: noindex, nofollow, <meta name='robots' content='noindex, nofollow'>, canonical 0, ld+json 0, og:title 1, og:url 1; control /: canonical 1, ld+json 1"
+   },
+   {
+    "name": "per-post noindex toggle on tmp page 783 (deleted afterwards)",
+    "result": "PASS",
+    "evidence": "hk9_seo_noindex=1 \u2192 robots 'noindex, follow', canonical 0, ld+json 0, og:title 1; + hk9_seo_canonical=https://example.org/elsewhere/ \u2192 <link rel=\"canonical\" href=\"https://example.org/elsewhere/\"> (1), ld+json 0; noindex=0 \u2192 robots max-image-preview:large, self canonical http://localhost:8093/tmp-seo-noindex/, ld+json 1; tmp objects left: 0"
+   },
+   {
+    "name": "tools/schema-check.mjs (9 URLs + noindex row)",
+    "result": "PASS",
+    "evidence": "node tools/schema-check.mjs --urls=/,/about/,/events/,/meet-the-team/,/service-dogs-and-the-ada/,/donate/,/news/,/contact/,/?s=dog \u2192 10/10 URLs pass, exit 0; noindex row /barkode/hk923-005/: robots ['noindex, nofollow'], X-Robots-Tag, 0 canonical, 0 prev/next, 0 JSON-LD; page types unchanged (WebPage/AboutPage/CollectionPage/ContactPage/SearchResultsPage, FAQPage, ItemList); re-run after the Slim SEO removal gives the same 10/10"
+   },
+   {
+    "name": "tools/url-matrix.sh http://localhost:8093",
+    "result": "PASS",
+    "evidence": "exit 0, 84 \u2705 / 0 \u274c; /author/admin/ and /author/hk9director/ 301 \u2192 http://localhost:8093/ with x-redirect-by: hk9-legacy; /?author=1 404"
+   },
+   {
+    "name": "npm run build + npm run package",
+    "result": "PASS",
+    "evidence": "build-css/js/icons OK (theme.js 3.0 kB); package: heartland-k9s.zip 0.8 MB (sha 622163e2\u2026), heartland-k9s-core.zip 0.5 MB (sha 727d8db4\u2026), payload-lite unchanged (4b5cb55f\u2026); the core ZIP lists 11 src/Seo/ entries, Store.php carries /author/admin/, Context.php carries rel_canonical, 0 tests/ entries"
+   },
+   {
+    "name": "plugin/heartland-k9s-core/tests/url-coverage-suite.sh (fresh stack 8095)",
+    "result": "PASS",
+    "evidence": "== 34 passed, 0 failed == (exit 0), run 2026-09-13T16:01:04Z; fixture 40 pages / 244 attachments / 1257 files; import media_files adopt 244 create 5 fail 0, posts_stub adopt 40 create 39 fail 0; pages 24/24, registry 16/16, author archives 2/2 'seeded by the plugin', crawled images 126/126, FooGallery thumbs 84/84 absent, referenced upload URLs 929/929, url-matrix 84 \u2705 / 0 \u274c, debug.log 0; docs/reports/url-coverage.md rewritten: grep -c predates \u2192 0, \"notes\":[]; teardown done (no hk9fresh containers/volumes, suite tmp dir removed)"
+   },
+   {
+    "name": "Lighthouse mobile runs=1 (/, /contact/, /events/)",
+    "result": "PASS",
+    "evidence": "node tools/lighthouse.mjs --urls=/,/contact/,/events/ --runs=1 --out=<scratchpad>/lh --no-html: / 98 (FCP 0.78, LCP 2.40 s), /contact/ 95 (FCP 1.35, LCP 2.93 s), /events/ 99 (FCP 0.92, LCP 2.03 s); Accessibility/Best practices/SEO 100 on all three; TBT 0, CLS 0 \u2014 consistent with docs/performance.md (99/94/99 median of 3) within single-run noise"
+   },
+   {
+    "name": "tools/axe.mjs",
+    "result": "PASS",
+    "evidence": "Result: PASS \u2014 no serious/critical violations across 16 URLs \u00d7 2 widths (32 rows, critical=0 serious=0); report written to the scratchpad (axe.md), committed docs/reports/axe.md untouched"
+   },
+   {
+    "name": "tools/network-audit.mjs",
+    "result": "PASS",
+    "evidence": "Result: PASS \u2014 all 16 URLs clean (no forbidden hosts, no failed/4xx+ main-frame requests, no console errors/warnings); report written to the scratchpad (network-audit.md)"
+   },
+   {
+    "name": "Plugin-managed mode regression check with Slim SEO (temporary)",
+    "result": "PASS",
+    "evidence": "wp plugin install slim-seo --activate; /, /events/: 1 <title>, 1 description, 1 canonical, 1 og:title, 1 ld+json (slim-seo-schema 1, hk9-schema 0); schema-check /,/events/,/meet-the-team/ --noindex= \u2192 3/3; the record's Slim graph holds no NGO node / nonprofitStatus (no extras merged into a noindexed view; Slim's own canonical + WebPage graph remain \u2014 Slim owns them in that mode)"
+   },
+   {
+    "name": "Slim SEO removed again, Gravity Forms active, stack clean",
+    "result": "PASS",
+    "evidence": "plugin deactivate + delete slim-seo; option delete slim_seo, slim_seo_db_version; option list --search='*slim*' empty, no slim transients/cron events; wp plugin list: akismet inactive, gravityforms active 3.0.1.1, heartland-k9s-core active 1.2.2, hello inactive, hk9-dev must-use \u2014 no slim-seo; wp-sitemap.xml lists page/hk9_story/hk9_team/hk9_campaign/hk9_event only, 0 barkode entries; /?s=dog noindex,follow with 0 canonical; debug.log 0 lines; tmp objects 0"
+   }
+  ],
+  "issues": [
+   "Suite numbers moved vs the previous run: 'upload URLs referenced by the new theme output' 929/929 (was 799/799) and '96 of 126 crawled image files referenced verbatim' (was 108) \u2014 the new theme ZIP carries the WebP sub-size change, so the output lists more (.webp) srcset candidates and fewer of the crawled JPEG -WxH files verbatim; every referenced URL resolves, so not a regression, but the report's numbers differ from the version recorded with the 10:23 ZIP.",
+   "build/heartland-k9s-core.zip, build/heartland-k9s.zip and build/SHA256SUMS are tracked binaries that changed with `npm run package` (the payload-lite ZIP is byte-identical); nothing was committed, per instructions.",
+   "In plugin-managed mode Slim SEO itself still prints a self-canonical and its generic WebPage graph on the noindexed registry record \u2014 that is Slim's output (it owns canonical/schema in that mode, as docs/seo.md states); the Heartland guard only stops our extras from merging there. Slim is removed from the local stack again.",
+   "Lighthouse /contact/ scored 95 in this single run (docs say 94, runs 94/95/94) \u2014 single-run noise, no doc change made.",
+   "axe / network-audit / Lighthouse outputs were written to the scratchpad, not over the committed docs/reports/*.md (those are being edited by other agents and the results are unchanged: PASS/PASS); only docs/reports/url-coverage.md was rewritten, by the suite itself.",
+   "tools/schema-check.mjs now checks /barkode/hk923-005/ as a noindex row by default; on a stack without that record pass --noindex=<other registry path> or --noindex= (empty) \u2014 the row fails on 404 by design."
+  ],
+  "integration_notes": "Behavioural change in plugin/heartland-k9s-core/src/Seo: `Context::rel_canonical()` is the URL for <link rel=\"canonical\"> (and gates rel prev/next) \u2014 '' on noindexed singular views without a per-post canonical override; `Context::canonical()` is unchanged (still the view URL used by og:url, Schema and Breadcrumbs). `Schema::printable()` now returns false for `is_singular() && Context::noindex()` in every mode (registry records, hk9_seo_noindex toggle, _hk9_local_fixture posts) \u2014 anyone expecting JSON-LD on a noindexed page must clear the toggle. Docs updated to match: docs/seo.md \u00a72 (Canonical) and 'Registry records', docs/ARCHITECTURE.md \u00a712 (two phrases). tools/schema-check.mjs: new `--noindex=` option (default /barkode/hk923-005/); the `--urls` argument must be quoted in zsh because of the `?` in /?s=dog. The url-coverage suite proves the seeded author-archive path only with a ZIP built from the working tree \u2014 re-run `npm run package` before the suite whenever Redirects/Store.php changes. docs/performance.md \u00a72.1/\u00a74 and docs/install.md \u00a7D.6 now describe the mixed PNG-or-JPEG + WebP srcsets for adopted media and the one-off whole-attachment `wp media regenerate` (never --image_size). Main stack state on hand-back: plugins akismet inactive, gravityforms active 3.0.1.1, heartland-k9s-core active 1.2.2 (bind-mounted working tree), no slim-seo, no slim options; debug.log empty; no tmp objects; fresh stack (8095) down with volumes removed."
+ }
+}

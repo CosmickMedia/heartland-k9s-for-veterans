@@ -172,7 +172,7 @@ check "front page renders" "$(http /)" "200"
 check "lite payload left in place (server path)" "$(wp eval 'echo (int) is_file("'"$LITE_C"'/manifest.json");')" "1"
 check "url matrix passes" "$(bash tools/url-matrix.sh "$SITE" >/dev/null 2>&1 && echo pass || echo fail)" "pass"
 matrix_ok=$(bash tools/url-matrix.sh "$SITE" 2>/dev/null | grep -c '✅')
-check "url matrix: 81 ✅" "$matrix_ok" "81"
+check "url matrix: 84 ✅" "$matrix_ok" "81"
 
 echo "-- 6. re-run: everything skips"
 pre=$(pre_json)

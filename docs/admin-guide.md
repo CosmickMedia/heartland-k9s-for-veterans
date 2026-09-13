@@ -271,6 +271,24 @@ Write under **Posts**. The listing is the **News** page, set as **Posts page** i
 ![Reading settings](reports/screenshots/admin-guide/reading.png)
 ![Settings — Blog](reports/screenshots/admin-guide/settings-blog.png)
 
+## Search engines & social sharing (SEO)
+
+The site prints its own search-engine tags (page title, description, canonical address, robots rules, Facebook / X share cards, XML sitemap) and structured data (organization, breadcrumbs, articles, events, FAQ, team) — **unless an SEO plugin is active**. With Slim SEO (installed on heartlandk9s.org), Yoast, Rank Math, All in One SEO, SEOPress or The SEO Framework active, the plugin's own titles, descriptions and social tags apply and Heartland only adds the nonprofit, event, FAQ and team details those plugins cannot know. **Heartland → Settings → SEO** shows which plugin was detected and the resulting mode; leave **Output mode** on *Automatic*.
+
+**Per page / post / story / team / campaign / event — the "Search & social" box** under the editor:
+
+- **SEO title** — replaces the browser-tab / search-result title (empty = "Page title – Site name"; aim for 50–60 characters).
+- **Meta description** — the snippet under the search result and the share text (about 155 characters). When empty the page's excerpt, hero text or first paragraph is used.
+- **Social image** — the picture Facebook, X, LinkedIn or iMessage show when the link is shared, cropped to 1200×630. When empty: the featured image, the hero image, then the default from Settings → SEO.
+- **Hide from search engines (noindex)** — for thank-you pages, drafts published for a link check, duplicate landing pages. Also removes the page from the XML sitemap.
+- **Canonical URL override** — only when the page is a copy of another address.
+
+With an SEO plugin active the box shows a note and the plugin's own fields on the same screen apply (the Heartland values are kept but unused).
+
+**Heartland → Settings → SEO**: **Default social image** (a landscape photo at least 1200×630 — the share card for pages without their own image), **Organization logo** (search engines show it next to the organization; falls back to the header logo), **Organization short name** ("Heartland K9s"), **Organization description**, **Other profile URLs** (Charity Navigator, Wikipedia…; the social links and Candid profile from the Contact tab are included automatically), **X (Twitter) handle**, **Show breadcrumbs** (the small "Home › Section › Page" trail below page heroes and on story, team, campaign, event and news pages). The organization's legal name, EIN, address, phone and social profiles used in the structured data come from the **Contact** tab; the donate action points at the **Online donation form** under Destinations.
+
+BarKode records are never indexed, never in the sitemap and carry no structured data — nothing to do there.
+
 ## Redirects
 
 **Heartland → Redirects**. **Add redirect**: **Source path** (site-relative, e.g. `/old-page/`), **Destination** (*A page or item on this site*, *A BarKode record*, or *A path or web address*), **Type** (301 Permanent, 302 Temporary, 410 Gone), **Note**, **Enabled**. Rules marked **seed** cover the printed BarKode patch URLs and old gallery/slider links: they cannot be deleted, only disabled. **Restore missing seeds** puts them back. Row actions let you enable, disable and test a rule.

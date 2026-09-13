@@ -1,7 +1,14 @@
 <?php
 /**
- * Compatibility: SEO meta (Open Graph / Twitter / description) only when no SEO
- * plugin is active and `advanced.output_seo_meta` is on; robots tweaks.
+ * Compatibility: SEO meta output.
+ *
+ * With the companion plugin active its SEO module (HK9\Core\Seo, docs/seo.md)
+ * prints the title parts, description, canonical, robots, Open Graph / Twitter
+ * tags and the structured data — and steps back entirely when an SEO plugin
+ * is active. Everything in this file is therefore either a delegate or the
+ * minimal plugin-less fallback: description + Open Graph / Twitter tags only
+ * when no SEO plugin is active and `advanced.output_seo_meta` is on, plus the
+ * registry / fixture robots rules and the blog listing title.
  *
  * @package heartland-k9s
  */
@@ -14,6 +21,9 @@ defined( 'ABSPATH' ) || exit;
  * @return bool
  */
 function hk9_seo_plugin_active(): bool {
+	if ( function_exists( 'hk9_seo_plugin' ) ) {
+		return null !== hk9_seo_plugin();
+	}
 	$active = defined( 'WPSEO_VERSION' )            // Yoast SEO
 		|| class_exists( 'RankMath' )                 // Rank Math
 		|| defined( 'SLIM_SEO_VER' )                  // Slim SEO
@@ -30,11 +40,25 @@ function hk9_seo_plugin_active(): bool {
 }
 
 /**
- * Meta description for the current view.
+ * Whether the plugin's SEO module prints the head tags for this request.
+ *
+ * @return bool
+ */
+function hk9_seo_delegated(): bool {
+	return function_exists( 'hk9_seo_prints_meta' );
+}
+
+/**
+ * Meta description for the current view (plugin-less fallback; the plugin's
+ * resolver is used when present).
  *
  * @return string
  */
 function hk9_meta_description(): string {
+	if ( function_exists( 'hk9_seo_description' ) ) {
+		return hk9_seo_description();
+	}
+
 	$description = '';
 
 	if ( is_singular() ) {
@@ -72,15 +96,21 @@ function hk9_meta_description(): string {
 
 	$description = trim( preg_replace( '/\s+/', ' ', wp_strip_all_tags( $description ) ) );
 
-	return wp_html_excerpt( $description, 300, '…' );
+	return wp_html_excerpt( $description, 160, '…' );
 }
 
 /**
- * Open Graph image for the current view: featured image → hero image → footer logo.
+ * Open Graph image for the current view: featured image → hero image → logo
+ * (plugin-less fallback; the plugin's resolver is used when present).
  *
  * @return array{url:string,width:int,height:int}|null
  */
 function hk9_meta_image(): ?array {
+	if ( function_exists( 'hk9_seo_image' ) ) {
+		$image = hk9_seo_image();
+		return is_array( $image ) ? [ 'url' => (string) $image['url'], 'width' => (int) $image['width'], 'height' => (int) $image['height'] ] : null;
+	}
+
 	$id = 0;
 
 	if ( is_singular() ) {
@@ -118,9 +148,13 @@ function hk9_meta_image(): ?array {
 }
 
 /**
- * Print description / Open Graph / Twitter meta.
+ * Print description / Open Graph / Twitter meta — only without the plugin's
+ * SEO module (which prints a fuller set, or nothing while an SEO plugin runs).
  */
 function hk9_print_seo_meta(): void {
+	if ( hk9_seo_delegated() ) {
+		return;
+	}
 	if ( hk9_seo_plugin_active() || ! hk9_theme_option( 'advanced.output_seo_meta' ) ) {
 		return;
 	}
@@ -174,6 +208,7 @@ add_action( 'wp_head', 'hk9_print_seo_meta', 1 );
 
 /**
  * Robots: never index the registry or local fixtures; search results are handled by core.
+ * (The plugin applies the same rules plus the per-page "noindex" field.)
  *
  * @param array $robots Directives.
  * @return array
@@ -195,12 +230,16 @@ add_filter( 'wp_robots', 'hk9_robots', 20 );
 
 /**
  * Site-name + tagline title on the front page (core uses "Site – Tagline" already);
- * make the blog listing use the configured blog hero title.
+ * make the blog listing use the configured blog hero title. Skipped while an
+ * SEO plugin owns the title (its own title settings apply).
  *
  * @param array $parts Title parts.
  * @return array
  */
 function hk9_document_title_parts( array $parts ): array {
+	if ( hk9_seo_plugin_active() ) {
+		return $parts;
+	}
 	if ( is_home() && ! is_front_page() ) {
 		$title = (string) hk9_theme_option( 'blog.hero_title' );
 		if ( '' !== $title ) {

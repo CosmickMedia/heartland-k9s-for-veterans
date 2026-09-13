@@ -14,7 +14,9 @@ Pipeline (all offline after the first download):
   4. Save as WOFF2 into theme/heartland-k9s/assets/fonts/.
   5. Copy the OFL notices next to the fonts and into docs/licenses/.
   6. Write theme/heartland-k9s/assets/src/scss/_fonts.scss (@font-face rules
-     + a size table).
+     + a size table; faces marked "deferred" are listed but not declared) and
+     theme/heartland-k9s/assets/fonts/fonts.json (the same faces as data, read
+     by inc/assets.php for the deferred loader and its <noscript> fallback).
   7. Verify axes/ranges and glyph coverage of every output; exit non-zero on
      any failure.
 
@@ -27,6 +29,7 @@ Usage:  python3 tools/fonts/build-fonts.py [--force] [--skip-download]
 from __future__ import annotations
 
 import argparse
+import json
 import io
 import os
 import shutil
@@ -48,6 +51,7 @@ CACHE_DIR = ROOT / "tools" / ".cache" / "fonts"
 THEME_DIR = ROOT / "theme" / "heartland-k9s"
 FONTS_OUT = THEME_DIR / "assets" / "fonts"
 SCSS_OUT = THEME_DIR / "assets" / "src" / "scss" / "_fonts.scss"
+JSON_OUT = FONTS_OUT / "fonts.json"
 LICENSES_OUT = ROOT / "docs" / "licenses"
 
 GF_RAW = "https://raw.githubusercontent.com/google/fonts/main/ofl/"
@@ -82,6 +86,12 @@ FONTS = [
         "family": "Fraunces",
         "style": "italic",
         "weight": "300 800",
+        # Not declared in the CSS: the italic is only used below the fold (footer
+        # tagline, testimonial quotes), so the theme loads it with the Font Loading
+        # API once the roman faces and the page have loaded (inc/assets.php
+        # hk9_deferred_fonts() + theme.js) instead of letting its 80 kB compete
+        # with the LCP image and the two preloaded roman faces.
+        "deferred": True,
         "axes": {"SOFT": 0, "WONK": 0, "opsz": (9, 144), "wght": (300, 800)},
         "expect_axes": {"opsz": (9, 144), "wght": (300, 800)},
         "license": "fraunces/OFL.txt",
@@ -334,8 +344,17 @@ def write_scss(results: list[dict]) -> None:
     lines.append("// ---------------------------------------------------------------------------")
     lines.append("")
 
+    deferred = [r["spec"]["out"] for r in results if r["spec"].get("deferred")]
+    if deferred:
+        lines += [
+            f"// Deferred (declared by the theme at runtime, see fonts.json): {', '.join(deferred)}",
+            "",
+        ]
+
     for r in results:
         spec = r["spec"]
+        if spec.get("deferred"):
+            continue
         lines += [
             "@font-face {",
             f"\tfont-family: '{spec['family']}';",
@@ -350,6 +369,25 @@ def write_scss(results: list[dict]) -> None:
     SCSS_OUT.parent.mkdir(parents=True, exist_ok=True)
     SCSS_OUT.write_text("\n".join(lines), encoding="utf-8")
     log(f"scss     {SCSS_OUT.relative_to(ROOT)}")
+
+    manifest = {
+        "generated_by": "tools/fonts/build-fonts.py",
+        "faces": [
+            {
+                "family": r["spec"]["family"],
+                "style": r["spec"]["style"],
+                "weight": r["spec"]["weight"],
+                "file": r["spec"]["out"],
+                "bytes": r["size"],
+                "unicode_range": LATIN_UNICODES,
+                "display": "swap",
+                "deferred": bool(r["spec"].get("deferred")),
+            }
+            for r in results
+        ],
+    }
+    JSON_OUT.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+    log(f"json     {JSON_OUT.relative_to(ROOT)}")
 
 
 def main(argv: list[str]) -> int:

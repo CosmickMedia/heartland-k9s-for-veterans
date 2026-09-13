@@ -256,6 +256,16 @@
     },
     "analytics": {
       "fathom_site_id": ""
+    },
+    "seo": {
+      "schema_mode": "auto",
+      "default_social_image": "{{media:ref:asset:hero-home}}",
+      "org_alternate_name": "Heartland K9s",
+      "org_logo": 0,
+      "org_description": "",
+      "same_as": "https://www.facebook.com/heartlandk9s/\nhttps://app.candid.org/profile/9494475/heartland-canines-for-veterans-inc-47-4991572/?pkId=0c9bd385-c54d-417d-8e44-a7057050afae",
+      "twitter_site": "",
+      "breadcrumbs": true
     }
   }
 }

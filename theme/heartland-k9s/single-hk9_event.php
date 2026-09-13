@@ -60,6 +60,7 @@ while ( have_posts() ) :
 	?>
 	<div class="hk9-overlap hk9-single hk9-single--event">
 		<article class="hk9-overlap__card hk9-single__card hk9-event" id="post-<?php echo esc_attr( (string) $hk9_id ); ?>">
+			<?php hk9_the_breadcrumbs(); ?>
 			<div class="hk9-event__layout">
 				<div class="hk9-event__main">
 					<?php if ( in_array( $hk9_status, [ 'cancelled', 'postponed' ], true ) ) : ?>

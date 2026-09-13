@@ -139,6 +139,59 @@ function hk9_style_bundles(): array {
 }
 
 /**
+ * Whether the theme stylesheets are printed inline in the document (default)
+ * instead of as render-blocking <link>s.
+ *
+ * The compiled CSS is small (core 9.6 kB gzip, bundles 2.5–5.5 kB) but every
+ * <link> costs a round trip before the first paint, and pages with two or three
+ * bundles queue behind the fonts and the hero image on HTTP/1.1. Printing the
+ * files inline removes those requests from the critical path with no flash of
+ * unstyled content (every rule is present when the parser reaches the body):
+ * mobile Lighthouse (docs/performance.md) FCP −0.3 to −0.5 s and Performance
+ * 94 → 99 on the three-bundle pages, at the cost of 10–25 kB (gzip) of CSS per
+ * page view that is no longer cached across pages. Define `HK9_INLINE_CSS`
+ * (wp-config.php) or filter `hk9/theme/inline_css` to go back to <link>s.
+ *
+ * @return bool
+ */
+function hk9_inline_css(): bool {
+	$default = defined( 'HK9_INLINE_CSS' ) ? (bool) HK9_INLINE_CSS : true;
+	/**
+	 * Filter whether theme CSS is inlined.
+	 *
+	 * @param bool $inline Default true.
+	 */
+	return (bool) apply_filters( 'hk9/theme/inline_css', $default );
+}
+
+/**
+ * Enqueue one compiled stylesheet — as a <link>, or as an inline <style> with
+ * the same handle (so dependencies, order and wp_add_inline_style() keep working).
+ *
+ * @param string   $handle   Style handle.
+ * @param string   $relative Path relative to the theme root.
+ * @param string[] $deps     Dependencies.
+ * @param bool     $inline   Print the file contents instead of linking it.
+ */
+function hk9_enqueue_theme_style( string $handle, string $relative, array $deps, bool $inline ): void {
+	if ( ! $inline ) {
+		wp_enqueue_style( $handle, HK9_THEME_URI . '/' . $relative, $deps, hk9_asset_version( $relative ) );
+		return;
+	}
+	$css = (string) file_get_contents( HK9_THEME_DIR . '/' . $relative ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	// Compiled CSS lives in assets/dist/: make its relative font URLs absolute so the
+	// font preloads (hk9_preload_fonts()) still match the @font-face sources.
+	$css = str_replace( 'url("../', 'url("' . HK9_THEME_URI . '/assets/', $css );
+	$css = str_replace( "url('../", "url('" . HK9_THEME_URI . '/assets/', $css );
+	$css = str_replace( 'url(../', 'url(' . HK9_THEME_URI . '/assets/', $css );
+	wp_register_style( $handle, false, $deps, hk9_asset_version( $relative ) ); // phpcs:ignore WordPress.WP.EnqueuedResourceParameters.MissingVersion
+	wp_enqueue_style( $handle );
+	if ( '' !== $css ) {
+		wp_add_inline_style( $handle, $css );
+	}
+}
+
+/**
  * Enqueue the compiled theme stylesheets and script.
  */
 function hk9_enqueue_assets(): void {
@@ -146,7 +199,8 @@ function hk9_enqueue_assets(): void {
 	$js  = 'assets/dist/theme.js';
 
 	if ( file_exists( HK9_THEME_DIR . '/' . $css ) ) {
-		wp_enqueue_style( 'hk9-theme', HK9_THEME_URI . '/' . $css, [], hk9_asset_version( $css ) );
+		$inline = hk9_inline_css();
+		hk9_enqueue_theme_style( 'hk9-theme', $css, [], $inline );
 
 		$root_css = hk9_root_css();
 		if ( '' !== $root_css ) {
@@ -156,7 +210,7 @@ function hk9_enqueue_assets(): void {
 		foreach ( hk9_style_bundles() as $bundle ) {
 			$file = 'assets/dist/' . $bundle . '.css';
 			if ( file_exists( HK9_THEME_DIR . '/' . $file ) ) {
-				wp_enqueue_style( 'hk9-' . $bundle, HK9_THEME_URI . '/' . $file, [ 'hk9-theme' ], hk9_asset_version( $file ) );
+				hk9_enqueue_theme_style( 'hk9-' . $bundle, $file, [ 'hk9-theme' ], $inline );
 			}
 		}
 	}
@@ -167,6 +221,7 @@ function hk9_enqueue_assets(): void {
 		$config = [
 			'navBreakpoint' => 1024,
 			'adminBar'      => is_admin_bar_showing(),
+			'fonts'         => hk9_deferred_fonts(),
 			'i18n'          => [
 				'openMenu'  => __( 'Open menu', 'heartland-k9s' ),
 				'closeMenu' => __( 'Close menu', 'heartland-k9s' ),
@@ -181,7 +236,147 @@ function hk9_enqueue_assets(): void {
 add_action( 'wp_enqueue_scripts', 'hk9_enqueue_assets', 20 );
 
 /**
- * Preload the two roman variable fonts (the italic loads on demand).
+ * The web fonts the theme ships, from the generated assets/fonts/fonts.json
+ * (tools/fonts/build-fonts.py): family, style, weight, file, unicode_range,
+ * display, deferred. Empty when the manifest is missing.
+ *
+ * @return array<int,array{family:string,style:string,weight:string,file:string,unicode_range:string,display:string,deferred:bool}>
+ */
+function hk9_font_faces(): array {
+	static $faces = null;
+	if ( null !== $faces ) {
+		return $faces;
+	}
+	$faces = [];
+	$file  = HK9_THEME_DIR . '/assets/fonts/fonts.json';
+	if ( ! file_exists( $file ) ) {
+		return $faces;
+	}
+	$json = json_decode( (string) file_get_contents( $file ), true ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+	foreach ( (array) ( $json['faces'] ?? [] ) as $face ) {
+		if ( ! is_array( $face ) || empty( $face['family'] ) || empty( $face['file'] ) ) {
+			continue;
+		}
+		$faces[] = [
+			'family'        => (string) $face['family'],
+			'style'         => (string) ( $face['style'] ?? 'normal' ),
+			'weight'        => (string) ( $face['weight'] ?? '400' ),
+			'file'          => (string) $face['file'],
+			'unicode_range' => (string) ( $face['unicode_range'] ?? '' ),
+			'display'       => (string) ( $face['display'] ?? 'swap' ),
+			'deferred'      => ! empty( $face['deferred'] ),
+		];
+	}
+	return $faces;
+}
+
+/**
+ * Whether a font family is in use (not replaced by a system stack in Settings).
+ *
+ * @param string $family Family name from the manifest.
+ * @return bool
+ */
+function hk9_font_family_active( string $family ): bool {
+	if ( 'Fraunces' === $family ) {
+		return 'system-serif' !== hk9_theme_option( 'fonts.serif' );
+	}
+	if ( 'Inter' === $family ) {
+		return 'system-sans' !== hk9_theme_option( 'fonts.sans' );
+	}
+	return true;
+}
+
+/**
+ * Faces the compiled CSS does not declare — the Fraunces italic, used only
+ * below the fold (footer tagline, testimonial quotes) — as data for theme.js,
+ * which adds them through the Font Loading API once the roman faces and the
+ * page have loaded. Keeping the 80 kB italic out of the critical path lets
+ * the LCP image and the two preloaded roman faces share the bandwidth on a
+ * slow connection (mobile Lighthouse: home 94 → 97 in isolation). The final
+ * rendering is unchanged: the italic swaps in exactly as a `font-display:
+ * swap` face would, just later; hk9_deferred_fonts_noscript() covers browsers
+ * without JavaScript.
+ *
+ * @return array<int,array{family:string,style:string,weight:string,url:string,unicodeRange:string,display:string}>
+ */
+function hk9_deferred_fonts(): array {
+	$fonts = [];
+	foreach ( hk9_font_faces() as $face ) {
+		if ( ! $face['deferred'] || ! hk9_font_family_active( $face['family'] ) || ! file_exists( HK9_THEME_DIR . '/assets/fonts/' . $face['file'] ) ) {
+			continue;
+		}
+		$fonts[] = [
+			'family'       => $face['family'],
+			'style'        => $face['style'],
+			'weight'       => $face['weight'],
+			'url'          => HK9_THEME_URI . '/assets/fonts/' . $face['file'],
+			'unicodeRange' => $face['unicode_range'],
+			'display'      => $face['display'],
+		];
+	}
+	/**
+	 * Filter the faces theme.js loads after the page has loaded.
+	 *
+	 * @param array $fonts {family, style, weight, url, unicodeRange, display}[].
+	 */
+	return (array) apply_filters( 'hk9/theme/deferred_fonts', $fonts );
+}
+
+/**
+ * The deferred faces as plain @font-face rules ('' when there are none).
+ *
+ * @return string
+ */
+function hk9_deferred_fonts_css(): string {
+	$css = '';
+	foreach ( hk9_deferred_fonts() as $font ) {
+		if ( ! is_array( $font ) || empty( $font['url'] ) || empty( $font['family'] ) ) {
+			continue;
+		}
+		$css .= sprintf(
+			'@font-face{font-family:%s;font-style:%s;font-weight:%s;font-display:%s;src:url(%s) format("woff2");%s}',
+			wp_json_encode( (string) $font['family'] ),
+			esc_attr( (string) ( $font['style'] ?? 'normal' ) ),
+			esc_attr( (string) ( $font['weight'] ?? '400' ) ),
+			esc_attr( (string) ( $font['display'] ?? 'swap' ) ),
+			esc_url( (string) $font['url'] ),
+			! empty( $font['unicodeRange'] ) ? 'unicode-range:' . esc_attr( (string) $font['unicodeRange'] ) . ';' : ''
+		);
+	}
+	return $css;
+}
+
+/**
+ * No-JavaScript fallback for the deferred faces: the same @font-face rules,
+ * declared in the head so the browser fetches them as usual.
+ */
+function hk9_deferred_fonts_noscript(): void {
+	$css = hk9_deferred_fonts_css();
+	if ( '' !== $css ) {
+		echo '<noscript><style id="hk9-fonts-noscript">' . $css . '</style></noscript>' . "\n"; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in hk9_deferred_fonts_css().
+	}
+}
+add_action( 'wp_head', 'hk9_deferred_fonts_noscript', 3 );
+
+/**
+ * The block editor canvas declares the deferred faces directly (editor.css is
+ * compiled from the same partial and therefore lacks them; nothing is deferred
+ * in the editor).
+ */
+function hk9_editor_deferred_fonts(): void {
+	if ( ! is_admin() ) {
+		return;
+	}
+	$css = hk9_deferred_fonts_css();
+	if ( '' !== $css ) {
+		wp_add_inline_style( 'wp-block-library', $css );
+	}
+}
+add_action( 'enqueue_block_assets', 'hk9_editor_deferred_fonts' );
+
+/**
+ * Preload the two roman variable fonts (the italic is deferred, see
+ * hk9_deferred_fonts()).
  *
  * The href must be byte-identical to the @font-face `src` the compiled CSS
  * resolves to (assets/fonts/<file>.woff2, no query string) — otherwise the
@@ -286,13 +481,19 @@ function hk9_preload_lcp_image(): void {
 	$srcset = (string) wp_get_attachment_image_srcset( $id, (string) $lcp['size'] );
 	$media  = '';
 
-	$mobile_id = (int) ( $lcp['mobile'] ?? 0 );
-	if ( $mobile_id > 0 && wp_attachment_is_image( $mobile_id ) ) {
-		$mobile = wp_get_attachment_image_src( $mobile_id, (string) $lcp['size'] );
-		if ( is_array( $mobile ) && ! empty( $mobile[0] ) ) {
-			printf( '<link rel="preload" as="image" href="%s" media="(max-width: 767px)" fetchpriority="high">' . "\n", esc_url( $mobile[0] ) );
-			$media = ' media="(min-width: 768px)"';
-		}
+	// A phone variant (hero_image.image_mobile, rendered through <picture>) is
+	// preloaded per media query with the same candidates as its <source>, so the
+	// preload matches the request the browser makes and nothing loads twice.
+	$mobile = ( 'hk9-hero' === (string) $lcp['size'] && function_exists( 'hk9_hero_mobile_source' ) ) ? hk9_hero_mobile_source( $id, (int) ( $lcp['mobile'] ?? 0 ) ) : null;
+	if ( null !== $mobile ) {
+		printf(
+			'<link rel="preload" as="image" href="%s" imagesrcset="%s" imagesizes="%s" media="%s" fetchpriority="high">' . "\n",
+			esc_url( $mobile['src'] ),
+			esc_attr( $mobile['srcset'] ),
+			esc_attr( $mobile['sizes'] ),
+			esc_attr( hk9_hero_mobile_media() )
+		);
+		$media = ' media="' . esc_attr( hk9_hero_desktop_media() ) . '"';
 	}
 
 	printf(
@@ -300,10 +501,37 @@ function hk9_preload_lcp_image(): void {
 		esc_url( $src[0] ),
 		'' !== $srcset ? ' imagesrcset="' . esc_attr( $srcset ) . '"' : '',
 		'' !== $srcset ? ' imagesizes="' . esc_attr( (string) $lcp['sizes'] ) . '"' : '',
-		$media // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- static attribute string.
+		$media // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped above.
 	);
 }
 add_action( 'wp_head', 'hk9_preload_lcp_image', 1 );
+
+/**
+ * Gravity Forms 3.0 registers `gravity_forms_orbital_theme` (the Orbital
+ * theme's own stylesheet) but ships the file empty — its rules moved into the
+ * theme framework file. On a form page that is one render-blocking request
+ * (a full round trip on mobile) for zero bytes of CSS, so it is dropped —
+ * only while the file on disk really is empty, so a later release that
+ * fills it again is served untouched. Gravity Forms itself only enqueues on
+ * pages that render a form; nothing else is touched.
+ */
+function hk9_drop_empty_gravity_styles( $tag, $handle, $href ) {
+	if ( 'gravity_forms_orbital_theme' !== $handle || is_admin() ) {
+		return $tag;
+	}
+	static $empty = null;
+	if ( null === $empty ) {
+		$empty = false;
+		$path  = (string) wp_parse_url( (string) $href, PHP_URL_PATH );
+		$base  = (string) wp_parse_url( plugins_url(), PHP_URL_PATH );
+		if ( '' !== $path && '' !== $base && str_starts_with( $path, $base ) ) {
+			$file  = WP_PLUGIN_DIR . substr( $path, strlen( $base ) );
+			$empty = is_file( $file ) && 0 === (int) filesize( $file );
+		}
+	}
+	return $empty ? '' : $tag;
+}
+add_filter( 'style_loader_tag', 'hk9_drop_empty_gravity_styles', 10, 3 );
 
 /**
  * Trim core head output that is useless here or points at third-party hosts

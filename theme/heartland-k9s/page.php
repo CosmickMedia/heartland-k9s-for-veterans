@@ -25,12 +25,23 @@ while ( have_posts() ) :
 	$hk9_rest     = array_values( array_diff( $hk9_layout, [ 'hero_band' ] ) );
 	$hk9_blank    = hk9_content_is_blank( $hk9_page_id );
 
+	// Breadcrumbs (inc/seo.php): first thing in the content card, or a small strip below the band when the card is empty.
+	$hk9_crumbs = function_exists( 'hk9_breadcrumbs' ) ? hk9_breadcrumbs() : '';
+
 	if ( $hk9_has_hero ) {
 		hk9_the_hero( hk9_section( $hk9_page_id, 'hero_band' ), 'band' );
-		hk9_the_content_card( $hk9_page_id );
+		if ( ! $hk9_blank ) {
+			echo '<div class="hk9-overlap"><div class="hk9-overlap__card hk9-prose">';
+			echo $hk9_crumbs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the template part.
+			the_content();
+			echo '</div></div>';
+		} elseif ( '' !== $hk9_crumbs ) {
+			echo '<div class="hk9-breadcrumbs-strip"><div class="container">' . $hk9_crumbs . '</div></div>'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the template part.
+		}
 	} else {
 		// Plain start: no band; the title heads the content card.
 		echo '<section class="hk9-section hk9-page-plain"><div class="hk9-gutter"><div class="hk9-overlap__card hk9-page-plain__card hk9-prose">';
+		echo $hk9_crumbs; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- escaped in the template part.
 		echo '<h1 class="hk9-page-plain__title">' . esc_html( get_the_title( $hk9_page_id ) ) . '</h1>';
 		if ( ! $hk9_blank ) {
 			the_content();

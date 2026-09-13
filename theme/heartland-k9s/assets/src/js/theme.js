@@ -9,12 +9,16 @@
  *    prefers-reduced-motion; JS only marks the document as "js" so that
  *    scripted enhancements can be styled.
  * 4. External link rel safety (target=_blank → rel="noopener noreferrer").
+ * 5. Deferred web fonts: faces the stylesheet does not declare (the Fraunces
+ *    italic, used only below the fold) are added with the Font Loading API
+ *    once the page and the roman faces have loaded, so they never compete
+ *    with the LCP image. Config comes from inc/assets.php (fonts.json).
  *
  * FAQ items are native <details>/<summary> and need no script.
  */
 
 const config = Object.assign(
-	{ navBreakpoint: 1024, adminBar: false, i18n: { openMenu: 'Open menu', closeMenu: 'Close menu' } },
+	{ navBreakpoint: 1024, adminBar: false, fonts: [], i18n: { openMenu: 'Open menu', closeMenu: 'Close menu' } },
 	(window.HK9 && window.HK9.config) || {}
 );
 
@@ -153,6 +157,72 @@ function initExternalLinks() {
 }
 
 /* ---------------------------------------------------------------------- */
+/* Deferred web fonts                                                      */
+/* ---------------------------------------------------------------------- */
+
+function initDeferredFonts() {
+	const faces = Array.isArray(config.fonts) ? config.fonts : [];
+	if (!faces.length || !('fonts' in document) || typeof window.FontFace !== 'function') {
+		return; // No Font Loading API: the <noscript> block is not used either, the browser keeps the fallback face.
+	}
+	const afterLoad = new Promise((resolve) => {
+		if (document.readyState === 'complete') {
+			resolve();
+		} else {
+			window.addEventListener('load', resolve, { once: true });
+		}
+	});
+	// The first contentful paint (buffered, so it resolves even when it already
+	// happened); resolves at once where the Paint Timing API is missing.
+	const afterFirstPaint = new Promise((resolve) => {
+		if (typeof PerformanceObserver !== 'function' || !(PerformanceObserver.supportedEntryTypes || []).includes('paint')) {
+			resolve();
+			return;
+		}
+		try {
+			const observer = new PerformanceObserver((list) => {
+				if (list.getEntriesByName('first-contentful-paint').length) {
+					observer.disconnect();
+					resolve();
+				}
+			});
+			observer.observe({ type: 'paint', buffered: true });
+		} catch (e) {
+			resolve();
+		}
+	});
+	// Wait for the page (LCP image, initial faces), the initial font loads and the
+	// first contentful paint before touching the network, then add each face; text
+	// that needs it swaps in as with `font-display: swap`.
+	Promise.all([afterLoad, afterFirstPaint, document.fonts.ready]).then(() => {
+		faces.forEach((face) => {
+			if (!face || !face.family || !face.url) {
+				return;
+			}
+			try {
+				const descriptors = {
+					style: face.style || 'normal',
+					weight: face.weight || '400',
+					display: face.display || 'swap',
+				};
+				if (face.unicodeRange) {
+					descriptors.unicodeRange = face.unicodeRange;
+				}
+				const font = new FontFace(face.family, `url(${JSON.stringify(face.url)}) format("woff2")`, descriptors);
+				font
+					.load()
+					.then((loaded) => {
+						document.fonts.add(loaded);
+					})
+					.catch(() => {});
+			} catch (e) {
+				/* Unsupported descriptor: keep the fallback face. */
+			}
+		});
+	});
+}
+
+/* ---------------------------------------------------------------------- */
 /* Boot                                                                    */
 /* ---------------------------------------------------------------------- */
 
@@ -164,6 +234,7 @@ function boot() {
 	initStickyOffset();
 	initMobileMenu();
 	initExternalLinks();
+	initDeferredFonts();
 }
 
 if (document.readyState === 'loading') {

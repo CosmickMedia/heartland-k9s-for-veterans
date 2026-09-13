@@ -37,6 +37,7 @@ final class Plugin {
 		'HK9\\Core\\Forms\\GravityProvisioner' => 'always',
 		'HK9\\Core\\Events\\Dates'            => 'always',
 		'HK9\\Core\\Analytics\\Fathom'        => 'always',
+		'HK9\\Core\\Seo\\Module'             => 'always',
 		'HK9\\Core\\Rest\\Pick'               => 'always',
 		'HK9\\Core\\Admin\\Menu'              => 'admin',
 		'HK9\\Core\\Admin\\Notices'           => 'admin',

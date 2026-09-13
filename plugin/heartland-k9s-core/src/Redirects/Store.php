@@ -525,6 +525,10 @@ final class Store {
 		$rules['/?foogallery=2468']                = [ 'to' => $path( '/photos/' ), 'note' => 'Legacy FooGallery photo gallery' ];
 		$rules['/?foogallery=back-the-pack-partners'] = [ 'to' => $path( '/back-the-pack/' ), 'note' => 'Legacy FooGallery partner logos' ];
 		$rules['/teams/']                          = [ 'to' => $path( '/hk9-current-teams-in-training/' ), 'note' => 'Teams listing lives on the "current teams in training" page' ];
+		// The live site sends both author archives to the homepage (crawl 2026-09); keep that. The
+		// resolver runs on parse_request before Privacy::block_author_query, so the 301 wins; ?author=N stays a 404.
+		$rules['/author/admin/']                   = [ 'to' => $path( '/' ), 'note' => 'Author archive: the live site redirects it to the homepage' ];
+		$rules['/author/hk9director/']             = [ 'to' => $path( '/' ), 'note' => 'Author archive: the live site redirects it to the homepage' ];
 
 		$out = [];
 		foreach ( $rules as $source => $rule ) {

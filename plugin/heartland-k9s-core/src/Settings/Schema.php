@@ -44,6 +44,7 @@ final class Schema {
 			'blog'         => [ 'blog' ],
 			'forms'        => [ 'forms' ],
 			'analytics'    => [ 'analytics' ],
+			'seo'          => [ 'seo' ],
 			'advanced'     => [ 'advanced' ],
 		];
 	}
@@ -64,6 +65,7 @@ final class Schema {
 			'blog'         => __( 'Blog', 'heartland-k9s-core' ),
 			'forms'        => __( 'Forms', 'heartland-k9s-core' ),
 			'analytics'    => __( 'Analytics', 'heartland-k9s-core' ),
+			'seo'          => __( 'SEO', 'heartland-k9s-core' ),
 			'advanced'     => __( 'Advanced', 'heartland-k9s-core' ),
 		];
 	}
@@ -265,6 +267,16 @@ final class Schema {
 			'analytics' => [
 				'fathom_site_id' => '',
 			],
+			'seo'       => [
+				'schema_mode'          => 'auto',
+				'default_social_image' => 0,
+				'org_alternate_name'   => 'Heartland K9s',
+				'org_logo'             => 0,
+				'org_description'      => '',
+				'same_as'              => '',
+				'twitter_site'         => '',
+				'breadcrumbs'          => true,
+			],
 			'advanced'  => [
 				'editors_manage_registry' => false,
 				'purge_on_uninstall'      => false,
@@ -407,6 +419,16 @@ final class Schema {
 			],
 			'analytics' => [
 				'fathom_site_id' => [ 'type' => 'code' ],
+			],
+			'seo'       => [
+				'schema_mode'          => [ 'type' => 'select', 'options' => [ 'auto', 'full', 'plugin', 'off' ] ],
+				'default_social_image' => [ 'type' => 'image' ],
+				'org_alternate_name'   => [ 'type' => 'text' ],
+				'org_logo'             => [ 'type' => 'image' ],
+				'org_description'      => [ 'type' => 'textarea' ],
+				'same_as'              => [ 'type' => 'textarea' ],
+				'twitter_site'         => [ 'type' => 'text' ],
+				'breadcrumbs'          => [ 'type' => 'toggle' ],
 			],
 			'advanced'  => [
 				'editors_manage_registry'  => [ 'type' => 'toggle' ],
@@ -644,6 +666,30 @@ final class Schema {
 				'description' => __( 'Privacy-friendly analytics. The script is only added when a site ID is set.', 'heartland-k9s-core' ),
 				'fields'      => [
 					'fathom_site_id' => $def( 'analytics', 'fathom_site_id', __( 'Fathom site ID', 'heartland-k9s-core' ), __( 'Found in your Fathom dashboard under Settings → Sites (e.g. ABCDEFGH).', 'heartland-k9s-core' ) ),
+				],
+			],
+			'seo'       => [
+				'label'       => __( 'SEO', 'heartland-k9s-core' ),
+				'description' => __( 'Search-engine and social-sharing output. Without an SEO plugin the site prints its own titles, descriptions, canonical addresses, Open Graph tags, XML sitemap and structured data; with Slim SEO, Yoast, Rank Math, All in One SEO, SEOPress or The SEO Framework active it steps back and only adds the nonprofit, event, FAQ and team structured data those plugins cannot know. Each page also has a "Search & social" box in the editor.', 'heartland-k9s-core' ),
+				'fields'      => [
+					'status_note'          => [
+						'type'   => 'note',
+						'label'  => __( 'Current mode', 'heartland-k9s-core' ),
+						'help'   => '',
+						'render' => static function (): void {
+							if ( class_exists( 'HK9\\Core\\Seo\\Module' ) ) {
+								\HK9\Core\Seo\Module::render_settings_note();
+							}
+						},
+					],
+					'schema_mode'          => $def( 'seo', 'schema_mode', __( 'Output mode', 'heartland-k9s-core' ), __( 'Automatic follows the detection above and is the right choice for almost every site. "Full" and "Plugin-managed" force a mode; "Off" prints no structured data at all.', 'heartland-k9s-core' ), [ 'options' => [ 'auto' => __( 'Automatic (detect SEO plugins)', 'heartland-k9s-core' ), 'full' => __( 'Full — always print everything', 'heartland-k9s-core' ), 'plugin' => __( 'Plugin-managed — site-specific structured data only', 'heartland-k9s-core' ), 'off' => __( 'Off — no structured data', 'heartland-k9s-core' ) ] ] ),
+					'default_social_image' => $def( 'seo', 'default_social_image', __( 'Default social image', 'heartland-k9s-core' ), __( 'Used when a page has no social image, featured image or hero image (shown by Facebook, X, LinkedIn, iMessage… when a link is shared). Landscape, at least 1200×630; it is cropped to that size automatically.', 'heartland-k9s-core' ) ),
+					'org_logo'             => $def( 'seo', 'org_logo', __( 'Organization logo (structured data)', 'heartland-k9s-core' ), __( 'The logo search engines show next to the organization. Falls back to the header logo. Square or landscape, at least 112×112, on a plain background.', 'heartland-k9s-core' ) ),
+					'org_alternate_name'   => $def( 'seo', 'org_alternate_name', __( 'Organization short name', 'heartland-k9s-core' ), __( 'Alternate name in the Organization structured data (e.g. "Heartland K9s"). The name itself is the site title, the legal name and EIN come from the Contact tab.', 'heartland-k9s-core' ) ),
+					'org_description'      => $def( 'seo', 'org_description', __( 'Organization description', 'heartland-k9s-core' ), __( 'One or two sentences about the organization for the structured data. Falls back to the footer description.', 'heartland-k9s-core' ) ),
+					'same_as'              => $def( 'seo', 'same_as', __( 'Other profile URLs', 'heartland-k9s-core' ), __( 'One address per line: Charity Navigator, Wikipedia, Wikidata, a state charity registry… The social links and the Candid / GuideStar profile from the Contact tab are included automatically (duplicates are ignored).', 'heartland-k9s-core' ) ),
+					'twitter_site'         => $def( 'seo', 'twitter_site', __( 'X (Twitter) handle for cards', 'heartland-k9s-core' ), __( 'Optional @handle printed as twitter:site. When empty, it is derived from the X profile URL on the Contact tab.', 'heartland-k9s-core' ) ),
+					'breadcrumbs'          => $def( 'seo', 'breadcrumbs', __( 'Show breadcrumbs', 'heartland-k9s-core' ), __( 'A small "Home › Section › Page" trail below the hero on default and landing pages and on story, team, campaign, event and news singles. The BreadcrumbList structured data is printed regardless.', 'heartland-k9s-core' ) ),
 				],
 			],
 			'advanced'  => [

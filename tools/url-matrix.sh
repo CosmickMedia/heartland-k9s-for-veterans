@@ -19,8 +19,13 @@ echo "| URL | Expected | Actual | Header check | Result |"
 echo "|---|---|---|---|---|"
 # Reference routes
 for p in / /about/ /program/ /veterans/ /get-involved/ /barkode/ /stories/ /contact/; do check "$p" 200; done
-# Migrated live pages (slugs preserved)
+# Migrated live pages (slugs preserved) — together with / /barkode/ /contact/ above these cover all 19 indexable
+# pages of the live crawl (urls-internal_all.csv) plus the 3 sitemap-only content pages and the new News page
 for p in /5-questions/ /online-application/ /service-dogs-and-the-ada/ /privacy-policy/ /donate/ /back-the-pack/ /volunteer/ /photos/ /events/ /thank-you/ /campaigns/ /meet-the-team/ /the-service-k9-program/ /how-it-works-veteran-consideration/ /hk9-current-teams-in-training/ /our-highlighted-team/ /heartland-gear/ /the-hk9-coloring-book/ /heartland-obedience-training-2/ /news/; do check "$p" 200; done
+# Author archives: the live site 301s both to the homepage; the seeded rule keeps that (?author=N stays a 404)
+check "/author/admin/" 301 "$BASE/" "x-redirect-by: hk9-legacy"
+check "/author/hk9director/" 301 "$BASE/" "x-redirect-by: hk9-legacy"
+check "/?author=1" 404
 # Registry legacy paths -> canonical record URLs (one hop)
 for s in larry-and-archie-service-k9 jimmy-and-riley-service-k9 vern-and-bella-service-dog hk923004 hk923-005 madison-and-gunther-service-k9 scott-and-elke-service-k9 jeremy-and-nova-service-k9 paul-and-mj-service-k9 cody-and-willow-service-k9 barkode-mosby-hk9t26-01 kimber_hk92026-01 caddie-service-k9_hk92026-02 tex-service-k9-hk926-002 sandy-therapy-k9t26-02; do
   check "/$s/" 301 "/barkode/$s/" "x-redirect-by: hk9-legacy"

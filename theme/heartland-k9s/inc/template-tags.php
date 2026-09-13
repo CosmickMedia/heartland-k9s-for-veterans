@@ -172,6 +172,53 @@ function hk9_image( int $id, string $size = 'large', array $attrs = [], bool $ea
 }
 
 /**
+ * Media query below which an image hero shows its `image_mobile` variant.
+ *
+ * @return string
+ */
+function hk9_hero_mobile_media(): string {
+	return '(max-width: 767px)';
+}
+
+/**
+ * Complement of hk9_hero_mobile_media(): the query the desktop hero preload carries.
+ *
+ * @return string
+ */
+function hk9_hero_desktop_media(): string {
+	return '(min-width: 768px)';
+}
+
+/**
+ * Candidates for the phone variant of an image hero, or null when the hero
+ * has no distinct mobile image. Shared by the hero <picture> and the LCP
+ * preload so both carry byte-identical srcset/sizes.
+ *
+ * @param int $image_id  Desktop hero image.
+ * @param int $mobile_id `image_mobile` field (0 = none).
+ * @return array{id:int,src:string,srcset:string,sizes:string}|null
+ */
+function hk9_hero_mobile_source( int $image_id, int $mobile_id ): ?array {
+	if ( $mobile_id <= 0 || $mobile_id === $image_id || ! wp_attachment_is_image( $mobile_id ) ) {
+		return null;
+	}
+	$src = wp_get_attachment_image_src( $mobile_id, 'hk9-hero' );
+	if ( ! is_array( $src ) || empty( $src[0] ) ) {
+		return null;
+	}
+	$srcset = (string) wp_get_attachment_image_srcset( $mobile_id, 'hk9-hero' );
+	if ( '' === $srcset ) {
+		$srcset = $src[0] . ' ' . (int) $src[1] . 'w';
+	}
+	return [
+		'id'     => $mobile_id,
+		'src'    => (string) $src[0],
+		'srcset' => $srcset,
+		'sizes'  => '100vw',
+	];
+}
+
+/**
  * Button markup from a link value.
  *
  * @param array  $link  Link value.
@@ -325,14 +372,21 @@ function hk9_the_hero( array $data, string $variant = 'band' ): void {
 		echo '<section class="' . esc_attr( implode( ' ', $classes ) ) . '" aria-labelledby="hk9-hero-title">';
 		echo '<div class="hk9-hero__bg">';
 		if ( $image_id > 0 ) {
-			if ( $mobile_id > 0 && $mobile_id !== $image_id ) {
-				$mobile = wp_get_attachment_image_src( $mobile_id, 'hk9-hero' );
-				if ( $mobile ) {
-					echo '<picture>';
-					printf( '<source media="(max-width: 767px)" srcset="%s">', esc_url( $mobile[0] ) );
-					echo hk9_image( $image_id, 'hk9-hero', [ 'sizes' => '100vw', 'alt' => '' ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core markup.
-					echo '</picture>';
-				}
+			$source = hk9_hero_mobile_source( $image_id, $mobile_id );
+			if ( null !== $source ) {
+				// The phone variant: its own srcset so the browser still picks the
+				// candidate for its width/DPR (768w on a 412 px @ 1.75 phone), the
+				// desktop image below. hk9_preload_lcp_image() preloads both with the
+				// same media queries and candidates.
+				echo '<picture>';
+				printf(
+					'<source media="%s" srcset="%s" sizes="%s">',
+					esc_attr( hk9_hero_mobile_media() ),
+					esc_attr( $source['srcset'] ),
+					esc_attr( $source['sizes'] )
+				);
+				echo hk9_image( $image_id, 'hk9-hero', [ 'sizes' => '100vw', 'alt' => '' ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core markup.
+				echo '</picture>';
 			} else {
 				echo hk9_image( $image_id, 'hk9-hero', [ 'sizes' => '100vw', 'alt' => '' ], true ); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- core markup.
 			}

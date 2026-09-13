@@ -52,6 +52,7 @@ while ( have_posts() ) :
 		<?php endif; ?>
 
 		<div class="hk9-post__body container">
+			<?php hk9_the_breadcrumbs( [ 'class' => 'hk9-breadcrumbs--reading' ] ); ?>
 			<div class="hk9-prose hk9-prose--reading hk9-post__content">
 				<?php the_content(); ?>
 			</div>

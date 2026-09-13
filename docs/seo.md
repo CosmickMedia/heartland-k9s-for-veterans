@@ -1,0 +1,86 @@
+# SEO & structured data
+
+Plugin module `HK9\Core\Seo` (`plugin/heartland-k9s-core/src/Seo/`, booted after Analytics — see `Plugin::MODULES`) plus the theme's `inc/compat.php` (delegating fallback), `inc/seo.php` + `template-parts/breadcrumbs.php` (visible breadcrumbs). Contract: docs/ARCHITECTURE.md §12.
+
+## 1. Two modes — never fight an SEO plugin
+
+`Seo\Detector` looks for Slim SEO (`SLIM_SEO_VER`), Yoast (`WPSEO_VERSION`), Rank Math (`RankMath` / `RANK_MATH_VERSION`), All in One SEO (`AIOSEO_VERSION`), SEOPress (`SEOPRESS_VERSION`) and The SEO Framework (`THE_SEO_FRAMEWORK_VERSION`). Filters: `hk9/seo/detected_plugin` (the `{slug,name,version}` array or null), `hk9/seo/plugin_active` (bool, shared with `Privacy\Registry`), `hk9/seo/mode`.
+
+| Mode | When | What Heartland prints |
+|---|---|---|
+| **full** | no SEO plugin (Settings → SEO → Output mode *Automatic*, or forced *Full*) | `<title>` parts, meta description, canonical, robots, rel prev/next, Open Graph + Twitter, the complete JSON-LD `@graph`, sitemap tweaks, the "Search & social" fields |
+| **plugin** (plugin-managed) | an SEO plugin is active (or forced *Plugin-managed*) | **nothing** the SEO plugin prints — only the site-specific structured data it cannot know (NGO details, Event, FAQPage, team ItemList, DonateAction). The "Search & social" box shows a note; its saved values are kept but unused |
+| **off** | Output mode *Off* | no structured data; the meta tags, robots rules, sitemap and the "Search & social" fields stay with Heartland unless an SEO plugin is active (`Detector::owns_meta()`) |
+
+Settings → SEO shows the detected plugin, its version and the effective mode (`Seo\Module::render_settings_note()`). The legacy switch Settings → Advanced → "Output basic SEO meta tags" still gates the head tags in full mode (`Detector::prints_meta()`, filter `hk9/seo/prints_meta`); structured data and the sitemap follow the mode only.
+
+The live site (heartlandk9s.org) runs Slim SEO 4.10, so it is in plugin-managed mode after the migration: Slim SEO keeps its titles, descriptions, canonicals, OG tags, sitemap and generic schema; Heartland only enriches them.
+
+## 2. Full mode output (`Seo\Head`, `Seo\Context`, `Seo\Description`, `Seo\Image`)
+
+- **Title** (`document_title_parts`, prio 20): core's "Page – Site name"; home = "Site name – Tagline"; the posts page uses `blog.hero_title`; archives/search/404 keep core's wording; "Page N" for paged views. The per-post **SEO title** field replaces the whole title (only "Page N" is kept).
+- **Meta description**: SEO field → excerpt → hero text (`hero_image`/`hero_band` `text`, home also `mission.text`) → team/campaign summary, story quote → first paragraph of the content (≥ 40 chars, blocks/shortcodes/tags stripped) → tagline; archives use the term description; posts page uses `blog.hero_text`; nothing on search/404. Trimmed to ~155 characters at a word boundary with "…" (`Description::trim()`). Registry records get the generic text from `Privacy\Registry` through `hk9/seo/description`.
+- **Canonical** (`Context::canonical()`, filter `hk9/seo/canonical`): self-referencing, no query string, for singular / front / posts page / archives; paged views keep `/page/N/` (also the listing pages `stories/page/2/`, which are pages with `paged`); split posts keep `/N/`; the per-post **canonical override** wins; none on search/404, and none on a **noindexed** view (per-post toggle, registry record, local fixture) unless the override names another URL — `noindex` next to a self-referencing canonical would send conflicting signals (`Context::rel_canonical()`; rel prev/next follow the same rule, `og:url` stays). Core's `rel_canonical` is removed (it only covers singular views).
+- **Robots** (`wp_robots`, prio 25): `noindex, follow` when the per-post **noindex** toggle is on, for registry records and local fixtures; core keeps `noindex` on search results and `max-image-preview:large` elsewhere. Paged views stay indexable.
+- **rel prev/next** on paginated blog home / archives (from `$wp_query->max_num_pages`).
+- **Open Graph / Twitter**: `og:locale`, `og:type` (`article` for posts, else `website`), `og:title` (page title without site name), `og:description`, `og:url` (= canonical), `og:site_name`, `og:image` + `secure_url`/`width`/`height`/`type`/`alt`, `article:published_time` / `modified_time` / `section` on posts, `twitter:card summary_large_image` (summary without an image), `twitter:title`/`description`/`image`/`image:alt`, `twitter:site` from Settings → SEO or the X profile URL. All printed at `wp_head` priority 1 under `<!-- Heartland K9s SEO -->`; filter `hk9/seo/head_tags`.
+- **Social image**: SEO field → featured image → event flyer → hero image (`hero_image.image` on home/program/barkode, `legacy.image` on about) → `blog.hero_image` on the posts page → Settings → SEO **Default social image** → header logo. Served from the `hk9-og` size (**1200×630, cropped**, registered by `Seo\Image::register_size()` at `init` 5 and listed in the media modal as "Social share"). Missing crops are created on demand through the theme's `hk9_ensure_image_size()`; smaller originals yield a narrower crop (e.g. 1024×630) rather than an upscale. The importer's media_sizes step generates the size for reused live files because it works from `wp_get_missing_image_subsizes()`.
+
+## 3. Per-post fields — "Search & social" (`Seo\Fields`)
+
+Post types: page, post, story, team, campaign, event (filter `hk9/seo/post_types`). Fields (field framework, meta key `hk9_seo_<key>`): `title` text, `description` textarea, `image` image, `noindex` toggle, `canonical` text (absolute http(s) URL only, `Fields::sanitize_canonical()`). Registered with `register_post_meta` (typed REST schema + `prepare_callback`, `sanitize_callback`, `auth_callback` = `edit_post`, `revisions_enabled` where the type supports revisions, `Meta\RevisionGuard::track()` for diffs/restores), pre-sanitized in `rest_pre_insert_{type}`, saved from the classic form (`save_post_{type}`, nonce `hk9_seo_nonce`) and mirrored into the block editor store by `assets/js/sections.js` (`data-hk9-mirror="fields"`, prefix `hk9_seo_`). `Fields\Assets` loads the field CSS/JS on these post types. In plugin-managed / off mode the box renders only a note. Read with `Seo\Fields::get( $post_id, $key )`.
+
+## 4. Structured data (`Seo\Schema`)
+
+One `<script type="application/ld+json" id="hk9-schema">` with `{"@context":"https://schema.org","@graph":[…]}`, encoded with `JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_UNESCAPED_UNICODE` (a `</script>` inside a value cannot break out). Printed at `wp_head` 20 in full mode. Never on 404s, feeds, embeds, previews or registry records. Filters: `hk9/seo/schema_graph` (nodes, mode), `hk9/seo/schema_organization`, `hk9/seo/schema_event`, `hk9/seo/same_as`.
+
+Node identifiers follow the convention Slim SEO / Yoast use: `{home}/#organization`, `{home}/#website`, `{home}/#logo`, `{url}#webpage`, `{url}#breadcrumblist`, `{url}#primaryimage`, `{url}#article`, `{url}#event`, `{url}#faq`, `{url}#team`, `{url}#person-<slug>`.
+
+| Node | Where | Properties |
+|---|---|---|
+| `NGO` (subtype of Organization) | every page | name (site title), legalName (`contact.legal_name`), alternateName (`seo.org_alternate_name`, "Heartland K9s"), url, logo/image → `#logo` ImageObject (`seo.org_logo` → `branding.header_logo` → custom logo, full size), description (`seo.org_description` → `footer.description`), email, telephone (`+1-800-913-6189`, `Schema::phone()`), address PostalAddress (Contact tab), `nonprofitStatus: https://schema.org/Nonprofit501c3`, taxID (`contact.ein`), sameAs (social URLs + Candid + Settings → SEO "Other profile URLs", deduped), contactPoint (customer service, US, English), potentialAction DonateAction → `links.donate_external` (→ `links.donate`) |
+| `WebSite` | every page (full) | name, url, description (tagline), inLanguage, publisher → NGO, potentialAction SearchAction (`/?s={search_term_string}`) |
+| `WebPage` / `CollectionPage` (posts page, archives, stories/events/campaigns/partners/people/teams/gallery templates) / `AboutPage` / `ContactPage` / `SearchResultsPage` | every page (full) | url, name, description, inLanguage, isPartOf → WebSite, breadcrumb → BreadcrumbList, primaryImageOfPage/image → `#primaryimage`, datePublished/dateModified on singular views, `about` → NGO on the front page, potentialAction DonateAction on the Donate template |
+| `BreadcrumbList` | every page except the front page (full) | ListItem position/name/item from `Seo\Breadcrumbs::trail()` (the last item unlinked) |
+| `BlogPosting` | post singles (full) | headline, url, description, image, datePublished/dateModified, author (Person with the display name when `blog.show_author` is on, otherwise the NGO), publisher → NGO, isPartOf/mainEntityOfPage → WebPage, articleSection, keywords, wordCount, inLanguage |
+| `Event` | event singles and the events listing (`upcoming` section's count via `Events\Dates::query()`) — both modes | name, url, startDate/endDate as ISO 8601 with the event's timezone offset (`2026-11-14T10:00:00-06:00`; date-only for all-day / time-TBD; **endDate only when an end was entered**), eventStatus (EventScheduled/Cancelled/Postponed), eventAttendanceMode Offline, description (excerpt → first paragraph), location Place {name: venue (site name when empty), address: PostalAddress parsed from the address textarea ("City, ST 12345" on the last line; the venue as text when no address; the organization address when neither)}, image (flyer → featured → default), offers {url: registration link, availability InStock} unless cancelled, organizer → NGO |
+| `FAQPage` | pages whose visible layout contains a section of type `faq` with items (landing template) — both modes | mainEntity: Question/acceptedAnswer Answer (answer HTML limited to p/br/a/strong/em/ul/ol/li/h2-h4) |
+| `ItemList` of `Person` | the Meet the Team page (people template, `grid` section: manual ids or every published person by menu order) — both modes | Person name, jobTitle (role), image (portrait), memberOf → NGO — **no e-mails, no phone numbers, no URLs** (people have no public page) |
+| `DonateAction` | Donate template (WebPage.potentialAction) and NGO.potentialAction — both modes | name, target (Zeffy form), recipient → NGO |
+
+### Plugin-managed mode: merging instead of duplicating
+
+An SEO plugin prints its own WebSite / WebPage / BreadcrumbList / Article / Organization. Heartland adds only NGO / Event / FAQPage / ItemList / DonateAction — and its NGO node carries **the same `@id` the plugin uses** (`{home}/#organization`), so in JSON-LD terms it is the *same node*: a consumer that merges the graphs by identifier ends up with one Organization that has the plugin's `name`/`url` **and** the nonprofit status, EIN, address, phone, profiles and donate action. `@type: NGO` refines `Organization` (a subclass), which Google's Organization rich results accept.
+
+- **Slim SEO** exposes its graph through the `slim_seo_schema_graph` filter. Heartland hooks it (`Schema::merge_slim_seo()`, `Schema::merge_into()`): nodes with a matching `@id` are merged property by property (scalars: ours win; `@type`: NGO; two different objects under one key — Slim's ReadAction and our DonateAction under `WebPage.potentialAction` — become a list; Slim's own `#logo` node is kept when it has one), new nodes are appended. Result: **one** `<script id="slim-seo-schema">` per page, no second block. Verified locally with Slim SEO 4.10.1 (`tools/schema-check.mjs`: 1 block, `NGO×1`, no `Organization` duplicate, `WebPage.potentialAction = [ReadAction, DonateAction]`).
+- **Other SEO plugins** (or Slim SEO with its Schema feature switched off): Heartland prints a second, separate `@graph` at `wp_footer` 99 whose nodes share the identifiers (`Schema::print_extras()`; the Donate page patch then carries url/name so it is a valid WebPage on its own). `tools/schema-check.mjs --expect-scripts=2` accepts that layout and still refuses two Organization nodes with different `@id`s.
+
+### Registry records
+
+`hk9_barkode` singles get **no structured data, no social image** (the default image only), **no canonical**, `noindex, nofollow` + `X-Robots-Tag` (Privacy\Registry) and are absent from every sitemap. The same `Schema::printable()` guard (`Context::noindex()`) also drops the JSON-LD on pages with the per-post **noindex** toggle and on local fixtures; `tools/schema-check.mjs` checks one registry record as its default *noindex row* (robots noindex present, 0 canonical, 0 JSON-LD; `--noindex=/a/,/b/` to check others).
+
+## 5. Sitemap (`Seo\Sitemap`, full mode only)
+
+Core sitemaps stay enabled; the editorial types (page, post, hk9_story, hk9_team, hk9_campaign, hk9_event) are listed, the registry / people / partners / submissions never; posts marked **noindex** and local fixtures are excluded (`wp_sitemaps_posts_query_args` meta query); every post entry, the front-page entry and each term entry carry `<lastmod>` (`wp_sitemaps_posts_entry`, `wp_sitemaps_posts_show_on_front_entry`, `wp_sitemaps_taxonomies_entry` — the term's newest post). In plugin-managed mode the SEO plugin's sitemap is used untouched (Slim SEO's already omits the registry because the type is not public).
+
+## 6. Breadcrumbs (`Seo\Breadcrumbs`, theme `inc/seo.php`)
+
+`hk9_breadcrumb_trail()` → `[ {name, url}, … ]`, first = Home, last = the current page (filter `hk9/seo/breadcrumbs`, `hk9/seo/breadcrumb_home_label`). Sections: page ancestors; the posts page (title from `blog.hero_title`) for posts, categories, tags, authors and dates; the listing page from Settings → Destinations (`links.stories`, `links.teams`, `links.campaigns`, `links.events`, `links.barkode` — by page id, else by path, else the reference path) for records; search results "Search results for “q”"; nothing on the front page and 404s.
+
+The theme prints them with `hk9_the_breadcrumbs()` / `hk9_breadcrumbs()` (`template-parts/breadcrumbs.php`: `<nav class="hk9-breadcrumbs" aria-label="Breadcrumb"><ol>…`, chevron-right separators, `aria-current="page"` on the last item, unlinked) — as the first line of the content card on the default page template and landing pages (a `.hk9-breadcrumbs-strip` below the band when the page has no content), inside the card of story / team / campaign / event singles (after the edge-to-edge story figure) and at the top of the post body (`.hk9-breadcrumbs--reading`, 720 px measure). Reference section templates (about, program, …) and listing pages print none. Off switch: Settings → SEO → "Show breadcrumbs" (`seo.breadcrumbs`, filter `hk9/theme/breadcrumbs`). Style: `assets/src/scss/_pages-shared.scss` §4 (13 px muted, in the core stylesheet). Without the plugin `inc/seo.php` builds a minimal trail itself.
+
+## 7. Settings → SEO (`hk9_settings[seo]`)
+
+`schema_mode` select `auto|full|plugin|off` (default auto) · `default_social_image` image · `org_logo` image · `org_alternate_name` "Heartland K9s" · `org_description` textarea · `same_as` textarea (one URL per line, validated at read time) · `twitter_site` text · `breadcrumbs` toggle (true) · `status_note` (rendered detection panel). Payload defaults (`payload-src/records/settings.json`): mode auto, default social image = `{{media:ref:asset:hero-home}}` (the 1024×1024 home hero asset — upload a 1200×630 landscape image later for the best share cards), `same_as` = the Facebook page + Candid profile (duplicates of the Contact tab values are ignored; the field exists for profiles the Contact tab has no slot for), breadcrumbs on.
+
+## 8. Verification
+
+```
+node tools/schema-check.mjs --urls=/,/about/,/events/,/events/<slug>/,/meet-the-team/,/service-dogs-and-the-ada/,/donate/,/news/,/stories/<slug>/
+node tools/schema-check.mjs --expect-scripts=2 …      # SEO plugin without a graph filter
+node tools/lighthouse.mjs --urls=/,/events/,/donate/ --runs=1 --out=<dir>   # SEO category 100 expected
+```
+
+`tools/schema-check.mjs` fetches each URL, extracts every JSON-LD block, checks valid JSON, `@context`, one block (configurable), no duplicated Organization / WebSite (per distinct `@id`, and every such node must have an `@id`), the required properties per type (Organization/NGO name+url, WebSite name+url, WebPage url+name, BreadcrumbList positions 1..n with names and item URLs on non-final items, Article headline/datePublished/author, Event name/startDate/location Place, FAQPage Question/acceptedAnswer text, Person name and **no email/telephone**, ItemList positions, DonateAction target), ISO 8601 dates, absolute URLs and that every `{"@id"}` reference resolves inside the page. Exit code 1 on any error.
+
+Results 2026-09-13 (local stack, WordPress 7.1): full mode — 29/29 URLs pass (home, the 8 reference pages, every listing page, story/team/campaign/event singles, a temporary upcoming event, `/news/`, `/news/page/2/`, a fixture post, a category, search; the registry single prints no schema); Slim SEO 4.10.1 active — 10/10 pass with a single `slim-seo-schema` block; Slim SEO with Schema off (separate block) 3/3; Lighthouse SEO 100/100/100 on `/`, `/events/`, `/donate/` (performance 96/99/99, accessibility 100, best practices 100). Slim SEO was installed for the test only and removed afterwards (plugin, `slim_seo*` options).

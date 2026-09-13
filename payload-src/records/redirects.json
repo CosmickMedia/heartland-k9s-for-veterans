@@ -56,6 +56,22 @@
     "note": "FooGallery query URL for the Back the Pack partner wall."
   },
   {
+    "key": "redirect:/author/admin/",
+    "type": "redirect",
+    "from": "/author/admin/",
+    "to": "/",
+    "status": 301,
+    "note": "Author archive; the live site already 301s it to the homepage (Screaming Frog crawl 2026-09). Seeded by the plugin too; ?author=N stays a 404 (privacy module)."
+  },
+  {
+    "key": "redirect:/author/hk9director/",
+    "type": "redirect",
+    "from": "/author/hk9director/",
+    "to": "/",
+    "status": 301,
+    "note": "Author archive; the live site already 301s it to the homepage (Screaming Frog crawl 2026-09). Seeded by the plugin too; ?author=N stays a 404 (privacy module)."
+  },
+  {
     "key": "redirect:/larry-and-archie-service-k9/",
     "type": "redirect",
     "from": "/larry-and-archie-service-k9/",
