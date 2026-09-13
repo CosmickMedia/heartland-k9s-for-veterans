@@ -12,7 +12,8 @@
  * chosen provider cannot render.
  *
  * Global helpers (declared below, guarded): hk9_form_providers(),
- * hk9_form_provider(), hk9_render_form_provider(), hk9_gravity_forms_active(),
+ * hk9_form_provider(), hk9_render_form_provider(), hk9_form_provider_notice(),
+ * hk9_form_provider_no_output(), hk9_gravity_forms_active(),
  * hk9_gravity_forms_list(), hk9_sanitize_form_shortcode().
  *
  * @package HK9\Core
@@ -37,8 +38,20 @@ namespace HK9\Core\Support {
 		/** Built-in form roles (which settings key supplies the default Gravity form). */
 		public const ROLES = [ 'contact', 'application' ];
 
+		/** Per-request cache of gravity_forms() (null = not fetched yet). */
+		private static ?array $forms_cache = null;
+
+		/** Per-request cache of gravity_form_exists(), form id => bool. */
+		private static array $exists_cache = [];
+
 		/** Nothing to hook: helpers are declared when this file loads (booted from Forms\Handler). */
 		public static function register(): void {}
+
+		/** Clears the per-request Gravity Forms caches (after adding/trashing forms in the same request, e.g. tests). */
+		public static function flush(): void {
+			self::$forms_cache  = null;
+			self::$exists_cache = [];
+		}
 
 		/** Provider labels (value => label), optionally with the "inherit" option first. */
 		public static function labels( bool $with_inherit = false ): array {
@@ -61,58 +74,89 @@ namespace HK9\Core\Support {
 		/**
 		 * Active, non-trashed Gravity Forms forms: id => title (from GFAPI::get_forms()).
 		 *
-		 * Only fetched where a picker can be shown (admin, ajax, REST, CLI):
-		 * GFAPI::get_forms() loads every form's meta, and the select field's
-		 * options callback runs whenever a definition is normalized, which
-		 * happens on every request. On the frontend the list is empty and the
-		 * stored id is validated per form by gravity_form_exists() instead.
+		 * Only fetched where a picker can be shown (admin, ajax, REST, CLI) and
+		 * only on demand: GFAPI::get_forms() loads every form's meta, so nothing
+		 * calls this while definitions load — the select's options callback runs
+		 * when a picker is rendered, saved (sanitized) or formatted for a
+		 * revision diff, and the result is cached per request. On the frontend
+		 * the list is empty and the stored id is validated per form by
+		 * gravity_form_exists() instead.
 		 *
 		 * @return array<int,string>
 		 */
 		public static function gravity_forms(): array {
-			static $cache = null;
-			if ( null !== $cache ) {
-				return $cache;
+			if ( null !== self::$forms_cache ) {
+				return self::$forms_cache;
 			}
-			$cache = [];
+			self::$forms_cache = [];
 			if ( ! self::gravity_active() || ! self::can_list_forms() ) {
-				return $cache;
+				return self::$forms_cache;
 			}
 			$forms = \GFAPI::get_forms( true, false );
 			if ( ! is_array( $forms ) ) {
-				return $cache;
+				return self::$forms_cache;
 			}
 			foreach ( $forms as $form ) {
 				$id = (int) ( $form['id'] ?? 0 );
 				if ( $id <= 0 ) {
 					continue;
 				}
-				$cache[ $id ] = (string) ( $form['title'] ?? '' );
+				self::$forms_cache[ $id ] = (string) ( $form['title'] ?? '' );
 			}
-			return $cache;
+			return self::$forms_cache;
 		}
 
 		/**
-		 * Select options for a Gravity form picker ('' placeholder handled by the
-		 * control; ids as string keys). A stored id that is no longer listed is
-		 * kept so a save never silently drops it while Gravity Forms is inactive.
+		 * Select options for a Gravity form picker (ids as string keys; the ''
+		 * placeholder is handled by the control). Two guarantees:
 		 *
+		 * - A stored id that is no longer listed (form trashed/deleted/inactive,
+		 *   Gravity Forms deactivated, or a context where the list is not
+		 *   fetched) is kept as a labelled "(unavailable)" option, so saving the
+		 *   page never silently resets the field. The theme still falls back to
+		 *   the built-in form while the id cannot render.
+		 * - When no form can be picked because Gravity Forms is inactive or has
+		 *   no forms, the '' option carries that status. The options callback
+		 *   only runs when a picker is rendered, saved or formatted, so this is
+		 *   the live status shown on the panel without any GFAPI call at
+		 *   definition load (see gravity_status()).
+		 *
+		 * @param int $current Stored form id (0 = none).
 		 * @return array<string,string>
 		 */
 		public static function gravity_form_options( int $current = 0 ): array {
-			$out = [];
+			$out    = [];
+			$status = self::gravity_status();
+			if ( '' !== $status ) {
+				$out[''] = $status;
+			}
 			foreach ( self::gravity_forms() as $id => $title ) {
 				/* translators: 1: form title, 2: form id */
 				$out[ (string) $id ] = sprintf( __( '%1$s (#%2$d)', 'heartland-k9s-core' ), '' !== $title ? $title : __( 'Untitled form', 'heartland-k9s-core' ), $id );
 			}
 			if ( $current > 0 && ! isset( $out[ (string) $current ] ) ) {
 				/* translators: %d: form id */
-				$out[ (string) $current ] = sprintf( __( 'Form #%d (not available)', 'heartland-k9s-core' ), $current );
+				$out[ (string) $current ] = sprintf( __( 'Form #%d (unavailable)', 'heartland-k9s-core' ), $current );
 			}
 			return $out;
 		}
 
-		/** Help text under a Gravity form picker. */
+		/**
+		 * Live status of the Gravity Forms picker: '' when forms can be picked
+		 * (or the list is not fetched in this context), otherwise a short
+		 * sentence for the editor (Gravity Forms inactive / no forms yet).
+		 */
+		public static function gravity_status(): string {
+			if ( ! self::gravity_active() ) {
+				return __( 'Gravity Forms is not active — the built-in form is shown', 'heartland-k9s-core' );
+			}
+			if ( self::can_list_forms() && [] === self::gravity_forms() ) {
+				return __( 'No Gravity Forms forms yet (Forms → New Form) — the built-in form is shown', 'heartland-k9s-core' );
+			}
+			return '';
+		}
+
+		/** Help text under a Gravity form picker (live: calls GFAPI in admin; use a static string in definitions). */
 		public static function gravity_help(): string {
 			if ( ! self::gravity_active() ) {
 				return __( 'Gravity Forms is not active. Install and activate it to pick a form here; until then the built-in form is shown.', 'heartland-k9s-core' );
@@ -228,15 +272,14 @@ namespace HK9\Core\Support {
 
 		/** Whether a Gravity form exists, is active and not trashed (single-form lookup, cached per request). */
 		public static function gravity_form_exists( int $form_id ): bool {
-			static $cache = [];
 			if ( $form_id <= 0 || ! self::gravity_active() ) {
 				return false;
 			}
-			if ( ! isset( $cache[ $form_id ] ) ) {
-				$form              = \GFAPI::get_form( $form_id );
-				$cache[ $form_id ] = is_array( $form ) && ! empty( $form['is_active'] ) && empty( $form['is_trash'] );
+			if ( ! isset( self::$exists_cache[ $form_id ] ) ) {
+				$form                           = \GFAPI::get_form( $form_id );
+				self::$exists_cache[ $form_id ] = is_array( $form ) && ! empty( $form['is_active'] ) && empty( $form['is_trash'] );
 			}
-			return $cache[ $form_id ];
+			return self::$exists_cache[ $form_id ];
 		}
 
 		/** Contexts where a form picker can appear (the list is never fetched for visitors). */
@@ -274,6 +317,33 @@ namespace HK9\Core\Support {
 			}
 			$id = ! empty( $args['id'] ) ? ' id="' . esc_attr( sanitize_html_class( (string) $args['id'] ) ) . '"' : '';
 			return '<div class="' . esc_attr( $class ) . '"' . $id . ' data-hk9-form-provider="' . esc_attr( $provider ) . '">' . $inner . '</div>';
+		}
+
+		/**
+		 * Marks an external provider that was available but rendered nothing
+		 * (render() returned '') as unavailable, with an editor note saying so —
+		 * e.g. an enclosing shortcode whose inner content the sanitizer removed,
+		 * or a Gravity form whose markup a filter suppressed. Callers then show
+		 * the built-in form like for any other unavailable provider. No-op for
+		 * the built-in provider or a provider already flagged unavailable.
+		 *
+		 * @param array $resolved Value from resolve().
+		 * @return array Same shape as resolve().
+		 */
+		public static function no_output( array $resolved ): array {
+			$provider = (string) ( $resolved['provider'] ?? self::BUILTIN );
+			if ( empty( $resolved['available'] ) || ! in_array( $provider, [ self::GRAVITY, self::SHORTCODE ], true ) ) {
+				return $resolved;
+			}
+			$resolved['available'] = false;
+			if ( self::GRAVITY === $provider ) {
+				/* translators: %d: form id */
+				$resolved['notice'] = sprintf( __( 'Gravity Forms form #%d produced no output (another plugin or a customization may be suppressing it). The built-in form is shown instead.', 'heartland-k9s-core' ), (int) ( $resolved['gravity_form_id'] ?? 0 ) );
+			} else {
+				/* translators: %s: shortcode tag */
+				$resolved['notice'] = sprintf( __( 'The [%s] shortcode produced no output. The built-in form is shown instead.', 'heartland-k9s-core' ), self::shortcode_tag( (string) ( $resolved['shortcode'] ?? '' ) ) );
+			}
+			return $resolved;
 		}
 
 		/**
@@ -391,6 +461,19 @@ namespace {
 		/** Editor-only note for a provider that fell back to the built-in form ('' for visitors). */
 		function hk9_form_provider_notice( array $resolved ): string {
 			return FormProviders::notice_markup( (string) ( $resolved['notice'] ?? '' ) );
+		}
+	}
+
+	if ( ! function_exists( 'hk9_form_provider_no_output' ) ) {
+		/**
+		 * Flags an available external provider whose markup came back empty as
+		 * unavailable (editor note set); call when hk9_render_form_provider() returned ''.
+		 *
+		 * @param array $resolved Value from hk9_form_provider().
+		 * @return array Same shape as hk9_form_provider().
+		 */
+		function hk9_form_provider_no_output( array $resolved ): array {
+			return FormProviders::no_output( $resolved );
 		}
 	}
 }

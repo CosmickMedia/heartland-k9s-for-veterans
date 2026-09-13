@@ -3,8 +3,9 @@
  * Section: form (contact) — "Send a Message" column. Shows the form of the
  * section's provider: the plugin's built-in form (`hk9_the_form()`), a Gravity
  * Forms form or a form shortcode (`hk9_form_provider()` resolves the section
- * value, falling back to Settings → Forms). Guarded so the theme keeps working
- * without the plugin.
+ * value, falling back to Settings → Forms). An external provider that cannot
+ * render, or whose output is empty, falls back to the built-in form with an
+ * editor-only note. Guarded so the theme keeps working without the plugin.
  *
  * Rendered inside the contact card by page-templates/contact.php (column
  * lg:w-3/5 p-10 md:p-12 bg-card); the part also works stand-alone.
@@ -43,9 +44,12 @@ if ( '' !== $hk9_success_text ) {
 	$hk9_form_args['success_text'] = $hk9_success_text;
 }
 
-// Provider: built-in (default) / Gravity Forms / shortcode. External providers that cannot render fall back to the built-in form.
+// Provider: built-in (default) / Gravity Forms / shortcode. External providers that cannot render — or render nothing — fall back to the built-in form with an editor-only note.
 $hk9_provider      = hk9_form_provider( $hk9_data, $hk9_form );
 $hk9_provider_html = 'builtin' !== ( $hk9_provider['provider'] ?? 'builtin' ) ? hk9_render_form_provider( $hk9_provider, [ 'id' => 'hk9-' . sanitize_html_class( $hk9_id ) . '-provider' ] ) : '';
+if ( '' === $hk9_provider_html ) {
+	$hk9_provider = hk9_form_provider_no_output( $hk9_provider ); // No-op unless an available external provider produced no markup.
+}
 ?>
 <div class="hk9-contact-card__form hk9-contact-form" id="<?php echo esc_attr( 'hk9-' . sanitize_html_class( $hk9_id ) ); ?>">
 	<?php if ( '' !== $hk9_heading ) : ?>

@@ -4,10 +4,15 @@
  *
  * Item 'structure' — manifest schema, unique keys, token graph, dates, templates.
  * Item 'env'       — permalink structure, active theme, uploads writable, post types.
- * Item <attachment key> — file containment, existence, size cap, sha256, MIME (per-record failure).
+ * Item 'lite'      — content-only payload: how many of its file-less live media records
+ *                    have their attachment on this site (fatal below LITE_MIN_FOUND).
+ * Item <attachment key> — file containment, existence, size cap, sha256, MIME (per-record failure);
+ *                    skipped for a file-less record (it ships no file: media_files adopts it or fails it).
  * Item 'prehash:<n>' — hash pre-existing attachments lacking _hk9_sha256 so manual uploads are adopted.
  *
  * Structural/environment problems are fatal; file problems fail only that record.
+ * File-less attachment records ("file": null) are accepted only when the manifest is
+ * flagged "lite" AND existing-site mode (mode.adopt) is on — otherwise a clear fatal.
  *
  * @package HK9\Core
  */
@@ -19,6 +24,7 @@ namespace HK9\Core\Import\Steps;
 use HK9\Core\Import\Context;
 use HK9\Core\Import\Hash;
 use HK9\Core\Import\Manifest;
+use HK9\Core\Import\Preflight;
 use HK9\Core\Import\Tokens;
 
 defined( 'ABSPATH' ) || exit;
@@ -31,10 +37,16 @@ final class Validate extends Step {
 
 	public const POST_STATUSES = [ 'publish', 'draft', 'private', 'pending', 'future' ];
 
+	/** Fatal message when a content-only payload is run without existing-site mode. */
+	public const LITE_NEEDS_ADOPT = 'This is a content-only payload: enable \'Existing site: adopt matching content\' — it reuses the media already in this Media Library — or use the full payload.';
+
 	private static ?int $existing_attachments = null;
 
 	protected function items(): array {
 		$items = [ 'structure', 'env' ];
+		if ( $this->manifest()->is_lite() ) {
+			$items[] = 'lite';
+		}
 		foreach ( $this->manifest()->keys( 'attachment' ) as $k ) {
 			$items[] = $k;
 		}
@@ -61,12 +73,16 @@ final class Validate extends Step {
 			$this->environment();
 			return;
 		}
+		if ( 'lite' === $item ) {
+			$this->lite_media();
+			return;
+		}
 		if ( str_starts_with( $item, 'prehash:' ) ) {
 			$this->prehash( (int) substr( $item, 8 ) );
 			return;
 		}
 		$record = $this->record( $item );
-		if ( $record ) {
+		if ( $record && ! Manifest::is_file_less( $record ) ) {
 			$this->check_file( $item, $record );
 		}
 	}
@@ -80,9 +96,13 @@ final class Validate extends Step {
 		$seen     = [];
 		$records  = 0;
 		$bytes    = 0;
+		$fileless = 0;
 
 		foreach ( $manifest->records() as $i => $record ) {
 			++$records;
+			if ( Manifest::is_file_less( $record ) ) {
+				++$fileless;
+			}
 			$key = $record['key'] ?? null;
 			if ( ! is_string( $key ) || '' === trim( $key ) || strlen( $key ) > 191 ) {
 				$fatal[] = sprintf( 'Record #%d has no valid "key".', $i );
@@ -102,8 +122,8 @@ final class Validate extends Step {
 			foreach ( $errors as $e ) {
 				$fatal[] = $key . ': ' . $e;
 			}
-			if ( 'attachment' === $type ) {
-				$bytes += (int) ( $record['size'] ?? 0 );
+			if ( 'attachment' === $type && ! Manifest::is_file_less( $record ) ) {
+				$bytes += (int) ( $record['size'] ?? 0 ); // Shipped files only (a lite record's bytes stay on the site).
 			}
 
 			// Token graph: every token must point at a record of the right kind.
@@ -136,6 +156,17 @@ final class Validate extends Step {
 			'bytes'       => $bytes,
 		];
 
+		// File-less attachment records are the content-only payload's live media: they need the
+		// manifest's "lite" flag (so a truncated full payload is never mistaken for one) and
+		// existing-site mode, which is the only way they can be satisfied.
+		if ( $fileless > 0 ) {
+			if ( ! $manifest->is_lite() ) {
+				$fatal[] = sprintf( '%d attachment record(s) carry no file ("file": null) but the manifest is not flagged "lite". Rebuild the payload (build-payload.mjs --lite) or use the full payload.', $fileless );
+			} elseif ( ! $ctx->adopt() ) {
+				$fatal[] = self::LITE_NEEDS_ADOPT;
+			}
+		}
+
 		if ( $fatal ) {
 			$shown = array_slice( $fatal, 0, 25 );
 			foreach ( $shown as $msg ) {
@@ -150,6 +181,9 @@ final class Validate extends Step {
 			throw new \RuntimeException( sprintf( 'Manifest validation failed with %d error(s).', count( $fatal ) ) );
 		}
 		$ctx->info( '', sprintf( 'Structure OK: %d records, %d attachments, %s.', $records, $manifest->count( 'attachment' ), size_format( $bytes ) ) );
+		if ( $fileless > 0 ) {
+			$ctx->info( '', sprintf( 'Content-only payload: %d attachment record(s) ship no file and are reused from this site\'s Media Library (existing-site mode). %s', $fileless, $manifest->lite_message() ) );
+		}
 	}
 
 	/**
@@ -171,7 +205,16 @@ final class Validate extends Step {
 
 		switch ( $type ) {
 			case 'attachment':
-				if ( ! $str( $r['file'] ?? null ) || '' === $r['file'] ) {
+				if ( Manifest::is_file_less( $r ) ) {
+					// Content-only record: no file, but enough to find the attachment on this site.
+					if ( ! $str( $r['basename'] ?? null ) || '' === $r['basename'] || basename( (string) $r['basename'] ) !== $r['basename'] ) {
+						$e[] = 'file-less attachment needs a "basename" (file name without a path).';
+					}
+					$path = $r['live_path'] ?? null;
+					if ( ! $str( $path ) || '' === $path || str_starts_with( (string) $path, '/' ) || str_contains( (string) $path, "\0" ) || preg_match( '#(^|[/\\\\])\.\.([/\\\\]|$)#', (string) $path ) ) {
+						$e[] = 'file-less attachment needs an uploads-relative "live_path".';
+					}
+				} elseif ( ! $str( $r['file'] ?? null ) || '' === $r['file'] ) {
 					$e[] = 'attachment needs "file".';
 				}
 				if ( ! $str( $r['sha256'] ?? null ) || ! preg_match( '/^[a-f0-9]{64}$/', (string) $r['sha256'] ) ) {
@@ -397,6 +440,37 @@ final class Validate extends Step {
 			}
 		}
 		$ctx->info( '', sprintf( 'Environment OK: theme %s, permalinks %s.', get_stylesheet(), (string) get_option( 'permalink_structure' ) ) );
+	}
+
+	/* --------------------------------------------------------------- lite */
+
+	/**
+	 * Content-only payload: every file-less live media record must have its
+	 * attachment on this site (by live id + file name, or by live_path). The
+	 * run is blocked when fewer than Preflight::LITE_MIN_FOUND of them are
+	 * found — that is not the site the payload was extracted from, and the
+	 * full payload is the right tool. The first missing paths go to the log.
+	 */
+	private function lite_media(): void {
+		$ctx  = $this->ctx;
+		$lite = Preflight::lite_media( $this->manifest() );
+		if ( 0 === $lite['total'] ) {
+			return;
+		}
+		$ctx->info( '', sprintf( 'Content-only payload: %d of %d media files found on this site%s.', $lite['found'], $lite['total'], $lite['by_path'] > 0 ? sprintf( ' (%d by upload path, the id differs)', $lite['by_path'] ) : '' ) );
+		foreach ( array_slice( $lite['missing'], 0, Preflight::LITE_LIST_MISSING ) as $path ) {
+			$ctx->log->warn( self::NAME, '', 'missing on this site: ' . $path );
+		}
+		if ( count( $lite['missing'] ) > Preflight::LITE_LIST_MISSING ) {
+			$ctx->log->warn( self::NAME, '', sprintf( '… and %d more missing media files.', count( $lite['missing'] ) - Preflight::LITE_LIST_MISSING ) );
+		}
+		if ( $lite['found'] < $lite['required'] ) {
+			$ctx->fatal( sprintf( 'Content-only payload: only %d of %d media files were found on this site (at least %d%% are required). This does not look like the site the payload was extracted from — use the full payload (heartland-k9s-payload.zip), which carries every media file. First missing: %s', $lite['found'], $lite['total'], Preflight::LITE_MIN_FOUND, implode( ', ', array_slice( $lite['missing'], 0, 5 ) ) ) );
+			throw new \RuntimeException( 'Content-only payload: too few media files found on this site.' );
+		}
+		if ( $lite['missing'] ) {
+			$ctx->warn( '', sprintf( 'Content-only payload: %d media file(s) are not on this site and will fail in media_files (see the log for the paths).', count( $lite['missing'] ) ) );
+		}
 	}
 
 	/**

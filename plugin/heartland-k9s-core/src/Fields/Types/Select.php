@@ -1,7 +1,8 @@
 <?php
 /**
  * Select field: string (or string[] when multiple). Options are value=>label;
- * a callable 'options_callback' resolves dynamic options (e.g. terms).
+ * a callable 'options_callback' ( $field, $current_value ) resolves dynamic
+ * options (e.g. terms) and may keep a stored value that is no longer listed.
  *
  * @package HK9\Core
  */
@@ -30,8 +31,6 @@ class Select extends Type {
 	}
 
 	public function sanitize( array $field, mixed $value ): mixed {
-		$options  = Field::options( $field );
-		$has_opts = ! empty( $options );
 		$multiple = ! empty( $field['multiple'] );
 
 		if ( $multiple ) {
@@ -45,7 +44,12 @@ class Select extends Type {
 			if ( ! is_array( $value ) ) {
 				return [];
 			}
-			$out = [];
+			if ( [] === $value ) {
+				return [];
+			}
+			$options  = Field::options( $field, $value );
+			$has_opts = ! empty( $options );
+			$out      = [];
 			foreach ( $value as $item ) {
 				if ( ! is_scalar( $item ) ) {
 					continue;
@@ -64,9 +68,16 @@ class Select extends Type {
 			return $default;
 		}
 		$value = sanitize_text_field( (string) $value );
+		if ( $value === $default ) {
+			// The default is always a legal stored value (the schema enum includes it), so the options are not
+			// needed to validate it. Skipping them keeps options callbacks (terms, Gravity Forms lists) from
+			// running while definitions load: Field::normalize() sanitizes every declared default.
+			return $default;
+		}
+		$options = Field::options( $field, $value );
 		// Anything that is not a valid option (including the "— Select —" placeholder '') becomes the
 		// default, so the stored value always passes the schema enum (the default is always in it).
-		if ( $has_opts && ! isset( $options[ $value ] ) ) {
+		if ( ! empty( $options ) && ! isset( $options[ $value ] ) ) {
 			return $default;
 		}
 		return $value;
@@ -95,7 +106,7 @@ class Select extends Type {
 
 	public function render( array $field, mixed $value, string $name, string $id, Renderer $renderer ): string {
 		$multiple = ! empty( $field['multiple'] );
-		$options  = Field::options( $field );
+		$options  = Field::options( $field, $value );
 		$attrs    = $this->control_attrs(
 			$field,
 			$name . ( $multiple ? '[]' : '' ),
@@ -134,7 +145,7 @@ class Select extends Type {
 	}
 
 	public function format( array $field, mixed $value ): string {
-		$options = Field::options( $field );
+		$options = Field::options( $field, $value );
 		$values  = is_array( $value ) ? $value : [ $value ];
 		$labels  = [];
 		foreach ( $values as $v ) {

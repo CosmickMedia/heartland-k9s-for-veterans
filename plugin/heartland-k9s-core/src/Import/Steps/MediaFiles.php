@@ -28,6 +28,13 @@
  * hashes so both rows hash-match the object, re-runs skip, and rollback can
  * delete the attachment once).
  *
+ * Content-only payload (manifest "lite"): a file-less record ("file": null,
+ * with "basename" + "live_path") can ONLY be adopted — by live id + file name,
+ * or by its upload path when the id differs (Adopt::attachment_match). Nothing
+ * is ever copied for it and the sha256 fallback does not apply: when no
+ * attachment matches, the record fails ("Attachment not found on this site
+ * (expected <live_path>); use the full payload") and its dependants skip.
+ *
  * @package HK9\Core
  */
 
@@ -76,18 +83,28 @@ final class MediaFiles extends Step {
 			$row = null;
 		}
 
-		$adopted = false;
-		$how     = '';
+		$adopted   = false;
+		$how       = '';
+		$file_less = Manifest::is_file_less( $record );
 		if ( 0 === $id ) {
 			// In existing-site mode a live:media:<id> record first takes the live attachment with
 			// its own id and file name — before any byte-identical match, so both halves of a
 			// duplicated live upload keep their own attachment (and their own id for tokens) ...
 			if ( $ctx->adopt() ) {
-				$id = Adopt::attachment_candidate( $key, $record );
+				$match = Adopt::attachment_match( $key, $record );
+				$id    = $match['id'];
 				if ( $id > 0 ) {
 					$adopted = true;
-					$how     = 'id';
+					$how     = $match['how'];
 				}
+			}
+			// A file-less record (content-only payload) has nothing to copy and nothing to hash:
+			// it is adopted from this site's Media Library or it fails — never created, never
+			// bound to another record's bytes.
+			if ( 0 === $id && $file_less ) {
+				$expected = Manifest::live_path( $record );
+				$ctx->fail( $key, sprintf( 'Attachment not found on this site (expected %s); use the full payload.', '' !== $expected ? $expected : Manifest::attachment_basename( $record ) ), $sens );
+				return;
 			}
 			// ... then another payload record's attachment with the same bytes (oldest row wins) ...
 			if ( 0 === $id ) {
@@ -143,7 +160,8 @@ final class MediaFiles extends Step {
 
 		$fresh   = ! $row || $row['object_id'] !== $id;
 		$current = self::current( $id );
-		if ( $fresh && $adopted && 'id' === $how ) {
+		$by_live = in_array( $how, [ 'id', 'path' ], true ); // Matched as the live attachment itself (by id or by upload path).
+		if ( $fresh && $adopted && $by_live ) {
 			// Matched by id + file name only: say so when the bytes on disk are not the payload's
 			// (a file replaced in place under the same name), so the audit trail carries it.
 			$known = $this->known_sha( $id );
@@ -151,7 +169,7 @@ final class MediaFiles extends Step {
 				$ctx->warn( $key, sprintf( 'Attachment #%d has the payload file name but its file bytes differ from the payload (sha256 %s… on disk, %s… in the payload); adopted as-is, the live file is kept.', $id, substr( $known, 0, 12 ), substr( $sha, 0, 12 ) ), $sens );
 			}
 		}
-		if ( $fresh && $adopted && 'id' === $how && ! $sens ) {
+		if ( $fresh && $adopted && $by_live && ! $sens ) {
 			// Adopted as-is: the live attachment keeps its title/alt/caption/description/date;
 			// the row records the database values so later runs see them as untouched.
 			$plan = [
@@ -172,7 +190,7 @@ final class MediaFiles extends Step {
 			$plan = Reconcile::plan( $fresh ? [ 'object_id' => $id, 'field_hashes' => [] ] : $row, $desired, $current, $ctx->overwrite() );
 		}
 		if ( $fresh && $adopted ) {
-			$ctx->adopted( $key, $id, sprintf( 'by %s, %s%s', $how, basename( (string) $record['file'] ), $plan['apply'] ? ' (fields applied: ' . implode( ',', array_keys( $plan['apply'] ) ) . ')' : ' (kept as-is)' ) . ( $ctx->dry() ? ' (dry run)' : '' ), $sens );
+			$ctx->adopted( $key, $id, sprintf( 'by %s, %s%s', $how, Manifest::attachment_basename( $record ), $plan['apply'] ? ' (fields applied: ' . implode( ',', array_keys( $plan['apply'] ) ) . ')' : ' (kept as-is)' ) . ( $ctx->dry() ? ' (dry run)' : '' ), $sens );
 		} else {
 			$ctx->result( $key, $plan['action'], $plan['conflicts'] ? 'conflicts: ' . implode( ',', $plan['conflicts'] ) : '', $sens );
 		}
@@ -200,8 +218,8 @@ final class MediaFiles extends Step {
 			if ( '' === (string) get_post_meta( $id, '_hk9_source_key', true ) ) {
 				update_post_meta( $id, '_hk9_source_key', $key );
 			}
-			if ( 'id' === $how ) {
-				// Bound by live id + file name (bytes not hashed here): keep the hash the
+			if ( $by_live ) {
+				// Bound by live id + file name / upload path (bytes not hashed here): keep the hash the
 				// validate pre-pass computed from the real file; fill it in only when absent.
 				if ( '' === (string) get_post_meta( $id, '_hk9_sha256', true ) ) {
 					update_post_meta( $id, '_hk9_sha256', $sha );
@@ -299,7 +317,12 @@ final class MediaFiles extends Step {
 	}
 
 	private function create( string $key, array $record, array $desired, string $sha, bool $sens ): void {
-		$ctx  = $this->ctx;
+		$ctx = $this->ctx;
+		if ( Manifest::is_file_less( $record ) ) {
+			// Never reached (process() fails such a record first); guards a future caller.
+			$ctx->fail( $key, 'This record ships no file and cannot be created; use the full payload.', $sens );
+			return;
+		}
 		$path = $this->manifest()->path( (string) $record['file'] );
 		$ctx->result( $key, 'create', basename( (string) $record['file'] ), $sens );
 		if ( $ctx->dry() ) {
@@ -409,7 +432,8 @@ final class MediaFiles extends Step {
 		$sensitive = Context::is_sensitive( $record );
 		$title     = (string) ( $record['title'] ?? '' );
 		if ( '' === $title ) {
-			$title = pathinfo( (string) ( $record['file'] ?? 'file' ), PATHINFO_FILENAME );
+			$name  = Manifest::attachment_basename( $record );
+			$title = pathinfo( '' !== $name ? $name : 'file', PATHINFO_FILENAME );
 		}
 		if ( $sensitive ) {
 			// Registry images: never carry names in title/alt/caption (F7).

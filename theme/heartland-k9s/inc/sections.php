@@ -170,7 +170,8 @@ function hk9_template_has_native_content( string $template ): bool {
  * 'after' (after the sections, default), 'before' (right after the hero) or
  * 'hide'. Read from `hk9_sections_layout.content_position` (preview-aware via
  * get_post_meta()). Returns '' when the template has a native content slot or
- * the page has no block content.
+ * the page has no block content (hk9_content_is_blank(): empty paragraph
+ * blocks count as no content).
  *
  * @param int    $post_id  Page id.
  * @param string $template Template slug.
@@ -180,7 +181,7 @@ function hk9_editor_content_position( int $post_id, string $template ): string {
 	if ( $post_id <= 0 || hk9_template_has_native_content( $template ) ) {
 		return '';
 	}
-	if ( '' === trim( (string) get_post_field( 'post_content', $post_id ) ) ) {
+	if ( hk9_content_is_blank( $post_id ) ) {
 		return '';
 	}
 	$position = 'after';
@@ -208,7 +209,7 @@ function hk9_editor_content_position( int $post_id, string $template ): string {
  * 'before' (after the hero): the overlap card used by landing pages.
  * 'after' (after the sections): the same card inside a padded section so it
  * does not overlap the section above it. Nothing is printed for 'hide' or
- * when the content is empty.
+ * when the content is blank (hk9_content_is_blank()).
  *
  * @param int    $post_id  Page id.
  * @param string $position 'after' | 'before' | 'hide'.
@@ -217,7 +218,7 @@ function hk9_the_editor_content( int $post_id, string $position ): void {
 	if ( 'before' !== $position && 'after' !== $position ) {
 		return;
 	}
-	if ( '' === trim( (string) get_post_field( 'post_content', $post_id ) ) ) {
+	if ( hk9_content_is_blank( $post_id ) ) {
 		return;
 	}
 	if ( 'before' === $position ) {
@@ -292,14 +293,14 @@ function hk9_render_sections( int $post_id, string $template ): void {
 }
 
 /**
- * Block content card used by page.php / landing after the hero band.
+ * Block content card used by page.php / landing after the hero band. Nothing
+ * is printed when the content is blank (hk9_content_is_blank()).
  *
  * @param int  $post_id Page id.
  * @param bool $wrap    Wrap in the overlap card.
  */
 function hk9_the_content_card( int $post_id, bool $wrap = true ): void {
-	$content = get_post_field( 'post_content', $post_id );
-	if ( '' === trim( (string) $content ) ) {
+	if ( hk9_content_is_blank( $post_id ) ) {
 		return;
 	}
 
@@ -461,5 +462,33 @@ if ( ! function_exists( 'hk9_form_provider_notice' ) ) {
 			return '';
 		}
 		return '<p class="hk9-notice hk9-form-provider__notice" role="note">' . esc_html( $notice ) . ' <span class="hk9-form-provider__who">' . esc_html__( '(Only editors see this note.)', 'heartland-k9s' ) . '</span></p>';
+	}
+}
+
+if ( ! function_exists( 'hk9_form_provider_no_output' ) ) {
+	/**
+	 * Flags an available external provider whose markup came back empty
+	 * (hk9_render_form_provider() returned '') as unavailable, with an editor
+	 * note, so the template falls back to the built-in form like for any other
+	 * unavailable provider. No-op for builtin / already-unavailable providers.
+	 *
+	 * @param array $resolved Value from hk9_form_provider().
+	 * @return array Same shape as hk9_form_provider().
+	 */
+	function hk9_form_provider_no_output( array $resolved ): array {
+		$provider = (string) ( $resolved['provider'] ?? 'builtin' );
+		if ( empty( $resolved['available'] ) || ! in_array( $provider, [ 'gravity', 'shortcode' ], true ) ) {
+			return $resolved;
+		}
+		$resolved['available'] = false;
+		if ( 'gravity' === $provider ) {
+			/* translators: %d: form id */
+			$resolved['notice'] = sprintf( __( 'Gravity Forms form #%d produced no output (another plugin or a customization may be suppressing it). The built-in form is shown instead.', 'heartland-k9s' ), (int) ( $resolved['gravity_form_id'] ?? 0 ) );
+		} else {
+			$tag = preg_match( '/^\[([a-zA-Z0-9_-]+)/', trim( (string) ( $resolved['shortcode'] ?? '' ) ), $m ) ? $m[1] : '';
+			/* translators: %s: shortcode tag */
+			$resolved['notice'] = sprintf( __( 'The [%s] shortcode produced no output. The built-in form is shown instead.', 'heartland-k9s' ), $tag );
+		}
+		return $resolved;
 	}
 }

@@ -210,7 +210,7 @@ final class Admin {
 							<?php
 							printf(
 								/* translators: %s: max upload size */
-								esc_html__( 'Max upload size on this server: %s. Larger payloads: use WP-CLI (wp hk9 import <dir>).', 'heartland-k9s-core' ),
+								esc_html__( 'The content-only payload (heartland-k9s-payload-lite.zip, about 2 MB) uploads here; it reuses the media already in this Media Library and needs "Existing site: adopt matching content" ticked below. Max upload size on this server: %s — only the full payload (every media file, about 663 MB) exceeds it; put that one on the server by SFTP or use WP-CLI (wp hk9 import <dir>).', 'heartland-k9s-core' ),
 								esc_html( size_format( wp_max_upload_size() ) )
 							);
 							?>
@@ -233,12 +233,12 @@ final class Admin {
 						<input type="hidden" id="hk9-import-path" value="<?php echo esc_attr( $payload['dir'] ?? '' ); ?>" />
 					<?php endif; ?>
 					<div class="hk9-import__serverpath">
-						<h3><?php esc_html_e( 'Large payloads: use a directory on the server', 'heartland-k9s-core' ); ?></h3>
+						<h3><?php esc_html_e( 'Full payload: use a directory on the server', 'heartland-k9s-core' ); ?></h3>
 						<p class="description">
 							<?php
 							printf(
 								/* translators: %s: example directory */
-								esc_html__( 'Upload the unpacked payload (manifest.json, content/, media/) with SFTP into a folder named hk9-payload-<anything> inside the uploads directory, e.g. %s, then enter that path here. The folder is protected and removed after a successful import.', 'heartland-k9s-core' ),
+								esc_html__( 'Only needed for the full payload (heartland-k9s-payload.zip), which is larger than any upload limit: upload its unpacked contents (manifest.json, content/, media/) with SFTP into a folder named hk9-payload-<anything> inside the uploads directory, e.g. %s, then enter that path here. The folder is protected and removed after a successful import.', 'heartland-k9s-core' ),
 								'<code>' . esc_html( trailingslashit( wp_upload_dir( null, false )['basedir'] ) . 'hk9-payload-2026/' ) . '</code>'
 							);
 							?>
@@ -265,7 +265,7 @@ final class Admin {
 						<?php $existing = (int) ( self::preflight()['existing']['total'] ?? 0 ); ?>
 						<label><input type="checkbox" id="hk9-import-adopt" <?php checked( $existing > 0 ); ?> /> <?php esc_html_e( 'Existing site: adopt matching content', 'heartland-k9s-core' ); ?></label>
 						<p class="description hk9-import__adopt-help" id="hk9-import-adopt-help">
-							<?php esc_html_e( 'Pages that already exist with the same id or slug are converted in place (same id, same URL, the old builder content is replaced and kept for rollback); the legacy BarKode registry pages become BarKode records with the same slug (their printed QR paths redirect); attachments with the same id and file name are reused as they are (nothing is re-uploaded, only missing image sizes are generated); menus and terms with the same name/slug are reused. Every adoption is listed in the "Adopt" column and in the run log, and a rollback restores what was replaced. Leave it unticked on a fresh site.', 'heartland-k9s-core' ); ?>
+							<?php esc_html_e( 'Pages that already exist with the same id or slug are converted in place (same id, same URL, the old builder content is replaced and kept for rollback); the legacy BarKode registry pages become BarKode records with the same slug (their printed QR paths redirect); attachments with the same id and file name (or the same upload path) are reused as they are (nothing is re-uploaded, only missing image sizes are generated); menus and terms with the same name/slug are reused. Every adoption is listed in the "Adopt" column and in the run log, and a rollback restores what was replaced. The content-only payload requires this option — its live media records ship no file. Leave it unticked on a fresh site with the full payload.', 'heartland-k9s-core' ); ?>
 						</p>
 						<label><input type="checkbox" id="hk9-import-overwrite" /> <?php esc_html_e( 'Overwrite conflicts (revert edits made on this site to the payload values)', 'heartland-k9s-core' ); ?></label>
 						<div class="hk9-import__buttons">
@@ -370,6 +370,9 @@ final class Admin {
 			<dt><?php esc_html_e( 'Source', 'heartland-k9s-core' ); ?></dt><dd><?php echo esc_html( ! empty( $payload['uploaded'] ) ? __( 'Uploaded ZIP (deleted automatically after a clean import)', 'heartland-k9s-core' ) : __( 'Server path', 'heartland-k9s-core' ) ); ?></dd>
 			<dt><?php esc_html_e( 'Generated', 'heartland-k9s-core' ); ?></dt><dd><?php echo esc_html( (string) $payload['generated_at'] ); ?></dd>
 			<dt><?php esc_html_e( 'Records', 'heartland-k9s-core' ); ?></dt><dd><?php echo esc_html( (string) $payload['records'] ); ?> (<?php echo esc_html( (string) $payload['posts'] ); ?> <?php esc_html_e( 'posts/pages', 'heartland-k9s-core' ); ?>, <?php echo esc_html( (string) $payload['attachments'] ); ?> <?php esc_html_e( 'media', 'heartland-k9s-core' ); ?>, <?php echo esc_html( size_format( (int) $payload['bytes'] ) ); ?>)</dd>
+			<?php if ( ! empty( $payload['lite'] ) ) : ?>
+				<dt><?php esc_html_e( 'Kind', 'heartland-k9s-core' ); ?></dt><dd><?php printf( /* translators: %d: number of media records reused from the site */ esc_html__( 'Content-only payload: %d media files are not shipped and are reused from this site\'s Media Library (tick "Existing site: adopt matching content").', 'heartland-k9s-core' ), (int) $payload['file_less'] ); ?></dd>
+			<?php endif; ?>
 		</dl>
 		<?php
 	}
@@ -397,6 +400,9 @@ final class Admin {
 			self::back( 'error', (string) ( $info['error'] ?? __( 'Invalid payload.', 'heartland-k9s-core' ) ) );
 		}
 		Payload::set_current( $dir, 'upload' );
+		if ( ! empty( $info['lite'] ) ) {
+			self::back( 'success', sprintf( /* translators: 1: records, 2: media records reused from the site */ __( 'Content-only payload unpacked: %1$d records; %2$d media files are reused from this site\'s Media Library. Check the pre-flight, leave "Existing site: adopt matching content" ticked and run a dry run first.', 'heartland-k9s-core' ), (int) $info['records'], (int) $info['file_less'] ) );
+		}
 		self::back( 'success', sprintf( /* translators: 1: records, 2: media count */ __( 'Payload unpacked: %1$d records, %2$d media files. Run a dry run first.', 'heartland-k9s-core' ), (int) $info['records'], (int) $info['attachments'] ) );
 	}
 

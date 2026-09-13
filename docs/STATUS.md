@@ -38,6 +38,7 @@ Local stack: `docker compose -f docker/docker-compose.yml up -d && docker/setup.
 - [x] payload-src authored (8 reference pages, 19 migrated pages, records, menus, settings, redirects, tags, reading)
 - [x] payload built (363 records) · imported locally + on a fresh stack (0 errors, ~2m25s) · re-import all skips, 0 conflicts · rollback verified · edit-preserve/overwrite/resume proven (importer suite 81 checks)
 - [x] Existing-site migration mode (plugin 1.1.0): adopt matching pages/registry pages/media by live id + slug, in-place BarKode conversion, pre-flight panel + `wp hk9 preflight`, un-adopting rollback — simulated on the local stack against an Avada-shaped old site (`tests/adopt-existing-suite.sh`, 155 checks); client runbook in `docs/install.md` §B
+- [x] Content-only payload (plugin 1.1.1): `build-payload.mjs --lite` → `payload-lite/` / `dist/heartland-k9s-payload-lite.zip` (≈1.5 MB, uploads on the admin screen); live media records carry `file: null` + `basename`/`live_path`/`sha256`/`bytes` and are adopted from the Media Library (by id + name, or by upload path), never copied; validate/pre-flight "N of M media found" gate (fatal < 95 %); simulated with all 244 live attachments present (`tests/lite-payload-suite.sh`) — install.md §B now runs on the lite ZIP
 
 ## Phase 6 — Visual comparison loop
 - [x] Screenshots + diffs (8 routes × 390/1440 + representative widths) · fixes · deviations documented

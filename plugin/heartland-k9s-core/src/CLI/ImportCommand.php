@@ -9,6 +9,7 @@ declare(strict_types=1);
 
 namespace HK9\Core\CLI;
 
+use HK9\Core\Import\Manifest;
 use HK9\Core\Import\Map;
 use HK9\Core\Import\Rollback;
 use HK9\Core\Import\Runner;
@@ -51,7 +52,7 @@ final class ImportCommand {
 	 * : Resolve conflicts (records edited on this site) in favour of the payload.
 	 *
 	 * [--adopt-existing]
-	 * : Existing site: bind payload records to the pages (by live id or slug), legacy BarKode pages (converted in place) and attachments (by live id + file name) already on this site instead of creating "-2" duplicates; reported in the "adopt" column, logged as "ADOPT #id".
+	 * : Existing site: bind payload records to the pages (by live id or slug), legacy BarKode pages (converted in place) and attachments (by live id + file name, or by upload path) already on this site instead of creating "-2" duplicates; reported in the "adopt" column, logged as "ADOPT #id". Required for the content-only payload (heartland-k9s-payload-lite.zip), whose live media records ship no file.
 	 *
 	 * [--resume]
 	 * : Continue the paused/interrupted run, or start a new pass over a finished one.
@@ -88,6 +89,7 @@ final class ImportCommand {
 	 *     wp hk9 import /var/www/html/wp-content/hk9-payload --user=admin --dry-run
 	 *     wp hk9 import /var/www/html/wp-content/hk9-payload --user=admin
 	 *     wp hk9 import /home/site/hk9-payload --adopt-existing --user=admin
+	 *     wp hk9 import /home/site/hk9-payload-lite --adopt-existing --user=admin   # content-only payload
 	 *     wp hk9 import --resume --user=admin
 	 *     wp hk9 import ./payload --step=media_files --user=admin
 	 *
@@ -161,6 +163,14 @@ final class ImportCommand {
 			$docroot = realpath( ABSPATH );
 			if ( $docroot && str_starts_with( $real, $docroot . DIRECTORY_SEPARATOR ) && ! is_file( $real . '/.htaccess' ) ) {
 				WP_CLI::warning( 'The payload directory is inside the web root without an .htaccess deny rule; do not leave sensitive payloads there.' );
+			}
+			// A content-only payload can only be satisfied in existing-site mode: say so before a run is recorded.
+			$manifest = Manifest::load( $real );
+			if ( $manifest instanceof Manifest && $manifest->is_lite() ) {
+				if ( ! $mode['adopt'] ) {
+					WP_CLI::error( 'This is a content-only payload: add --adopt-existing — it reuses the media already in this Media Library — or use the full payload.' );
+				}
+				WP_CLI::log( 'Content-only payload: the live media records ship no file and are reused from this site\'s Media Library.' );
 			}
 			$result = Runner::start( $real, $mode, get_current_user_id(), 'path' );
 		}

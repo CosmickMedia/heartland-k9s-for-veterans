@@ -51,6 +51,22 @@ $hk9_rest = static function ( string $method, string $route, array $params = [] 
 $hk9_revisions = static fn( int $post_id ): array => array_map( 'intval', get_posts( [ 'post_type' => 'revision', 'post_parent' => $post_id, 'post_status' => 'any', 'numberposts' => -1, 'fields' => 'ids', 'orderby' => 'ID', 'order' => 'ASC' ] ) );
 $hk9_latest    = static fn( int $post_id ) => wp_get_post_revisions( $post_id, [ 'numberposts' => 1 ] );
 
+/* 0. Loading the definitions (init) never fetches the Gravity Forms list: GFAPI::get_forms() only runs when a picker is rendered/saved with a non-default value. */
+if ( class_exists( 'HK9\\Core\\Support\\FormProviders' ) ) {
+	$gf_cache_prop = new ReflectionProperty( HK9\Core\Support\FormProviders::class, 'forms_cache' );
+	$gf_cache_prop->setAccessible( true );
+	foreach ( array_keys( Registry::templates() ) as $hk9_t ) {
+		foreach ( Registry::definitions( $hk9_t ) as $hk9_d ) {
+			$hk9_d->schema();
+			$hk9_d->defaults();
+			$hk9_d->sanitize( $hk9_d->defaults() );
+		}
+	}
+	null === $gf_cache_prop->getValue()
+		? $hk9_pass( 'gravity_list_not_fetched_at_boot', 'FormProviders::$forms_cache still null after init + schema/defaults/sanitize(defaults) of every definition (WP-CLI context would allow the fetch)' )
+		: $hk9_fail( 'gravity_list_not_fetched_at_boot', 'forms list was fetched while definitions loaded: ' . wp_json_encode( $gf_cache_prop->getValue() ) );
+}
+
 /* 1. Schema validity + idempotency of every registered default. */
 $bad = [];
 foreach ( get_registered_meta_keys( 'post', 'page' ) as $key => $args ) {
@@ -409,6 +425,94 @@ remove_shortcode( 'hk9_test_form_sc' );
 ( false === $sc_real['available'] && true === $sc_real2['available'] && str_contains( $sc_html, 'hk9-shortcode-form' ) && str_contains( $sc_html, 'hk9-test-sc-form' ) )
 	? $hk9_pass( 'form_provider_shortcode_renders', 'registered shortcode → available, rendered inside .hk9-form-provider.hk9-shortcode-form via do_shortcode' )
 	: $hk9_fail( 'form_provider_shortcode_renders', wp_json_encode( [ $sc_real, $sc_real2, $sc_html ] ) );
+
+/* 16c. A registered shortcode that renders nothing → flagged unavailable with an editor note (built-in fallback); no-op for builtin / already-unavailable. */
+add_shortcode( 'hk9_test_form_empty', static fn(): string => '' );
+$sc_empty      = hk9_form_provider( [ 'provider' => 'shortcode', 'shortcode' => '[hk9_test_form_empty]' ], 'contact' );
+$sc_empty_html = hk9_render_form_provider( $sc_empty );
+$sc_flagged    = hk9_form_provider_no_output( $sc_empty );
+remove_shortcode( 'hk9_test_form_empty' );
+$builtin_res   = hk9_form_provider( [ 'provider' => 'builtin' ], 'contact' );
+( true === $sc_empty['available'] && '' === $sc_empty_html && false === $sc_flagged['available'] && str_contains( $sc_flagged['notice'], '[hk9_test_form_empty]' )
+	&& $builtin_res === hk9_form_provider_no_output( $builtin_res ) && $sc_res === hk9_form_provider_no_output( $sc_res ) )
+	? $hk9_pass( 'form_provider_empty_output_flagged', 'available shortcode with empty output → hk9_form_provider_no_output() sets available=false + notice naming the tag; builtin and already-unavailable providers unchanged' )
+	: $hk9_fail( 'form_provider_empty_output_flagged', wp_json_encode( [ $sc_empty, $sc_empty_html, $sc_flagged ] ) );
+
+/* 16d. Gravity picker: definitions load without GFAPI; the options callback receives the current value, so a stored id whose form is gone survives a save as "(unavailable)". */
+$gf_field = null;
+foreach ( $form_def->fields as $f ) {
+	if ( 'gravity_form_id' === $f['key'] ) {
+		$gf_field = $f;
+	}
+}
+$gf_help_static = is_array( $gf_field ) && is_string( $gf_field['help'] ) && str_contains( $gf_field['help'], 'Shown when the provider is Gravity Forms' );
+if ( ! class_exists( 'GFAPI' ) ) {
+	$hk9_blocked( 'gravity_picker_keeps_stale_id', 'Gravity Forms not active' );
+} elseif ( ! $gf_help_static ) {
+	$hk9_fail( 'gravity_picker_keeps_stale_id', 'gravity_form_id help is not the static text: ' . wp_json_encode( $gf_field['help'] ?? null ) );
+} else {
+	$gf_tmp = GFAPI::add_form( [ 'title' => 'HK9 Test GF Form', 'fields' => [], 'is_active' => true ] );
+	if ( is_wp_error( $gf_tmp ) || (int) $gf_tmp <= 0 ) {
+		$hk9_blocked( 'gravity_picker_keeps_stale_id', 'GFAPI::add_form failed: ' . ( is_wp_error( $gf_tmp ) ? $gf_tmp->get_error_message() : 'no id' ) );
+	} else {
+		$gf_tmp = (int) $gf_tmp;
+		HK9\Core\Support\FormProviders::flush();
+		$gf_opts_live = HK9\Core\Fields\Field::options( $gf_field, '' );
+		$gf_opts_stale = HK9\Core\Fields\Field::options( $gf_field, '424242' );
+		$gf_saved_live = $form_def->sanitize( [ '__present' => '1', 'provider' => 'gravity', 'gravity_form_id' => (string) $gf_tmp ] );
+		$gf_saved_stale = $form_def->sanitize( [ '__present' => '1', 'provider' => 'gravity', 'gravity_form_id' => '424242' ] );
+		$gf_saved_bogus = $form_def->sanitize( [ '__present' => '1', 'provider' => 'gravity', 'gravity_form_id' => '12abc' ] );
+		$gf_control = ( new HK9\Core\Fields\Renderer() )->render_field( $gf_field, '424242', 'hk9_sec_contact_form', 'hk9_sec_contact_form' );
+		$gf_ok = isset( $gf_opts_live[ (string) $gf_tmp ] ) && ! isset( $gf_opts_live['424242'] ) && ! isset( $gf_opts_live[''] )
+			&& isset( $gf_opts_stale['424242'] ) && str_contains( $gf_opts_stale['424242'], '(unavailable)' )
+			&& (string) $gf_tmp === $gf_saved_live['gravity_form_id'] && '424242' === $gf_saved_stale['gravity_form_id'] && '' === $gf_saved_bogus['gravity_form_id']
+			&& $gf_saved_stale === $form_def->sanitize( $gf_saved_stale ) && ! is_wp_error( rest_validate_value_from_schema( $gf_saved_stale, $form_def->schema(), 'hk9_sec_contact_form' ) )
+			&& str_contains( $gf_control, 'value="424242" selected' ) && str_contains( $gf_control, '(unavailable)' )
+			&& false === hk9_form_provider( $gf_saved_stale, 'contact' )['available'] && true === hk9_form_provider( $gf_saved_live, 'contact' )['available'];
+		GFAPI::delete_form( $gf_tmp );
+		HK9\Core\Support\FormProviders::flush();
+		$gf_status_opts = HK9\Core\Fields\Field::options( $gf_field, '' );
+		$gf_status_ok   = [] === HK9\Core\Support\FormProviders::gravity_forms() ? ( isset( $gf_status_opts[''] ) && str_contains( $gf_status_opts[''], 'No Gravity Forms forms yet' ) && '' === $form_def->sanitize( [ '__present' => '1', 'provider' => 'gravity', 'gravity_form_id' => '' ] )['gravity_form_id'] ) : true;
+		( $gf_ok && $gf_status_ok )
+			? $hk9_pass( 'gravity_picker_keeps_stale_id', "static help in definition; live list has form #{$gf_tmp}; stored 424242 (no such form) kept as 'Form #424242 (unavailable)' on save, idempotent + schema-valid, selected in the rendered control, resolves unavailable (built-in fallback); '12abc' → ''; with no forms the '' option carries the status" )
+			: $hk9_fail( 'gravity_picker_keeps_stale_id', wp_json_encode( [ $gf_opts_live, $gf_opts_stale, $gf_saved_live['gravity_form_id'] ?? null, $gf_saved_stale['gravity_form_id'] ?? null, $gf_saved_bogus['gravity_form_id'] ?? null, $gf_status_opts, substr( $gf_control, 0, 600 ) ] ) );
+	}
+}
+
+/* 16e. Blank editor canvas: empty paragraph blocks / classic markup with no text count as no content (no empty band, no content.css); any other block or text counts. */
+$blank_id = wp_insert_post( [ 'post_type' => 'page', 'post_title' => 'HK9 Test Blank Canvas', 'post_status' => 'publish', 'post_content' => "<!-- wp:paragraph -->\n<p></p>\n<!-- /wp:paragraph -->\n\n<!-- wp:paragraph {\"align\":\"center\"} -->\n<p class=\"has-text-align-center\">&nbsp;</p>\n<!-- /wp:paragraph -->", 'page_template' => 'page-templates/about.php' ] );
+$blank_cases = [];
+$blank_set   = static function ( string $content ) use ( $blank_id ): void {
+	wp_update_post( [ 'ID' => $blank_id, 'post_content' => $content ] );
+	clean_post_cache( $blank_id );
+};
+$blank_cases['empty_paragraphs'] = hk9_content_is_blank( $blank_id ) && '' === hk9_editor_content_position( $blank_id, 'about' );
+$blank_set( '' );
+$blank_cases['empty_string'] = hk9_content_is_blank( $blank_id );
+$blank_set( "<p>&nbsp;</p>\n<p><br></p>" );
+$blank_cases['classic_nbsp'] = hk9_content_is_blank( $blank_id );
+$blank_set( "<!-- wp:paragraph -->\n<p>Hello</p>\n<!-- /wp:paragraph -->" );
+$blank_cases['text_paragraph'] = ! hk9_content_is_blank( $blank_id ) && 'after' === hk9_editor_content_position( $blank_id, 'about' );
+$blank_set( "<!-- wp:paragraph -->\n<p></p>\n<!-- /wp:paragraph -->\n\n<!-- wp:image {\"id\":1} -->\n<figure class=\"wp-block-image\"><img src=\"x.jpg\" alt=\"\"/></figure>\n<!-- /wp:image -->" );
+$blank_cases['image_block'] = ! hk9_content_is_blank( $blank_id );
+$blank_set( "<!-- wp:spacer {\"height\":\"40px\"} -->\n<div style=\"height:40px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div>\n<!-- /wp:spacer -->" );
+$blank_cases['spacer_block'] = ! hk9_content_is_blank( $blank_id );
+$blank_set( '<img src="x.jpg" alt="">' );
+$blank_cases['classic_image'] = ! hk9_content_is_blank( $blank_id );
+$blank_set( '[gallery ids="1,2"]' );
+$blank_cases['classic_shortcode'] = ! hk9_content_is_blank( $blank_id );
+wp_delete_post( $blank_id, true );
+[] === array_keys( array_filter( $blank_cases, static fn( $ok ) => ! $ok ) )
+	? $hk9_pass( 'blank_canvas_detection', 'blank: empty paragraph blocks (incl. &nbsp;/align), empty string, classic <p>&nbsp;</p><p><br></p> → position ""; content: text paragraph (position "after"), image block, spacer block, classic <img>, classic shortcode' )
+	: $hk9_fail( 'blank_canvas_detection', 'failed cases: ' . implode( ', ', array_keys( array_filter( $blank_cases, static fn( $ok ) => ! $ok ) ) ) );
+
+/* 16f. Layout revision formatter names the editor-content position. */
+$fmt_post   = get_post( $page_id );
+$fmt_before = RevisionGuard::format_for_diff( Layout::META_KEY, [ 'order' => [ 'legacy' ], 'hidden' => [], 'content_position' => 'before' ], $fmt_post );
+$fmt_hide   = RevisionGuard::format_for_diff( Layout::META_KEY, [ 'order' => [ 'legacy' ], 'hidden' => [], 'content_position' => 'hide' ], $fmt_post );
+( str_contains( $fmt_before, 'Editor content: ' . Layout::content_labels()['before'] ) && str_contains( $fmt_hide, 'Editor content: ' . Layout::content_labels()['hide'] ) && $fmt_before !== $fmt_hide && str_starts_with( $fmt_before, 'Order: legacy' ) )
+	? $hk9_pass( 'layout_revision_formatter_shows_content_position', 'format_for_diff prints Order / Hidden / Editor content: <label>; before vs hide differ' )
+	: $hk9_fail( 'layout_revision_formatter_shows_content_position', wp_json_encode( [ $fmt_before, $fmt_hide ] ) );
 
 /* 14. Subscriber PUT → 403. */
 $sub_id = wp_insert_user( [ 'user_login' => 'hk9_test_subscriber_' . wp_rand( 1000, 9999 ), 'user_pass' => wp_generate_password(), 'role' => 'subscriber' ] );

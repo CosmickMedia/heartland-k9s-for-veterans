@@ -23,7 +23,11 @@
  *   attachments (live:media:<id>)
  *     the attachment with that id when the basename of its attached file (or
  *     of its original image) equals the payload file's basename and the file
- *     exists on disk; otherwise the sha256 index applies (MediaFiles)
+ *     exists on disk; failing that — for a record that carries a "live_path"
+ *     (content-only payload) — the attachment whose _wp_attached_file is that
+ *     uploads-relative path (or its -scaled/-rotated rendition), i.e. a site
+ *     whose attachment ids were renumbered; otherwise the sha256 index applies
+ *     (MediaFiles; never for a file-less record, which fails instead)
  *
  * A matched post whose status differs from the record's (a private or draft
  * page holding a payload slug) is still adopted — the first bind applies the
@@ -169,40 +173,123 @@ final class Adopt {
 
 	/**
 	 * Attachment record (live:media:<id>) -> the attachment with that id when its
-	 * file has the payload file's basename (case-insensitive) and exists on disk.
+	 * file has the payload file's basename (case-insensitive) and exists on disk;
+	 * failing that, when the record carries a "live_path" (content-only payload),
+	 * the attachment whose `_wp_attached_file` is that path (a site whose ids were
+	 * renumbered keeps its upload paths).
 	 *
 	 * @return int Attachment id or 0.
 	 */
 	public static function attachment_candidate( string $key, array $record ): int {
+		return self::attachment_match( $key, $record )['id'];
+	}
+
+	/**
+	 * Same as attachment_candidate(), with how the match was made.
+	 *
+	 * @return array{id:int, how:string} how: 'id' (live id + file name) | 'path' (live_path) | ''.
+	 */
+	public static function attachment_match( string $key, array $record ): array {
+		$none = [
+			'id'  => 0,
+			'how' => '',
+		];
 		$live_id = self::live_id( $key );
 		if ( $live_id <= 0 || ! str_starts_with( $key, 'live:media:' ) ) {
-			return 0;
+			return $none;
+		}
+		$want = strtolower( Manifest::attachment_basename( $record ) );
+		if ( '' === $want ) {
+			return $none;
 		}
 		$post = get_post( $live_id );
-		if ( ! $post instanceof \WP_Post || 'attachment' !== $post->post_type || 'trash' === $post->post_status ) {
-			return 0;
+		if ( $post instanceof \WP_Post && self::attachment_usable( $post, $key, $want ) ) {
+			return [
+				'id'  => $live_id,
+				'how' => 'id',
+			];
+		}
+		$path = Manifest::live_path( $record );
+		if ( '' === $path ) {
+			return $none;
+		}
+		foreach ( self::attachments_at_path( $path ) as $candidate ) {
+			if ( (int) $candidate->ID !== $live_id && self::attachment_usable( $candidate, $key, $want ) ) {
+				return [
+					'id'  => (int) $candidate->ID,
+					'how' => 'path',
+				];
+			}
+		}
+		return $none;
+	}
+
+	/**
+	 * An attachment may stand in for a record when it is not trashed, not claimed
+	 * by another key, its file (or its original image) has the wanted basename
+	 * and that file exists on disk.
+	 */
+	private static function attachment_usable( \WP_Post $post, string $key, string $want ): bool {
+		$id = (int) $post->ID;
+		if ( 'attachment' !== $post->post_type || 'trash' === $post->post_status ) {
+			return false;
 		}
 		if ( '' !== self::blocked( $post, $key ) ) {
-			return 0;
+			return false;
 		}
-		$want = strtolower( basename( (string) ( $record['file'] ?? '' ) ) );
-		if ( '' === $want ) {
-			return 0;
-		}
-		$attached = (string) get_post_meta( $live_id, '_wp_attached_file', true );
+		$attached = (string) get_post_meta( $id, '_wp_attached_file', true );
 		$names    = [ strtolower( basename( $attached ) ) ];
-		$meta     = wp_get_attachment_metadata( $live_id );
+		$meta     = wp_get_attachment_metadata( $id );
 		if ( is_array( $meta ) && ! empty( $meta['original_image'] ) ) {
 			$names[] = strtolower( basename( (string) $meta['original_image'] ) );
 		}
 		if ( ! in_array( $want, $names, true ) ) {
-			return 0;
+			return false;
 		}
-		$file = get_attached_file( $live_id, true );
-		if ( ! $file || ! is_file( $file ) ) {
-			return 0;
+		$file = get_attached_file( $id, true );
+		return (bool) $file && is_file( $file );
+	}
+
+	/**
+	 * Non-trashed attachments whose `_wp_attached_file` is an uploads-relative
+	 * path — or its `-scaled` / `-rotated` rendition, which is what WordPress
+	 * records for a big image whose original sits at that path.
+	 *
+	 * @return \WP_Post[]
+	 */
+	private static function attachments_at_path( string $path ): array {
+		$ext   = pathinfo( $path, PATHINFO_EXTENSION );
+		$stem  = '' !== $ext ? substr( $path, 0, -strlen( $ext ) - 1 ) : $path;
+		$paths = [ $path ];
+		if ( '' !== $ext ) {
+			$paths[] = $stem . '-scaled.' . $ext;
+			$paths[] = $stem . '-rotated.' . $ext;
 		}
-		return $live_id;
+		$posts = get_posts(
+			[
+				'post_type'        => 'attachment',
+				'post_status'      => 'any',
+				'numberposts'      => 5,
+				'orderby'          => 'ID',
+				'order'            => 'ASC',
+				'suppress_filters' => true,
+				'no_found_rows'    => true,
+				'meta_query'       => [ // phpcs:ignore WordPress.DB.SlowDBQuery.slow_db_query_meta_query
+					[
+						'key'     => '_wp_attached_file',
+						'value'   => $paths,
+						'compare' => 'IN',
+					],
+				],
+			]
+		);
+		$out   = [];
+		foreach ( $posts as $post ) {
+			if ( $post instanceof \WP_Post && 'trash' !== $post->post_status ) {
+				$out[] = $post;
+			}
+		}
+		return $out;
 	}
 
 	/**

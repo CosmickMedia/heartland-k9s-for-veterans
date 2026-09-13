@@ -4,6 +4,7 @@
  *
  *   node tools/build-payload.mjs [--src=payload-src] [--out=payload] [--media-index=payload/media-index.json]
  *                                [--copy-media] [--no-verify] [--quiet]
+ *   node tools/build-payload.mjs --lite [--out=payload-lite] [--media-from=payload]
  *
  * Inputs
  *   <src>/records/**\/*.json   one record object or an array of records (hk9-payload/1 shapes, ARCHITECTURE.md §8)
@@ -11,10 +12,18 @@
  *                             (or is attached automatically when content/<key with ':' -> '__'>.html exists)
  *   <src>/sources.json        optional { sources: {...}, requires: { theme } }
  *   media-index.json          { items: { key: { file, sha256, bytes, mime, width, height, title, alt, caption,
- *                               description, date, parent?, sensitive? } } } written by tools/fetch-media.mjs
- *                             (missing -> build with zero media and warn)
+ *                               description, date, parent?, sensitive?, source_url } } } written by
+ *                             tools/fetch-media.mjs (missing -> build with zero media and warn)
  * Output
  *   <out>/manifest.json, <out>/content/*.html (and <out>/media/** when --copy-media copies from <src>/media/**)
+ *
+ * --lite builds the CONTENT-ONLY payload for the live site (existing-site mode): the same manifest,
+ * except that every live:media:<id> attachment record carries "file": null plus "basename" (the
+ * payload file name), "live_path" (uploads-relative path derived from the media index source_url,
+ * e.g. 2023/05/Concept-1-rocker-outlined-2.png), "sha256" and "bytes"; <out>/media/ holds only the
+ * ref:asset:* files (copied from <media-from>, default payload/), and the manifest is flagged
+ * "lite": true. The importer adopts those records from the site's Media Library (by id + file
+ * name, or by live_path) and never copies a file for them; the full payload is unchanged.
  *
  * Every {{token}} must resolve to a record of the right kind (or, for terms, a seeded taxonomy term slug listed
  * in <src>/known-terms.json); dangling tokens fail the build. Record shapes are validated the same way the
@@ -36,12 +45,24 @@ const args = Object.fromEntries(
   })
 );
 
+const LITE = Boolean(args.lite);
 const SRC = path.resolve(ROOT, args.src || 'payload-src');
-const OUT = path.resolve(ROOT, args.out || 'payload');
+const OUT = path.resolve(ROOT, args.out || (LITE ? 'payload-lite' : 'payload'));
+// Where the full media files live (lite builds copy the ref:asset:* files from here and verify the
+// live files' sha256 against it when present).
+const MEDIA_FROM = path.resolve(ROOT, args['media-from'] || 'payload');
 const MEDIA_INDEX = args['media-index'] ? path.resolve(ROOT, args['media-index']) : null;
 const COPY_MEDIA = Boolean(args['copy-media']);
 const VERIFY = !args['no-verify'];
 const QUIET = Boolean(args.quiet);
+// Records whose file the lite payload leaves out: the live site's own uploads.
+const LITE_KEY_PREFIX = 'live:media:';
+const UPLOADS_URL_RE = /^https?:\/\/[^/]+\/wp-content\/uploads\/(.+)$/i;
+
+if (LITE && path.resolve(OUT) === path.resolve(MEDIA_FROM)) {
+  console.error('build-payload: --lite must write somewhere other than --media-from (it removes <out>/media).');
+  process.exit(1);
+}
 
 const TOKEN_RE = /\{\{(media_url|media|post_url|post|term):([^{}|]+?)(?:\|([a-z_]+))?\}\}/g;
 const STRUCTURAL = new Set(['attachment', 'term', 'menu', 'option', 'reading', 'redirect']);
@@ -129,12 +150,29 @@ for (const file of walk(path.join(SRC, 'records'), '.json')) {
 // Media index -> attachment records.
 let mediaIndexPath = MEDIA_INDEX;
 if (!mediaIndexPath) {
-  for (const candidate of [path.join(OUT, 'media-index.json'), path.join(SRC, 'media-index.json')]) {
+  for (const candidate of [path.join(OUT, 'media-index.json'), path.join(MEDIA_FROM, 'media-index.json'), path.join(SRC, 'media-index.json')]) {
     if (fs.existsSync(candidate)) { mediaIndexPath = candidate; break; }
   }
 }
 let mediaCount = 0;
 let mediaBytes = 0;
+let liteCount = 0;
+let liteBytes = 0;
+
+// Uploads-relative path of a live file ("2023/05/name.png") from its source URL (the original
+// upload, not the -scaled rendition WordPress serves for big images).
+function livePathOf(item) {
+  for (const url of [item.source_url, item.served_full_url]) {
+    if (!isStr(url)) continue;
+    const m = url.match(UPLOADS_URL_RE);
+    if (m) {
+      let p = m[1].split('?')[0].split('#')[0];
+      try { p = decodeURIComponent(p); } catch { /* keep as is */ }
+      return p.replace(/^\/+/, '');
+    }
+  }
+  return '';
+}
 if (mediaIndexPath && fs.existsSync(mediaIndexPath)) {
   let index;
   try {
@@ -170,10 +208,29 @@ if (mediaIndexPath && fs.existsSync(mediaIndexPath)) {
       rec.__denied = true;
       warn(`${key}: MIME ${rec.mime} is rejected by the importer; the record is left out of the manifest`);
     }
+    if (LITE && key.startsWith(LITE_KEY_PREFIX) && !rec.__denied) {
+      // Content-only payload: the file stays on the live site; the importer adopts the attachment
+      // by id + basename (or by live_path) and never copies anything for this record.
+      const livePath = livePathOf(item);
+      if (!livePath) fail(`${key}: cannot derive live_path (no wp-content/uploads source_url in the media index)`);
+      rec.__full_file = rec.file;
+      rec.basename = path.posix.basename(rec.file);
+      rec.live_path = livePath;
+      rec.bytes = rec.size;
+      rec.file = null;
+      if (livePath && path.posix.basename(livePath).toLowerCase() !== rec.basename.toLowerCase()) {
+        fail(`${key}: live_path "${livePath}" does not end in the payload file name "${rec.basename}"`);
+      }
+    }
     records.push({ ...rec, __file: path.relative(ROOT, mediaIndexPath) });
     if (!rec.__denied) {
-      mediaCount++;
-      mediaBytes += rec.size;
+      if (rec.file === null) {
+        liteCount++;
+        liteBytes += rec.size;
+      } else {
+        mediaCount++;
+        mediaBytes += rec.size;
+      }
     }
   }
 } else {
@@ -237,7 +294,13 @@ function checkShape(r) {
   if (!isStr(type) || !type) { fail(`${k}: missing "type"`); return; }
   switch (type) {
     case 'attachment':
-      if (!isStr(r.file) || !r.file) fail(`${k}: attachment needs "file"`);
+      if (r.file === null) {
+        // Content-only record (lite payload): no file, but enough to find the attachment on the live site.
+        if (!LITE) fail(`${k}: "file": null is only valid in a --lite build`);
+        if (!isStr(r.basename) || !r.basename) fail(`${k}: file-less attachment needs "basename"`);
+        if (!isStr(r.live_path) || !r.live_path || r.live_path.startsWith('/') || /(^|\/)\.\.(\/|$)/.test(r.live_path)) fail(`${k}: file-less attachment needs an uploads-relative "live_path"`);
+        if (!Number.isInteger(r.bytes) || r.bytes <= 0) fail(`${k}: file-less attachment needs "bytes"`);
+      } else if (!isStr(r.file) || !r.file) fail(`${k}: attachment needs "file"`);
       if (!/^[a-f0-9]{64}$/.test(r.sha256 || '')) fail(`${k}: attachment needs a 64-hex "sha256"`);
       if (!isStr(r.mime) || !r.mime) fail(`${k}: attachment needs "mime"`);
       if (r.parent !== undefined && !singleToken(r.parent, ['post'])) fail(`${k}: "parent" must be {{post:K}}`);
@@ -348,15 +411,42 @@ for (const r of byKey.values()) {
   checkTokens(r.key, copy);
 }
 
+if (LITE) {
+  // <out>/media holds only the files the lite payload ships (the ref:asset:* records): start clean.
+  fs.rmSync(path.join(OUT, 'media'), { recursive: true, force: true });
+}
+
+let liteVerified = 0;
+let liteUnverified = 0;
 for (const r of byKey.values()) {
   if (r.type !== 'attachment' || r.__denied) continue;
+  if (r.file === null) {
+    // Lite record: nothing to ship; verify the recorded sha256 against the full media when it is there.
+    const fullFile = r.__full_file ? path.join(MEDIA_FROM, r.__full_file) : '';
+    if (VERIFY && fullFile && fs.existsSync(fullFile)) {
+      const size = fs.statSync(fullFile).size;
+      if (size !== r.bytes) warn(`${r.key}: declared bytes ${r.bytes} != actual ${size} in ${path.relative(ROOT, MEDIA_FROM)}`);
+      if (sha256File(fullFile) !== r.sha256) fail(`${r.key}: sha256 mismatch for ${r.__full_file} in ${path.relative(ROOT, MEDIA_FROM)}`);
+      liteVerified++;
+    } else {
+      liteUnverified++;
+    }
+    continue;
+  }
   const srcCandidate = path.join(SRC, r.file);
   const outFile = path.join(OUT, r.file);
   if (COPY_MEDIA && fs.existsSync(srcCandidate)) {
     fs.mkdirSync(path.dirname(outFile), { recursive: true });
     fs.copyFileSync(srcCandidate, outFile);
   }
-  if (!fs.existsSync(outFile)) { fail(`${r.key}: media file "${r.file}" missing under ${path.relative(ROOT, OUT)}`); continue; }
+  if (LITE && !fs.existsSync(outFile)) {
+    const fromFile = path.join(MEDIA_FROM, r.file);
+    if (fs.existsSync(fromFile)) {
+      fs.mkdirSync(path.dirname(outFile), { recursive: true });
+      fs.copyFileSync(fromFile, outFile);
+    }
+  }
+  if (!fs.existsSync(outFile)) { fail(`${r.key}: media file "${r.file}" missing under ${path.relative(ROOT, OUT)}${LITE ? ` (and under ${path.relative(ROOT, MEDIA_FROM)})` : ''}`); continue; }
   const size = fs.statSync(outFile).size;
   if (!r.size) r.size = size;
   else if (r.size !== size) warn(`${r.key}: declared size ${r.size} != actual ${size}`);
@@ -381,6 +471,7 @@ for (const r of byKey.values()) {
   if (r.__denied) continue; // Unreferenced SVG/HEIC media: kept out of the manifest (warned above).
   const clean = { ...r };
   delete clean.__file;
+  delete clean.__full_file;
   grouped[typeOf(r)].push(clean);
 }
 const manifest = {
@@ -388,14 +479,36 @@ const manifest = {
   generated_at: new Date().toISOString(),
   sources: sourcesCfg.sources || {},
   requires: { theme: 'heartland-k9s', ...(sourcesCfg.requires || {}) },
-  records: order.flatMap((t) => grouped[t]),
 };
+if (LITE) {
+  manifest.lite = true;
+  manifest.lite_message = `Content-only payload: ${liteCount} live:media:* attachment records carry no file ("file": null) and are reused from this site's Media Library — import it with "Existing site: adopt matching content" (CLI --adopt-existing) on the site the payload was extracted from. Only the ${mediaCount} ref:asset:* files are shipped in media/. For a fresh site use the full payload (heartland-k9s-payload.zip).`;
+}
+manifest.records = order.flatMap((t) => grouped[t]);
 fs.mkdirSync(OUT, { recursive: true });
 fs.writeFileSync(path.join(OUT, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');
 
+function dirBytes(dir) {
+  let total = 0;
+  if (!fs.existsSync(dir)) return 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const p = path.join(dir, entry.name);
+    if (entry.isDirectory()) total += dirBytes(p);
+    else if (entry.isFile()) total += fs.statSync(p).size;
+  }
+  return total;
+}
+
 const counts = {};
 for (const r of manifest.records) counts[r.type] = (counts[r.type] || 0) + 1;
-log(`build-payload: wrote ${path.relative(ROOT, path.join(OUT, 'manifest.json'))}`);
+log(`build-payload: wrote ${path.relative(ROOT, path.join(OUT, 'manifest.json'))}${LITE ? ' (lite / content-only)' : ''}`);
 log(`  records: ${manifest.records.length}  (${Object.entries(counts).map(([k, v]) => `${k}=${v}`).join(', ')})`);
 log(`  content files: ${contentCount}   media: ${mediaCount} (${(mediaBytes / 1048576).toFixed(1)} MB)`);
+if (LITE) {
+  log(`  file-less live media records: ${liteCount} (${(liteBytes / 1048576).toFixed(1)} MB stay on the live site; sha256 verified against ${path.relative(ROOT, MEDIA_FROM)}: ${liteVerified}, unverified: ${liteUnverified})`);
+  const manifestBytes = fs.statSync(path.join(OUT, 'manifest.json')).size;
+  const contentBytes = dirBytes(path.join(OUT, 'content'));
+  const outMediaBytes = dirBytes(path.join(OUT, 'media'));
+  log(`  lite payload size: ${((manifestBytes + contentBytes + outMediaBytes) / 1048576).toFixed(2)} MB (manifest ${(manifestBytes / 1024).toFixed(0)} KB, content ${(contentBytes / 1024).toFixed(0)} KB, media ${(outMediaBytes / 1048576).toFixed(2)} MB in ${mediaCount} files)`);
+}
 for (const w of warnings) log('  ! ' + w);

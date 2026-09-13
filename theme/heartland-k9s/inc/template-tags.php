@@ -565,3 +565,38 @@ function hk9_paragraphs( string $text, string $class = '' ): string {
 	}
 	return $html;
 }
+
+/**
+ * Whether a page's block content (editor canvas) is blank: empty, whitespace,
+ * or nothing but empty paragraph blocks / classic markup with no text
+ * (`<!-- wp:paragraph --><p></p><!-- /wp:paragraph -->`, `<p>&nbsp;</p>`).
+ * Any other block (image, embed, heading, group, shortcode …) or any visible
+ * text counts as content. Used by the content-card helpers so an accidental
+ * empty paragraph never leaves a blank band on the page (or loads content.css).
+ *
+ * @param int $post_id Page id.
+ * @return bool
+ */
+function hk9_content_is_blank( int $post_id ): bool {
+	$content = $post_id > 0 ? (string) get_post_field( 'post_content', $post_id ) : '';
+	if ( '' === trim( $content ) ) {
+		return true;
+	}
+	// Markup that renders nothing: paragraph/line-break/inline wrappers around whitespace or &nbsp;.
+	$html_is_blank = static function ( string $html ): bool {
+		$html = preg_replace( '#<!--.*?-->#s', '', $html ) ?? $html;
+		$html = preg_replace( '#</?(p|br|span|div|em|strong|b|i)\b[^>]*>#i', '', $html ) ?? $html;
+		$html = str_replace( [ '&nbsp;', "\xC2\xA0" ], '', $html );
+		return '' === trim( $html );
+	};
+	foreach ( parse_blocks( $content ) as $block ) {
+		$name = (string) ( $block['blockName'] ?? '' );
+		if ( '' !== $name && 'core/paragraph' !== $name ) {
+			return false;
+		}
+		if ( ! $html_is_blank( (string) ( $block['innerHTML'] ?? '' ) ) ) {
+			return false;
+		}
+	}
+	return true;
+}

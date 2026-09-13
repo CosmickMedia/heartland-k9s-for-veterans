@@ -482,16 +482,21 @@ final class Shared {
 	 * id is stored as a numeric string by the select type) and a sanitized
 	 * `shortcode` (only [shortcode] tags survive; executed with do_shortcode()).
 	 *
+	 * Nothing here talks to Gravity Forms while definitions load (that happens
+	 * on every admin/REST/CLI request): the help text is static and the form
+	 * list is only fetched by the options callback when the picker is rendered,
+	 * saved or formatted. The callback receives the current value so a stored
+	 * id whose form was trashed/deleted (or Gravity Forms deactivated) stays
+	 * selectable as "Form #n (unavailable)" instead of being reset on save.
+	 *
 	 * @return array[] Field definitions.
 	 */
 	public static function form_provider_fields(): array {
-		$gravity_options = static function (): array {
-			return class_exists( 'HK9\\Core\\Support\\FormProviders' ) ? \HK9\Core\Support\FormProviders::gravity_form_options() : [];
+		$gravity_options = static function ( array $field, mixed $current = null ): array {
+			$current = is_scalar( $current ) && ctype_digit( (string) $current ) ? (int) $current : 0;
+			return class_exists( 'HK9\\Core\\Support\\FormProviders' ) ? \HK9\Core\Support\FormProviders::gravity_form_options( $current ) : [];
 		};
-		$gravity_help = class_exists( 'HK9\\Core\\Support\\FormProviders' )
-			? \HK9\Core\Support\FormProviders::gravity_help()
-			: __( 'Gravity Forms is not active.', 'heartland-k9s-core' );
-		$providers    = class_exists( 'HK9\\Core\\Support\\FormProviders' )
+		$providers = class_exists( 'HK9\\Core\\Support\\FormProviders' )
 			? \HK9\Core\Support\FormProviders::labels( true )
 			: [
 				'inherit'   => __( 'Site default (Settings → Forms)', 'heartland-k9s-core' ),
@@ -513,7 +518,7 @@ final class Shared {
 				'type'             => 'select',
 				'key'              => 'gravity_form_id',
 				'label'            => __( 'Gravity Forms form', 'heartland-k9s-core' ),
-				'help'             => $gravity_help,
+				'help'             => __( 'Shown when the provider is Gravity Forms. Pick one of the forms built under Forms in the admin menu, or leave it on the site default (Settings → Forms). Title and description are hidden; the form submits with AJAX. When Gravity Forms is not active or has no forms yet, the list says so and the built-in form is shown.', 'heartland-k9s-core' ),
 				'placeholder'      => __( '— Use the site default form —', 'heartland-k9s-core' ),
 				'options'          => [],
 				'options_callback' => $gravity_options,

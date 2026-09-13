@@ -7,7 +7,9 @@
  * the plugin's built-in application form (heading/notice/success page passed
  * through), a Gravity Forms form or a form shortcode. With an external
  * provider the heading and the notice (when not empty) still render above the
- * form, and the "Before you apply" card still follows the toggle.
+ * form, and the "Before you apply" card still follows the toggle. An external
+ * provider that cannot render, or whose output is empty, falls back to the
+ * built-in form with an editor-only note.
  *
  * @package heartland-k9s
  *
@@ -42,9 +44,12 @@ if ( hk9_link_is_set( $hk9_success ) ) {
 	$hk9_form_args['success_url'] = $hk9_success;
 }
 
-// Provider: built-in (default) / Gravity Forms / shortcode. External providers that cannot render fall back to the built-in form.
+// Provider: built-in (default) / Gravity Forms / shortcode. External providers that cannot render — or render nothing — fall back to the built-in form with an editor-only note.
 $hk9_provider      = hk9_form_provider( $hk9_data, 'application' );
 $hk9_provider_html = 'builtin' !== ( $hk9_provider['provider'] ?? 'builtin' ) ? hk9_render_form_provider( $hk9_provider, [ 'id' => 'hk9-form-application-provider' ] ) : '';
+if ( '' === $hk9_provider_html ) {
+	$hk9_provider = hk9_form_provider_no_output( $hk9_provider ); // No-op unless an available external provider produced no markup.
+}
 
 hk9_section_open( $hk9_id, 'hk9-section--py20 hk9-application' );
 ?>

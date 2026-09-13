@@ -141,12 +141,18 @@ final class Field {
 	/**
 	 * Resolves select options (value => label). Accepts arrays, lists and callables.
 	 *
+	 * An `options_callback` receives the field and the current value (`null`
+	 * when unknown, e.g. for a schema enum) so dynamic lists can keep a stored
+	 * value that is no longer listed instead of letting the sanitizer reset it.
+	 *
+	 * @param array $field   Field definition.
+	 * @param mixed $current Current (raw or stored) value of the field, if known.
 	 * @return array<string,string>
 	 */
-	public static function options( array $field ): array {
+	public static function options( array $field, mixed $current = null ): array {
 		$options = $field['options'] ?? [];
 		if ( ! empty( $field['options_callback'] ) && is_callable( $field['options_callback'] ) ) {
-			$options = call_user_func( $field['options_callback'], $field );
+			$options = call_user_func( $field['options_callback'], $field, $current );
 		}
 		if ( ! is_array( $options ) ) {
 			return [];

@@ -473,9 +473,17 @@ final class Payload {
 				'error' => $manifest->get_error_message(),
 			];
 		}
-		$bytes = 0;
+		$bytes     = 0; // Media shipped in the payload.
+		$live      = 0; // Media a content-only payload leaves on the site.
+		$file_less = 0;
 		foreach ( $manifest->keys( 'attachment' ) as $k ) {
-			$bytes += (int) ( $manifest->get( $k )['size'] ?? 0 );
+			$record = $manifest->get( $k ) ?? [];
+			if ( Manifest::is_file_less( $record ) ) {
+				++$file_less;
+				$live += (int) ( $record['bytes'] ?? $record['size'] ?? 0 );
+				continue;
+			}
+			$bytes += (int) ( $record['size'] ?? 0 );
 		}
 		return [
 			'dir'          => $dir,
@@ -485,6 +493,9 @@ final class Payload {
 			'attachments'  => $manifest->count( 'attachment' ),
 			'posts'        => $manifest->count( Manifest::POST_TYPES_KEY ),
 			'bytes'        => $bytes,
+			'lite'         => $manifest->is_lite(),
+			'file_less'    => $file_less,
+			'live_bytes'   => $live,
 			'uploaded'     => self::is_uploaded_dir( $dir ),
 		];
 	}

@@ -8,7 +8,7 @@ Log in at `/wp-admin/`. Everything specific to Heartland lives under the **Heart
 
 Every page has two layers: the **block editor canvas** at the top (used on migrated pages, News and Privacy Policy) and a box titled **Sections — <template name>** below it (open the **Meta Boxes** bar if collapsed). Each section is a collapsible panel of fields; which sections exist depends on the page's **Template** (sidebar → **Page** tab → **Template**).
 
-The sidebar panel **Page sections** controls order and visibility: *"Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content."* The hero is always shown. The same panel has **Editor content**, which places anything written in the block canvas before or after the sections (or hides it) — see [Adding extra content to section pages](#adding-extra-content-to-section-pages). Save with the blue **Save** button.
+The sidebar panel **Page sections** controls order and visibility: *"Drag, or use the arrow buttons, to reorder. Untick a section to hide it without losing its content."* The hero is always shown. The same panel has **Editor content**, which places anything written in the block canvas before or after the sections (or hides it) — see [Adding extra content to section pages](#adding-extra-content-to-section-pages). Save with the blue **Save** button. Section content, the section order and the Editor content setting are all part of the page's revisions: the **Revisions** screen (linked from the sidebar) shows them line by line — "Section layout" lists *Order*, *Hidden* and *Editor content* — and restoring a revision brings them back with it.
 
 ![About editor overview](reports/screenshots/admin-guide/about-editor-overview.png)
 ![Page sections panel](reports/screenshots/admin-guide/about-page-sections-panel.png)
@@ -128,7 +128,7 @@ News and Privacy Policy use the default template (hero band + block content, opt
 Every section page (Home, About, The Program, For Veterans, Get Involved, BarKode, Stories, Contact, Donate, Events, Campaigns, Partners, People, Teams, Highlighted Team) also accepts ordinary blocks in the editor canvas at the top of the page — paragraphs, images, embeds — so extra content never needs a developer. Whatever you write there is shown in a white card in the same style as landing pages:
 
 - **Page sections → Editor content** (sidebar) decides where: **After the sections** (default — the card comes after the last section), **Before the sections (right after the hero)**, or **Hide**.
-- Nothing is shown while the canvas is empty, so pages that only use sections look exactly as before.
+- Nothing is shown while the canvas is empty, so pages that only use sections look exactly as before. An empty paragraph block left behind in the canvas (the editor adds one when you click into it) still counts as empty — no blank card appears.
 - A blue note at the top of the editor reminds you that the page is built from the section panels below and where the canvas content appears; it can be dismissed.
 
 Landing pages, Thank You, the Online Application intro and the Photos gallery already place the canvas content themselves (in the card under the hero), so the **Editor content** setting does not apply to them.
@@ -181,14 +181,14 @@ The Contact page (**Form** section) and the Online Application page (**Form** se
 
 - **Site default (Settings → Forms)** — the normal choice: follows **Heartland → Settings → Forms → Default form provider**, so switching the whole site is one setting.
 - **Built-in form (this plugin)** — the plugin's own contact / application inquiry form (recipients, subjects, success text and stored submissions are configured under Settings → Forms, see below).
-- **Gravity Forms** — pick a form in **Gravity Forms form** (the list shows the forms built under **Forms** in the admin menu; leave it on *Use the site default form* to use the form chosen in Settings → Forms). The form's title and description are hidden, it submits without a page reload, and it is styled to match the site. If Gravity Forms is not installed the field says so.
+- **Gravity Forms** — pick a form in **Gravity Forms form** (the list shows the forms built under **Forms** in the admin menu; leave it on *Use the site default form* to use the form chosen in Settings → Forms). The form's title and description are hidden, it submits without a page reload, and it is styled to match the site. When Gravity Forms is not active, or has no forms yet, the list says so instead of offering forms. A form that has since been trashed or deleted stays selected as *Form #n (unavailable)* — saving the page does not clear it — and the page shows the built-in form until you pick another form or restore that one.
 - **Form shortcode** — paste a form plugin's shortcode into **Form shortcode**, e.g. `[gravityform id="2" title="false" ajax="true"]`. Only the shortcode itself is kept; any other text or HTML you paste there is removed.
 
 Site-wide: **Heartland → Settings → Forms** → **Default form provider** (Built-in / Gravity Forms / Form shortcode), **Gravity Forms: contact form** and **Gravity Forms: application form** (which Gravity form each page uses unless the page picks its own). With **Form shortcode** as the site default, each page's **Form shortcode** field supplies the shortcode.
 
 What stays the same whichever provider you choose: the section **Heading** and **Intro** (Contact), the **Heading**, **Notice above the form** and the **Before you apply / Read the 5 Questions** card (Application; the card follows **Show the "5 Questions" link**). **Success heading / Success text / Success page** only apply to the built-in form — Gravity Forms and shortcode forms show their own confirmation.
 
-Safety net: if Gravity Forms is deactivated, the chosen form is deleted, or a shortcode's plugin is switched off, the page shows the built-in form again and logged-in editors see a short note above it explaining why (visitors see only the form).
+Safety net: if Gravity Forms is deactivated, the chosen form is deleted or trashed, a shortcode's plugin is switched off, or the chosen form or shortcode produces nothing on the page (for example a shortcode that needs content it did not get), the page shows the built-in form again and logged-in editors see a short note above it explaining why (visitors see only the form).
 
 ![Form provider fields](reports/screenshots/admin-guide/contact-section-form-provider.png)
 ![Settings — Forms: default provider](reports/screenshots/admin-guide/settings-forms-provider.png)

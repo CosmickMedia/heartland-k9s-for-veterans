@@ -305,8 +305,17 @@ final class Registry {
 				if ( null === $value ) {
 					return '';
 				}
-				$layout = Layout::sanitize( $value );
-				return sprintf( "%s: %s\n%s: %s", __( 'Order', 'heartland-k9s-core' ), implode( ', ', $layout['order'] ), __( 'Hidden', 'heartland-k9s-core' ), implode( ', ', $layout['hidden'] ) );
+				$layout   = Layout::sanitize( $value );
+				$position = (string) ( $layout['content_position'] ?? Layout::CONTENT_AFTER );
+				return sprintf(
+					"%s: %s\n%s: %s\n%s: %s",
+					__( 'Order', 'heartland-k9s-core' ),
+					implode( ', ', $layout['order'] ),
+					__( 'Hidden', 'heartland-k9s-core' ),
+					implode( ', ', $layout['hidden'] ),
+					__( 'Editor content', 'heartland-k9s-core' ),
+					Layout::content_labels()[ $position ] ?? $position
+				);
 			}
 		);
 	}

@@ -18,3 +18,11 @@ payload-src/source/
 payload/manifest.json
 payload/content/
 payload/media-index.json
+
+# Content-only ("lite") payload — tools/build-payload.mjs --lite. Only payload-lite/media/ (the 6 ref
+# assets, ~1 MB) is committed so a clone can package the lite ZIP after `node tools/build-payload.mjs --lite`;
+# manifest.json + content/ carry the same BarKode registry records as payload/ (personal contact
+# data) and are generated locally, never committed — the packaged lite ZIP contains them too.
+payload-lite/manifest.json
+payload-lite/content/
+dist/heartland-k9s-payload-lite.zip

@@ -22,6 +22,12 @@ final class Preflight {
 	public const MIN_PHP = '8.1';
 	public const MIN_WP  = '6.4';
 
+	/** Content-only payload: percentage of its live media that must exist on the site for a run to proceed. */
+	public const LITE_MIN_FOUND = 95;
+
+	/** How many missing paths the pre-flight detail / the run log list. */
+	public const LITE_LIST_MISSING = 10;
+
 	/**
 	 * @param string|null $dir Payload directory (null = the currently selected payload).
 	 * @return array{ok:bool,checks:array<int,array{id:string,label:string,status:string,detail:string,action?:array{label:string,url:string}}>,payload:?array,existing:?array}
@@ -118,6 +124,7 @@ final class Preflight {
 
 		$payload  = null;
 		$existing = null;
+		$lite     = null;
 		if ( '' === $dir ) {
 			$checks[] = [
 				'id'     => 'payload',
@@ -138,8 +145,11 @@ final class Preflight {
 				'id'     => 'payload',
 				'label'  => __( 'Payload', 'heartland-k9s-core' ),
 				'status' => 'pass',
-				/* translators: 1: record count, 2: posts/pages count, 3: media count, 4: size */
-				'detail' => sprintf( __( '%1$d records (%2$d posts/pages, %3$d media, %4$s) in %5$s', 'heartland-k9s-core' ), (int) $payload['records'], (int) $payload['posts'], (int) $payload['attachments'], size_format( (int) $payload['bytes'] ), (string) $dir ),
+				'detail' => ! empty( $payload['lite'] )
+					/* translators: 1: record count, 2: posts/pages count, 3: media count, 4: shipped media count, 5: directory */
+					? sprintf( __( 'Content-only payload: %1$d records (%2$d posts/pages, %3$d media of which %4$d ship as files; the rest are reused from this site\'s Media Library) in %5$s', 'heartland-k9s-core' ), (int) $payload['records'], (int) $payload['posts'], (int) $payload['attachments'], (int) $payload['attachments'] - (int) $payload['file_less'], (string) $dir )
+					/* translators: 1: record count, 2: posts/pages count, 3: media count, 4: size, 5: directory */
+					: sprintf( __( '%1$d records (%2$d posts/pages, %3$d media, %4$s) in %5$s', 'heartland-k9s-core' ), (int) $payload['records'], (int) $payload['posts'], (int) $payload['attachments'], size_format( (int) $payload['bytes'] ), (string) $dir ),
 			];
 			$existing = self::existing( $manifest );
 			$total    = (int) $existing['total'];
@@ -157,6 +167,10 @@ final class Preflight {
 					)
 					: __( 'None of the payload pages or attachments exist on this site yet (fresh install, or everything is already imported).', 'heartland-k9s-core' ),
 			];
+			if ( $manifest->is_lite() ) {
+				$lite     = self::lite_media( $manifest );
+				$checks[] = self::lite_check( $lite );
+			}
 		}
 
 		$ok = true;
@@ -171,6 +185,100 @@ final class Preflight {
 			'checks'   => $checks,
 			'payload'  => $payload,
 			'existing' => $existing,
+			'lite'     => $lite,
+		];
+	}
+
+	/**
+	 * Content-only payload: which of its file-less live media records have their
+	 * attachment on this site — by live id + file name, or by upload path
+	 * (Adopt::attachment_match, the very rule media_files applies). A record
+	 * already bound in the map to an attachment that still exists counts as
+	 * found (after the import everything is mapped and the count stays N of N).
+	 *
+	 * @return array{total:int,found:int,by_path:int,required:int,missing:string[]}
+	 *               missing: the live paths (uploads-relative) of the records not found, manifest order.
+	 */
+	public static function lite_media( Manifest $manifest ): array {
+		$keys  = $manifest->file_less_keys();
+		$total = count( $keys );
+		$out   = [
+			'total'    => $total,
+			'found'    => 0,
+			'by_path'  => 0,
+			'required' => (int) ceil( $total * self::LITE_MIN_FOUND / 100 ),
+			'missing'  => [],
+		];
+		if ( 0 === $total ) {
+			return $out;
+		}
+		Map::ensure();
+		$mapped = Map::active_objects();
+		$ids    = [];
+		foreach ( $keys as $key ) {
+			$live = Adopt::live_id( $key );
+			if ( $live > 0 ) {
+				$ids[] = $live;
+			}
+			if ( ! empty( $mapped[ $key ] ) ) {
+				$ids[] = (int) $mapped[ $key ];
+			}
+		}
+		if ( $ids ) {
+			_prime_post_caches( array_values( array_unique( $ids ) ), false, true );
+		}
+		foreach ( $keys as $key ) {
+			$record = $manifest->get( $key ) ?? [];
+			$bound  = (int) ( $mapped[ $key ] ?? 0 );
+			if ( $bound > 0 && 'attachment' === get_post_type( $bound ) ) {
+				++$out['found'];
+				continue;
+			}
+			$match = Adopt::attachment_match( $key, $record );
+			if ( $match['id'] > 0 ) {
+				++$out['found'];
+				if ( 'path' === $match['how'] ) {
+					++$out['by_path'];
+				}
+				continue;
+			}
+			$path            = Manifest::live_path( $record );
+			$out['missing'][] = '' !== $path ? $path : Manifest::attachment_basename( $record );
+		}
+		return $out;
+	}
+
+	/**
+	 * The pre-flight row for a content-only payload: pass when every live media
+	 * file is on this site, a note when a few are missing (those records fail
+	 * in media_files), a failure — the run refuses to start — below LITE_MIN_FOUND.
+	 */
+	private static function lite_check( array $lite ): array {
+		$total   = (int) $lite['total'];
+		$found   = (int) $lite['found'];
+		$missing = (array) $lite['missing'];
+		$status  = 0 === count( $missing ) ? 'pass' : ( $found >= (int) $lite['required'] ? 'warn' : 'fail' );
+		/* translators: 1: found, 2: total */
+		$detail = sprintf( __( 'Content-only payload: %1$d of %2$d media files found on this site', 'heartland-k9s-core' ), $found, $total );
+		if ( (int) $lite['by_path'] > 0 ) {
+			/* translators: %d: count */
+			$detail .= sprintf( __( ' (%d matched by upload path because the attachment id differs)', 'heartland-k9s-core' ), (int) $lite['by_path'] );
+		}
+		$detail .= '.';
+		if ( 'pass' === $status ) {
+			$detail .= ' ' . __( 'They are reused as they are; nothing is uploaded for them.', 'heartland-k9s-core' );
+		} elseif ( 'warn' === $status ) {
+			/* translators: 1: missing count, 2: comma-separated paths */
+			$detail .= ' ' . sprintf( __( '%1$d missing — those records fail in media_files and the pages that use them are skipped until you use the full payload. Missing: %2$s', 'heartland-k9s-core' ), count( $missing ), implode( ', ', array_slice( $missing, 0, self::LITE_LIST_MISSING ) ) . ( count( $missing ) > self::LITE_LIST_MISSING ? ', …' : '' ) );
+		} else {
+			/* translators: 1: minimum percentage, 2: comma-separated paths */
+			$detail .= ' ' . sprintf( __( 'At least %1$d%% must exist for this payload to run: this is not the site it was extracted from (or the Media Library was emptied). Use the full payload (heartland-k9s-payload.zip), which carries every media file. Missing: %2$s', 'heartland-k9s-core' ), self::LITE_MIN_FOUND, implode( ', ', array_slice( $missing, 0, self::LITE_LIST_MISSING ) ) . ( count( $missing ) > self::LITE_LIST_MISSING ? ', …' : '' ) );
+		}
+		return [
+			'id'     => 'lite',
+			'label'  => __( 'Media reuse', 'heartland-k9s-core' ),
+			'status' => $status,
+			'detail' => $detail,
 		];
 	}
 

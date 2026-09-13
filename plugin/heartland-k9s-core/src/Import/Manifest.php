@@ -97,6 +97,63 @@ final class Manifest {
 		return (string) apply_filters( 'hk9/import/expected_stylesheet', (string) $theme );
 	}
 
+	/**
+	 * Content-only ("lite") payload: built with `build-payload.mjs --lite`, its
+	 * live:media:<id> attachment records carry no file ("file": null) and are
+	 * reused from the Media Library of the site they were extracted from.
+	 */
+	public function is_lite(): bool {
+		return ! empty( $this->data['lite'] );
+	}
+
+	public function lite_message(): string {
+		return (string) ( $this->data['lite_message'] ?? '' );
+	}
+
+	/**
+	 * An attachment record that ships no file (lite payload): "file" is present
+	 * and null; "basename" + "live_path" say where the live site keeps it.
+	 */
+	public static function is_file_less( array $record ): bool {
+		return 'attachment' === ( $record['type'] ?? '' ) && array_key_exists( 'file', $record ) && null === $record['file'];
+	}
+
+	/**
+	 * Keys of the file-less attachment records, in manifest order.
+	 *
+	 * @return string[]
+	 */
+	public function file_less_keys(): array {
+		$out = [];
+		foreach ( $this->keys( 'attachment' ) as $key ) {
+			if ( self::is_file_less( $this->by_key[ $key ] ) ) {
+				$out[] = $key;
+			}
+		}
+		return $out;
+	}
+
+	/**
+	 * File name of an attachment record: the payload file's basename, or the
+	 * "basename" a file-less record carries.
+	 */
+	public static function attachment_basename( array $record ): string {
+		$file = $record['file'] ?? null;
+		if ( is_string( $file ) && '' !== $file ) {
+			return basename( $file );
+		}
+		return (string) ( $record['basename'] ?? '' );
+	}
+
+	/**
+	 * Uploads-relative path a live attachment record expects on the site
+	 * ("2023/05/name.png"); '' when the record carries none.
+	 */
+	public static function live_path( array $record ): string {
+		$path = $record['live_path'] ?? '';
+		return is_string( $path ) ? ltrim( str_replace( '\\', '/', $path ), '/' ) : '';
+	}
+
 	/** @return array[] */
 	public function records(): array {
 		return $this->data['records'];
