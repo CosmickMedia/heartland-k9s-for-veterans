@@ -2,6 +2,10 @@
 
 Theme and plugin share one version number and are released together; each GitHub release carries `heartland-k9s.zip` and `heartland-k9s-core.zip`, which the sites' update checkers install.
 
+## v1.3.1 — 2026-09-14
+
+Thank You page template (post-application confirmation): band hero, next-steps card with numbered steps, Medical History Form download (type/size from the file), return address and help strip from Settings, While-You-Wait cards, optional CTA — all editable in Page sections; the migrated page ships noindex and re-imports in place from the lite payload. Block editor: the Meta Boxes pane (section panels) opens by default. Importer: a missing meta key and an empty value no longer count as an editor conflict (false conflicts after re-saving records); rollback uses the same rule. 8 new lucide icons. Test fixtures updated for the 1.3.0 WebP output.
+
 ## v1.3.0 — 2026-09-13
 
 - SEO: per-page 'Search & social' fields (title, description, social image, noindex, canonical), Open Graph/Twitter cards with 1200×630 images, canonical + rel prev/next, sitemap lastmod, visible breadcrumbs, and JSON-LD structured data (NGO organization with EIN/501(c)(3)/address/DonateAction, WebSite, WebPage, BreadcrumbList, Article, Event with timezone-correct dates, FAQPage, team Person list). Automatically defers to Slim SEO / Yoast / Rank Math / AIOSEO / SEOPress and merges only the extra nodes.
