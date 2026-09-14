@@ -2,6 +2,10 @@
 
 Theme and plugin share one version number and are released together; each GitHub release carries `heartland-k9s.zip` and `heartland-k9s-core.zip`, which the sites' update checkers install.
 
+## v1.3.2 — 2026-09-14
+
+Importer: a record whose mapped post was trashed by an editor is now left alone on re-import (counted as a skip with a warning) instead of being re-created; run with Overwrite conflicts to create a fresh copy. Found while re-importing 1.3.1's Thank You page on the live site, where the two legacy /success/ drafts had been trashed.
+
 ## v1.3.1 — 2026-09-14
 
 Thank You page template (post-application confirmation): band hero, next-steps card with numbered steps, Medical History Form download (type/size from the file), return address and help strip from Settings, While-You-Wait cards, optional CTA — all editable in Page sections; the migrated page ships noindex and re-imports in place from the lite payload. Block editor: the Meta Boxes pane (section panels) opens by default. Importer: a missing meta key and an empty value no longer count as an editor conflict (false conflicts after re-saving records); rollback uses the same rule. 8 new lucide icons. Test fixtures updated for the 1.3.0 WebP output.
