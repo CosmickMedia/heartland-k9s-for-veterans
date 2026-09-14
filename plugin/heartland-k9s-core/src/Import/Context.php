@@ -163,6 +163,20 @@ final class Context {
 		return isset( $this->state['failed_keys'][ $key ] );
 	}
 
+	/**
+	 * Leave a record alone for the rest of this pass (counted as a skip, not a
+	 * failure): e.g. its mapped post was trashed by an editor. Tokens pointing
+	 * at it keep resolving through its map row.
+	 */
+	public function skip_record( string $key, string $reason, bool $sensitive = false ): void {
+		$this->state['skipped_keys'][ $key ] = $reason;
+		$this->result( $key, 'skip', $reason, $sensitive );
+	}
+
+	public function is_skipped( string $key ): bool {
+		return isset( $this->state['skipped_keys'][ $key ] );
+	}
+
 	public static function is_sensitive( array $record ): bool {
 		return ! empty( $record['sensitive'] );
 	}

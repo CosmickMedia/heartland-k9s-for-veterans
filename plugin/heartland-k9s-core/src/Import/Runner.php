@@ -124,6 +124,7 @@ final class Runner {
 			$state['errors']      = [];
 			$state['warnings']    = [];
 			$state['failed_keys'] = [];
+			$state['skipped_keys'] = [];
 			$state['prehash']     = [];
 			$state['dry_created'] = [];
 			$state['dry_adopted'] = [];

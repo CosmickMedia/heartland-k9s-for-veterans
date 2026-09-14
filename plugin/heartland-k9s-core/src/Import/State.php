@@ -73,6 +73,7 @@ final class State {
 			'errors'         => [],
 			'warnings'       => [],
 			'failed_keys'    => [],
+			'skipped_keys'   => [],
 			'prehash'        => [],
 			'dry_created'    => [],
 			'dry_adopted'    => [],

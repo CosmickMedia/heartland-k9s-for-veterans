@@ -55,7 +55,14 @@ final class PostsStub extends Step {
 			$post = get_post( $id );
 			if ( ! $post || $post->post_type !== $type || 'trash' === $post->post_status ) {
 				if ( $post && 'trash' === $post->post_status ) {
-					$ctx->warn( $key, sprintf( 'Mapped post #%d is in the trash; a new one will be created.', $id ), $sens );
+					// An editor trashed it: that is an edit, so the record is left alone (trash
+					// included) unless overwrite is on — then a fresh copy is created.
+					if ( ! $ctx->overwrite() ) {
+						$ctx->warn( $key, sprintf( 'Mapped post #%d is in the trash on this site; left there. Restore it from the trash, or run with "Overwrite conflicts" to create a fresh copy.', $id ), $sens );
+						$ctx->skip_record( $key, sprintf( 'in the trash (#%d)', $id ), $sens );
+						return;
+					}
+					$ctx->warn( $key, sprintf( 'Mapped post #%d is in the trash; overwrite is on, so a new one will be created.', $id ), $sens );
 				}
 				$id = 0;
 			}

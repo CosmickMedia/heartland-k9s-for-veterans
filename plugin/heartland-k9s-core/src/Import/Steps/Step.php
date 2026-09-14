@@ -81,6 +81,9 @@ abstract class Step {
 			$this->ctx->info( $key, 'skipped: failed earlier in this pass', Context::is_sensitive( $record ) );
 			return true;
 		}
+		if ( $this->ctx->is_skipped( $key ) ) {
+			return true; // Left alone earlier in this pass (Context::skip_record()), already counted.
+		}
 		return false;
 	}
 }
