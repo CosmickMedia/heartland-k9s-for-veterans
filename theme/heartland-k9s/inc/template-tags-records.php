@@ -45,7 +45,9 @@ function hk9_rec_section_type_map( string $template ): array {
  *
  * @param int    $post_id  Page id.
  * @param string $template Template slug.
- * @param array  $inject   { before: [id => callable], after: [id => callable] }.
+ * @param array  $inject   { before: [id => callable], after: [id => callable], args: [id => array] }
+ *                         — `args` are extra template-part arguments merged under the standard
+ *                         data/post_id/id/template keys (e.g. a content callback for a card).
  */
 function hk9_rec_render_sections( int $post_id, string $template, array $inject = [] ): void {
 	$layout = hk9_sections_layout( $post_id, $template );
@@ -69,6 +71,7 @@ function hk9_rec_render_sections( int $post_id, string $template, array $inject 
 
 	$before = is_array( $inject['before'] ?? null ) ? $inject['before'] : [];
 	$after  = is_array( $inject['after'] ?? null ) ? $inject['after'] : [];
+	$extra  = is_array( $inject['args'] ?? null ) ? $inject['args'] : [];
 
 	// Editor content (block canvas) position; '' for templates with a native content slot (landing, application …).
 	$content_position = hk9_editor_content_position( $post_id, $template );
@@ -84,12 +87,15 @@ function hk9_rec_render_sections( int $post_id, string $template, array $inject 
 		get_template_part(
 			'template-parts/sections/' . $section['type'],
 			null,
-			[
-				'data'     => $section['data'],
-				'post_id'  => $post_id,
-				'id'       => $id,
-				'template' => $template,
-			]
+			array_merge(
+				is_array( $extra[ $id ] ?? null ) ? $extra[ $id ] : [],
+				[
+					'data'     => $section['data'],
+					'post_id'  => $post_id,
+					'id'       => $id,
+					'template' => $template,
+				]
+			)
 		);
 
 		if ( isset( $after[ $id ] ) && is_callable( $after[ $id ] ) ) {
@@ -246,7 +252,65 @@ function hk9_rec_section_defaults( array $sections, string $template ): array {
 			];
 			break;
 		case 'thank-you':
-			$extra = [ 'cta' => $cta( true ) ];
+			$extra = [
+				'next_steps' => [
+					'type'   => 'next_steps_card',
+					'hidden' => false,
+					'data'   => [
+						'icon'                 => 'circle-check',
+						'heading'              => __( 'Your inquiry is on its way to our team', 'heartland-k9s' ),
+						'text'                 => __( "Thank you for reaching out to Heartland Canines for Veterans. Taking this step takes courage, and we're glad you did. Our team will review your inquiry and be in touch.", 'heartland-k9s' ),
+						'steps_heading'        => __( 'One more step: the Medical History Form', 'heartland-k9s' ),
+						'steps'                => [
+							[ 'title' => __( 'Download or print the form', 'heartland-k9s' ), 'text' => __( 'Use the button below to open the Medical History Form.', 'heartland-k9s' ) ],
+							[ 'title' => __( 'Have your physician complete it', 'heartland-k9s' ), 'text' => __( 'The form must be filled out and signed by your physician.', 'heartland-k9s' ) ],
+							[ 'title' => __( 'Return it to our office', 'heartland-k9s' ), 'text' => __( "Mail the completed form to the address below. Your physician's office can send it directly if that is easier.", 'heartland-k9s' ) ],
+							[ 'title' => __( 'We review your inquiry', 'heartland-k9s' ), 'text' => __( 'Our team will review your inquiry and the completed form together and be in touch.', 'heartland-k9s' ) ],
+						],
+						'file'                 => 0,
+						'file_label'           => __( 'Download the Medical History Form', 'heartland-k9s' ),
+						'show_file_meta'       => true,
+						'open_in_new_tab'      => true,
+						'help_text'            => __( "Trouble opening the file? Call or email our office and we'll help you get a copy.", 'heartland-k9s' ),
+						'address_heading'      => __( 'Mail the completed form to', 'heartland-k9s' ),
+						'use_settings_address' => true,
+						'address_custom'       => '',
+						'tip'                  => __( 'Keep a copy of the completed form for your records before you mail it.', 'heartland-k9s' ),
+					],
+				],
+				'help'       => [
+					'type'   => 'contact_strip',
+					'hidden' => false,
+					'data'   => [
+						'heading' => __( "Questions? We're here to help.", 'heartland-k9s' ),
+						'text'    => __( 'If anything about the form or your inquiry is unclear, reach out during office hours.', 'heartland-k9s' ),
+						'rows'    => [
+							[ 'source' => 'phone', 'icon' => 'phone', 'label' => __( 'Call us', 'heartland-k9s' ), 'value' => '' ],
+							[ 'source' => 'email', 'icon' => 'mail', 'label' => __( 'Email us', 'heartland-k9s' ), 'value' => '' ],
+							[ 'source' => 'hours', 'icon' => 'clock', 'label' => __( 'Office hours', 'heartland-k9s' ), 'value' => '' ],
+						],
+						'link'    => hk9_rec_settings_link( 'links.contact', __( 'More ways to reach us', 'heartland-k9s' ), '/contact/' ),
+						'tone'    => 'muted',
+					],
+				],
+				'reading'    => [
+					'type'   => 'feature_cards',
+					'hidden' => false,
+					'data'   => [
+						'heading' => __( 'While You Wait', 'heartland-k9s' ),
+						'intro'   => __( 'A few pages that answer the questions veterans ask us most.', 'heartland-k9s' ),
+						'divider' => true,
+						'align'   => 'center',
+						'columns' => '3',
+						'cards'   => [
+							[ 'icon' => 'circle-help', 'tone' => 'navy', 'title' => __( '5 Questions to Ask', 'heartland-k9s' ), 'text' => __( 'Things to think through before partnering with a service dog.', 'heartland-k9s' ), 'link' => hk9_rec_settings_link( 'links.five_questions', __( 'Read the 5 questions', 'heartland-k9s' ), '/5-questions/' ), 'decorate' => false ],
+							[ 'icon' => 'scale', 'tone' => 'navy', 'title' => __( 'Service Dogs and the ADA', 'heartland-k9s' ), 'text' => __( 'What the law says about where a service dog can go with you.', 'heartland-k9s' ), 'link' => hk9_rec_settings_link( 'links.ada', __( 'Read the ADA FAQs', 'heartland-k9s' ), '/service-dogs-and-the-ada/' ), 'decorate' => false ],
+							[ 'icon' => 'heart', 'tone' => 'crimson', 'title' => __( 'Success Stories', 'heartland-k9s' ), 'text' => __( 'Veterans and dogs who have gone through the program.', 'heartland-k9s' ), 'link' => hk9_rec_settings_link( 'links.stories', __( 'Read their stories', 'heartland-k9s' ), '/stories/' ), 'decorate' => false ],
+						],
+					],
+				],
+				'cta'        => $cta( true ),
+			];
 			break;
 		case 'landing':
 			$extra = [ 'tiers' => [ 'type' => 'tiers', 'hidden' => true, 'data' => [ 'heading' => '', 'intro' => '', 'items' => [] ] ] ];

@@ -108,7 +108,8 @@ Per field the row stores `{db: hash(value re-read from the DB after our write), 
 - no row → **create** (the row is reserved *before* the object is created, so a concurrent tick cannot duplicate it; an orphan created in a crash window is re-found through `_hk9_source_key`);
 - `db` unchanged → untouched by editors → apply only if the payload changed;
 - `db` changed → an editor edited it → **conflict**: skipped and counted, unless `--overwrite` (then applied and the pre-image kept);
-- fields that were skipped as conflicts keep their stored hashes, so the conflict persists until resolved.
+- fields that were skipped as conflicts keep their stored hashes, so the conflict persists until resolved;
+- a `meta:` key that does not exist and one stored as an empty string hash the same (`Reconcile::hash()`, plugin 1.3.1 — WordPress reads both back as `''`): an empty payload value therefore never creates an empty meta row, and a record whose empty fields were dropped by a later save is not reported as an editor conflict on the next run (before 1.3.1 every re-saved person / partner / campaign showed 3–4 spurious `meta:` conflicts). Rollback's "modified since import" check and its re-hash after a restore use the same rule.
 
 Hashes are canonical (sorted keys, normalised line endings) and always taken from read-back values, so kses/sanitizer normalisation never produces false conflicts. After a write the `db` hash of **every non-conflicting field** is refreshed from the read-back (not only the applied ones): a write can change another field as a side effect — publishing a page makes WordPress uniquify its slug — and recording what the database actually holds keeps re-runs from reporting a phantom conflict.
 

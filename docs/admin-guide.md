@@ -111,7 +111,7 @@ Privacy rules — what is public:
 
 ## Edit migrated pages (block editor + optional sections)
 
-Pages such as The HK9 Coloring Book, Heartland Gear, Volunteer, 5 Questions, Service Dogs and the ADA, The Service K9 Program, How it Works, Heartland Obedience Training and Thank You use the **Landing Page** template: text and images are ordinary blocks in the canvas, rendered in the card under the navy hero. Optional sections are ticked off by default in **Page sections** — tick one to show it:
+Pages such as The HK9 Coloring Book, Heartland Gear, Volunteer, 5 Questions, Service Dogs and the ADA, The Service K9 Program, How it Works and Heartland Obedience Training use the **Landing Page** template: text and images are ordinary blocks in the canvas, rendered in the card under the navy hero. Optional sections are ticked off by default in **Page sections** — tick one to show it:
 
 - **Feature cards** — same fields as the Home cards.
 - **FAQ** — **Heading**, **Intro**, **Questions** (**Question**, **Answer**), **Source note** (internal).
@@ -122,6 +122,18 @@ Pages such as The HK9 Coloring Book, Heartland Gear, Volunteer, 5 Questions, Ser
 ![Sponsor tiers](reports/screenshots/admin-guide/landing-section-tiers-items.png)
 
 News and Privacy Policy use the default template (hero band + block content, optional Call to action) — see the next section.
+
+### The Thank You page (after the application form)
+
+The **Thank You** template is the page a veteran lands on after submitting the Initial Application Inquiry (the Gravity Forms confirmation redirects there; the target is *Settings → Forms → Application inquiry success page*). Its panels, top to bottom:
+
+- **Hero (band)** — eyebrow "Application received", heading, one line of text.
+- **Next steps card** — the white card under the hero: **Icon**, **Heading**, **Text**, **Steps heading** and up to five **Steps** (title + one line each — describe what happens, not when: no response times or promises), the **Form to download** (pick the Medical History Form PDF from the Media Library; replace it here when the form changes — the button shows the file type and size automatically, and disappears when no file is chosen), **Download button label**, **Line under the button**, the **Return address heading** with the organisation name and mailing address from *Settings → Contact* (or a **Custom address**), and a **Tip**. Anything you write in the editor canvas appears inside this card after the address — use it for extra notes only.
+- **Help strip** — heading, text and up to four rows that read the phone, email and office hours from *Settings → Contact* (a row is hidden when its value is empty there), plus an optional link. *Secondary phone* is the "Director cell" number — add it only if the office wants it on this page.
+- **While you wait** — three cards (5 Questions, Service Dogs and the ADA, Success Stories); untick it under **Page sections** to end the page after the help strip.
+- **Call to action** — off by default (the reader has just asked for help); tick it under **Page sections** to show it.
+
+The page is marked **Hide from search engines** in *Search & social* — keep it that way; it is a confirmation page, not a landing page.
 
 ## New pages: the default template and the Heartland patterns
 
@@ -160,7 +172,7 @@ Every section page (Home, About, The Program, For Veterans, Get Involved, BarKod
 - Nothing is shown while the canvas is empty, so pages that only use sections look exactly as before. An empty paragraph block left behind in the canvas (the editor adds one when you click into it) still counts as empty — no blank card appears.
 - A blue note at the top of the editor reminds you that the page is built from the section panels below and where the canvas content appears; it can be dismissed.
 
-Landing pages, Thank You, the Online Application intro and the Photos gallery already place the canvas content themselves (in the card under the hero), so the **Editor content** setting does not apply to them.
+Landing pages, the Thank You card, the Online Application intro and the Photos gallery already place the canvas content themselves (in the card under the hero), so the **Editor content** setting does not apply to them.
 
 The **Sections — …** box under the editor and the **Page sections** panel are always shown (they cannot be hidden through *Screen Options*), and the **Sections** box stays first under the editor.
 

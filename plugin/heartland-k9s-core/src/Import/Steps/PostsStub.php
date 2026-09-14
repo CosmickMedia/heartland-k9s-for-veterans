@@ -25,10 +25,10 @@ namespace HK9\Core\Import\Steps;
 
 use HK9\Core\Import\Adopt;
 use HK9\Core\Import\Context;
-use HK9\Core\Import\Hash;
 use HK9\Core\Import\Manifest;
 use HK9\Core\Import\Map;
 use HK9\Core\Import\PostFields;
+use HK9\Core\Import\Reconcile;
 
 defined( 'ABSPATH' ) || exit;
 
@@ -183,8 +183,8 @@ final class PostsStub extends Step {
 			$after = PostFields::current( $id, [ 'post_type', 'template' ] );
 			foreach ( [ 'post_type', 'template' ] as $f ) {
 				$hashes[ $f ] = [
-					'db'  => Hash::of( $after[ $f ] ),
-					'src' => Hash::of( $after[ $f ] ),
+					'db'  => Reconcile::hash( $f, $after[ $f ] ),
+					'src' => Reconcile::hash( $f, $after[ $f ] ),
 				];
 			}
 		}

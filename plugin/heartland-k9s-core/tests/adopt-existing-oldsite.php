@@ -120,6 +120,7 @@ $by_sha = [ 555, '2019/12', 'old-background.jpg', 'live__media__1961', 'bg2.jpg'
 
 $only_thumbnail = static fn( $sizes ) => array_intersect_key( (array) $sizes, [ 'thumbnail' => 1 ] );
 add_filter( 'intermediate_image_sizes_advanced', $only_thumbnail, 999 ); // The old site never had our theme's sizes.
+add_filter( 'image_editor_output_format', '__return_empty_array', 999 ); // ...nor its WebP output (1.3.0): -scaled stays JPEG as on the live site.
 
 $insert_attachment = static function ( int $id, string $subdir, string $basename, string $src, string $title, string $alt ) use ( $uploads, &$created ): void {
 	$dir = trailingslashit( $uploads['basedir'] ) . $subdir;
@@ -168,6 +169,7 @@ foreach ( $media as [ $id, $subdir, $basename, $pdir, $title, $alt ] ) {
 [ $id, $subdir, $basename, $pdir, $srcname, $alt ] = $by_sha;
 $insert_attachment( $id, $subdir, $basename, $payload_dir . '/media/' . $pdir . '/' . $srcname, 'Old background', $alt );
 remove_filter( 'intermediate_image_sizes_advanced', $only_thumbnail, 999 );
+remove_filter( 'image_editor_output_format', '__return_empty_array', 999 );
 
 /* ------------------------------------------------------------------ menu */
 

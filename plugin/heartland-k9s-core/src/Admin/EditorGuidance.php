@@ -33,6 +33,7 @@ final class EditorGuidance {
 
 	public static function register(): void {
 		add_action( 'enqueue_block_editor_assets', [ self::class, 'block_editor_notice' ] );
+		add_action( 'enqueue_block_editor_assets', [ self::class, 'open_meta_boxes_pane' ] );
 		add_action( 'admin_enqueue_scripts', [ self::class, 'panel_enhancements' ] );
 		add_filter( 'hidden_meta_boxes', [ self::class, 'never_hidden' ], 10, 2 );
 		add_filter( 'get_user_option_meta-box-order_page', [ self::class, 'keep_first' ] );
@@ -162,6 +163,41 @@ final class EditorGuidance {
 } )( window.wp );
 JS;
 		wp_add_inline_script( 'hk9-editor-guidance', 'window.HK9EditorGuidance = ' . wp_json_encode( $config ) . ';' . "\n" . $js );
+	}
+
+	/**
+	 * enqueue_block_editor_assets: open the block editor's "Meta Boxes" pane by default.
+	 *
+	 * Since WordPress 6.7 the classic meta boxes (the Heartland section panels, record
+	 * fields and "Page sections") sit in a collapsible pane under the canvas that core
+	 * collapses unless the user has a saved preference, so editors did not find them.
+	 * setDefaults() only fills in missing preferences: a user who collapses the pane
+	 * (or resizes it) keeps that choice. Applies to every block-editor post screen.
+	 */
+	public static function open_meta_boxes_pane(): void {
+		$screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+		if ( ! $screen instanceof \WP_Screen || 'post' !== $screen->base ) {
+			return;
+		}
+		wp_register_script( 'hk9-editor-metaboxes', false, [ 'wp-data', 'wp-preferences', 'wp-edit-post' ], HK9_CORE_VERSION, true );
+		wp_enqueue_script( 'hk9-editor-metaboxes' );
+		$js = <<<'JS'
+( function ( wp ) {
+	if ( ! wp || ! wp.data || ! wp.data.dispatch ) {
+		return;
+	}
+	var prefs = wp.data.dispatch( 'core/preferences' );
+	if ( ! prefs || typeof prefs.setDefaults !== 'function' ) {
+		return;
+	}
+	// Open, and tall enough to work in (55% of the window, at least 360px); core clamps it to the editor height.
+	prefs.setDefaults( 'core/edit-post', {
+		metaBoxesMainIsOpen: true,
+		metaBoxesMainOpenHeight: Math.max( 360, Math.round( window.innerHeight * 0.55 ) )
+	} );
+} )( window.wp );
+JS;
+		wp_add_inline_script( 'hk9-editor-metaboxes', $js );
 	}
 
 	/** admin_enqueue_scripts: provider-dependent field visibility + small layout-panel styles (both editors). */

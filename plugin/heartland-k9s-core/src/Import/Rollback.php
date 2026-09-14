@@ -196,7 +196,7 @@ final class Rollback {
 			$modified = [];
 			foreach ( $before as $f => $v ) {
 				$h = $row['field_hashes'][ $f ]['db'] ?? null;
-				if ( null !== $h && array_key_exists( $f, $current ) && Hash::of( $current[ $f ] ) !== $h ) {
+				if ( null !== $h && array_key_exists( $f, $current ) && Reconcile::hash( (string) $f, $current[ $f ] ) !== $h ) {
 					$modified[] = (string) $f;
 				}
 			}
@@ -216,7 +216,7 @@ final class Rollback {
 				foreach ( $before as $f => $v ) {
 					unset( $hashes[ $f ] );
 					if ( array_key_exists( $f, $after ) ) {
-						$hashes[ $f ] = [ 'db' => Hash::of( $after[ $f ] ), 'src' => '' ];
+						$hashes[ $f ] = [ 'db' => Reconcile::hash( (string) $f, $after[ $f ] ), 'src' => '' ];
 					}
 				}
 				$pre = $row['before_data'];
@@ -308,7 +308,7 @@ final class Rollback {
 			$modified = [];
 			foreach ( $before as $f => $v ) {
 				$h = $row['field_hashes'][ $f ]['db'] ?? null;
-				if ( null !== $h && isset( $current[ $f ] ) && Hash::of( $current[ $f ] ) !== $h ) {
+				if ( null !== $h && isset( $current[ $f ] ) && Reconcile::hash( (string) $f, $current[ $f ] ) !== $h ) {
 					$modified[] = (string) $f;
 				}
 			}
@@ -350,7 +350,7 @@ final class Rollback {
 		$modified = [];
 		foreach ( $before as $f => $v ) {
 			$h = $row['field_hashes'][ $f ]['db'] ?? null;
-			if ( null !== $h && Hash::of( $current[ $f ] ?? null ) !== $h ) {
+			if ( null !== $h && Reconcile::hash( (string) $f, $current[ $f ] ?? null ) !== $h ) {
 				$modified[] = (string) $f;
 			}
 		}
@@ -412,7 +412,7 @@ final class Rollback {
 			if ( ! array_key_exists( $f, $current ) ) {
 				continue;
 			}
-			$now     = Hash::of( $current[ $f ] );
+			$now     = Reconcile::hash( (string) $f, $current[ $f ] );
 			$matched = false;
 			foreach ( $rows as $r ) {
 				$h = $r['field_hashes'][ $f ]['db'] ?? null;
@@ -436,7 +436,7 @@ final class Rollback {
 		foreach ( $fields as $f ) {
 			unset( $hashes[ $f ] );
 			if ( array_key_exists( $f, $after ) ) {
-				$hashes[ $f ] = [ 'db' => Hash::of( $after[ $f ] ), 'src' => '' ];
+				$hashes[ $f ] = [ 'db' => Reconcile::hash( (string) $f, $after[ $f ] ), 'src' => '' ];
 			}
 		}
 		$pre = $row['before_data'];

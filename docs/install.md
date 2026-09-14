@@ -180,3 +180,5 @@ Both packages check this GitHub repository for **published releases** (plugin-up
 4. If GitHub's anonymous API limit (60 requests/hour per IP) ever gets in the way, add `define( 'HK9_GITHUB_TOKEN', '<fine-grained token with public repo read>' );` to `wp-config.php`.
 
 `build/` in the repository always contains the latest ZIPs too, for manual upload (Plugins → Add New → Upload → *Replace current with uploaded*).
+
+**Content shipped with a release** (a re-authored page such as the Thank You page in 1.3.1, new section values, redirects): after updating the plugin and theme, upload the release's `heartland-k9s-payload-lite.zip` on **Heartland → Setup & Import**, keep *Existing site: adopt matching content* ticked, run **Dry run** (the per-step table shows exactly which records would change — e.g. `posts_hierarchy` update 1 / `posts_content` update 1 for one page, everything else skip) and then **Import**. Records the client has edited since the last run are reported as conflicts and left alone unless *Overwrite conflicts* is ticked; every run can be rolled back from section 4 of that screen.

@@ -4,7 +4,7 @@
   "status": "publish",
   "slug": "thank-you",
   "title": "Thank You",
-  "template": "page-templates/landing.php",
+  "template": "page-templates/thank-you.php",
   "excerpt": "",
   "date": "2021-06-05T01:40:35Z",
   "menu_order": 0,
@@ -13,47 +13,186 @@
     "hk9_sec_hero_band": {
       "type": "object",
       "value": {
-        "eyebrow": "",
+        "eyebrow": "Application received",
         "heading": "Thank You",
-        "text": "",
+        "text": "We have your Initial Application Inquiry. Here is the one thing we still need from you, and how to reach us if you have questions.",
         "pattern": "none"
       }
     },
-    "hk9_sec_cards": {
+    "hk9_sec_next_steps": {
       "type": "object",
       "value": {
-        "heading": "",
-        "intro": "",
-        "divider": false,
+        "icon": "circle-check",
+        "heading": "Your inquiry is on its way to our team",
+        "text": "Thank you for reaching out to Heartland Canines for Veterans. Taking this step takes courage, and we're glad you did. Our team will review your inquiry and be in touch.",
+        "steps_heading": "One more step: the Medical History Form",
+        "steps": [
+          {
+            "title": "Download or print the form",
+            "text": "Use the button below to open the Medical History Form."
+          },
+          {
+            "title": "Have your physician complete it",
+            "text": "The form must be filled out and signed by your physician."
+          },
+          {
+            "title": "Return it to our office",
+            "text": "Mail the completed form to the address below. Your physician's office can send it directly if that is easier."
+          },
+          {
+            "title": "We review your inquiry",
+            "text": "Our team will review your inquiry and the completed form together and be in touch."
+          }
+        ],
+        "file": "{{media:live:media:2506}}",
+        "file_label": "Download the Medical History Form",
+        "show_file_meta": true,
+        "open_in_new_tab": true,
+        "help_text": "Trouble opening the file? Call or email our office and we'll help you get a copy.",
+        "address_heading": "Mail the completed form to",
+        "use_settings_address": true,
+        "address_custom": "",
+        "tip": "Keep a copy of the completed form for your records before you mail it."
+      }
+    },
+    "hk9_sec_help": {
+      "type": "object",
+      "value": {
+        "heading": "Questions? We're here to help.",
+        "text": "If anything about the form or your inquiry is unclear, reach out during office hours.",
+        "rows": [
+          {
+            "source": "phone",
+            "icon": "phone",
+            "label": "Call us",
+            "value": "",
+            "link": {
+              "label": "",
+              "url": "",
+              "post_id": 0,
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "source": "email",
+            "icon": "mail",
+            "label": "Email us",
+            "value": "",
+            "link": {
+              "label": "",
+              "url": "",
+              "post_id": 0,
+              "target": "_self",
+              "rel": ""
+            }
+          },
+          {
+            "source": "hours",
+            "icon": "clock",
+            "label": "Office hours",
+            "value": "",
+            "link": {
+              "label": "",
+              "url": "",
+              "post_id": 0,
+              "target": "_self",
+              "rel": ""
+            }
+          }
+        ],
+        "link": {
+          "label": "More ways to reach us",
+          "url": "",
+          "post_id": "{{post:ref:page:contact}}",
+          "target": "_self",
+          "rel": ""
+        },
+        "tone": "muted"
+      }
+    },
+    "hk9_sec_reading": {
+      "type": "object",
+      "value": {
+        "heading": "While You Wait",
+        "intro": "A few pages that answer the questions veterans ask us most.",
+        "divider": true,
         "align": "center",
         "columns": "3",
-        "cards": []
-      }
-    },
-    "hk9_sec_faq": {
-      "type": "object",
-      "value": {
-        "heading": "",
-        "intro": "",
-        "items": [],
-        "source_note": ""
-      }
-    },
-    "hk9_sec_tiers": {
-      "type": "object",
-      "value": {
-        "heading": "",
-        "intro": "",
-        "items": []
+        "cards": [
+          {
+            "icon": "circle-help",
+            "tone": "navy",
+            "title": "5 Questions to Ask",
+            "text": "Things to think through before partnering with a service dog.",
+            "link": {
+              "label": "Read the 5 questions",
+              "url": "",
+              "post_id": "{{post:live:page:16}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          },
+          {
+            "icon": "scale",
+            "tone": "navy",
+            "title": "Service Dogs and the ADA",
+            "text": "What the law says about where a service dog can go with you.",
+            "link": {
+              "label": "Read the ADA FAQs",
+              "url": "",
+              "post_id": "{{post:live:page:1995}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          },
+          {
+            "icon": "heart",
+            "tone": "crimson",
+            "title": "Success Stories",
+            "text": "Veterans and dogs who have gone through the program.",
+            "link": {
+              "label": "Read their stories",
+              "url": "",
+              "post_id": "{{post:ref:page:stories}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "decorate": false
+          }
+        ]
       }
     },
     "hk9_sec_cta": {
       "type": "object",
       "value": {
-        "heading": "",
-        "text": "",
-        "buttons": [],
-        "tone": "navy"
+        "heading": "Join Us in Our Mission",
+        "text": "Every donation, volunteer hour, and shared story helps us provide another service dog to a veteran in need.",
+        "buttons": [
+          {
+            "link": {
+              "label": "Make a Donation",
+              "url": "",
+              "post_id": "{{post:live:page:2120}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "primary"
+          },
+          {
+            "link": {
+              "label": "Ways to Volunteer",
+              "url": "",
+              "post_id": "{{post:ref:page:get-involved}}",
+              "target": "_self",
+              "rel": ""
+            },
+            "style": "outline"
+          }
+        ],
+        "tone": "tint"
       }
     },
     "hk9_sections_layout": {
@@ -61,18 +200,20 @@
       "value": {
         "order": [
           "hero_band",
-          "cards",
-          "faq",
-          "tiers",
+          "next_steps",
+          "help",
+          "reading",
           "cta"
         ],
         "hidden": [
-          "cards",
-          "faq",
-          "tiers",
           "cta"
-        ]
+        ],
+        "content_position": "after"
       }
+    },
+    "hk9_seo_noindex": {
+      "type": "boolean",
+      "value": true
     }
   }
 }

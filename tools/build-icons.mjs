@@ -50,6 +50,8 @@ const REFERENCE_ICONS = [
 const EXTRA_ICONS = [
 	'external-link', 'chevron-left', 'chevron-right', 'chevron-down', 'search', 'image',
 	'download', 'ticket', 'building-2', 'paw-print', 'star', 'info', 'alert-triangle',
+	// Thank-you template (next-steps card, help strip, reading cards) + step pickers.
+	'circle-help', 'scale', 'file-down', 'lightbulb', 'printer', 'stethoscope', 'send', 'list-checks',
 ];
 
 /**

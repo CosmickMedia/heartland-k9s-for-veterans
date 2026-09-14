@@ -50,6 +50,19 @@ All results below were measured on the local Docker stack described in `docs/ins
 
 Plugin test suites: `tests/sections-test.php` **39/39** (schema-valid defaults, one revision per save, restore, preview, template switch, capability checks), `tests/core-fixes-test.php` **93/93**, `tests/wave4b-editor.mjs` 15/15.
 
+### 4a. Thank You template (theme + plugin 1.3.1) — passed
+
+| Check | Result | Evidence |
+|---|---|---|
+| Definition schema-valid, sanitizer idempotent | passed | `tests/sections-test.php` **47/47** — `schema_defaults_valid` now covers 47 page meta keys incl. `hk9_sec_next_steps` / `hk9_sec_help` / `hk9_sec_reading` |
+| Editor: Meta Boxes pane open by default, "Sections — Thank You" box with the five panels in order, File field showing `medical-history-k9-vets.pdf`, 4 steps + 3 help rows, new icons in the picker, edit → save → frontend, restore | passed | ad-hoc Playwright check on the docker stack, 9/9 (`scratchpad/ty-editor-check.mjs`) |
+| Frontend: h1 → h2 → h3/h4 outline, `<ol>` steps, download button "(PDF, 1.5 MB)" from the attachment, `<address>` from Settings → Contact, tel:/mailto: rows, page-token links resolve to /5-questions/, /service-dogs-and-the-ada/, /stories/, /contact/ | passed | curl on :8093 and on the DevKinsta live-shaped site |
+| Hidden **Next steps card** keeps the canvas content (bare check-icon card); card last → bottom spacer | passed | layout meta toggled with WP-CLI, HTML checked, restored |
+| `noindex, follow`, no canonical, not in the sitemap | passed | `hk9_seo_noindex` from the payload; `wp-sitemap-posts-page-1.xml` has no /thank-you/ |
+| axe (390 / 1440) | passed | 0 violations of any impact |
+| Re-import updates only the thank-you page (adopted site) | passed | docker stack: `posts_hierarchy` update 1 / `posts_content` update 1, 0 conflicts; DevKinsta (adopt mode, same ids as live): identical — after `Reconcile::hash()` stopped reporting missing-vs-empty meta as editor conflicts (49 false conflicts → 0) |
+| Importer regression | passed | after the Reconcile/Rollback hash change: `tests/importer-suite.sh` **81/81**, `tests/adopt-existing-suite.sh` **155/155**, `tests/lite-payload-suite.sh` **104/104** (the lite suite's old-site fixture now keeps its uploads JPEG — the theme's 1.3.0 WebP output had turned the fixture's `-scaled` files into `.webp`, unlike the real live uploads — and its record / URL-matrix counts were brought up to 365 / 84) |
+
 ## 5. Forms — passed
 
 Validation errors re-rendered inline with an error summary (focus moved), honeypot / time-trap / single-use token (atomic claim: 4 parallel submits → 1×200 + 3×409) / per-IP rate limit (429 + Retry-After) / stateless failure codes, no-JS path via admin-post.php, JS path via `hk9/v1/forms/{id}` with a cache-safe token endpoint, `wp_mail` delivery captured in Mailpit (headers: From site, Reply-To submitter, subject prefixes; HTML + text parts), submissions stored privately with `Sent`/`Not sent` badges, admin notice + `hk9/forms/mail_failed` on failure, retention cron. Evidence: Wave 1 forms report, Wave 4a/5 plugin reports, editor matrix task 14. **Not verified:** final inbox delivery on the production host (Mailpit is a local sink) — see docs/unresolved.md.

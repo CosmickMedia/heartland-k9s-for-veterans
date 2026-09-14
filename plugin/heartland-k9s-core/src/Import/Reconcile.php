@@ -22,6 +22,22 @@ defined( 'ABSPATH' ) || exit;
 final class Reconcile {
 
 	/**
+	 * Hash of a field value for comparison. A `meta:` key that does not exist and
+	 * one stored as an empty string are the same thing to the site (WordPress reads
+	 * both back as ''), so both hash as '': an empty payload value never creates an
+	 * empty meta row, and a record whose empty fields were dropped by a later save
+	 * (get_post_meta() → '' but metadata_exists() → false) is not reported as an
+	 * editor conflict on the next run. Rollback (modified check + re-hash after a
+	 * restore) and PostsStub use the same rule so every stored `db` hash agrees.
+	 */
+	public static function hash( string $field, mixed $value ): string {
+		if ( null === $value && str_starts_with( $field, 'meta:' ) ) {
+			$value = '';
+		}
+		return Hash::of( $value );
+	}
+
+	/**
 	 * @param array|null $row       Map row (decoded) or null when the object does not exist yet.
 	 * @param array      $desired   field => resolved payload value.
 	 * @param array      $current   field => value currently in the database (only used when $row).
@@ -39,7 +55,7 @@ final class Reconcile {
 		if ( null === $row ) {
 			foreach ( $desired as $f => $v ) {
 				$apply[ $f ]  = $v;
-				$hashes[ $f ] = [ 'src' => Hash::of( $v ) ];
+				$hashes[ $f ] = [ 'src' => self::hash( $f, $v ) ];
 			}
 			return [
 				'action'      => 'create',
@@ -53,8 +69,8 @@ final class Reconcile {
 
 		$stored = $row['field_hashes'] ?? [];
 		foreach ( $desired as $f => $v ) {
-			$src_now = Hash::of( $v );
-			$db_now  = Hash::of( $current[ $f ] ?? null );
+			$src_now = self::hash( $f, $v );
+			$db_now  = self::hash( $f, $current[ $f ] ?? null );
 			$s       = $stored[ $f ] ?? null;
 
 			if ( null === $s || ! isset( $s['db'] ) ) {
@@ -120,8 +136,8 @@ final class Reconcile {
 		$out = [];
 		foreach ( $desired as $f => $v ) {
 			$out[ $f ] = [
-				'db'  => Hash::of( $after[ $f ] ?? null ),
-				'src' => Hash::of( $v ),
+				'db'  => self::hash( $f, $after[ $f ] ?? null ),
+				'src' => self::hash( $f, $v ),
 			];
 		}
 		return $out;
@@ -141,7 +157,7 @@ final class Reconcile {
 				continue;
 			}
 			if ( array_key_exists( $f, $current_after ) ) {
-				$hashes[ $f ]['db'] = Hash::of( $current_after[ $f ] );
+				$hashes[ $f ]['db'] = self::hash( $f, $current_after[ $f ] );
 			}
 		}
 		return $hashes;
@@ -158,7 +174,7 @@ final class Reconcile {
 			if ( ! isset( $h['db'] ) || ! array_key_exists( $f, $current ) ) {
 				continue;
 			}
-			if ( Hash::of( $current[ $f ] ) !== $h['db'] ) {
+			if ( self::hash( (string) $f, $current[ $f ] ) !== $h['db'] ) {
 				$diff[] = (string) $f;
 			}
 		}

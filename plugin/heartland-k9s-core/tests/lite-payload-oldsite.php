@@ -51,6 +51,8 @@ $uploads  = wp_upload_dir();
 
 $only_thumbnail = static fn( $sizes ) => array_intersect_key( (array) $sizes, [ 'thumbnail' => 1 ] );
 add_filter( 'intermediate_image_sizes_advanced', $only_thumbnail, 999 );
+// The old site uploaded JPEG/PNG originals long before the theme's WebP output (1.3.0): keep the -scaled rendition in the source format.
+add_filter( 'image_editor_output_format', '__return_empty_array', 999 );
 
 $created = 0;
 $kept    = 0;
@@ -120,6 +122,7 @@ foreach ( (array) ( $manifest['records'] ?? [] ) as $record ) {
 	++$created;
 }
 remove_filter( 'intermediate_image_sizes_advanced', $only_thumbnail, 999 );
+remove_filter( 'image_editor_output_format', '__return_empty_array', 999 );
 
 foreach ( $errors as $e ) {
 	fwrite( STDERR, $e . "\n" );

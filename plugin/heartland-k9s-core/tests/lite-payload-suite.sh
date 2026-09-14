@@ -125,7 +125,7 @@ check "pre-flight ok" "$(pre_get "$pre" 'd["ok"]')" "True"
 check "pre-flight: 244 of 244 media found" "$(pre_get "$pre" '[c["status"] for c in d["checks"] if c["id"]=="lite"][0], d["lite"]["found"], d["lite"]["total"], d["lite"]["by_path"], len(d["lite"]["missing"])')" "pass 244 244 0 0"
 check "pre-flight detail text" "$(pre_get "$pre" '"Content-only payload: 244 of 244 media files found on this site" in [c["detail"] for c in d["checks"] if c["id"]=="lite"][0]')" "True"
 check "pre-flight existing pages/registry/media" "$(pre_get "$pre" 'd["existing"]["pages"], d["existing"]["registry"], d["existing"]["media"]')" "7 2 244"
-check "pre-flight payload line says content-only" "$(pre_get "$pre" '[c["detail"] for c in d["checks"] if c["id"]=="payload"][0].startswith("Content-only payload: 363 records")')" "True"
+check "pre-flight payload line says content-only" "$(pre_get "$pre" '[c["detail"] for c in d["checks"] if c["id"]=="payload"][0].startswith("Content-only payload: 365 records")')" "True"
 check "wp hk9 preflight prints the line" "$($WP hk9 preflight "$LITE_C" 2>/dev/null | grep -c 'PASS  Media reuse.*Content-only payload: 244 of 244 media files found on this site')" "1"
 
 echo "-- 4. dry run with --adopt-existing"
@@ -158,7 +158,7 @@ check "no sha256 mismatch warnings" "$(log_count 'file bytes differ from the pay
 check "every live:media row is bound to its own id" "$(wp eval 'global $wpdb; $t = HK9\Core\Import\Map::table(); echo (int) $wpdb->get_var("SELECT COUNT(*) FROM $t WHERE source_key LIKE \"live:media:%\" AND status = \"active\" AND object_id = CAST(SUBSTRING(source_key, 12) AS UNSIGNED) AND created_by_run IS NULL");')" "244"
 check "attached file paths unchanged for all 244" "$(paths_hash)" "$old_paths"
 check "attachments = 245 old + 5 ref assets" "$(wp post list --post_type=attachment --format=count)" "$((old_att + 5))"
-check "only the 5 ref files were added under uploads" "$(( $(upload_originals) - old_files ))" "5"
+check "only the 5 ref files were added under uploads (each as original + full-size WebP since 1.3.0)" "$(( $(upload_originals) - old_files ))" "10"
 check "bytes copied = the 5 ref files" "$(wp eval 'echo (int) (HK9\Core\Import\State::load()["bytes_copied"] ?? 0);')" "$expected_copy"
 check "#3028 missing sizes filled" "$(wp eval 'echo (int) (count((array) (wp_get_attachment_metadata(3028)["sizes"] ?? [])) > '"$old_3028_sizes"');')" "1"
 check "#2458 still the scaled live file" "$(wp post meta get 2458 _wp_attached_file)" "2021/03/IMG_curlyvest-scaled.jpg"
@@ -172,7 +172,7 @@ check "front page renders" "$(http /)" "200"
 check "lite payload left in place (server path)" "$(wp eval 'echo (int) is_file("'"$LITE_C"'/manifest.json");')" "1"
 check "url matrix passes" "$(bash tools/url-matrix.sh "$SITE" >/dev/null 2>&1 && echo pass || echo fail)" "pass"
 matrix_ok=$(bash tools/url-matrix.sh "$SITE" 2>/dev/null | grep -c '✅')
-check "url matrix: 84 ✅" "$matrix_ok" "81"
+check "url matrix: 84 ✅" "$matrix_ok" "84"
 
 echo "-- 6. re-run: everything skips"
 pre=$(pre_json)
@@ -182,7 +182,7 @@ check "re-run exit" "$rc" "0"
 check "re-run create+adopt+update+conflict+fail" "$(totals)" "0"
 check "re-run media_files skip" "$(count media_files skip)" "250"
 check "attached file paths still unchanged" "$(paths_hash)" "$old_paths"
-check "no new files under uploads" "$(( $(upload_originals) - old_files ))" "5"
+check "no new files under uploads" "$(( $(upload_originals) - old_files ))" "10"
 
 echo "-- 7. negative: two live attachments missing (one re-created under a new id at the same path)"
 # 1961 (2020/01/bg2.jpg, plain image) and 2458 (2021/03/IMG_curlyvest.jpg, scaled) are removed with their files.
@@ -191,7 +191,7 @@ wp post delete 1961 2458 --force >/dev/null
 check "1961 + 2458 gone" "$(wp post get 1961 --field=ID 2>/dev/null)-$(wp post get 2458 --field=ID 2>/dev/null)" "-"
 check "their files gone" "$(wp eval '$u = wp_upload_dir()["basedir"]; echo (int) file_exists($u . "/2020/01/bg2.jpg") + (int) file_exists($u . "/'"$path_2458"'");')" "0"
 # 2458 comes back as a NEW attachment (different id) at the very same upload path: matched "by path".
-new_id=$(wp eval '$u = wp_upload_dir(); $dest = $u["basedir"] . "/2021/03/IMG_curlyvest.jpg"; wp_mkdir_p(dirname($dest)); copy("'"$PAYLOAD_C"'/media/live__media__2458/IMG_curlyvest.jpg", $dest); require_once ABSPATH . "wp-admin/includes/image.php"; $only = fn($s) => array_intersect_key((array) $s, ["thumbnail" => 1]); add_filter("intermediate_image_sizes_advanced", $only, 999); $id = wp_insert_attachment(["post_mime_type" => "image/jpeg", "post_title" => "curlyvest (renumbered)", "post_status" => "inherit", "guid" => $u["baseurl"] . "/2021/03/IMG_curlyvest.jpg"], $dest, 0, true); wp_update_attachment_metadata($id, wp_generate_attachment_metadata($id, $dest)); echo (int) $id;')
+new_id=$(wp eval '$u = wp_upload_dir(); $dest = $u["basedir"] . "/2021/03/IMG_curlyvest.jpg"; wp_mkdir_p(dirname($dest)); copy("'"$PAYLOAD_C"'/media/live__media__2458/IMG_curlyvest.jpg", $dest); require_once ABSPATH . "wp-admin/includes/image.php"; $only = fn($s) => array_intersect_key((array) $s, ["thumbnail" => 1]); add_filter("intermediate_image_sizes_advanced", $only, 999); add_filter("image_editor_output_format", "__return_empty_array", 999); $id = wp_insert_attachment(["post_mime_type" => "image/jpeg", "post_title" => "curlyvest (renumbered)", "post_status" => "inherit", "guid" => $u["baseurl"] . "/2021/03/IMG_curlyvest.jpg"], $dest, 0, true); wp_update_attachment_metadata($id, wp_generate_attachment_metadata($id, $dest)); echo (int) $id;')
 check "re-created under a new id" "$(( new_id > 0 && new_id != 2458 ))" "1"
 check "... at the live (scaled) path" "$(wp post meta get "$new_id" _wp_attached_file)" "$path_2458"
 pre=$(pre_json)

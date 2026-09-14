@@ -621,6 +621,52 @@ function hk9_paragraphs( string $text, string $class = '' ): string {
 }
 
 /**
+ * Short "type, size" label for a document attachment ("PDF, 1.5 MB"), from the
+ * real mime type and the file size (attachment metadata first, then the file on
+ * disk). Degrades to the type alone when the size is unknown, and to '' for an
+ * unknown type — never a warning.
+ *
+ * @param int $id Attachment id.
+ * @return string
+ */
+function hk9_attachment_meta_label( int $id ): string {
+	if ( $id <= 0 || 'attachment' !== get_post_type( $id ) ) {
+		return '';
+	}
+	$types = [
+		'application/pdf' => 'PDF',
+		'application/msword' => 'DOC',
+		'application/vnd.openxmlformats-officedocument.wordprocessingml.document' => 'DOCX',
+		'application/vnd.ms-excel' => 'XLS',
+		'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' => 'XLSX',
+		'text/plain' => 'TXT',
+		'image/jpeg' => 'JPG',
+		'image/png' => 'PNG',
+	];
+	$mime = (string) get_post_mime_type( $id );
+	$type = $types[ $mime ] ?? '';
+	if ( '' === $type && str_starts_with( $mime, 'image/' ) ) {
+		$type = strtoupper( substr( $mime, 6 ) );
+	}
+	if ( '' === $type ) {
+		return '';
+	}
+
+	$bytes = 0;
+	$meta  = wp_get_attachment_metadata( $id );
+	if ( is_array( $meta ) && ! empty( $meta['filesize'] ) ) {
+		$bytes = (int) $meta['filesize'];
+	} else {
+		$file = (string) get_attached_file( $id );
+		if ( '' !== $file && is_readable( $file ) ) {
+			$bytes = (int) filesize( $file );
+		}
+	}
+
+	return $bytes > 0 ? $type . ', ' . size_format( $bytes, $bytes >= MB_IN_BYTES ? 1 : 0 ) : $type;
+}
+
+/**
  * Whether a page's block content (editor canvas) is blank: empty, whitespace,
  * or nothing but empty paragraph blocks / classic markup with no text
  * (`<!-- wp:paragraph --><p></p><!-- /wp:paragraph -->`, `<p>&nbsp;</p>`).
